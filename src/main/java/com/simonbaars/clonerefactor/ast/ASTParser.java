@@ -50,7 +50,7 @@ public class ASTParser {
 								finishedLine = r.getLastLineNumber();
 							sortedDomain.addTo(file, finishedLine);
 							List<Node> nodes = r.getThisFile().get(finishedLine);
-							r.getBuffer().addToBuffer(nodes);
+							r.getBuffer().addToBuffer(nodes, MIN_AMOUNT_OF_LINES, MIN_AMOUNT_OF_TOKENS);
 							if(r.getBuffer().isValid()) {
 								scanForClones(potentialClones, foundCloneClasses, r.getBuffer());
 								potentialClones.add(new CloneClass(r.getBuffer().getLines()));

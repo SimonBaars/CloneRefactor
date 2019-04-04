@@ -5,24 +5,24 @@ import java.util.List;
 import java.util.Objects;
 
 import com.github.javaparser.ast.Node;
+import com.simonbaars.clonerefactor.model.LineTokens;
 
 public class LineBuffer {
 	int currentIndex = 0;
 	int tokens = 0;
-	private final List<List<Node>> lines;
+	private final List<LineTokens> lines;
 	
 	public LineBuffer() {
 		lines = new ArrayList<>();
 	}
 	
-	public void addToBuffer(List<Node> n) {
-		List<Node> prevLine = lines.get(currentIndex);
+	public void addToBuffer(List<Node> n, int minLines, int minTokens) {
+		LineTokens prevLine = lines.get(currentIndex);
 		if(prevLine!=null)
 			tokens-=prevLine.size();
-		lines.set(currentIndex, n);
-		currentIndex++;
+		lines.add(new LineTokens(n));
 		tokens+=n.size();
-		if(currentIndex>=lines.size())
+		if(lines.size()>minLines)
 			currentIndex=0;
 	}
 	
@@ -38,7 +38,7 @@ public class LineBuffer {
 		this.currentIndex = currentIndex;
 	}
 
-	public List<List<Node>> getLines() {
+	public List<LineTokens> getLines() {
 		return lines;
 	}
 }

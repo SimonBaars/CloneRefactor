@@ -15,5 +15,13 @@ public class LineTokens {
 	public List<Node> getTokens() {
 		return tokens;
 	}
+
+	public int size() {
+		return tokens.size();
+	}
+	
+	public void add(Node token) {
+		tokens.add(token);
+	}
 	
 }
