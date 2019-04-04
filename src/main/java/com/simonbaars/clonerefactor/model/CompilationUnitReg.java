@@ -9,8 +9,8 @@ public class CompilationUnitReg {
 	private final ListMap<Integer, Node> thisFile = new ListMap<>();
 	private final LineBuffer buffer;
 	
-	public CompilationUnitReg(int size) {
-		this.buffer = new LineBuffer(size);
+	public CompilationUnitReg() {
+		this.buffer = new LineBuffer();
 	}
 	
 	public int getLastLineNumber() {

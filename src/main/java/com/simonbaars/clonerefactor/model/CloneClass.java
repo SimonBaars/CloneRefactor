@@ -8,22 +8,18 @@ import com.github.javaparser.ast.Node;
 
 
 public class CloneClass {
-	private final List<List<Node>> cloneClass;
-	
-	public CloneClass(int size) {
-		cloneClass = new ArrayList<>(size);
-	}
+	private final List<LineTokens> cloneClass;
 
-	public CloneClass(List<List<Node>> lines) {
+	public CloneClass(List<LineTokens> lines) {
 		cloneClass = new ArrayList<>(lines);
 	}
 
-	public List<List<Node>> getCloneClass() {
+	public List<LineTokens> getCloneClass() {
 		return cloneClass;
 	}
 	
-	@Override
+	/*@Override
 	public String toString() {
-		return cloneClass.stream().map(e -> e.stream().map(Node::toString).collect(Collectors.joining(", "))).collect(Collectors.joining(" => "));
-	}
+		return cloneClass.stream().map(e -> e.stream().map(f -> f.getTokens().toString()).collect(Collectors.joining(", "))).collect(Collectors.joining(" => "));
+	}*/
 }

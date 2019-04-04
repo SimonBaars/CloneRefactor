@@ -29,9 +29,10 @@ public class CloneDetectionTest extends TestCase
 
     /**
      * Rigourous Test :-)
-     
+     */
     public void testJPacman()
     {
         Main.main(new String[] {"/Users/sbaars/clone/jpacman-framework"});
-    }*/
+        //Main.main(new String[] {"/Users/sbaars/clone/simple-clone"});
+    }
 }
