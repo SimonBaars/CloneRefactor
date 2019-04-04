@@ -5,17 +5,16 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 /**
- * Unit test for simple App.
+ * Unit test for the clone detector.
  */
-public class AppTest 
-    extends TestCase
+public class CloneDetectionTest extends TestCase
 {
     /**
      * Create the test case
      *
      * @param testName name of the test case
      */
-    public AppTest( String testName )
+    public CloneDetectionTest( String testName )
     {
         super( testName );
     }
@@ -25,14 +24,14 @@ public class AppTest
      */
     public static Test suite()
     {
-        return new TestSuite( AppTest.class );
+        return new TestSuite( CloneDetectionTest.class );
     }
 
     /**
      * Rigourous Test :-)
-     */
-    public void testApp()
+     
+    public void testJPacman()
     {
-        assertTrue( true );
-    }
+        Main.main(new String[] {"/Users/sbaars/clone/jpacman-framework"});
+    }*/
 }
