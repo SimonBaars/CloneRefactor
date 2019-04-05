@@ -6,6 +6,9 @@ public class Location {
 	private final File file;
 	private final int line;
 	
+	private Location prevLine;
+	private Location clone;
+	
 	public Location(File file, int line) {
 		super();
 		this.file = file;
@@ -18,6 +21,22 @@ public class Location {
 
 	public int getLine() {
 		return line;
+	}
+
+	public Location getPrevLine() {
+		return prevLine;
+	}
+
+	public void setPrevLine(Location nextLine) {
+		this.prevLine = nextLine;
+	}
+
+	public Location getClone() {
+		return clone;
+	}
+
+	public void setClone(Location clone) {
+		this.clone = clone;
 	}
 
 	@Override

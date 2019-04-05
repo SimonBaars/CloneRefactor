@@ -8,12 +8,10 @@ import com.simonbaars.clonerefactor.datatype.LineBuffer;
 
 public class CompilationUnitReg {
 	private int lastLineNumber = 0;
-	private final List<Node> thisLine = new ArrayList<>();
-	private final LineBuffer buffer;
+	private List<Node> thisLine = new ArrayList<>();
+	private Location lastLine = null;
 	
-	public CompilationUnitReg() {
-		this.buffer = new LineBuffer();
-	}
+	public CompilationUnitReg() {}
 	
 	public int getLastLineNumber() {
 		return lastLineNumber;
@@ -34,8 +32,19 @@ public class CompilationUnitReg {
 	public List<Node> getThisLine() {
 		return thisLine;
 	}
-
-	public LineBuffer getBuffer() {
-		return buffer;
+	
+	public void nextLine(Location lineLoc) {
+		lineLoc.setPrevLine(lastLine);
+		this.setLastLine(lineLoc);
+		thisLine = new ArrayList<>();
 	}
+
+	public Location getLastLine() {
+		return lastLine;
+	}
+
+	public void setLastLine(Location lastLine) {
+		this.lastLine = lastLine;
+	}
+
 }
