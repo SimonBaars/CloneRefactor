@@ -29,42 +29,55 @@ public class ASTParser {
 	private static final int MIN_AMOUNT_OF_TOKENS = 50;
 	
 	public static void parse(List<File> javaFiles) {
+		final Map<LineTokens, List<Location>> lineReg = calculateLineReg(javaFiles);
+	}
+
+	private static final Map<LineTokens, List<Location>> calculateLineReg(List<File> javaFiles) {
 		final Map<LineTokens, List<Location>> lineReg = new HashMap<>();
 		for(File file : javaFiles) {
 			try {
-				final ParseResult<CompilationUnit> pr = new JavaParser().parse(file);
-				CompilationUnit cu = pr.getResult().get();
-				final CompilationUnitReg r = new CompilationUnitReg();
-				for (Iterator<Node> it = cu.stream().iterator(); it.hasNext();) {
-					Node t = it.next();
-					Optional<Range> range = t.getRange();
-					if(range.isPresent()) {
-						int line = range.get().begin.line;
-						if(!it.hasNext() || (r.lastLineNumberExists() && r.getLastLineNumber()!=line)) {
-							int finishedLine = line; // Line to be scanned for clones
-							if(it.hasNext())
-								finishedLine = r.getLastLineNumber();
-							/*sortedDomain.addTo(file, finishedLine);
-							List<Node> nodes = r.getThisFile().get(finishedLine);
-							r.getBuffer().addToBuffer(nodes, MIN_AMOUNT_OF_LINES, MIN_AMOUNT_OF_TOKENS);
-							if(r.getBuffer().isValid()) {
-								scanForClones(potentialClones, foundCloneClasses, r.getBuffer());
-								potentialClones.add(new CloneClass(r.getBuffer().getLines()));
-							}*/
-							LineTokens l = new LineTokens(r.getThisLine());
-							Location location = new Location(file, finishedLine);
-							if(lineReg.containsKey(l)) 
-								lineReg.get(l).add(location);
-							else lineReg.put(l, Arrays.asList(location));
-						}
-						r.visitLine(line);
-						r.getThisLine().add(t);
-					}
-				}
+				parseClassFile(lineReg, file);
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
 			}
 		}
+		return lineReg;
+	}
+
+	private static void parseClassFile(final Map<LineTokens, List<Location>> lineReg, File file)
+			throws FileNotFoundException {
+		final ParseResult<CompilationUnit> pr = new JavaParser().parse(file);
+		CompilationUnit cu = pr.getResult().get();
+		final CompilationUnitReg r = new CompilationUnitReg();
+		for (Iterator<Node> it = cu.stream().iterator(); it.hasNext();) {
+			parseToken(lineReg, file, r, it);
+		}
+	}
+
+	private static void parseToken(final Map<LineTokens, List<Location>> lineReg, File file, final CompilationUnitReg r,
+			Iterator<Node> it) {
+		Node t = it.next();
+		Optional<Range> range = t.getRange();
+		if(range.isPresent()) {
+			int line = range.get().begin.line;
+			if(!it.hasNext() || (r.lastLineNumberExists() && r.getLastLineNumber()!=line)) {
+				addLineTokensToReg(lineReg, file, r, it, line);
+			}
+			r.visitLine(line);
+			r.getThisLine().add(t);
+		}
+	}
+
+	private static void addLineTokensToReg(final Map<LineTokens, List<Location>> lineReg, File file,
+			final CompilationUnitReg r, Iterator<Node> it, int line) {
+		int finishedLine = line; // Line to be scanned for clones
+		if(it.hasNext())
+			finishedLine = r.getLastLineNumber();
+		LineTokens l = new LineTokens(r.getThisLine());
+		Location location = new Location(file, finishedLine);
+		if(lineReg.containsKey(l)) 
+			lineReg.get(l).add(location);
+		else lineReg.put(l, Arrays.asList(location));
 	}
 
 	private static void scanForClones(List<CloneClass> potentialClones, List<CloneClass> foundCloneClasses, LineBuffer buffer) {
