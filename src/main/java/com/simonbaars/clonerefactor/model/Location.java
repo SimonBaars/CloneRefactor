@@ -51,4 +51,8 @@ public class Location {
 		this.endLine = Optional.of(endLine);
 	}
 	
+	public int getEndLine() {
+		return endLine.isPresent() ? endLine.get() : -1;
+	}
+	
 }

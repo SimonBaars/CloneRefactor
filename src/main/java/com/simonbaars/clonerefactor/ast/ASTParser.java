@@ -16,6 +16,7 @@ import com.github.javaparser.ParseResult;
 import com.github.javaparser.Range;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;
+import com.simonbaars.clonerefactor.datatype.ListMap;
 import com.simonbaars.clonerefactor.model.Chain;
 import com.simonbaars.clonerefactor.model.CompilationUnitReg;
 import com.simonbaars.clonerefactor.model.LineTokens;
@@ -72,6 +73,16 @@ public class ASTParser {
 			}
 		}
 		checkForClones(clones, endedChains);
+	}
+
+	private static void checkForClones(List<Chain> clones, List<Location> endedChains) {
+		ListMap<Integer, Location> foundClones = new ListMap<>();
+		for(Location loc : endedChains) {
+			int length = loc.getEndLine() - loc.getLine();
+			if(length >= MIN_AMOUNT_OF_LINES)
+				foundClones.addTo(length, loc);
+		}
+		foundClones.values().forEach(e -> clones.add(new Chain(e)));
 	}
 
 	private static void collectClones(Location lastLoc, List<Chain> buildingChains) {
