@@ -31,7 +31,7 @@ public class ASTParser {
 	public static void parse(List<File> javaFiles) {
 		System.out.println("Start parse");
 		final Map<LineTokens, List<Location>> lineReg = calculateLineReg(javaFiles);
-		
+		findClones(lineReg);
 	}
 
 	private static final Map<LineTokens, List<Location>> calculateLineReg(List<File> javaFiles) {

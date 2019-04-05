@@ -29,7 +29,7 @@ public class LineTokens {
 	public boolean equals (Object compareTokens) {
 		if(!(compareTokens instanceof LineTokens))
 			return false;
-		System.out.println("Compare "+toString()+" with "+tokens.toString()+" => "+this.tokens.equals(((LineTokens)compareTokens).getTokens())+" but actually "+(hashCode() == compareTokens.hashCode()));
+		//System.out.println("Compare "+toString()+" with "+tokens.toString()+" => "+this.tokens.equals(((LineTokens)compareTokens).getTokens())+" but actually "+(hashCode() == compareTokens.hashCode()));
 		return this.tokens.equals(((LineTokens)compareTokens).getTokens());
 	}
 	
