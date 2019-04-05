@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -15,9 +16,7 @@ import com.github.javaparser.ParseResult;
 import com.github.javaparser.Range;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;
-import com.simonbaars.clonerefactor.datatype.LineBuffer;
 import com.simonbaars.clonerefactor.model.Chain;
-import com.simonbaars.clonerefactor.model.CloneClass;
 import com.simonbaars.clonerefactor.model.CompilationUnitReg;
 import com.simonbaars.clonerefactor.model.LineTokens;
 import com.simonbaars.clonerefactor.model.Location;
@@ -47,7 +46,6 @@ public class ASTParser {
 	private static void makeValid(List<Chain> buildingChains, List<Chain> clones) {
 		List<Location> existingClones = buildingChains.get(buildingChains.size()-2).getChain();
 		List<Location> newClones = buildingChains.get(buildingChains.size()-1).getChain();
-		boolean haveOneAdded = false, haveOneRemoved = true;
 		List<Location> validChains = existingClones.stream().map(e -> e.getPrevLine()).collect(Collectors.toList());
 		
 		List<Location> newChains = newClones.stream().filter(e -> !validChains.contains(e)).collect(Collectors.toList());
@@ -60,9 +58,20 @@ public class ASTParser {
 		}
 	}
 
-	private static void detectValidClones(List<Chain> buildingChains, List<Chain> clones, List<Location> newClones) {
-		// TODO Auto-generated method stub
-		
+	private static void detectValidClones(List<Chain> buildingChains, List<Chain> clones, List<Location> endedChains) {
+		List<Chain> potentialClones = new ArrayList<Chain>();
+		ListIterator<Chain> li = buildingChains.listIterator(buildingChains.size()-1); // Reverse order iterator on buildingChains
+		while(li.hasPrevious()) {
+			Chain prev = li.previous();
+			for(Location l : prev.getChain()) {
+				if(endedChains.contains(l.getPrevLine())) {
+					l.setEndLine(l.getPrevLine().getLine());
+					endedChains.remove(l.getPrevLine());
+					endedChains.add(l);
+				}
+			}
+		}
+		checkForClones(clones, endedChains);
 	}
 
 	private static void collectClones(Location lastLoc, List<Chain> buildingChains) {
@@ -109,7 +118,7 @@ public class ASTParser {
 			Iterator<Node> it) {
 		Node t = it.next();
 		Optional<Range> range = t.getRange();
-		Location l;
+		Location l = null;
 		if(range.isPresent()) {
 			int line = range.get().begin.line;
 			if(!it.hasNext() || (r.lastLineNumberExists() && r.getLastLineNumber()!=line)) {

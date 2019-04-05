@@ -1,10 +1,13 @@
 package com.simonbaars.clonerefactor.model;
 
 import java.io.File;
+import java.util.Optional;
 
 public class Location {
 	private final File file;
 	private final int line;
+	
+	private Optional<Integer> endLine = Optional.empty();
 	
 	private Location prevLine;
 	private Location clone;
@@ -42,6 +45,10 @@ public class Location {
 	@Override
 	public String toString() {
 		return "Location [file=" + file + ", line=" + line + "]";
+	}
+	
+	public void setEndLine(Integer endLine) {
+		this.endLine = Optional.of(endLine);
 	}
 	
 }
