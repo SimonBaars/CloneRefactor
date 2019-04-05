@@ -19,4 +19,10 @@ public class Location {
 	public int getLine() {
 		return line;
 	}
+
+	@Override
+	public String toString() {
+		return "Location [file=" + file + ", line=" + line + "]";
+	}
+	
 }

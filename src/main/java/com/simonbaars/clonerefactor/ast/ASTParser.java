@@ -29,7 +29,9 @@ public class ASTParser {
 	private static final int MIN_AMOUNT_OF_TOKENS = 50;
 	
 	public static void parse(List<File> javaFiles) {
+		System.out.println("Start parse");
 		final Map<LineTokens, List<Location>> lineReg = calculateLineReg(javaFiles);
+		
 	}
 
 	private static final Map<LineTokens, List<Location>> calculateLineReg(List<File> javaFiles) {
@@ -75,9 +77,15 @@ public class ASTParser {
 			finishedLine = r.getLastLineNumber();
 		LineTokens l = new LineTokens(r.getThisLine());
 		Location location = new Location(file, finishedLine);
-		if(lineReg.containsKey(l)) 
+		//System.out.println("Line = "+location+", l = "+l);
+		if(lineReg.containsKey(l))
 			lineReg.get(l).add(location);
-		else lineReg.put(l, Arrays.asList(location));
+		else {
+			List<Location> occurrences = new ArrayList<>();
+			lineReg.put(l, occurrences);
+			occurrences.add(location);
+		}
+		r.getThisLine().clear();
 	}
 
 	private static void scanForClones(List<CloneClass> potentialClones, List<CloneClass> foundCloneClasses, LineBuffer buffer) {
