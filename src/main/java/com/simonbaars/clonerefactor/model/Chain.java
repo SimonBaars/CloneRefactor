@@ -20,4 +20,7 @@ public class Chain {
 		return chain;
 	}
 	
+	public void add(Location l) {
+		chain.add(l);
+	}
 }

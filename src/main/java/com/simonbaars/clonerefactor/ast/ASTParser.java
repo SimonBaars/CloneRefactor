@@ -28,14 +28,30 @@ public class ASTParser {
 	public static void parse(List<File> javaFiles) {
 		System.out.println("Start parse");
 		Location lastLoc = calculateLineReg(javaFiles);
-		List<Chain> chains = findChains(lastLoc);
+		final List<Chain> buildingChains = new ArrayList<Chain>();
+		findChains(lastLoc, buildingChains);
 	}
 
-	private static List<Chain> findChains(Location lastLoc) {
-		
+	private static void findChains(Location lastLoc, List<Chain> buildingChains) {
+		buildingChains.add(new Chain());
+		collectClones(lastLoc, buildingChains);
+		//if(lastLoc.getClone()!=null)
+		//	collectClones(lastLoc, buildingChains);
+		if(lastLoc.getPrevLine()!=null)
+			findChains(lastLoc, buildingChains);
 	}
 
 	
+	private static void collectClones(Location lastLoc, List<Chain> buildingChains) {
+		last(buildingChains).add(lastLoc);
+		if(lastLoc.getClone()!=null)
+			collectClones(lastLoc.getClone(), buildingChains);
+	}
+
+	private static Chain last(List<Chain> buildingChains) {
+		return buildingChains.get(buildingChains.size()-1);
+	}
+
 	/**
 	 * AST PARSING
 	 * @return 
