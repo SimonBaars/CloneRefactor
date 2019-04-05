@@ -8,27 +8,29 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Optional;
+
+import javax.swing.event.ListSelectionEvent;
 
 import com.github.javaparser.JavaParser;
 import com.github.javaparser.ParseResult;
 import com.github.javaparser.Range;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;
-import com.simonbaars.clonerefactor.datatype.FlattenedList;
 import com.simonbaars.clonerefactor.datatype.LineBuffer;
 import com.simonbaars.clonerefactor.datatype.ListMap;
 import com.simonbaars.clonerefactor.model.CloneClass;
 import com.simonbaars.clonerefactor.model.CompilationUnitReg;
-import com.simonbaars.clonerefactor.model.SimilarityReg;
+import com.simonbaars.clonerefactor.model.LineTokens;
+import com.simonbaars.clonerefactor.model.Location;
 
 public class ASTParser {
 	private static final int MIN_AMOUNT_OF_LINES = 6;
 	private static final int MIN_AMOUNT_OF_TOKENS = 50;
-	private static final double SIMILARITYTHRESHOLD = 90;
 	
 	public static void parse(List<File> javaFiles) {
+		final Map<LineTokens, List<Location>> lineReg = new HashMap<>();
+		
 		final Map<File, ListMap<Integer, Node>> tokensOnLine = new HashMap<>();
 		final ListMap<File, Integer> sortedDomain = new ListMap<>();
 		// Lists in order: List of potential clone classes -> 6 lines in the potential clone class -> List of tokens on the line.
@@ -48,13 +50,18 @@ public class ASTParser {
 							int finishedLine = line; // Line to be scanned for clones
 							if(it.hasNext())
 								finishedLine = r.getLastLineNumber();
-							sortedDomain.addTo(file, finishedLine);
+							/*sortedDomain.addTo(file, finishedLine);
 							List<Node> nodes = r.getThisFile().get(finishedLine);
 							r.getBuffer().addToBuffer(nodes, MIN_AMOUNT_OF_LINES, MIN_AMOUNT_OF_TOKENS);
 							if(r.getBuffer().isValid()) {
 								scanForClones(potentialClones, foundCloneClasses, r.getBuffer());
 								potentialClones.add(new CloneClass(r.getBuffer().getLines()));
-							}
+							}*/
+							LineTokens l = new LineTokens(r.getThisFile().get(finishedLine));
+							Location location = new Location(file, finishedLine);
+							if(lineReg.containsKey(l)) 
+								lineReg.get(l).add(location);
+							else lineReg.put(l, Arrays.asList(location));
 						}
 						r.visitLine(line);
 						r.getThisFile().addTo(line, t);

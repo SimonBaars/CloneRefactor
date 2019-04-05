@@ -24,4 +24,11 @@ public class LineTokens {
 		tokens.add(token);
 	}
 	
+	@Override
+	public boolean equals (Object tokens) {
+		if(!(tokens instanceof LineTokens))
+			return false;
+		return tokens.equals(((LineTokens)tokens).getTokens());
+	}
+	
 }

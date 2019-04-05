@@ -9,6 +9,9 @@ import com.simonbaars.clonerefactor.datatype.FlattenedList;
 import com.simonbaars.clonerefactor.model.SimilarityReg;
 
 public class SimilarityChecker {
+	
+	private static final double SIMILARITYTHRESHOLD = 90;
+	
 	private static double similarity(List<List<Node>> leftClone, List<List<Node>> rightClone) {
 		final List<Node> left = new FlattenedList<>(leftClone);
 		final List<Node> right = new FlattenedList<>(rightClone);
