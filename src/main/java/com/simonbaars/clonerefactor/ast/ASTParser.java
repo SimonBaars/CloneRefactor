@@ -30,12 +30,6 @@ public class ASTParser {
 	
 	public static void parse(List<File> javaFiles) {
 		final Map<LineTokens, List<Location>> lineReg = new HashMap<>();
-		
-		final Map<File, ListMap<Integer, Node>> tokensOnLine = new HashMap<>();
-		final ListMap<File, Integer> sortedDomain = new ListMap<>();
-		// Lists in order: List of potential clone classes -> 6 lines in the potential clone class -> List of tokens on the line.
-		final List<CloneClass> potentialClones = new ArrayList<>();
-		final List<CloneClass> foundCloneClasses = new ArrayList<>();
 		for(File file : javaFiles) {
 			try {
 				final ParseResult<CompilationUnit> pr = new JavaParser().parse(file);
@@ -57,22 +51,20 @@ public class ASTParser {
 								scanForClones(potentialClones, foundCloneClasses, r.getBuffer());
 								potentialClones.add(new CloneClass(r.getBuffer().getLines()));
 							}*/
-							LineTokens l = new LineTokens(r.getThisFile().get(finishedLine));
+							LineTokens l = new LineTokens(r.getThisLine());
 							Location location = new Location(file, finishedLine);
 							if(lineReg.containsKey(l)) 
 								lineReg.get(l).add(location);
 							else lineReg.put(l, Arrays.asList(location));
 						}
 						r.visitLine(line);
-						r.getThisFile().addTo(line, t);
+						r.getThisLine().add(t);
 					}
 				}
-				tokensOnLine.put(file, r.getThisFile());
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
 			}
 		}
-		System.out.println(Arrays.toString(foundCloneClasses.toArray()));
 	}
 
 	private static void scanForClones(List<CloneClass> potentialClones, List<CloneClass> foundCloneClasses, LineBuffer buffer) {

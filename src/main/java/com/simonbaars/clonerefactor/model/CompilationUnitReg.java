@@ -1,12 +1,14 @@
 package com.simonbaars.clonerefactor.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.github.javaparser.ast.Node;
 import com.simonbaars.clonerefactor.datatype.LineBuffer;
-import com.simonbaars.clonerefactor.datatype.ListMap;
 
 public class CompilationUnitReg {
 	private int lastLineNumber = 0;
-	private final ListMap<Integer, Node> thisFile = new ListMap<>();
+	private final List<Node> thisLine = new ArrayList<>();
 	private final LineBuffer buffer;
 	
 	public CompilationUnitReg() {
@@ -29,8 +31,8 @@ public class CompilationUnitReg {
 		this.lastLineNumber = line;
 	}
 
-	public ListMap<Integer, Node> getThisFile() {
-		return thisFile;
+	public List<Node> getThisLine() {
+		return thisLine;
 	}
 
 	public LineBuffer getBuffer() {
