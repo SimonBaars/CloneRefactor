@@ -8,6 +8,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import com.github.javaparser.JavaParser;
 import com.github.javaparser.ParseResult;
@@ -44,8 +45,20 @@ public class ASTParser {
 
 	
 	private static void makeValid(List<Chain> buildingChains, List<Chain> clones) {
-		Chain existingClones = buildingChains.get(buildingChains.size()-2);
-		Chain newClones = buildingChains.get(buildingChains.size()-1);
+		List<Location> existingClones = buildingChains.get(buildingChains.size()-2).getChain();
+		List<Location> newClones = buildingChains.get(buildingChains.size()-1).getChain();
+		boolean haveOneAdded = false, haveOneRemoved = true;
+		List<Location> validChains = existingClones.stream().map(e -> e.getPrevLine()).collect(Collectors.toList());
+		newClones.removeIf(e -> !validChains.contains(e));
+		if(newClones.size()!=existingClones.size())
+			detectValidClones(buildingChains, clones, newClones);
+		if(newClones.size() == 1) {
+			buildingChains.clear();
+		}
+	}
+
+	private static void detectValidClones(List<Chain> buildingChains, List<Chain> clones, List<Location> newClones) {
+		// TODO Auto-generated method stub
 		
 	}
 
