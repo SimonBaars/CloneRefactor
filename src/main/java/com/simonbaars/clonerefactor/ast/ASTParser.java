@@ -29,19 +29,26 @@ public class ASTParser {
 		System.out.println("Start parse");
 		Location lastLoc = calculateLineReg(javaFiles);
 		final List<Chain> buildingChains = new ArrayList<Chain>();
-		findChains(lastLoc, buildingChains);
+		final List<Chain> clones = new ArrayList<Chain>();
+		findChains(lastLoc, buildingChains, clones);
 	}
 
-	private static void findChains(Location lastLoc, List<Chain> buildingChains) {
+	private static void findChains(Location lastLoc, List<Chain> buildingChains, List<Chain> clones) {
 		buildingChains.add(new Chain());
 		collectClones(lastLoc, buildingChains);
-		//if(lastLoc.getClone()!=null)
-		//	collectClones(lastLoc, buildingChains);
+		if(buildingChains.size()>=2)
+			makeValid(buildingChains, clones); //Because of the recent additions the current chain may be invalidated
 		if(lastLoc.getPrevLine()!=null)
-			findChains(lastLoc, buildingChains);
+			findChains(lastLoc, buildingChains, clones); //I can also do this non recursively, but this looks nice :D
 	}
 
 	
+	private static void makeValid(List<Chain> buildingChains, List<Chain> clones) {
+		Chain existingClones = buildingChains.get(buildingChains.size()-2);
+		Chain newClones = buildingChains.get(buildingChains.size()-1);
+		
+	}
+
 	private static void collectClones(Location lastLoc, List<Chain> buildingChains) {
 		last(buildingChains).add(lastLoc);
 		if(lastLoc.getClone()!=null)
