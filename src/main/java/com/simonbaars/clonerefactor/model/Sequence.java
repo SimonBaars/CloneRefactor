@@ -5,33 +5,33 @@ import java.util.Arrays;
 import java.util.List;
 
 public class Sequence {
-	final List<Location> chain;
+	final List<Location> sequence;
 
 	public Sequence(List<Location> collection) {
 		super();
-		this.chain = collection;
+		this.sequence = collection;
 	}
 
 	public Sequence() {
 		super();
-		this.chain = new ArrayList<>();
+		this.sequence = new ArrayList<>();
 	}
 
-	public List<Location> getChain() {
-		return chain;
+	public List<Location> getSequence() {
+		return sequence;
 	}
 	
 	public Sequence add(Location l) {
-		chain.add(l);
+		sequence.add(l);
 		return this; //For method chaining
 	}
 
 	public int size() {
-		return chain.size();
+		return sequence.size();
 	}
 
 	@Override
 	public String toString() {
-		return "Sequence [chain=" + Arrays.toString(chain.toArray()) + "]";
+		return "Sequence [sequence=" + Arrays.toString(sequence.toArray()) + "]";
 	}
 }

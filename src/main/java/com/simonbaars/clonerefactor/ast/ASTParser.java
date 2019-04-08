@@ -39,10 +39,10 @@ public class ASTParser {
 	private static void findChains(Location lastLoc, Sequence buildingChains, List<Sequence> clones) {
 		Sequence newClones = collectClones(lastLoc);
 		if(newClones.size()>=1)
-			buildingChains = makeValid(buildingChains, newClones, clones); //Because of the recent additions the current chain may be invalidated
+			buildingChains = makeValid(buildingChains, newClones, clones); //Because of the recent additions the current sequence may be invalidated
 		if(lastLoc.getPrevLine()!=null) {
 			if(lastLoc.getPrevLine().getFile()!=lastLoc.getFile()) {
-				buildingChains.getChain().clear();
+				buildingChains.getSequence().clear();
 			}
 			findChains(lastLoc.getPrevLine(), buildingChains, clones); //I can also do this non recursively, but this looks nice :D
 		}
@@ -50,10 +50,10 @@ public class ASTParser {
 
 	
 	private static Sequence makeValid(Sequence oldClones, Sequence newClones, List<Sequence> clones) {
-		Map<Location /*oldClones*/, Location /*newClones*/> validChains = oldClones.getChain().stream().filter(e -> newClones.getChain().contains(e.getPrevLine())).collect(Collectors.toMap(e -> e, e -> e.getPrevLine()));
+		Map<Location /*oldClones*/, Location /*newClones*/> validChains = oldClones.getSequence().stream().filter(e -> newClones.getSequence().contains(e.getPrevLine())).collect(Collectors.toMap(e -> e, e -> e.getPrevLine()));
 		
 		if(validChains.size()!=oldClones.size()) {
-			checkValidClones(oldClones, oldClones.getChain().stream().filter(e -> !newClones.getChain().contains(e.getPrevLine())).collect(Collectors.toList()), clones);
+			checkValidClones(oldClones, oldClones.getSequence().stream().filter(e -> !newClones.getSequence().contains(e.getPrevLine())).collect(Collectors.toList()), clones);
 		}
 		
 		for(Entry<Location, Location> validChain : validChains.entrySet()) {
@@ -68,9 +68,9 @@ public class ASTParser {
 
 	private static Sequence mergeClones(Sequence newClones) {
 		outerloop: for(int i = 0; i<newClones.size(); i++) {
-			Location loc1 = newClones.getChain().get(i);
+			Location loc1 = newClones.getSequence().get(i);
 			for(int j = i+1; j<newClones.size(); j++) {
-				Location loc2 = newClones.getChain().get(j);
+				Location loc2 = newClones.getSequence().get(j);
 				if(loc1.getFile() == loc2.getFile()) {
 					int beginLineOne = loc1.getBeginLine();
 					int endLineOne = loc1.getEndLine();
@@ -79,12 +79,12 @@ public class ASTParser {
 					System.out.println("Overlap "+beginLineOne+", "+endLineOne+", "+beginLineTwo+", "+endLineTwo+", "+overlap(beginLineOne, endLineOne, beginLineTwo, endLineTwo));
 					if(overlap(beginLineOne, endLineOne, beginLineTwo, endLineTwo)) {
 						if(endLineOne>endLineTwo) {
-							newClones.getChain().remove(i);
+							newClones.getSequence().remove(i);
 							loc2.setBeginLine(loc1.getBeginLine());
 							i--;
 							continue outerloop;
 						} else {
-							newClones.getChain().remove(j);
+							newClones.getSequence().remove(j);
 							loc1.setBeginLine(loc2.getBeginLine());
 							j--;
 						}
@@ -101,7 +101,7 @@ public class ASTParser {
 
 	private static void checkValidClones(Sequence oldClones, List<Location> endedClones, List<Sequence> clones) {
 		ListMap<Integer /*Sequence size*/, Location /* Clones */> cloneList = new ListMap<>();
-		oldClones.getChain().stream().filter(e -> e.getAmountOfLines() > MIN_AMOUNT_OF_LINES).forEach(e -> cloneList.addTo(e.getAmountOfLines(), e));
+		oldClones.getSequence().stream().filter(e -> e.getAmountOfLines() > MIN_AMOUNT_OF_LINES).forEach(e -> cloneList.addTo(e.getAmountOfLines(), e));
 		for(List<Location> l : cloneList.values()) {
 			if(l.stream().anyMatch(e -> endedClones.contains(e))) {
 				clones.add(new Sequence(l));
