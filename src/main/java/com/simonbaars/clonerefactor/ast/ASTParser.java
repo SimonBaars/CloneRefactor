@@ -32,30 +32,28 @@ public class ASTParser {
 		Location lastLoc = calculateLineReg(javaFiles);
 		final Chain buildingChains = new Chain();
 		final List<Chain> clones = new ArrayList<Chain>();
-		findChains(lastLoc, buildingChains, clones, new ArrayList<>());
+		findChains(lastLoc, buildingChains, clones);
 		System.out.println(Arrays.toString(clones.toArray()));
 	}
 
-	private static void findChains(Location lastLoc, Chain buildingChains, List<Chain> clones, List<Location> currentLocs) {
-		currentLocs.add(lastLoc);
-		Chain newClones = collectClones(lastLoc.getClone());
+	private static void findChains(Location lastLoc, Chain buildingChains, List<Chain> clones) {
+		Chain newClones = collectClones(lastLoc);
 		if(newClones.size()>=1)
-			buildingChains = makeValid(buildingChains, newClones, clones, currentLocs); //Because of the recent additions the current chain may be invalidated
+			buildingChains = makeValid(buildingChains, newClones, clones); //Because of the recent additions the current chain may be invalidated
 		if(lastLoc.getPrevLine()!=null) {
 			if(lastLoc.getPrevLine().getFile()!=lastLoc.getFile()) {
 				buildingChains.getChain().clear();
-				currentLocs.clear();
 			}
-			findChains(lastLoc.getPrevLine(), buildingChains, clones, currentLocs); //I can also do this non recursively, but this looks nice :D
+			findChains(lastLoc.getPrevLine(), buildingChains, clones); //I can also do this non recursively, but this looks nice :D
 		}
 	}
 
 	
-	private static Chain makeValid(Chain oldClones, Chain newClones, List<Chain> clones, List<Location> currentLocs) {
+	private static Chain makeValid(Chain oldClones, Chain newClones, List<Chain> clones) {
 		Map<Location /*oldClones*/, Location /*newClones*/> validChains = oldClones.getChain().stream().filter(e -> newClones.getChain().contains(e.getPrevLine())).collect(Collectors.toMap(e -> e, e -> e.getPrevLine()));
 		
 		if(validChains.size()!=oldClones.size()) {
-			checkValidClones(oldClones, oldClones.getChain().stream().filter(e -> !newClones.getChain().contains(e.getPrevLine())).collect(Collectors.toList()), clones, currentLocs);
+			checkValidClones(oldClones, oldClones.getChain().stream().filter(e -> !newClones.getChain().contains(e.getPrevLine())).collect(Collectors.toList()), clones);
 		}
 		
 		for(Entry<Location, Location> validChain : validChains.entrySet()) {
@@ -70,19 +68,23 @@ public class ASTParser {
 
 	private static Chain mergeClones(Chain newClones) {
 		outerloop: for(int i = 0; i<newClones.size(); i++) {
+			Location loc1 = newClones.getChain().get(i);
 			for(int j = i+1; j<newClones.size(); j++) {
-				if(newClones.getChain().get(i).getFile() == newClones.getChain().get(j).getFile()) {
-					int beginLineOne = newClones.getChain().get(i).getBeginLine();
-					int endLineOne = newClones.getChain().get(i).getBeginLine();
-					int beginLineTwo = newClones.getChain().get(i).getBeginLine();
-					int endLineTwo = newClones.getChain().get(i).getBeginLine();
+				Location loc2 = newClones.getChain().get(j);
+				if(loc1.getFile() == loc2.getFile()) {
+					int beginLineOne = loc1.getBeginLine();
+					int endLineOne = loc1.getEndLine();
+					int beginLineTwo = loc2.getBeginLine();
+					int endLineTwo = loc2.getEndLine();
 					if(overlap(beginLineOne, endLineOne, beginLineTwo, endLineTwo)) {
 						if(endLineOne>endLineTwo) {
 							newClones.getChain().remove(i);
+							loc2.setBeginLine(loc1.getBeginLine());
 							i--;
 							continue outerloop;
 						} else {
 							newClones.getChain().remove(j);
+							loc1.setBeginLine(loc2.getBeginLine());
 							j--;
 						}
 					}
@@ -96,12 +98,12 @@ public class ASTParser {
 		return x1 <= y2 && y1 <= x2;
 	}
 
-	private static void checkValidClones(Chain oldClones, List<Location> endedClones, List<Chain> clones, List<Location> currentLocs) {
+	private static void checkValidClones(Chain oldClones, List<Location> endedClones, List<Chain> clones) {
 		ListMap<Integer /*Chain size*/, Location /* Clones */> cloneList = new ListMap<>();
 		oldClones.getChain().stream().filter(e -> e.getAmountOfLines() > MIN_AMOUNT_OF_LINES).forEach(e -> cloneList.addTo(e.getAmountOfLines(), e));
 		for(List<Location> l : cloneList.values()) {
 			if(l.stream().anyMatch(e -> endedClones.contains(e))) {
-				clones.add(mergeClones(new Chain(l).add(new Location(currentLocs.get(currentLocs.size()-1).getFile(), currentLocs.get(currentLocs.size()-l.get(0).getAmountOfLines()-1).getBeginLine(), currentLocs.get(currentLocs.size()-1).getEndLine(), l.get(0).getAmountOfLines()))));
+				clones.add(new Chain(l));
 				continue;
 			}
 		}
