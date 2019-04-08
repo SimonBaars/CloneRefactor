@@ -76,6 +76,7 @@ public class ASTParser {
 					int endLineOne = loc1.getEndLine();
 					int beginLineTwo = loc2.getBeginLine();
 					int endLineTwo = loc2.getEndLine();
+					System.out.println("Overlap "+beginLineOne+", "+endLineOne+", "+beginLineTwo+", "+endLineTwo+", "+overlap(beginLineOne, endLineOne, beginLineTwo, endLineTwo));
 					if(overlap(beginLineOne, endLineOne, beginLineTwo, endLineTwo)) {
 						if(endLineOne>endLineTwo) {
 							newClones.getChain().remove(i);
@@ -95,7 +96,7 @@ public class ASTParser {
 	}
 	
 	public static boolean overlap(int x1, int y1, int x2, int y2) {
-		return x1 <= y2 && y1 <= x2;
+		return x1 <= y2 || y1 <= x2;
 	}
 
 	private static void checkValidClones(Chain oldClones, List<Location> endedClones, List<Chain> clones) {
