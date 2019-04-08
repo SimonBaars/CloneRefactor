@@ -27,13 +27,13 @@ public class ASTParser {
 	private static final int MIN_AMOUNT_OF_LINES = 6;
 	private static final int MIN_AMOUNT_OF_TOKENS = 50;
 	
-	public static void parse(List<File> javaFiles) {
+	public static List<Chain> parse(List<File> javaFiles) {
 		System.out.println("Start parse");
 		Location lastLoc = calculateLineReg(javaFiles);
 		final Chain buildingChains = new Chain();
 		final List<Chain> clones = new ArrayList<Chain>();
 		findChains(lastLoc, buildingChains, clones);
-		System.out.println(Arrays.toString(clones.toArray()));
+		return clones;
 	}
 
 	private static void findChains(Location lastLoc, Chain buildingChains, List<Chain> clones) {

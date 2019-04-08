@@ -25,6 +25,12 @@ public class Location {
 		this.amountOfLines = amountOfLines;
 	}
 
+	public Location(File file, int beginLine, int endLine) {
+		this.file = file;
+		this.beginLine = beginLine;
+		this.endLine = endLine;
+	}
+
 	public File getFile() {
 		return file;
 	}
@@ -80,6 +86,37 @@ public class Location {
 
 	public void setAmountOfLines(int amountOfLines) {
 		this.amountOfLines = amountOfLines;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + beginLine;
+		result = prime * result + endLine;
+		result = prime * result + ((file == null) ? 0 : file.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Location other = (Location) obj;
+		if (beginLine != other.beginLine)
+			return false;
+		if (endLine != other.endLine)
+			return false;
+		if (file == null) {
+			if (other.file != null)
+				return false;
+		} else if (!file.equals(other.file))
+			return false;
+		return true;
 	}
 	
 }
