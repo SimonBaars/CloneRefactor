@@ -5,9 +5,10 @@ import java.util.Optional;
 
 public class Location {
 	private final File file;
-	private final int line;
+	private int line;
 	
 	private Optional<Integer> endLine = Optional.empty();
+	private int amountOfLines = 1;
 	
 	private Location prevLine;
 	private Location clone;
@@ -61,6 +62,18 @@ public class Location {
 	
 	public int lines() {
 		return endLine.isPresent() ? getEndLine() - getBeginLine() : 1;
+	}
+
+	public void setBeginLine(int beginLine) {
+		this.line = beginLine;
+	}
+
+	public int getAmountOfLines() {
+		return amountOfLines;
+	}
+
+	public void setAmountOfLines(int amountOfLines) {
+		this.amountOfLines = amountOfLines;
 	}
 	
 }

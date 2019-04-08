@@ -8,6 +8,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -37,18 +38,26 @@ public class ASTParser {
 
 	private static void findChains(Location lastLoc, Chain buildingChains, List<Chain> clones) {
 		System.out.println(lastLoc.toString());
-		Chain newClones = collectClones(lastLoc, buildingChains);
-		if(buildingChains.size()>=2)
-			makeValid(buildingChains, clones); //Because of the recent additions the current chain may be invalidated
+		Chain newClones = collectClones(lastLoc);
+		if(newClones.size()>=1)
+			makeValid(buildingChains, newClones, clones); //Because of the recent additions the current chain may be invalidated
 		if(lastLoc.getPrevLine()!=null)
 			findChains(lastLoc.getPrevLine(), buildingChains, clones); //I can also do this non recursively, but this looks nice :D
 	}
 
 	
-	private static void makeValid(List<Chain> buildingChains, List<Chain> clones) {
-		List<Location> existingClones = buildingChains.get(buildingChains.size()-2).getChain();
-		List<Location> newClones = buildingChains.get(buildingChains.size()-1).getChain();
-		List<Location> validChains = existingClones.stream().map(e -> e.getPrevLine()).collect(Collectors.toList());
+	private static Chain makeValid(Chain oldClones, Chain newClones, List<Chain> clones) {
+		Map<Location /*oldClones*/, Location /*newClones*/> validChains = oldClones.getChain().stream().filter(e -> newClones.getChain().contains(e.getPrevLine())).collect(Collectors.toMap(e -> e, e -> e.getPrevLine()));
+		
+		
+		for(Entry<Location, Location> validChain : validChains.entrySet()) {
+			validChain.getValue().setBeginLine(validChain.getKey().getBeginLine());
+			validChain.getValue().setAmountOfLines(validChain.getKey().getAmountOfLines()+1);
+		}
+		
+		return new Chain(validChains.values());
+		
+		/*List<Location> validChains = existingClones.stream().map(e -> e.getPrevLine()).collect(Collectors.toList());
 		
 		List<Location> endedChains = newClones.stream().filter(e -> !validChains.contains(e)).collect(Collectors.toList());
 		//validChains.removeIf(e -> !newChains.contains(e)); //These are the chains that are finished, we should check if we can turn them into clones.
@@ -57,7 +66,7 @@ public class ASTParser {
 		if(newChains.size() == 1) {
 			buildingChains.clear();
 			buildingChains.add(new Chain(newClones));
-		}
+		}*/
 	}
 
 	private static void detectValidClones(List<Chain> buildingChains, List<Chain> clones, List<Location> endedChains) {
@@ -87,10 +96,13 @@ public class ASTParser {
 		foundClones.values().forEach(e -> clones.add(new Chain(e)));
 	}
 
-	private static void collectClones(Location lastLoc, Chain buildingChains) {
-		buildingChains.add(lastLoc);
-		if(lastLoc.getClone()!=null)
-			collectClones(lastLoc.getClone(), buildingChains);
+	private static Chain collectClones(Location lastLoc) {
+		Chain c = new Chain();
+		while(lastLoc!=null) {
+			c.add(lastLoc);
+			lastLoc = lastLoc.getClone();
+		}
+		return c;
 	}
 
 	/**

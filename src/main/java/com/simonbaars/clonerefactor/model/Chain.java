@@ -1,14 +1,15 @@
 package com.simonbaars.clonerefactor.model;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 public class Chain {
-	final List<Location> chain;
+	final Collection<Location> chain;
 
-	public Chain(List<Location> chain) {
+	public Chain(Collection<Location> collection) {
 		super();
-		this.chain = chain;
+		this.chain = collection;
 	}
 
 	public Chain() {
@@ -16,11 +17,15 @@ public class Chain {
 		this.chain = new ArrayList<>();
 	}
 
-	public List<Location> getChain() {
+	public Collection<Location> getChain() {
 		return chain;
 	}
 	
 	public void add(Location l) {
 		chain.add(l);
+	}
+
+	public int size() {
+		return chain.size();
 	}
 }
