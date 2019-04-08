@@ -29,16 +29,15 @@ public class ASTParser {
 	public static void parse(List<File> javaFiles) {
 		System.out.println("Start parse");
 		Location lastLoc = calculateLineReg(javaFiles);
-		final List<Chain> buildingChains = new ArrayList<Chain>();
+		final Chain buildingChains = new Chain();
 		final List<Chain> clones = new ArrayList<Chain>();
 		findChains(lastLoc, buildingChains, clones);
 		System.out.println("Finish parse");
 	}
 
-	private static void findChains(Location lastLoc, List<Chain> buildingChains, List<Chain> clones) {
+	private static void findChains(Location lastLoc, Chain buildingChains, List<Chain> clones) {
 		System.out.println(lastLoc.toString());
-		buildingChains.add(new Chain());
-		collectClones(lastLoc, buildingChains);
+		Chain newClones = collectClones(lastLoc, buildingChains);
 		if(buildingChains.size()>=2)
 			makeValid(buildingChains, clones); //Because of the recent additions the current chain may be invalidated
 		if(lastLoc.getPrevLine()!=null)
@@ -51,10 +50,10 @@ public class ASTParser {
 		List<Location> newClones = buildingChains.get(buildingChains.size()-1).getChain();
 		List<Location> validChains = existingClones.stream().map(e -> e.getPrevLine()).collect(Collectors.toList());
 		
-		List<Location> newChains = newClones.stream().filter(e -> !validChains.contains(e)).collect(Collectors.toList());
-		validChains.removeIf(e -> !newChains.contains(e)); //These are the chains that are finished, we should check if we can turn them into clones.
-		if(newChains.size()!=existingClones.size())
-			detectValidClones(buildingChains, clones, validChains);
+		List<Location> endedChains = newClones.stream().filter(e -> !validChains.contains(e)).collect(Collectors.toList());
+		//validChains.removeIf(e -> !newChains.contains(e)); //These are the chains that are finished, we should check if we can turn them into clones.
+		if(endedChains.size()!=0)
+			detectValidClones(buildingChains, clones, endedChains);
 		if(newChains.size() == 1) {
 			buildingChains.clear();
 			buildingChains.add(new Chain(newClones));
@@ -88,14 +87,10 @@ public class ASTParser {
 		foundClones.values().forEach(e -> clones.add(new Chain(e)));
 	}
 
-	private static void collectClones(Location lastLoc, List<Chain> buildingChains) {
-		last(buildingChains).add(lastLoc);
+	private static void collectClones(Location lastLoc, Chain buildingChains) {
+		buildingChains.add(lastLoc);
 		if(lastLoc.getClone()!=null)
 			collectClones(lastLoc.getClone(), buildingChains);
-	}
-
-	private static Chain last(List<Chain> buildingChains) {
-		return buildingChains.get(buildingChains.size()-1);
 	}
 
 	/**
