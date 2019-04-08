@@ -15,6 +15,7 @@ public class Location {
 	
 	private Location prevLine;
 	private Location clone;
+	private Location nextLine;
 	
 	public Location(File file, int line) {
 		super();
@@ -148,6 +149,14 @@ public class Location {
 	public boolean isLocationParsed(ListMap<Integer, Location> reg) {
 		List<Location> list = reg.get(tokenHash);
 		return list.get(list.size()-1) != this;
+	}
+
+	public Location getNextLine() {
+		return nextLine;
+	}
+
+	public void setNextLine(Location nextLine) {
+		this.nextLine = nextLine;
 	}
 	
 }

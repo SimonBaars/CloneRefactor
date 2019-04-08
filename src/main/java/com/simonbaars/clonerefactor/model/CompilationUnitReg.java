@@ -34,6 +34,7 @@ public class CompilationUnitReg {
 	
 	public void nextLine(Location lineLoc) {
 		lineLoc.setPrevLine(lastLine);
+		if(getLastLine()!=null) getLastLine().setNextLine(lineLoc);
 		this.setLastLine(lineLoc);
 		thisLine = new ArrayList<>();
 	}

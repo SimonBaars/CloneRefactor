@@ -113,8 +113,8 @@ public class ASTParser {
 				for(Location l2 : oldClones.getSequence()) {
 					if(l.get(0)!= l2 && l2.getAmountOfLines()>=l.get(0).getAmountOfLines()) {
 						if(l2.getAmountOfLines()>l.get(0).getAmountOfLines())
-							System.out.println("BEGIN LINE IS INCORRECT :(");
-						l.add(new Location(l2.getFile(), l2.getBeginLine(), l2.getEndLine(), l.get(0).getAmountOfLines(), l.get(0).getAmountOfTokens()));
+							System.out.println("END LINE IS INCORRECT :(");
+						l.add(new Location(l2.getFile(), l2.getBeginLine(), findActualEndLine(l2, l.get(0).getAmountOfLines())/*l2.getEndLine()*/, l.get(0).getAmountOfLines(), l.get(0).getAmountOfTokens()));
 					}
 				}
 				System.out.println("ADDING SEQUENCE "+new Sequence(l));
@@ -124,6 +124,13 @@ public class ASTParser {
 		}
 	}
 	
+	private static int findActualEndLine(Location l2, int amountOfLines) {
+		System.out.println(l2.getEndLine());
+		if(amountOfLines>1)
+			return findActualEndLine(l2.getNextLine(), amountOfLines-1);
+		return l2.getEndLine();
+	}
+
 	private static Sequence collectClones(Location lastLoc) {
 		Sequence c = new Sequence();
 		while(lastLoc!=null) {
