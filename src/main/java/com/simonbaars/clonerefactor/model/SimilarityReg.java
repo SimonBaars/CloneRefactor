@@ -1,7 +1,6 @@
 package com.simonbaars.clonerefactor.model;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import com.github.javaparser.ast.Node;

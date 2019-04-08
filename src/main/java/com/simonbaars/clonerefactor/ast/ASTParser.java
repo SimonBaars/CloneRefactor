@@ -3,10 +3,10 @@ package com.simonbaars.clonerefactor.ast;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
@@ -33,7 +33,7 @@ public class ASTParser {
 		final Chain buildingChains = new Chain();
 		final List<Chain> clones = new ArrayList<Chain>();
 		findChains(lastLoc, buildingChains, clones, new ArrayList<>());
-		System.out.println("Finish parse");
+		System.out.println(Arrays.toString(clones.toArray()));
 	}
 
 	private static void findChains(Location lastLoc, Chain buildingChains, List<Chain> clones, List<Location> currentLocs) {
@@ -68,7 +68,7 @@ public class ASTParser {
 		return newClones;
 	}
 
-	private static void mergeClones(Chain newClones) {
+	private static Chain mergeClones(Chain newClones) {
 		outerloop: for(int i = 0; i<newClones.size(); i++) {
 			for(int j = i+1; j<newClones.size(); j++) {
 				if(newClones.getChain().get(i).getFile() == newClones.getChain().get(j).getFile()) {
@@ -78,17 +78,18 @@ public class ASTParser {
 					int endLineTwo = newClones.getChain().get(i).getBeginLine();
 					if(overlap(beginLineOne, endLineOne, beginLineTwo, endLineTwo)) {
 						if(endLineOne>endLineTwo) {
-							newClones.getChain().remove(j);
-							j--;
-						} else {
 							newClones.getChain().remove(i);
 							i--;
 							continue outerloop;
+						} else {
+							newClones.getChain().remove(j);
+							j--;
 						}
 					}
 				}
 			}
 		}
+		return newClones;
 	}
 	
 	public static boolean overlap(int x1, int y1, int x2, int y2) {
@@ -100,7 +101,7 @@ public class ASTParser {
 		oldClones.getChain().stream().filter(e -> e.getAmountOfLines() > MIN_AMOUNT_OF_LINES).forEach(e -> cloneList.addTo(e.getAmountOfLines(), e));
 		for(List<Location> l : cloneList.values()) {
 			if(l.stream().anyMatch(e -> endedClones.contains(e))) {
-				clones.add(new Chain(l).add(new Location(currentLocs.get(currentLocs.size()-1).getFile(), currentLocs.get(currentLocs.size()-l.get(0).getAmountOfLines()-1).getBeginLine(), currentLocs.get(currentLocs.size()-1).getEndLine(), l.get(0).getAmountOfLines())));
+				clones.add(mergeClones(new Chain(l).add(new Location(currentLocs.get(currentLocs.size()-1).getFile(), currentLocs.get(currentLocs.size()-l.get(0).getAmountOfLines()-1).getBeginLine(), currentLocs.get(currentLocs.size()-1).getEndLine(), l.get(0).getAmountOfLines()))));
 				continue;
 			}
 		}

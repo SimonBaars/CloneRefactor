@@ -1,7 +1,7 @@
 package com.simonbaars.clonerefactor.model;
 
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Arrays;
 import java.util.List;
 
 public class Chain {
@@ -28,5 +28,10 @@ public class Chain {
 
 	public int size() {
 		return chain.size();
+	}
+
+	@Override
+	public String toString() {
+		return "Chain [chain=" + Arrays.toString(chain.toArray()) + "]";
 	}
 }

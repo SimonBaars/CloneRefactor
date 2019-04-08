@@ -1,11 +1,10 @@
 package com.simonbaars.clonerefactor.model;
 
 import java.io.File;
-import java.util.Optional;
 
 public class Location {
 	private final File file;
-	private int line;
+	private int beginLine;
 	private int endLine;
 	private int amountOfLines = 1;
 	
@@ -15,13 +14,13 @@ public class Location {
 	public Location(File file, int line) {
 		super();
 		this.file = file;
-		this.line = line;
+		this.beginLine = line;
 		this.endLine = line;
 	}
 
 	public Location(File file, int beginLine, int endLine, int amountOfLines) {
 		this.file = file;
-		this.line = beginLine;
+		this.beginLine = beginLine;
 		this.endLine = endLine;
 		this.amountOfLines = amountOfLines;
 	}
@@ -31,11 +30,11 @@ public class Location {
 	}
 
 	public int getLine() {
-		return line;
+		return beginLine;
 	}
 
 	public int getBeginLine() {
-		return line;
+		return beginLine;
 	}
 	
 	public Location getPrevLine() {
@@ -56,7 +55,7 @@ public class Location {
 
 	@Override
 	public String toString() {
-		return "Location [file=" + file + ", line=" + line + "]";
+		return "Location [file=" + file + ", beginLine=" + beginLine + ", endLine = " + endLine + "]";
 	}
 	
 	public void setEndLine(int endLine) {
@@ -72,7 +71,7 @@ public class Location {
 	}
 
 	public void setBeginLine(int beginLine) {
-		this.line = beginLine;
+		this.beginLine = beginLine;
 	}
 
 	public int getAmountOfLines() {

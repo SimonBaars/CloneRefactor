@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.github.javaparser.ast.Node;
-import com.simonbaars.clonerefactor.datatype.LineBuffer;
 
 public class CompilationUnitReg {
 	private int lastLineNumber = 0;
