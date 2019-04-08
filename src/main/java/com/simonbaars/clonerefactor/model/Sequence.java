@@ -4,15 +4,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class Chain {
+public class Sequence {
 	final List<Location> chain;
 
-	public Chain(List<Location> collection) {
+	public Sequence(List<Location> collection) {
 		super();
 		this.chain = collection;
 	}
 
-	public Chain() {
+	public Sequence() {
 		super();
 		this.chain = new ArrayList<>();
 	}
@@ -21,7 +21,7 @@ public class Chain {
 		return chain;
 	}
 	
-	public Chain add(Location l) {
+	public Sequence add(Location l) {
 		chain.add(l);
 		return this; //For method chaining
 	}
@@ -32,6 +32,6 @@ public class Chain {
 
 	@Override
 	public String toString() {
-		return "Chain [chain=" + Arrays.toString(chain.toArray()) + "]";
+		return "Sequence [chain=" + Arrays.toString(chain.toArray()) + "]";
 	}
 }

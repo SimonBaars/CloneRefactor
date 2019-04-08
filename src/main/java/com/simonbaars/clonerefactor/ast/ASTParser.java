@@ -18,7 +18,7 @@ import com.github.javaparser.Range;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;
 import com.simonbaars.clonerefactor.datatype.ListMap;
-import com.simonbaars.clonerefactor.model.Chain;
+import com.simonbaars.clonerefactor.model.Sequence;
 import com.simonbaars.clonerefactor.model.CompilationUnitReg;
 import com.simonbaars.clonerefactor.model.LineTokens;
 import com.simonbaars.clonerefactor.model.Location;
@@ -27,17 +27,17 @@ public class ASTParser {
 	private static final int MIN_AMOUNT_OF_LINES = 6;
 	private static final int MIN_AMOUNT_OF_TOKENS = 50;
 	
-	public static List<Chain> parse(List<File> javaFiles) {
+	public static List<Sequence> parse(List<File> javaFiles) {
 		System.out.println("Start parse");
 		Location lastLoc = calculateLineReg(javaFiles);
-		final Chain buildingChains = new Chain();
-		final List<Chain> clones = new ArrayList<Chain>();
+		final Sequence buildingChains = new Sequence();
+		final List<Sequence> clones = new ArrayList<Sequence>();
 		findChains(lastLoc, buildingChains, clones);
 		return clones;
 	}
 
-	private static void findChains(Location lastLoc, Chain buildingChains, List<Chain> clones) {
-		Chain newClones = collectClones(lastLoc);
+	private static void findChains(Location lastLoc, Sequence buildingChains, List<Sequence> clones) {
+		Sequence newClones = collectClones(lastLoc);
 		if(newClones.size()>=1)
 			buildingChains = makeValid(buildingChains, newClones, clones); //Because of the recent additions the current chain may be invalidated
 		if(lastLoc.getPrevLine()!=null) {
@@ -49,7 +49,7 @@ public class ASTParser {
 	}
 
 	
-	private static Chain makeValid(Chain oldClones, Chain newClones, List<Chain> clones) {
+	private static Sequence makeValid(Sequence oldClones, Sequence newClones, List<Sequence> clones) {
 		Map<Location /*oldClones*/, Location /*newClones*/> validChains = oldClones.getChain().stream().filter(e -> newClones.getChain().contains(e.getPrevLine())).collect(Collectors.toMap(e -> e, e -> e.getPrevLine()));
 		
 		if(validChains.size()!=oldClones.size()) {
@@ -66,7 +66,7 @@ public class ASTParser {
 		return newClones;
 	}
 
-	private static Chain mergeClones(Chain newClones) {
+	private static Sequence mergeClones(Sequence newClones) {
 		outerloop: for(int i = 0; i<newClones.size(); i++) {
 			Location loc1 = newClones.getChain().get(i);
 			for(int j = i+1; j<newClones.size(); j++) {
@@ -99,19 +99,19 @@ public class ASTParser {
 		return x1 <= y2 || y1 <= x2;
 	}
 
-	private static void checkValidClones(Chain oldClones, List<Location> endedClones, List<Chain> clones) {
-		ListMap<Integer /*Chain size*/, Location /* Clones */> cloneList = new ListMap<>();
+	private static void checkValidClones(Sequence oldClones, List<Location> endedClones, List<Sequence> clones) {
+		ListMap<Integer /*Sequence size*/, Location /* Clones */> cloneList = new ListMap<>();
 		oldClones.getChain().stream().filter(e -> e.getAmountOfLines() > MIN_AMOUNT_OF_LINES).forEach(e -> cloneList.addTo(e.getAmountOfLines(), e));
 		for(List<Location> l : cloneList.values()) {
 			if(l.stream().anyMatch(e -> endedClones.contains(e))) {
-				clones.add(new Chain(l));
+				clones.add(new Sequence(l));
 				continue;
 			}
 		}
 	}
 	
-	private static Chain collectClones(Location lastLoc) {
-		Chain c = new Chain();
+	private static Sequence collectClones(Location lastLoc) {
+		Sequence c = new Sequence();
 		while(lastLoc!=null) {
 			c.add(lastLoc);
 			lastLoc = lastLoc.getClone();

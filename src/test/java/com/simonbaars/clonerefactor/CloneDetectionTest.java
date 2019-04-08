@@ -2,9 +2,10 @@ package com.simonbaars.clonerefactor;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
-import com.simonbaars.clonerefactor.model.Chain;
+import com.simonbaars.clonerefactor.model.Sequence;
 import com.simonbaars.clonerefactor.model.Location;
 
 import junit.framework.Assert;
@@ -43,11 +44,11 @@ public class CloneDetectionTest extends TestCase
      */
     public void testSimpleClones()
     {
-        List<Chain> chains = testProject(SIMPLE_PROJECT);
-        Chain c = new Chain();
+        List<Sequence> chains = testProject(SIMPLE_PROJECT);
+        Sequence c = new Sequence();
         c.add(new Location(getJavaFileFromProject(SIMPLE_PROJECT, "Clone1"), 5, 16));
         c.add(new Location(getJavaFileFromProject(SIMPLE_PROJECT, "Clone2"), 5, 16));
-        List<Chain> expectedChains = new ArrayList<>();
+        List<Sequence> expectedChains = new ArrayList<>();
         expectedChains.add(c);
         Assert.assertTrue(checkArbitraryOrder(chains, expectedChains));
     }
@@ -57,11 +58,12 @@ public class CloneDetectionTest extends TestCase
      */
     public void testEqualLines()
     {
-    	List<Chain> chains = testProject(EQUAL_LINES_PROJECT);
-        Chain c = new Chain();
+    	List<Sequence> chains = testProject(EQUAL_LINES_PROJECT);
+    	System.out.println(Arrays.toString(chains.toArray()));
+        Sequence c = new Sequence();
         c.add(new Location(getJavaFileFromProject(EQUAL_LINES_PROJECT, "Clone1"), 5, 16));
         c.add(new Location(getJavaFileFromProject(EQUAL_LINES_PROJECT, "Clone2"), 5, 16));
-        List<Chain> expectedChains = new ArrayList<>();
+        List<Sequence> expectedChains = new ArrayList<>();
         expectedChains.add(c);
         Assert.assertTrue(checkArbitraryOrder(chains, expectedChains));
     }
@@ -91,7 +93,7 @@ public class CloneDetectionTest extends TestCase
     }
     
 
-	private List<Chain> testProject(String project) {
+	private List<Sequence> testProject(String project) {
 		return Main.cloneDetection(CloneDetectionTest.class.getClassLoader().getResource(project).getFile());
 	}
     
@@ -107,7 +109,7 @@ public class CloneDetectionTest extends TestCase
 		outerloop: for(Object chain : chains) {
 			for(Object expectedChain : expectedChains) {
 				if((chain instanceof List && checkArbitraryOrder((List)chain, (List)expectedChain)) ||
-					(chain instanceof Chain && checkArbitraryOrder(((Chain)chain).getChain(), ((Chain)expectedChain).getChain())) ||
+					(chain instanceof Sequence && checkArbitraryOrder(((Sequence)chain).getChain(), ((Sequence)expectedChain).getChain())) ||
 					(chain instanceof Object && chain.equals(expectedChain))){
 					continue outerloop;
 				}

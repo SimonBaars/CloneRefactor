@@ -14,7 +14,7 @@ import java.util.List;
 import com.simonbaars.clonerefactor.ast.ASTParser;
 import com.simonbaars.clonerefactor.exception.NoJavaFilesFoundException;
 import com.simonbaars.clonerefactor.exception.NoPathEnteredException;
-import com.simonbaars.clonerefactor.model.Chain;
+import com.simonbaars.clonerefactor.model.Sequence;
 
 public class Main {
 
@@ -25,7 +25,7 @@ public class Main {
 		cloneDetection(args[0]);
 	}
 
-	public static List<Chain> cloneDetection(String path) {
+	public static List<Sequence> cloneDetection(String path) {
 		List<File> javaFiles = scanProjectForJavaFiles(path);
 		
 		if(javaFiles.size() == 0)
