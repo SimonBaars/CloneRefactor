@@ -28,13 +28,49 @@ public class CloneDetectionTest extends TestCase
     }
 
     /**
-     * Rigourous Test :-)
+     * Test for clones that consist of lines that do not occur elsewhere.
      */
-    public void testJPacman()
+    public void simpleClones()
     {
-        //Main.main(new String[] {"/Users/sbaars/clone/jpacman-framework"});
-        Main.main(new String[] {CloneDetectionTest.class.getClassLoader().getResource("SimpleClone").getFile()});
+        testProject("SimpleClone");
     }
+    
+    /**
+     * Test for clones that consist of all equal lines.
+     */
+    public void equalLines()
+    {
+        testProject("EqualLines");
+    }
+    
+    /**
+     * Test for three clones, of which one .
+     */
+    public void equalLines()
+    {
+        testProject("EqualLines");
+    }
+    
+    /**
+     * Test for clones that consist of all equal lines.
+     */
+    public void equalLines()
+    {
+        testProject("EqualLines");
+    }
+    
+    /**
+     * Test for clones that consist of all equal lines.
+     */
+    public void equalLines()
+    {
+        testProject("EqualLines");
+    }
+    
+
+	private void testProject(String project) {
+		Main.main(new String[] {CloneDetectionTest.class.getClassLoader().getResource(project).getFile()});
+	}
     
     
 }

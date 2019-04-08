@@ -12,17 +12,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.simonbaars.clonerefactor.ast.ASTParser;
+import com.simonbaars.clonerefactor.exception.NoJavaFilesFoundException;
+import com.simonbaars.clonerefactor.exception.NoPathEnteredException;
 
 public class Main {
 
 	public static void main(String[] args) {
 		if(args.length == 0)
-			System.err.println("Please enter the path of the project you want to scan for clones!");
+			new NoJavaFilesFoundException();
 		
 		List<File> javaFiles = scanProjectForJavaFiles(args);
 		
 		if(javaFiles.size() == 0)
-			System.err.println("Project does not contain any clones!");
+			throw new NoPathEnteredException();
 		
 		ASTParser.parse(javaFiles);
 	}
