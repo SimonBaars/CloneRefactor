@@ -5,9 +5,9 @@ import java.util.Collection;
 import java.util.List;
 
 public class Chain {
-	final Collection<Location> chain;
+	final List<Location> chain;
 
-	public Chain(Collection<Location> collection) {
+	public Chain(List<Location> collection) {
 		super();
 		this.chain = collection;
 	}
@@ -17,7 +17,7 @@ public class Chain {
 		this.chain = new ArrayList<>();
 	}
 
-	public Collection<Location> getChain() {
+	public List<Location> getChain() {
 		return chain;
 	}
 	

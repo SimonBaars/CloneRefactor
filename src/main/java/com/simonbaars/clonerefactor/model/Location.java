@@ -6,8 +6,7 @@ import java.util.Optional;
 public class Location {
 	private final File file;
 	private int line;
-	
-	private Optional<Integer> endLine = Optional.empty();
+	private int endLine;
 	private int amountOfLines = 1;
 	
 	private Location prevLine;
@@ -17,6 +16,7 @@ public class Location {
 		super();
 		this.file = file;
 		this.line = line;
+		this.endLine = line;
 	}
 
 	public File getFile() {
@@ -52,16 +52,16 @@ public class Location {
 		return "Location [file=" + file + ", line=" + line + "]";
 	}
 	
-	public void setEndLine(Integer endLine) {
-		this.endLine = Optional.of(endLine);
+	public void setEndLine(int endLine) {
+		this.endLine = endLine;
 	}
 	
 	public int getEndLine() {
-		return endLine.isPresent() ? endLine.get() : -1;
+		return endLine;
 	}
 	
 	public int lines() {
-		return endLine.isPresent() ? getEndLine() - getBeginLine() : 1;
+		return getEndLine() - getBeginLine() + 1;
 	}
 
 	public void setBeginLine(int beginLine) {

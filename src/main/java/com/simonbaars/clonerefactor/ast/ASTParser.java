@@ -40,7 +40,7 @@ public class ASTParser {
 		System.out.println(lastLoc.toString());
 		Chain newClones = collectClones(lastLoc.getClone());
 		if(newClones.size()>=1)
-			makeValid(buildingChains, newClones, clones); //Because of the recent additions the current chain may be invalidated
+			buildingChains = makeValid(buildingChains, newClones, clones); //Because of the recent additions the current chain may be invalidated
 		if(lastLoc.getPrevLine()!=null)
 			findChains(lastLoc.getPrevLine(), buildingChains, clones); //I can also do this non recursively, but this looks nice :D
 	}
@@ -54,11 +54,40 @@ public class ASTParser {
 		}
 		
 		for(Entry<Location, Location> validChain : validChains.entrySet()) {
-			validChain.getValue().setBeginLine(validChain.getKey().getBeginLine());
+			validChain.getValue().setEndLine(validChain.getKey().getEndLine());
 			validChain.getValue().setAmountOfLines(validChain.getKey().getAmountOfLines()+1);
 		}
 		
+		mergeClones(newClones);
+		
 		return newClones;
+	}
+
+	private static void mergeClones(Chain newClones) {
+		outerloop: for(int i = 0; i<newClones.size(); i++) {
+			for(int j = i+1; j<newClones.size(); j++) {
+				if(newClones.getChain().get(i).getFile() == newClones.getChain().get(j).getFile()) {
+					int beginLineOne = newClones.getChain().get(i).getBeginLine();
+					int endLineOne = newClones.getChain().get(i).getBeginLine();
+					int beginLineTwo = newClones.getChain().get(i).getBeginLine();
+					int endLineTwo = newClones.getChain().get(i).getBeginLine();
+					if(overlap(beginLineOne, endLineOne, beginLineTwo, endLineTwo)) {
+						if(endLineOne>endLineTwo) {
+							newClones.getChain().remove(j);
+							j--;
+						} else {
+							newClones.getChain().remove(i);
+							i--;
+							continue outerloop;
+						}
+					}
+				}
+			}
+		}
+	}
+	
+	public static boolean overlap(int x1, int y1, int x2, int y2) {
+		return x1 <= y2 && y1 <= x2;
 	}
 
 	private static void checkValidClones(Chain oldClones, List<Location> endedClones, List<Chain> clones) {
@@ -67,6 +96,7 @@ public class ASTParser {
 		for(List<Location> l : cloneList.values()) {
 			if(l.stream().anyMatch(e -> endedClones.contains(e))) {
 				clones.add(new Chain(l));
+				//TODO: Add current to chain
 			}
 		}
 	}
