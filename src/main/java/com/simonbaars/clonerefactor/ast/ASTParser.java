@@ -59,17 +59,6 @@ public class ASTParser {
 		}
 		
 		return newClones;
-		
-		/*List<Location> validChains = existingClones.stream().map(e -> e.getPrevLine()).collect(Collectors.toList());
-		
-		List<Location> endedChains = newClones.stream().filter(e -> !validChains.contains(e)).collect(Collectors.toList());
-		//validChains.removeIf(e -> !newChains.contains(e)); //These are the chains that are finished, we should check if we can turn them into clones.
-		if(endedChains.size()!=0)
-			detectValidClones(buildingChains, clones, endedChains);
-		if(newChains.size() == 1) {
-			buildingChains.clear();
-			buildingChains.add(new Chain(newClones));
-		}*/
 	}
 
 	private static void checkValidClones(Chain oldClones, List<Location> endedClones, List<Chain> clones) {
@@ -81,34 +70,7 @@ public class ASTParser {
 			}
 		}
 	}
-
-	private static void detectValidClones(List<Chain> buildingChains, List<Chain> clones, List<Location> endedChains) {
-		//List<Chain> potentialClones = new ArrayList<Chain>();
-		ListIterator<Chain> li = buildingChains.listIterator(buildingChains.size()-1); // Reverse order iterator on buildingChains
-		while(li.hasPrevious()) {
-			Chain prev = li.previous();
-			for(Location l : prev.getChain()) {
-				System.out.println("Ended "+l);
-				if(endedChains.contains(l.getPrevLine())) {
-					l.setEndLine(l.getPrevLine().getLine());
-					endedChains.remove(l.getPrevLine());
-					endedChains.add(l);
-				}
-			}
-		}
-		checkForClones(clones, endedChains);
-	}
-
-	private static void checkForClones(List<Chain> clones, List<Location> endedChains) {
-		ListMap<Integer, Location> foundClones = new ListMap<>();
-		for(Location loc : endedChains) {
-			System.out.println(loc+", "+loc.lines());
-			if(loc.lines() >= MIN_AMOUNT_OF_LINES)
-				foundClones.addTo(loc.lines(), loc);
-		}
-		foundClones.values().forEach(e -> clones.add(new Chain(e)));
-	}
-
+	
 	private static Chain collectClones(Location lastLoc) {
 		Chain c = new Chain();
 		while(lastLoc!=null) {
@@ -128,7 +90,6 @@ public class ASTParser {
 		Location l = null;
 		final CompilationUnitReg r = new CompilationUnitReg();
 		for(File file : javaFiles) {
-			//System.out.println("Java file "+file);
 			try {
 				l = parseClassFile(lineReg, file, r);
 			} catch (FileNotFoundException e) {
@@ -173,8 +134,6 @@ public class ASTParser {
 			finishedLine = r.getLastLineNumber();
 		LineTokens l = new LineTokens(r.getThisLine());
 		Location location = new Location(file, finishedLine);
-		//System.out.println("Created LOC "+location);
-		//System.out.println("Line = "+location+", l = "+l);
 		if(lineReg.containsKey(l)) {
 			location.setClone(lineReg.get(l));
 			lineReg.put(l, location);
