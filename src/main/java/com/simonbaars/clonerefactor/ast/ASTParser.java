@@ -38,7 +38,7 @@ public class ASTParser {
 
 	private static void findChains(Location lastLoc, Chain buildingChains, List<Chain> clones) {
 		System.out.println(lastLoc.toString());
-		Chain newClones = collectClones(lastLoc);
+		Chain newClones = collectClones(lastLoc.getClone());
 		if(newClones.size()>=1)
 			makeValid(buildingChains, newClones, clones); //Because of the recent additions the current chain may be invalidated
 		if(lastLoc.getPrevLine()!=null)
@@ -49,13 +49,16 @@ public class ASTParser {
 	private static Chain makeValid(Chain oldClones, Chain newClones, List<Chain> clones) {
 		Map<Location /*oldClones*/, Location /*newClones*/> validChains = oldClones.getChain().stream().filter(e -> newClones.getChain().contains(e.getPrevLine())).collect(Collectors.toMap(e -> e, e -> e.getPrevLine()));
 		
+		if(validChains.size()!=oldClones.size()) {
+			checkValidClones(oldClones, oldClones.getChain().stream().filter(e -> !newClones.getChain().contains(e.getPrevLine())).collect(Collectors.toList()), clones);
+		}
 		
 		for(Entry<Location, Location> validChain : validChains.entrySet()) {
 			validChain.getValue().setBeginLine(validChain.getKey().getBeginLine());
 			validChain.getValue().setAmountOfLines(validChain.getKey().getAmountOfLines()+1);
 		}
 		
-		return new Chain(validChains.values());
+		return newClones;
 		
 		/*List<Location> validChains = existingClones.stream().map(e -> e.getPrevLine()).collect(Collectors.toList());
 		
@@ -67,6 +70,16 @@ public class ASTParser {
 			buildingChains.clear();
 			buildingChains.add(new Chain(newClones));
 		}*/
+	}
+
+	private static void checkValidClones(Chain oldClones, List<Location> endedClones, List<Chain> clones) {
+		ListMap<Integer /*Chain size*/, Location /* Clones */> cloneList = new ListMap<>();
+		oldClones.getChain().forEach(e -> cloneList.addTo(e.getAmountOfLines(), e));
+		for(List<Location> l : cloneList.values()) {
+			if(l.stream().anyMatch(e -> endedClones.contains(e))) {
+				clones.add(new Chain(l));
+			}
+		}
 	}
 
 	private static void detectValidClones(List<Chain> buildingChains, List<Chain> clones, List<Location> endedChains) {
