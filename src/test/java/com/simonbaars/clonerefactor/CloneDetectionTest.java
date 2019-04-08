@@ -40,7 +40,7 @@ public class CloneDetectionTest extends TestCase
     /**
      * Test for clones that consist of lines that do not occur elsewhere.
      */
-    public void simpleClones()
+    public void testSimpleClones()
     {
         List<Chain> chains = testProject(PROJECT);
         Chain c = new Chain();
@@ -54,7 +54,7 @@ public class CloneDetectionTest extends TestCase
 	/**
      * Test for clones that consist of all equal lines.
      */
-    public void equalLines()
+    public void testEqualLines()
     {
         testProject("EqualLines");
     }
@@ -62,7 +62,7 @@ public class CloneDetectionTest extends TestCase
     /**
      * Test for three clones, of which one starts a line later than the others.
      */
-    public void partialClonesLeft()
+    public void testPartialClonesLeft()
     {
         testProject("PartialLinesLeft");
     }
@@ -70,7 +70,7 @@ public class CloneDetectionTest extends TestCase
     /**
      * Test for three clones, of which one ends a line later than the others.
      */
-    public void partialLinesRight()
+    public void testPartialLinesRight()
     {
         testProject("PartialLinesRight");
     }
@@ -78,7 +78,7 @@ public class CloneDetectionTest extends TestCase
     /**
      * Test for clones in Java enumerations.
      */
-    public void enumClone()
+    public void testEnumClone()
     {
         testProject("EnumClone");
     }
