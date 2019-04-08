@@ -26,6 +26,7 @@ import com.simonbaars.clonerefactor.model.Location;
 public class ASTParser {
 	private static final int MIN_AMOUNT_OF_LINES = 6;
 	private static final int MIN_AMOUNT_OF_TOKENS = 50;
+	private static final ListMap<Integer, Location> cloneReg = new ListMap<>();
 	
 	public static List<Sequence> parse(List<File> javaFiles) {
 		System.out.println("Start parse");
@@ -39,7 +40,7 @@ public class ASTParser {
 	private static void findChains(Location lastLoc, Sequence buildingChains, List<Sequence> clones) {
 		Sequence newClones = collectClones(lastLoc);
 		if(newClones.size()>=1)
-			buildingChains = makeValid(buildingChains, newClones, clones); //Because of the recent additions the current sequence may be invalidated
+			buildingChains = makeValid(lastLoc, buildingChains, newClones, clones); //Because of the recent additions the current sequence may be invalidated
 		if(lastLoc.getPrevLine()!=null) {
 			if(lastLoc.getPrevLine().getFile()!=lastLoc.getFile()) {
 				buildingChains.getSequence().clear();
@@ -49,7 +50,7 @@ public class ASTParser {
 	}
 
 	
-	private static Sequence makeValid(Sequence oldClones, Sequence newClones, List<Sequence> clones) {
+	private static Sequence makeValid(Location lastLoc, Sequence oldClones, Sequence newClones, List<Sequence> clones) {
 		Map<Location /*oldClones*/, Location /*newClones*/> validChains = oldClones.getSequence().stream().filter(e -> newClones.getSequence().contains(e.getPrevLine())).collect(Collectors.toMap(e -> e, e -> e.getPrevLine()));
 		
 		if(validChains.size()!=oldClones.size()) {
@@ -61,6 +62,11 @@ public class ASTParser {
 			validChain.getValue().setAmountOfLines(validChain.getKey().getAmountOfLines()+1);
 		}
 		
+		if(lastLoc.isLocationParsed(cloneReg)){
+			newClones.getSequence().clear();
+			newClones.getSequence().addAll(validChains.values());
+		}
+		//removePreviouslyParsedClones(newClones);
 		mergeClones(newClones);
 		
 		return newClones;
@@ -76,7 +82,7 @@ public class ASTParser {
 					int endLineOne = loc1.getEndLine();
 					int beginLineTwo = loc2.getBeginLine();
 					int endLineTwo = loc2.getEndLine();
-					System.out.println("Overlap "+beginLineOne+", "+endLineOne+", "+beginLineTwo+", "+endLineTwo+", "+overlap(beginLineOne, endLineOne, beginLineTwo, endLineTwo));
+					//System.out.println("Overlap "+beginLineOne+", "+endLineOne+", "+beginLineTwo+", "+endLineTwo+", "+overlap(beginLineOne, endLineOne, beginLineTwo, endLineTwo));
 					if(overlap(beginLineOne, endLineOne, beginLineTwo, endLineTwo)) {
 						if(endLineOne>endLineTwo) {
 							newClones.getSequence().remove(i);
@@ -172,7 +178,8 @@ public class ASTParser {
 		if(it.hasNext())
 			finishedLine = r.getLastLineNumber();
 		LineTokens l = new LineTokens(r.getThisLine());
-		Location location = new Location(file, finishedLine);
+		Location location = new Location(file, finishedLine, l.size(), l.hashCode());
+		cloneReg.addTo(location.getTokenHash(), location);
 		if(lineReg.containsKey(l)) {
 			location.setClone(lineReg.get(l));
 			lineReg.put(l, location);

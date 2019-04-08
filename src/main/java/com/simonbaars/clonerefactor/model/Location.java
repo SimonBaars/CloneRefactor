@@ -1,12 +1,17 @@
 package com.simonbaars.clonerefactor.model;
 
 import java.io.File;
+import java.util.List;
+
+import com.simonbaars.clonerefactor.datatype.ListMap;
 
 public class Location {
 	private final File file;
 	private int beginLine;
 	private int endLine;
 	private int amountOfLines = 1;
+	private int amountOfTokens;
+	private int tokenHash;
 	
 	private Location prevLine;
 	private Location clone;
@@ -18,11 +23,10 @@ public class Location {
 		this.endLine = line;
 	}
 
-	public Location(File file, int beginLine, int endLine, int amountOfLines) {
-		this.file = file;
-		this.beginLine = beginLine;
-		this.endLine = endLine;
-		this.amountOfLines = amountOfLines;
+	public Location(File file, int line, int amountOfTokens, int tokenHash) {
+		this(file, line);
+		this.amountOfTokens = amountOfTokens;
+		this.tokenHash = tokenHash;
 	}
 
 	public Location(File file, int beginLine, int endLine) {
@@ -117,6 +121,27 @@ public class Location {
 		} else if (!file.equals(other.file))
 			return false;
 		return true;
+	}
+
+	public int getAmountOfTokens() {
+		return amountOfTokens;
+	}
+
+	public void setAmountOfTokens(int amountOfTokens) {
+		this.amountOfTokens = amountOfTokens;
+	}
+
+	public int getTokenHash() {
+		return tokenHash;
+	}
+
+	public void setTokenHash(int tokenHash) {
+		this.tokenHash = tokenHash;
+	}
+
+	public boolean isLocationParsed(ListMap<Integer, Location> reg) {
+		List<Location> list = reg.get(tokenHash);
+		return list.get(list.size()-1) != this;
 	}
 	
 }

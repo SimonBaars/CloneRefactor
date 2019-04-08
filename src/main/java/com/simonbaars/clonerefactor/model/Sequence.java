@@ -2,6 +2,7 @@ package com.simonbaars.clonerefactor.model;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 public class Sequence {
@@ -15,6 +16,10 @@ public class Sequence {
 	public Sequence() {
 		super();
 		this.sequence = new ArrayList<>();
+	}
+
+	public Sequence(Collection<Location> values) {
+		this(new ArrayList<>(values));
 	}
 
 	public List<Location> getSequence() {

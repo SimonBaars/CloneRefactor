@@ -20,6 +20,7 @@ public class CloneDetectionTest extends TestCase
 {
     private static final String SIMPLE_PROJECT = "SimpleClone";
     private static final String EQUAL_LINES_PROJECT = "EqualLines";
+    private static final String ENUM_PROJECT = "EnumClone";
 
 	/**
      * Create the test case
@@ -73,7 +74,8 @@ public class CloneDetectionTest extends TestCase
      */
     public void testPartialClonesLeft()
     {
-        testProject("PartialClonesLeft");
+    	List<Sequence> chains = testProject("PartialClonesLeft");
+    	System.out.println(Arrays.toString(chains.toArray()));
     }
     
     /**
@@ -81,7 +83,8 @@ public class CloneDetectionTest extends TestCase
      */
     public void testPartialLinesRight()
     {
-        testProject("PartialClonesRight");
+    	List<Sequence> chains = testProject("PartialClonesRight");
+    	System.out.println(Arrays.toString(chains.toArray()));
     }
     
     /**
@@ -89,7 +92,14 @@ public class CloneDetectionTest extends TestCase
      */
     public void testEnumClone()
     {
-        testProject("EnumClone");
+    	List<Sequence> chains = testProject(ENUM_PROJECT);
+    	System.out.println(Arrays.toString(chains.toArray()));
+    	Sequence c = new Sequence();
+        c.add(new Location(getJavaFileFromProject(ENUM_PROJECT, "Clone1"), 5, 16));
+        c.add(new Location(getJavaFileFromProject(ENUM_PROJECT, "Clone2"), 5, 16));
+        List<Sequence> expectedChains = new ArrayList<>();
+        expectedChains.add(c);
+        Assert.assertTrue(checkArbitraryOrder(chains, expectedChains));
     }
     
 
