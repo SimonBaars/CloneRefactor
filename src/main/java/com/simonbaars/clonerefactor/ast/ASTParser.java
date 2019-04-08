@@ -32,15 +32,17 @@ public class ASTParser {
 		final List<Chain> buildingChains = new ArrayList<Chain>();
 		final List<Chain> clones = new ArrayList<Chain>();
 		findChains(lastLoc, buildingChains, clones);
+		System.out.println("Finish parse");
 	}
 
 	private static void findChains(Location lastLoc, List<Chain> buildingChains, List<Chain> clones) {
+		System.out.println(lastLoc.toString());
 		buildingChains.add(new Chain());
 		collectClones(lastLoc, buildingChains);
 		if(buildingChains.size()>=2)
 			makeValid(buildingChains, clones); //Because of the recent additions the current chain may be invalidated
 		if(lastLoc.getPrevLine()!=null)
-			findChains(lastLoc, buildingChains, clones); //I can also do this non recursively, but this looks nice :D
+			findChains(lastLoc.getPrevLine(), buildingChains, clones); //I can also do this non recursively, but this looks nice :D
 	}
 
 	
@@ -50,7 +52,7 @@ public class ASTParser {
 		List<Location> validChains = existingClones.stream().map(e -> e.getPrevLine()).collect(Collectors.toList());
 		
 		List<Location> newChains = newClones.stream().filter(e -> !validChains.contains(e)).collect(Collectors.toList());
-		validChains.removeIf(e -> !newChains.contains(e)); //These are the chains that are finished, we should check if we can turn them into clones.
+		//validChains.removeIf(e -> !newChains.contains(e)); //These are the chains that are finished, we should check if we can turn them into clones.
 		if(newChains.size()!=existingClones.size())
 			detectValidClones(buildingChains, clones, validChains);
 		if(newChains.size() == 1) {
@@ -60,11 +62,12 @@ public class ASTParser {
 	}
 
 	private static void detectValidClones(List<Chain> buildingChains, List<Chain> clones, List<Location> endedChains) {
-		List<Chain> potentialClones = new ArrayList<Chain>();
+		//List<Chain> potentialClones = new ArrayList<Chain>();
 		ListIterator<Chain> li = buildingChains.listIterator(buildingChains.size()-1); // Reverse order iterator on buildingChains
 		while(li.hasPrevious()) {
 			Chain prev = li.previous();
 			for(Location l : prev.getChain()) {
+				System.out.println("Ended "+l);
 				if(endedChains.contains(l.getPrevLine())) {
 					l.setEndLine(l.getPrevLine().getLine());
 					endedChains.remove(l.getPrevLine());
@@ -78,9 +81,9 @@ public class ASTParser {
 	private static void checkForClones(List<Chain> clones, List<Location> endedChains) {
 		ListMap<Integer, Location> foundClones = new ListMap<>();
 		for(Location loc : endedChains) {
-			int length = loc.getEndLine() - loc.getLine();
-			if(length >= MIN_AMOUNT_OF_LINES)
-				foundClones.addTo(length, loc);
+			System.out.println(loc+", "+loc.lines());
+			if(loc.lines() >= MIN_AMOUNT_OF_LINES)
+				foundClones.addTo(loc.lines(), loc);
 		}
 		foundClones.values().forEach(e -> clones.add(new Chain(e)));
 	}
@@ -103,21 +106,23 @@ public class ASTParser {
 	private static final Location calculateLineReg(List<File> javaFiles) {
 		final Map<LineTokens, Location> lineReg = new HashMap<>();
 		Location l = null;
+		final CompilationUnitReg r = new CompilationUnitReg();
 		for(File file : javaFiles) {
+			//System.out.println("Java file "+file);
 			try {
-				l = parseClassFile(lineReg, file);
+				l = parseClassFile(lineReg, file, r);
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
 			}
+			r.reset();
 		}
 		return l;
 	}
 
-	private static Location parseClassFile(final Map<LineTokens, Location> lineReg, File file)
+	private static Location parseClassFile(final Map<LineTokens, Location> lineReg, File file, CompilationUnitReg r)
 			throws FileNotFoundException {
 		final ParseResult<CompilationUnit> pr = new JavaParser().parse(file);
 		CompilationUnit cu = pr.getResult().get();
-		final CompilationUnitReg r = new CompilationUnitReg();
 		Location l = null;
 		for (Iterator<Node> it = cu.stream().iterator(); it.hasNext();) {
 			l = parseToken(lineReg, file, r, it);
@@ -148,6 +153,7 @@ public class ASTParser {
 			finishedLine = r.getLastLineNumber();
 		LineTokens l = new LineTokens(r.getThisLine());
 		Location location = new Location(file, finishedLine);
+		//System.out.println("Created LOC "+location);
 		//System.out.println("Line = "+location+", l = "+l);
 		if(lineReg.containsKey(l)) {
 			location.setClone(lineReg.get(l));

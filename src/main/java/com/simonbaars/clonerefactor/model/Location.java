@@ -26,6 +26,10 @@ public class Location {
 		return line;
 	}
 
+	public int getBeginLine() {
+		return line;
+	}
+	
 	public Location getPrevLine() {
 		return prevLine;
 	}
@@ -53,6 +57,10 @@ public class Location {
 	
 	public int getEndLine() {
 		return endLine.isPresent() ? endLine.get() : -1;
+	}
+	
+	public int lines() {
+		return endLine.isPresent() ? getEndLine() - getBeginLine() : 1;
 	}
 	
 }

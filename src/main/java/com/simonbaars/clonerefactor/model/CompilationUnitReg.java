@@ -47,4 +47,9 @@ public class CompilationUnitReg {
 		this.lastLine = lastLine;
 	}
 
+	public void reset() {
+		setLastLineNumber(0);
+		thisLine.clear();
+	}
+
 }
