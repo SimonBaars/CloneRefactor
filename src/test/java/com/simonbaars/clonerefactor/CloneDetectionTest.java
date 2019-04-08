@@ -44,32 +44,32 @@ public class CloneDetectionTest extends TestCase
     }
     
     /**
-     * Test for three clones, of which one .
+     * Test for three clones, of which one starts a line later than the others.
      */
-    public void equalLines()
+    public void partialClonesLeft()
     {
-        testProject("EqualLines");
+        testProject("PartialLinesLeft");
     }
     
     /**
-     * Test for clones that consist of all equal lines.
+     * Test for three clones, of which one ends a line later than the others.
      */
-    public void equalLines()
+    public void partialLinesRight()
     {
-        testProject("EqualLines");
+        testProject("PartialLinesRight");
     }
     
     /**
-     * Test for clones that consist of all equal lines.
+     * Test for clones in Java enumerations.
      */
-    public void equalLines()
+    public void enumClone()
     {
-        testProject("EqualLines");
+        testProject("EnumClone");
     }
     
 
 	private void testProject(String project) {
-		Main.main(new String[] {CloneDetectionTest.class.getClassLoader().getResource(project).getFile()});
+		Main.cloneDetection(CloneDetectionTest.class.getClassLoader().getResource(project).getFile());
 	}
     
     

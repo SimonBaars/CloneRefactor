@@ -21,7 +21,11 @@ public class Main {
 		if(args.length == 0)
 			new NoJavaFilesFoundException();
 		
-		List<File> javaFiles = scanProjectForJavaFiles(args);
+		cloneDetection(args[0]);
+	}
+
+	public static void cloneDetection(String path) {
+		List<File> javaFiles = scanProjectForJavaFiles(path);
 		
 		if(javaFiles.size() == 0)
 			throw new NoPathEnteredException();
@@ -29,10 +33,10 @@ public class Main {
 		ASTParser.parse(javaFiles);
 	}
 
-	private static List<File> scanProjectForJavaFiles(String[] args) {
+	private static List<File> scanProjectForJavaFiles(String path) {
 		List<File> javaFiles = new ArrayList<>();
 		try {
-			Files.walkFileTree(Paths.get(args[0]), new SimpleFileVisitor<Path>() {
+			Files.walkFileTree(Paths.get(path), new SimpleFileVisitor<Path>() {
 			    @Override
 			    public FileVisitResult visitFile(Path filePath, BasicFileAttributes attrs) throws IOException {
 			    	File file = filePath.toFile();
