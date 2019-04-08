@@ -18,9 +18,11 @@ import junit.framework.TestSuite;
  */
 public class CloneDetectionTest extends TestCase
 {
-    private static final String SIMPLE_PROJECT = "SimpleClone";
+    private static final String PARTIAL_CLONES_RIGHT = "PartialClonesRight";
+	private static final String SIMPLE_PROJECT = "SimpleClone";
     private static final String EQUAL_LINES_PROJECT = "EqualLines";
     private static final String ENUM_PROJECT = "EnumClone";
+    
 
 	/**
      * Create the test case
@@ -83,8 +85,19 @@ public class CloneDetectionTest extends TestCase
      */
     public void testPartialLinesRight()
     {
-    	List<Sequence> chains = testProject("PartialClonesRight");
+    	List<Sequence> chains = testProject(PARTIAL_CLONES_RIGHT);
     	System.out.println(Arrays.toString(chains.toArray()));
+    	Sequence c = new Sequence();
+        c.add(new Location(getJavaFileFromProject(PARTIAL_CLONES_RIGHT, "Clone1"), 5, 15));
+        c.add(new Location(getJavaFileFromProject(PARTIAL_CLONES_RIGHT, "Clone2"), 5, 15));
+        c.add(new Location(getJavaFileFromProject(PARTIAL_CLONES_RIGHT, "Clone3"), 5, 15));
+        Sequence c2 = new Sequence();
+        c2.add(new Location(getJavaFileFromProject(PARTIAL_CLONES_RIGHT, "Clone1"), 5, 16));
+        c2.add(new Location(getJavaFileFromProject(PARTIAL_CLONES_RIGHT, "Clone2"), 5, 16));
+        List<Sequence> expectedChains = new ArrayList<>();
+        expectedChains.add(c);
+        expectedChains.add(c2);
+        Assert.assertTrue(checkArbitraryOrder(chains, expectedChains));
     }
     
     /**
