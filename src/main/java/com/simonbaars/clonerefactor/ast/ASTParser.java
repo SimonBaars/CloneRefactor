@@ -107,9 +107,17 @@ public class ASTParser {
 
 	private static void checkValidClones(Sequence oldClones, List<Location> endedClones, List<Sequence> clones) {
 		ListMap<Integer /*Sequence size*/, Location /* Clones */> cloneList = new ListMap<>();
-		oldClones.getSequence().stream().filter(e -> e.getAmountOfLines() > MIN_AMOUNT_OF_LINES).forEach(e -> cloneList.addTo(e.getAmountOfLines(), e));
+		endedClones.stream().filter(e -> e.getAmountOfLines() > MIN_AMOUNT_OF_LINES).forEach(e -> cloneList.addTo(e.getAmountOfLines(), e));
 		for(List<Location> l : cloneList.values()) {
 			if(l.stream().anyMatch(e -> endedClones.contains(e))) {
+				for(Location l2 : oldClones.getSequence()) {
+					if(l.get(0)!= l2 && l2.getAmountOfLines()>=l.get(0).getAmountOfLines()) {
+						if(l2.getAmountOfLines()>l.get(0).getAmountOfLines())
+							System.out.println("BEGIN LINE IS INCORRECT :(");
+						l.add(new Location(l2.getFile(), l2.getBeginLine(), l2.getEndLine(), l.get(0).getAmountOfLines(), l.get(0).getAmountOfTokens()));
+					}
+				}
+				System.out.println("ADDING SEQUENCE "+new Sequence(l));
 				clones.add(new Sequence(l));
 				continue;
 			}
