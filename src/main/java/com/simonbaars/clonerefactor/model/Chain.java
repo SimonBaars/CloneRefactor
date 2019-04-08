@@ -21,8 +21,9 @@ public class Chain {
 		return chain;
 	}
 	
-	public void add(Location l) {
+	public Chain add(Location l) {
 		chain.add(l);
+		return this; //For method chaining
 	}
 
 	public int size() {

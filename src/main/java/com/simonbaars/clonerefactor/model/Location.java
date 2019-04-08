@@ -19,6 +19,13 @@ public class Location {
 		this.endLine = line;
 	}
 
+	public Location(File file, int beginLine, int endLine, int amountOfLines) {
+		this.file = file;
+		this.line = beginLine;
+		this.endLine = endLine;
+		this.amountOfLines = amountOfLines;
+	}
+
 	public File getFile() {
 		return file;
 	}

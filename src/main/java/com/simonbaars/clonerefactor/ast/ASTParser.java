@@ -32,25 +32,30 @@ public class ASTParser {
 		Location lastLoc = calculateLineReg(javaFiles);
 		final Chain buildingChains = new Chain();
 		final List<Chain> clones = new ArrayList<Chain>();
-		findChains(lastLoc, buildingChains, clones);
+		findChains(lastLoc, buildingChains, clones, new ArrayList<>());
 		System.out.println("Finish parse");
 	}
 
-	private static void findChains(Location lastLoc, Chain buildingChains, List<Chain> clones) {
-		System.out.println(lastLoc.toString());
+	private static void findChains(Location lastLoc, Chain buildingChains, List<Chain> clones, List<Location> currentLocs) {
+		currentLocs.add(lastLoc);
 		Chain newClones = collectClones(lastLoc.getClone());
 		if(newClones.size()>=1)
-			buildingChains = makeValid(buildingChains, newClones, clones); //Because of the recent additions the current chain may be invalidated
-		if(lastLoc.getPrevLine()!=null)
-			findChains(lastLoc.getPrevLine(), buildingChains, clones); //I can also do this non recursively, but this looks nice :D
+			buildingChains = makeValid(buildingChains, newClones, clones, currentLocs); //Because of the recent additions the current chain may be invalidated
+		if(lastLoc.getPrevLine()!=null) {
+			if(lastLoc.getPrevLine().getFile()!=lastLoc.getFile()) {
+				buildingChains.getChain().clear();
+				currentLocs.clear();
+			}
+			findChains(lastLoc.getPrevLine(), buildingChains, clones, currentLocs); //I can also do this non recursively, but this looks nice :D
+		}
 	}
 
 	
-	private static Chain makeValid(Chain oldClones, Chain newClones, List<Chain> clones) {
+	private static Chain makeValid(Chain oldClones, Chain newClones, List<Chain> clones, List<Location> currentLocs) {
 		Map<Location /*oldClones*/, Location /*newClones*/> validChains = oldClones.getChain().stream().filter(e -> newClones.getChain().contains(e.getPrevLine())).collect(Collectors.toMap(e -> e, e -> e.getPrevLine()));
 		
 		if(validChains.size()!=oldClones.size()) {
-			checkValidClones(oldClones, oldClones.getChain().stream().filter(e -> !newClones.getChain().contains(e.getPrevLine())).collect(Collectors.toList()), clones);
+			checkValidClones(oldClones, oldClones.getChain().stream().filter(e -> !newClones.getChain().contains(e.getPrevLine())).collect(Collectors.toList()), clones, currentLocs);
 		}
 		
 		for(Entry<Location, Location> validChain : validChains.entrySet()) {
@@ -90,13 +95,13 @@ public class ASTParser {
 		return x1 <= y2 && y1 <= x2;
 	}
 
-	private static void checkValidClones(Chain oldClones, List<Location> endedClones, List<Chain> clones) {
+	private static void checkValidClones(Chain oldClones, List<Location> endedClones, List<Chain> clones, List<Location> currentLocs) {
 		ListMap<Integer /*Chain size*/, Location /* Clones */> cloneList = new ListMap<>();
-		oldClones.getChain().forEach(e -> cloneList.addTo(e.getAmountOfLines(), e));
+		oldClones.getChain().stream().filter(e -> e.getAmountOfLines() > MIN_AMOUNT_OF_LINES).forEach(e -> cloneList.addTo(e.getAmountOfLines(), e));
 		for(List<Location> l : cloneList.values()) {
 			if(l.stream().anyMatch(e -> endedClones.contains(e))) {
-				clones.add(new Chain(l));
-				//TODO: Add current to chain
+				clones.add(new Chain(l).add(new Location(currentLocs.get(currentLocs.size()-1).getFile(), currentLocs.get(currentLocs.size()-l.get(0).getAmountOfLines()-1).getBeginLine(), currentLocs.get(currentLocs.size()-1).getEndLine(), l.get(0).getAmountOfLines())));
+				continue;
 			}
 		}
 	}
