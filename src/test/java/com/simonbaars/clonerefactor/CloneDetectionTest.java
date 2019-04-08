@@ -95,8 +95,8 @@ public class CloneDetectionTest extends TestCase
     	List<Sequence> chains = testProject(ENUM_PROJECT);
     	System.out.println(Arrays.toString(chains.toArray()));
     	Sequence c = new Sequence();
-        c.add(new Location(getJavaFileFromProject(ENUM_PROJECT, "Clone1"), 5, 16));
-        c.add(new Location(getJavaFileFromProject(ENUM_PROJECT, "Clone2"), 5, 16));
+        c.add(new Location(getJavaFileFromProject(ENUM_PROJECT, "Clone1"), 4, 23));
+        c.add(new Location(getJavaFileFromProject(ENUM_PROJECT, "Clone2"), 4, 23));
         List<Sequence> expectedChains = new ArrayList<>();
         expectedChains.add(c);
         Assert.assertTrue(checkArbitraryOrder(chains, expectedChains));
