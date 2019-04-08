@@ -52,7 +52,7 @@ public class ASTParser {
 		List<Location> validChains = existingClones.stream().map(e -> e.getPrevLine()).collect(Collectors.toList());
 		
 		List<Location> newChains = newClones.stream().filter(e -> !validChains.contains(e)).collect(Collectors.toList());
-		//validChains.removeIf(e -> !newChains.contains(e)); //These are the chains that are finished, we should check if we can turn them into clones.
+		validChains.removeIf(e -> !newChains.contains(e)); //These are the chains that are finished, we should check if we can turn them into clones.
 		if(newChains.size()!=existingClones.size())
 			detectValidClones(buildingChains, clones, validChains);
 		if(newChains.size() == 1) {
