@@ -17,7 +17,8 @@ import junit.framework.TestSuite;
  */
 public class CloneDetectionTest extends TestCase
 {
-    private static final String PROJECT = "SimpleClone";
+    private static final String SIMPLE_PROJECT = "SimpleClone";
+    private static final String EQUAL_LINES_PROJECT = "EqualLines";
 
 	/**
      * Create the test case
@@ -42,12 +43,12 @@ public class CloneDetectionTest extends TestCase
      */
     public void testSimpleClones()
     {
-        List<Chain> chains = testProject(PROJECT);
+        List<Chain> chains = testProject(SIMPLE_PROJECT);
         Chain c = new Chain();
-        c.add(new Location(getJavaFileFromProject(PROJECT, "Clone1"), 5, 16));
-        c.add(new Location(getJavaFileFromProject(PROJECT, "Clone2"), 5, 16));
+        c.add(new Location(getJavaFileFromProject(SIMPLE_PROJECT, "Clone1"), 5, 16));
+        c.add(new Location(getJavaFileFromProject(SIMPLE_PROJECT, "Clone2"), 5, 16));
         List<Chain> expectedChains = new ArrayList<>();
-        
+        expectedChains.add(c);
         Assert.assertTrue(checkArbitraryOrder(chains, expectedChains));
     }
     
@@ -56,7 +57,13 @@ public class CloneDetectionTest extends TestCase
      */
     public void testEqualLines()
     {
-        testProject("EqualLines");
+    	List<Chain> chains = testProject(EQUAL_LINES_PROJECT);
+        Chain c = new Chain();
+        c.add(new Location(getJavaFileFromProject(EQUAL_LINES_PROJECT, "Clone1"), 5, 16));
+        c.add(new Location(getJavaFileFromProject(EQUAL_LINES_PROJECT, "Clone2"), 5, 16));
+        List<Chain> expectedChains = new ArrayList<>();
+        expectedChains.add(c);
+        Assert.assertTrue(checkArbitraryOrder(chains, expectedChains));
     }
     
     /**
@@ -64,7 +71,7 @@ public class CloneDetectionTest extends TestCase
      */
     public void testPartialClonesLeft()
     {
-        testProject("PartialLinesLeft");
+        testProject("PartialClonesLeft");
     }
     
     /**
@@ -72,7 +79,7 @@ public class CloneDetectionTest extends TestCase
      */
     public void testPartialLinesRight()
     {
-        testProject("PartialLinesRight");
+        testProject("PartialClonesRight");
     }
     
     /**
