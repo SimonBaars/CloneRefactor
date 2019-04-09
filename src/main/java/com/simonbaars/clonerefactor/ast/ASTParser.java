@@ -69,12 +69,12 @@ public class ASTParser {
 			newClones.getSequence().addAll(validChains.values());
 		}
 		//removePreviouslyParsedClones(newClones);
-		//mergeClones(newClones);
+		mergeClones(newClones);
 		
 		return newClones;
 	}
 
-	/*private static Sequence mergeClones(Sequence newClones) {
+	private static Sequence mergeClones(Sequence newClones) {
 		outerloop: for(int i = 0; i<newClones.size(); i++) {
 			Location loc1 = newClones.getSequence().get(i);
 			for(int j = i+1; j<newClones.size(); j++) {
@@ -87,21 +87,19 @@ public class ASTParser {
 					//System.out.println("Overlap "+beginLineOne+", "+endLineOne+", "+beginLineTwo+", "+endLineTwo+", "+overlap(beginLineOne, endLineOne, beginLineTwo, endLineTwo));
 					if(overlap(beginLineOne, endLineOne, beginLineTwo, endLineTwo)) {
 						if(endLineOne>endLineTwo) {
+							newClones.getSequence().remove(j);
+							j--;
+						} else {
 							newClones.getSequence().remove(i);
-							loc2.setEndLine(loc1.getEndLine());
 							i--;
 							continue outerloop;
-						} else {
-							newClones.getSequence().remove(j);
-							loc1.setEndLine(loc2.getEndLine());
-							j--;
 						}
 					}
 				}
 			}
 		}
 		return newClones;
-	}*/
+	}
 	
 	public static boolean overlap(int x1, int y1, int x2, int y2) {
 		return x1 <= y2 || y1 <= x2;
@@ -109,7 +107,7 @@ public class ASTParser {
 
 	private static void checkValidClones(Sequence oldClones, List<Location> endedClones, List<Sequence> clones) {
 		ListMap<Integer /*Sequence size*/, Location /* Clones */> cloneList = new ListMap<>();
-		endedClones.stream().filter(e -> e.getAmountOfLines() > MIN_AMOUNT_OF_LINES).forEach(e -> cloneList.addTo(e.getAmountOfLines(), e));
+		endedClones.stream().filter(e -> e.getAmountOfLines() >= MIN_AMOUNT_OF_LINES).forEach(e -> cloneList.addTo(e.getAmountOfLines(), e));
 		for(List<Location> l : cloneList.values()) {
 			if(l.stream().anyMatch(e -> endedClones.contains(e))) {
 				for(Location l2 : oldClones.getSequence()) {
