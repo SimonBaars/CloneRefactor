@@ -111,11 +111,13 @@ public class ASTParser {
 		endedClones.stream().filter(e -> e.getAmountOfLines() >= MIN_AMOUNT_OF_LINES).forEach(e -> cloneList.addTo(e.getAmountOfLines(), e));
 		for(List<Location> l : cloneList.values()) {
 			if(l.stream().anyMatch(e -> endedClones.contains(e))) {
+				int origEl = l.size();
 				for(Location l2 : oldClones.getSequence()) {
 					if(l.get(0)!= l2 && l2.getAmountOfLines()>=l.get(0).getAmountOfLines()) {
 						l.add(new Location(l2.getFile(), l2.getBeginLine(), findActualEndLine(l2, l.get(0).getAmountOfLines())/*l2.getEndLine()*/, l.get(0).getAmountOfLines(), l.get(0).getAmountOfTokens()));
 					}
 				}
+				IntStream.range(0, origEl).forEach(i -> l.set(i, new Location(l.get(i).getFile(), l.get(i).getBeginLine(), l.get(i).getEndLine(), l.get(i).getAmountOfLines(), l.get(i).getAmountOfTokens())));
 				//System.out.println("ADDING SEQUENCE "+new Sequence(l));
 				if(l.stream().collect(Collectors.summingInt(e -> e.getAmountOfTokens())) > MIN_AMOUNT_OF_TOKENS)
 					clones.add(new Sequence(l));
