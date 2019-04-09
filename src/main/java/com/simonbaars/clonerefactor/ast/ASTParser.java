@@ -3,7 +3,6 @@ package com.simonbaars.clonerefactor.ast;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -18,10 +17,10 @@ import com.github.javaparser.Range;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;
 import com.simonbaars.clonerefactor.datatype.ListMap;
-import com.simonbaars.clonerefactor.model.Sequence;
 import com.simonbaars.clonerefactor.model.CompilationUnitReg;
 import com.simonbaars.clonerefactor.model.LineTokens;
 import com.simonbaars.clonerefactor.model.Location;
+import com.simonbaars.clonerefactor.model.Sequence;
 
 public class ASTParser {
 	private static final int MIN_AMOUNT_OF_LINES = 6;

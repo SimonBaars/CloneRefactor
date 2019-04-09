@@ -5,8 +5,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import com.simonbaars.clonerefactor.model.Sequence;
 import com.simonbaars.clonerefactor.model.Location;
+import com.simonbaars.clonerefactor.model.Sequence;
 
 import junit.framework.Assert;
 import junit.framework.Test;
@@ -16,8 +16,7 @@ import junit.framework.TestSuite;
 /**
  * Unit test for the clone detector.
  */
-public class CloneDetectionTest extends TestCase
-{
+public class CloneDetectionTest extends TestCase {
     private static final String PARTIAL_CLONES_LEFT = "PartialClonesLeft";
 	private static final String PARTIAL_CLONES_RIGHT = "PartialClonesRight";
 	private static final String SIMPLE_PROJECT = "SimpleClone";
@@ -30,24 +29,21 @@ public class CloneDetectionTest extends TestCase
      *
      * @param testName name of the test case
      */
-    public CloneDetectionTest( String testName )
-    {
+    public CloneDetectionTest( String testName ) {
         super( testName );
     }
 
     /**
      * @return the suite of tests being tested
      */
-    public static Test suite()
-    {
+    public static Test suite() {
         return new TestSuite( CloneDetectionTest.class );
     }
 
     /**
      * Test for clones that consist of lines that do not occur elsewhere.
      */
-    public void testSimpleClones()
-    {
+    public void testSimpleClones() {
         List<Sequence> chains = testProject(SIMPLE_PROJECT);
         System.out.println(Arrays.toString(chains.toArray()));
         Sequence c = new Sequence();
@@ -61,8 +57,7 @@ public class CloneDetectionTest extends TestCase
 	/**
      * Test for clones that consist of all equal lines.
      */
-    public void testEqualLines()
-    {
+    public void testEqualLines() {
     	List<Sequence> chains = testProject(EQUAL_LINES_PROJECT);
     	System.out.println(Arrays.toString(chains.toArray()));
         Sequence c = new Sequence();
@@ -76,8 +71,7 @@ public class CloneDetectionTest extends TestCase
     /**
      * Test for three clones, of which one starts a line later than the others.
      */
-    public void testPartialClonesLeft()
-    {
+    public void testPartialClonesLeft() {
     	List<Sequence> chains = testProject(PARTIAL_CLONES_LEFT);
     	System.out.println(Arrays.toString(chains.toArray()));
     	Sequence c = new Sequence();
@@ -96,8 +90,7 @@ public class CloneDetectionTest extends TestCase
     /**
      * Test for three clones, of which one ends a line later than the others.
      */
-    public void testPartialLinesRight()
-    {
+    public void testPartialLinesRight() {
     	List<Sequence> chains = testProject(PARTIAL_CLONES_RIGHT);
     	System.out.println(Arrays.toString(chains.toArray()));
     	Sequence c = new Sequence();
@@ -116,8 +109,7 @@ public class CloneDetectionTest extends TestCase
     /**
      * Test for clones in Java enumerations.
      */
-    public void testEnumClone()
-    {
+    public void testEnumClone() {
     	List<Sequence> chains = testProject(ENUM_PROJECT);
     	System.out.println(Arrays.toString(chains.toArray()));
     	Sequence c = new Sequence();
