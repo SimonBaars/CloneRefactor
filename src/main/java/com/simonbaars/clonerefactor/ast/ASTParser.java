@@ -124,7 +124,7 @@ public class ASTParser {
 	
 	private static int findActualEndLine(Location l2, int amountOfLines) {
 		//System.out.println(l2.getBeginLine());
-		if(amountOfLines>0 && l2.getNextLine()!=null)
+		if(amountOfLines>0 && l2.getNextLine()!=null && l2.getNextLine().getFile() == l2.getFile())
 			return findActualEndLine(l2.getNextLine(), amountOfLines-1);
 		return l2.getBeginLine();
 	}
