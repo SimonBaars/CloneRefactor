@@ -2,6 +2,8 @@ package com.simonbaars.clonerefactor.ast;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -29,24 +31,24 @@ public class ASTParser {
 	private static final ListMap<Integer, Location> cloneReg = new ListMap<>();
 	
 	public static List<Sequence> parse(List<File> javaFiles) {
-		System.out.println("Start parse");
 		Location lastLoc = calculateLineReg(javaFiles);
-		final Sequence buildingChains = new Sequence();
-		final List<Sequence> clones = new ArrayList<Sequence>();
-		findChains(lastLoc, buildingChains, clones);
-		return clones;
+		return findChains(lastLoc);
 	}
 
-	private static void findChains(Location lastLoc, Sequence buildingChains, List<Sequence> clones) {
-		Sequence newClones = collectClones(lastLoc);
-		if(newClones.size()>=1)
-			buildingChains = makeValid(lastLoc, buildingChains, newClones, clones); //Because of the recent additions the current sequence may be invalidated
-		if(lastLoc.getPrevLine()!=null) {
-			if(lastLoc.getPrevLine().getFile()!=lastLoc.getFile()) {
-				buildingChains.getSequence().clear();
+	private static List<Sequence> findChains(Location lastLoc) {
+		Sequence buildingChains = new Sequence();
+		final List<Sequence> clones = new ArrayList<Sequence>();
+		for(;lastLoc!=null;lastLoc = lastLoc.getPrevLine()) {
+			Sequence newClones = collectClones(lastLoc);
+			if(newClones.size()>=1)
+				buildingChains = makeValid(lastLoc, buildingChains, newClones, clones); //Because of the recent additions the current sequence may be invalidated
+			if(lastLoc.getPrevLine()!=null) {
+				if(lastLoc.getPrevLine().getFile()!=lastLoc.getFile()) {
+					buildingChains.getSequence().clear();
+				}
 			}
-			findChains(lastLoc.getPrevLine(), buildingChains, clones); //I can also do this non recursively, but this looks nice :D
 		}
+		return clones;
 	}
 
 	
@@ -119,7 +121,7 @@ public class ASTParser {
 				}
 				IntStream.range(0, origEl).forEach(i -> l.set(i, new Location(l.get(i).getFile(), l.get(i).getBeginLine(), l.get(i).getEndLine(), l.get(i).getAmountOfLines(), l.get(i).getAmountOfTokens())));
 				//System.out.println("ADDING SEQUENCE "+new Sequence(l));
-				if(l.stream().collect(Collectors.summingInt(e -> e.getAmountOfTokens())) > MIN_AMOUNT_OF_TOKENS)
+				if(l.stream().collect(Collectors.summingInt(e -> e.getAmountOfTokens())) > MIN_AMOUNT_OF_TOKENS && l.size()>1)
 					clones.add(new Sequence(l));
 				continue;
 			}

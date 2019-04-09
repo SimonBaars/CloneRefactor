@@ -8,7 +8,10 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import com.simonbaars.clonerefactor.ast.ASTParser;
@@ -19,10 +22,13 @@ import com.simonbaars.clonerefactor.model.Sequence;
 public class Main {
 
 	public static void main(String[] args) {
+		System.out.println("Start parse at "+DateTimeFormatter.ofPattern("HH:mm:ss.SSS").format(LocalDateTime.now()));
 		if(args.length == 0)
 			new NoJavaFilesFoundException();
 		
-		cloneDetection(args[0]);
+		List<Sequence> cloneDetection = cloneDetection(args[0]);
+		System.out.println(Arrays.toString(cloneDetection.toArray()));
+		System.out.println("Done ("+cloneDetection.size()+" clones found) at "+DateTimeFormatter.ofPattern("HH:mm:ss.SSS").format(LocalDateTime.now()));
 	}
 
 	public static List<Sequence> cloneDetection(String path) {
