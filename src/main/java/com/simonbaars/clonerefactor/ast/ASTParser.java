@@ -22,12 +22,12 @@ import com.simonbaars.clonerefactor.model.Sequence;
 
 public class ASTParser {
 	private static final ListMap<Integer, Location> cloneReg = new ListMap<>();
-	
+
 	public static List<Sequence> parse(List<File> javaFiles) {
 		Location lastLoc = calculateLineReg(javaFiles);
 		return new CloneDetection().findChains(lastLoc, cloneReg);
 	}
-	
+
 	private static final Location calculateLineReg(List<File> javaFiles) {
 		final Map<LineTokens, Location> lineReg = new HashMap<>();
 		Location l = null;
@@ -61,9 +61,8 @@ public class ASTParser {
 		Location l = null;
 		if(range.isPresent()) {
 			int line = range.get().begin.line;
-			if(r.lastLineNumberExists() && r.getLastLineNumber()!=line) {
+			if(r.lastLineNumberExists() && r.getLastLineNumber()!=line)
 				l = addLineTokensToReg(lineReg, file, r, it, line);
-			}
 			r.visitLine(line);
 			r.getThisLine().add(t);
 			if(!it.hasNext())
