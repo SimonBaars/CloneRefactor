@@ -17,7 +17,8 @@ import junit.framework.TestSuite;
  * Unit test for the clone detector.
  */
 public class CloneDetectionTest extends TestCase {
-    private static final String SINGLE_FILE_PROJECT = "SingleFile";
+    private static final String UNEQUAL_SIZE_CLONES_PROJECT = "UnequalSizeClones";
+	private static final String SINGLE_FILE_PROJECT = "SingleFile";
 	private static final String PARTIAL_CLONES_LEFT = "PartialClonesLeft";
 	private static final String PARTIAL_CLONES_RIGHT = "PartialClonesRight";
 	private static final String SIMPLE_PROJECT = "SimpleClone";
@@ -135,6 +136,20 @@ public class CloneDetectionTest extends TestCase {
         Assert.assertTrue(checkArbitraryOrder(chains, expectedChains));
     }
     
+    
+    /**
+     * Test for clones that differ in length but consist of lines with equal tokens.
+     */
+    public void testUnequalSizeClones() {
+    	List<Sequence> chains = testProject(UNEQUAL_SIZE_CLONES_PROJECT);
+    	System.out.println(Arrays.toString(chains.toArray()));
+        Sequence c = new Sequence();
+        c.add(new Location(getJavaFileFromProject(UNEQUAL_SIZE_CLONES_PROJECT, "Clone1"), 5, 16)); //This is not entirely correct, but the question is whether it matters?
+        c.add(new Location(getJavaFileFromProject(UNEQUAL_SIZE_CLONES_PROJECT, "Clone2"), 6, 17));
+        List<Sequence> expectedChains = new ArrayList<>();
+        expectedChains.add(c);
+        Assert.assertTrue(checkArbitraryOrder(chains, expectedChains));
+    }
 
 	private List<Sequence> testProject(String project) {
 		return Main.cloneDetection(CloneDetectionTest.class.getClassLoader().getResource(project).getFile());
