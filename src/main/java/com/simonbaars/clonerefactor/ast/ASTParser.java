@@ -114,7 +114,7 @@ public class ASTParser {
 				int origEl = l.size();
 				for(Location l2 : oldClones.getSequence()) {
 					if(l.get(0)!= l2 && l2.getAmountOfLines()>=l.get(0).getAmountOfLines()) {
-						l.add(new Location(l2.getFile(), l2.getBeginLine(), findActualEndLine(l2, l.get(0).getAmountOfLines())/*l2.getEndLine()*/, l.get(0).getAmountOfLines(), l.get(0).getAmountOfTokens()));
+						l.add(new Location(l2.getFile(), l2.getBeginLine(), findActualEndLine(l2, l.get(0).getAmountOfLines()), l.get(0).getAmountOfLines(), l.get(0).getAmountOfTokens()));
 					}
 				}
 				IntStream.range(0, origEl).forEach(i -> l.set(i, new Location(l.get(i).getFile(), l.get(i).getBeginLine(), l.get(i).getEndLine(), l.get(i).getAmountOfLines(), l.get(i).getAmountOfTokens())));
@@ -128,7 +128,7 @@ public class ASTParser {
 	
 	private static int findActualEndLine(Location l2, int amountOfLines) {
 		//System.out.println(l2.getBeginLine());
-		if(amountOfLines>0 && l2.getNextLine()!=null && l2.getNextLine().getFile() == l2.getFile())
+		if(amountOfLines>1 && l2.getNextLine()!=null && l2.getNextLine().getFile() == l2.getFile())
 			return findActualEndLine(l2.getNextLine(), amountOfLines-1);
 		return l2.getBeginLine();
 	}
