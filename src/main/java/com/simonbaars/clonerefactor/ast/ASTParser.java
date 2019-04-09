@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import com.github.javaparser.JavaParser;
 import com.github.javaparser.ParseResult;
@@ -177,11 +178,13 @@ public class ASTParser {
 		Location l = null;
 		if(range.isPresent()) {
 			int line = range.get().begin.line;
-			if(!it.hasNext() || (r.lastLineNumberExists() && r.getLastLineNumber()!=line)) {
+			if(r.lastLineNumberExists() && r.getLastLineNumber()!=line) {
 				l = addLineTokensToReg(lineReg, file, r, it, line);
 			}
 			r.visitLine(line);
 			r.getThisLine().add(t);
+			if(!it.hasNext())
+				l = addLineTokensToReg(lineReg, file, r, it, line);
 		}
 		return l;
 	}
