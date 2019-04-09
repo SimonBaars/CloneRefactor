@@ -116,7 +116,8 @@ public class ASTParser {
 					}
 				}
 				//System.out.println("ADDING SEQUENCE "+new Sequence(l));
-				clones.add(new Sequence(l));
+				if(l.stream().collect(Collectors.summingInt(e -> e.getAmountOfTokens())) > MIN_AMOUNT_OF_TOKENS)
+					clones.add(new Sequence(l));
 				continue;
 			}
 		}
