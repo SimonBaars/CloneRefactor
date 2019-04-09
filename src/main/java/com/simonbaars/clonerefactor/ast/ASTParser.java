@@ -25,7 +25,7 @@ import com.simonbaars.clonerefactor.model.Location;
 
 public class ASTParser {
 	private static final int MIN_AMOUNT_OF_LINES = 6;
-	private static final int MIN_AMOUNT_OF_TOKENS = 50;
+	private static final int MIN_AMOUNT_OF_TOKENS = 10;
 	private static final ListMap<Integer, Location> cloneReg = new ListMap<>();
 	
 	public static List<Sequence> parse(List<File> javaFiles) {
@@ -53,7 +53,7 @@ public class ASTParser {
 	private static Sequence makeValid(Location lastLoc, Sequence oldClones, Sequence newClones, List<Sequence> clones) {
 		Map<Location /*oldClones*/, Location /*newClones*/> validChains = oldClones.getSequence().stream().filter(e -> newClones.getSequence().contains(e.getPrevLine())).collect(Collectors.toMap(e -> e, e -> e.getPrevLine()));
 		
-		if(validChains.size()!=oldClones.size()) {
+		if(validChains.size()!=oldClones.size() && !oldClones.getSequence().isEmpty()) {
 			checkValidClones(oldClones, oldClones.getSequence().stream().filter(e -> !newClones.getSequence().contains(e.getPrevLine())).collect(Collectors.toList()), clones);
 		}
 		
@@ -78,20 +78,20 @@ public class ASTParser {
 			for(int j = i+1; j<newClones.size(); j++) {
 				Location loc2 = newClones.getSequence().get(j);
 				if(loc1.getFile() == loc2.getFile()) {
-					int beginLineOne = loc1.getBeginLine();
-					int endLineOne = loc1.getEndLine();
+					int beginLineOne = loc1.getBeginLine()+1;
+					int endLineOne = loc1.getEndLine()+1;
 					int beginLineTwo = loc2.getBeginLine();
 					int endLineTwo = loc2.getEndLine();
 					//System.out.println("Overlap "+beginLineOne+", "+endLineOne+", "+beginLineTwo+", "+endLineTwo+", "+overlap(beginLineOne, endLineOne, beginLineTwo, endLineTwo));
 					if(overlap(beginLineOne, endLineOne, beginLineTwo, endLineTwo)) {
 						if(endLineOne>endLineTwo) {
 							newClones.getSequence().remove(i);
-							loc2.setBeginLine(loc1.getBeginLine());
+							loc2.setEndLine(loc1.getEndLine());
 							i--;
 							continue outerloop;
 						} else {
 							newClones.getSequence().remove(j);
-							loc1.setBeginLine(loc2.getBeginLine());
+							loc1.setEndLine(loc2.getEndLine());
 							j--;
 						}
 					}
