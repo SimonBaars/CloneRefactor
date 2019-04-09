@@ -17,7 +17,8 @@ import junit.framework.TestSuite;
  * Unit test for the clone detector.
  */
 public class CloneDetectionTest extends TestCase {
-    private static final String PARTIAL_CLONES_LEFT = "PartialClonesLeft";
+    private static final String SINGLE_FILE_PROJECT = "SingleFile";
+	private static final String PARTIAL_CLONES_LEFT = "PartialClonesLeft";
 	private static final String PARTIAL_CLONES_RIGHT = "PartialClonesRight";
 	private static final String SIMPLE_PROJECT = "SimpleClone";
     private static final String EQUAL_LINES_PROJECT = "EqualLines";
@@ -115,6 +116,20 @@ public class CloneDetectionTest extends TestCase {
     	Sequence c = new Sequence();
         c.add(new Location(getJavaFileFromProject(ENUM_PROJECT, "Clone1"), 4, 23));
         c.add(new Location(getJavaFileFromProject(ENUM_PROJECT, "Clone2"), 4, 23));
+        List<Sequence> expectedChains = new ArrayList<>();
+        expectedChains.add(c);
+        Assert.assertTrue(checkArbitraryOrder(chains, expectedChains));
+    }
+    
+    /**
+     * Test for clones in a single file, with just a single line to separate the clones.
+     */
+    public void testSingleFile() {
+    	List<Sequence> chains = testProject(SINGLE_FILE_PROJECT);
+    	System.out.println(Arrays.toString(chains.toArray()));
+    	Sequence c = new Sequence();
+        c.add(new Location(getJavaFileFromProject(SINGLE_FILE_PROJECT, "Clone1"), 5, 14));
+        c.add(new Location(getJavaFileFromProject(SINGLE_FILE_PROJECT, "Clone1"), 16, 25));
         List<Sequence> expectedChains = new ArrayList<>();
         expectedChains.add(c);
         Assert.assertTrue(checkArbitraryOrder(chains, expectedChains));
