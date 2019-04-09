@@ -49,6 +49,7 @@ public class CloneDetectionTest extends TestCase
     public void testSimpleClones()
     {
         List<Sequence> chains = testProject(SIMPLE_PROJECT);
+        System.out.println(Arrays.toString(chains.toArray()));
         Sequence c = new Sequence();
         c.add(new Location(getJavaFileFromProject(SIMPLE_PROJECT, "Clone1"), 5, 16));
         c.add(new Location(getJavaFileFromProject(SIMPLE_PROJECT, "Clone2"), 5, 16));

@@ -25,7 +25,7 @@ import com.simonbaars.clonerefactor.model.Location;
 
 public class ASTParser {
 	private static final int MIN_AMOUNT_OF_LINES = 6;
-	private static final int MIN_AMOUNT_OF_TOKENS = 10;
+	private static final int MIN_AMOUNT_OF_TOKENS = 15;
 	private static final ListMap<Integer, Location> cloneReg = new ListMap<>();
 	
 	public static List<Sequence> parse(List<File> javaFiles) {
@@ -58,8 +58,11 @@ public class ASTParser {
 		}
 		
 		for(Entry<Location, Location> validChain : validChains.entrySet()) {
-			validChain.getValue().setEndLine(validChain.getKey().getEndLine());
-			validChain.getValue().setAmountOfLines(validChain.getKey().getAmountOfLines()+1);
+			Location newClone = validChain.getValue();
+			Location oldClone = validChain.getKey();
+			newClone.setEndLine(oldClone.getEndLine());
+			newClone.setAmountOfLines(oldClone.getAmountOfLines()+1);
+			newClone.setAmountOfTokens(oldClone.getAmountOfTokens()+newClone.getAmountOfTokens());
 		}
 		
 		if(lastLoc.isLocationParsed(cloneReg)){
@@ -67,12 +70,12 @@ public class ASTParser {
 			newClones.getSequence().addAll(validChains.values());
 		}
 		//removePreviouslyParsedClones(newClones);
-		mergeClones(newClones);
+		//mergeClones(newClones);
 		
 		return newClones;
 	}
 
-	private static Sequence mergeClones(Sequence newClones) {
+	/*private static Sequence mergeClones(Sequence newClones) {
 		outerloop: for(int i = 0; i<newClones.size(); i++) {
 			Location loc1 = newClones.getSequence().get(i);
 			for(int j = i+1; j<newClones.size(); j++) {
@@ -99,7 +102,7 @@ public class ASTParser {
 			}
 		}
 		return newClones;
-	}
+	}*/
 	
 	public static boolean overlap(int x1, int y1, int x2, int y2) {
 		return x1 <= y2 || y1 <= x2;
