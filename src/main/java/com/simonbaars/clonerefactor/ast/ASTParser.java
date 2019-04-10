@@ -2,6 +2,7 @@ package com.simonbaars.clonerefactor.ast;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -25,7 +26,9 @@ public class ASTParser {
 
 	public static List<Sequence> parse(List<File> javaFiles) {
 		Location lastLoc = calculateLineReg(javaFiles);
-		return new CloneDetection().findChains(lastLoc, cloneReg);
+		if(lastLoc!=null)
+			return new CloneDetection().findChains(lastLoc, cloneReg);
+		return new ArrayList<>();
 	}
 
 	private static final Location calculateLineReg(List<File> javaFiles) {
@@ -34,7 +37,7 @@ public class ASTParser {
 		final CompilationUnitReg r = new CompilationUnitReg();
 		for(File file : javaFiles) {
 			try {
-				l = parseClassFile(lineReg, file, r);
+				l = setIfNotNull(l, parseClassFile(lineReg, file, r));
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
 			}
@@ -43,15 +46,22 @@ public class ASTParser {
 		return l;
 	}
 
+	private static Location setIfNotNull(Location l, Location parseClassFile) {
+		return parseClassFile == null ? l : parseClassFile;
+	}
+
 	private static Location parseClassFile(final Map<LineTokens, Location> lineReg, File file, CompilationUnitReg r)
 			throws FileNotFoundException {
 		final ParseResult<CompilationUnit> pr = new JavaParser().parse(file);
-		CompilationUnit cu = pr.getResult().get();
-		Location l = null;
-		for (Iterator<Node> it = cu.stream().iterator(); it.hasNext();) {
-			l = parseToken(lineReg, file, r, it);
+		if(pr.isSuccessful() && pr.getResult().isPresent()) {
+			CompilationUnit cu = pr.getResult().get();
+			Location l = null;
+			for (Iterator<Node> it = cu.stream().iterator(); it.hasNext();) {
+				l = parseToken(lineReg, file, r, it);
+			}
+			return l;
 		}
-		return l;
+		return null;
 	}
 
 	private static Location parseToken(final Map<LineTokens, Location> lineReg, File file, final CompilationUnitReg r,
