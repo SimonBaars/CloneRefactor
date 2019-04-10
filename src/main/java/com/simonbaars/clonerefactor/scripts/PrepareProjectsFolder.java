@@ -9,28 +9,23 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class PrepareProjectsFolder {
-
-	public static void main(String[] args) {
-		File projectsFolder = new File("/Users/sbaars/Downloads/java_projects/");
-		System.out.println(projectsFolder.list().length);
-		System.out.println(projectsFolder.listFiles(f -> isQualified(getSourceFolder(f))).length);
-	}
 	
-	public static File[] getFilteredCorpusFiles() {
-		File projectsFolder = new File("/Users/sbaars/Downloads/java_projects/");
-		return projectsFolder.listFiles(f -> isQualified(getSourceFolder(f)));
+	private static final File JAVA_PROJECTS_CORPUS_FOLDER = new File("/Users/sbaars/Downloads/java_projects/");
+
+	public static File[] getFilteredCorpusFiles(int min, int max) {
+		return JAVA_PROJECTS_CORPUS_FOLDER.listFiles(f -> isQualified(getSourceFolder(f), min, max));
 	}
 
 	public static File getSourceFolder(File f) {
 		return new File(f.getAbsolutePath()+"/src/main/java");
 	}
 	
-	public static boolean isQualified(File project) {
-		return project.exists() && between(10, 100, countJavaFiles(project));
+	public static boolean isQualified(File project, int min, int max) {
+		return project.exists() && between(min, max, countJavaFiles(project));
 	}
 
-	private static boolean between(int i, int j, long l) {
-		return l >=i && l <= j;
+	private static boolean between(int min, int max, long javaFilesInProject) {
+		return javaFilesInProject >=min && javaFilesInProject <= max;
 	}
 
 	private static long countJavaFiles(File project) {

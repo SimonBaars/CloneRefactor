@@ -14,13 +14,14 @@ import com.simonbaars.clonerefactor.common.TestingCommons;
 import com.simonbaars.clonerefactor.model.Sequence;
 
 import me.tongfei.progressbar.ProgressBar;
+import me.tongfei.progressbar.ProgressBarBuilder;
 
 public class RunOnCorpus {
 
 	public static void main(String[] args) {
 		File outputFolder = new File("/Users/sbaars/clone/output");
 		outputFolder.mkdirs();
-		File[] corpusFiles = getFilteredCorpusFiles();
+		File[] corpusFiles = getFilteredCorpusFiles(5, 1000);
 		for(File file : ProgressBar.wrap(Arrays.asList(corpusFiles), "Running Clone Detection")) {
 			List<Sequence> seq = ASTParser.parse(getJavaFiles(getSourceFolder(file)));
 			try {
@@ -30,5 +31,4 @@ public class RunOnCorpus {
 			}
 		}
 	}
-
 }
