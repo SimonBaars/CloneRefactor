@@ -27,5 +27,10 @@
 			<artifactId>javaparser-core</artifactId>
 			<version>3.13.6</version>
 		</dependency>
+		<dependency>
+			<groupId>me.tongfei</groupId>
+			<artifactId>progressbar</artifactId>
+			<version>0.7.3</version>
+		</dependency>
 	</dependencies>
 </project>
