@@ -159,10 +159,20 @@ public class CloneDetectionTest extends TestCase {
     	List<Sequence> chains = testProject(SEVERAL_METHODS_PROJECT);
     	System.out.println(Arrays.toString(chains.toArray()));
         Sequence c = new Sequence();
-        c.add(new Location(getJavaFileFromProject(SEVERAL_METHODS_PROJECT, "Clone1"), 4, 13)); //This is not entirely correct, but the question is whether it matters?
+        c.add(new Location(getJavaFileFromProject(SEVERAL_METHODS_PROJECT, "Clone1"), 4, 13)); 
         c.add(new Location(getJavaFileFromProject(SEVERAL_METHODS_PROJECT, "Clone2"), 4, 13));
         List<Sequence> expectedChains = new ArrayList<>();
         expectedChains.add(c);
+        Assert.assertTrue(checkArbitraryOrder(chains, expectedChains));
+    }
+    
+    /**
+     * Test for clones in import statements.
+     */
+    public void testImportStatements() {
+    	List<Sequence> chains = testProject("EqualImportStatements");
+    	System.out.println(Arrays.toString(chains.toArray()));
+        List<Sequence> expectedChains = new ArrayList<>();
         Assert.assertTrue(checkArbitraryOrder(chains, expectedChains));
     }
 

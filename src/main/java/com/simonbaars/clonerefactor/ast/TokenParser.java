@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Optional;
 
+import com.github.javaparser.JavaToken;
 import com.github.javaparser.Range;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;
@@ -13,10 +14,10 @@ import com.simonbaars.clonerefactor.model.CompilationUnitReg;
 import com.simonbaars.clonerefactor.model.LineTokens;
 import com.simonbaars.clonerefactor.model.Location;
 
-public class ASTParser implements Parser {
-	public Location parseToken(final Map<LineTokens, Location> lineReg, File file, final CompilationUnitReg r,
-			Iterator<Node> it, ListMap<Integer, Location> cloneReg) {
-		Node t = it.next();
+public class TokenParser implements Parser {
+	public Location parseToken(final Map<LineTokens, Location> lineReg, File file, final CompilationUnitReg<JavaToken> r,
+			Iterator<JavaToken> it, ListMap<Integer, Location> cloneReg) {
+		JavaToken t = it.next();
 		Optional<Range> range = t.getRange();
 		Location l = null;
 		if(range.isPresent()) {
@@ -32,8 +33,8 @@ public class ASTParser implements Parser {
 	}
 
 	private Location addLineTokensToReg(final Map<LineTokens, Location> lineReg, File file,
-			final CompilationUnitReg r, int line, ListMap<Integer, Location> cloneReg) {
-		LineTokens l = new LineTokens(r.getThisLine());
+			final CompilationUnitReg<JavaToken> r, int line, ListMap<Integer, Location> cloneReg) {
+		LineTokens<JavaToken> l = new LineTokens(r.getThisLine());
 		Location location = new Location(file, line, l.size(), l.hashCode());
 		cloneReg.addTo(location.getTokenHash(), location);
 		if(lineReg.containsKey(l)) {
@@ -47,9 +48,9 @@ public class ASTParser implements Parser {
 	}
 	
 	public Location extractLinesFromAST(final Map<LineTokens, Location> lineReg, File file,
-			CompilationUnitReg r, ListMap<Integer, Location> cloneReg, CompilationUnit cu) {
+			CompilationUnitReg<JavaToken> r, ListMap<Integer, Location> cloneReg, CompilationUnit cu) {
 		Location l = null;
-		for (Iterator<Node> it = cu.stream().iterator(); it.hasNext();) {
+		for (Iterator<JavaToken> it = cu.getTokenRange().get().iterator(); it.hasNext();) {
 			l = setIfNotNull(l, parseToken(lineReg, file, r, it, cloneReg));
 		}
 		return l;

@@ -5,15 +5,15 @@ import java.util.List;
 
 import com.github.javaparser.ast.Node;
 
-public class LineTokens {
-	private final List<Node> tokens;
+public class LineTokens<T> {
+	private final List<T> tokens;
 
-	public LineTokens(List<Node> tokens) {
+	public LineTokens(List<T> tokens) {
 		super();
 		this.tokens = tokens;
 	}
 
-	public List<Node> getTokens() {
+	public List<T> getTokens() {
 		return tokens;
 	}
 
@@ -21,7 +21,7 @@ public class LineTokens {
 		return tokens.size();
 	}
 	
-	public void add(Node token) {
+	public void add(T token) {
 		tokens.add(token);
 	}
 	
@@ -30,14 +30,14 @@ public class LineTokens {
 		if(!(compareTokens instanceof LineTokens))
 			return false;
 		//System.out.println("Compare "+toString()+" with "+tokens.toString()+" => "+this.tokens.equals(((LineTokens)compareTokens).getTokens())+" but actually "+(hashCode() == compareTokens.hashCode()));
-		return this.tokens.equals(((LineTokens)compareTokens).getTokens());
+		return this.tokens.equals(((LineTokens<T>)compareTokens).getTokens());
 	}
 	
 	@Override
 	public int hashCode() {
 		int prime = 31;
 		int result = 1;
-		for(Node token : tokens) {
+		for(T token : tokens) {
 			result=prime * result + token.hashCode();
 		}
 		return result;
