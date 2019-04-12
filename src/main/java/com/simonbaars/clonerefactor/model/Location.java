@@ -10,7 +10,7 @@ public class Location {
 	private int beginLine;
 	private int endLine;
 	private int amountOfLines = 1;
-	private int amountOfTokens;
+	private int amountOfTokens = 0;
 	private int tokenHash;
 	
 	private LineTokens tokens = new LineTokens();
@@ -172,6 +172,11 @@ public class Location {
 
 	public void setTokens(LineTokens tokens) {
 		this.tokens = tokens;
+		this.amountOfTokens = tokens.size();
+	}
+
+	public void incrementTokens() {
+		this.amountOfTokens++;
 	}
 	
 }

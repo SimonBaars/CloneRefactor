@@ -33,6 +33,7 @@ public class NodeParser implements Parser {
 				prevLocation.setNextLine(thisLocation);
 			} else if(prevLocation==null) thisLocation = new Location(file, line, prevLocation);
 			thisLocation.getTokens().add(t);
+			thisLocation.incrementTokens();
 			
 		}
 		return thisLocation;
