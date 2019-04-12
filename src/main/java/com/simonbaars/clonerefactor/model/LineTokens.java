@@ -58,7 +58,7 @@ public class LineTokens {
 
 	private int getTokenHashCode(Node token) {
 		if(token instanceof BlockStmt || token instanceof ClassOrInterfaceDeclaration || token instanceof EnumDeclaration)
-			return 1; //We need to let `equals` handle this
+			return 1; //We need to let `equals` handle this (a hashtable calls `equals` only if the hashcodes are equal)
 		return token.hashCode();
 	}
 

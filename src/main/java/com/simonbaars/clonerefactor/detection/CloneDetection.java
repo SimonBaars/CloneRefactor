@@ -83,11 +83,15 @@ public class CloneDetection {
 				}
 			}
 		}
-	return newClones;
+		return newClones;
 	}
 
 	public boolean overlap(int x1, int y1, int x2, int y2) {
-		return x1 <= y2 || y1 <= x2;
+		return between(x2, x1, y1) || between(y2, x1, y1);
+	}
+
+	private boolean between(int x2, int x1, int y1) {
+		return x2>=x1 && x2<=y1;
 	}
 
 	private void checkValidClones(Sequence oldClones, List<Location> endedClones, List<Sequence> clones) {
