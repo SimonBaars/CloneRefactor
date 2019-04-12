@@ -12,7 +12,7 @@ import com.simonbaars.clonerefactor.model.LineTokens;
 import com.simonbaars.clonerefactor.model.Location;
 
 public class ASTParser implements Parser {
-	public Location parseToken(final Map<LineTokens, Location> lineReg, File file, final CompilationUnitReg r,
+	public Location parseToken(Location prevLocation, File file,
 			Node t, ListMap<Integer, Location> cloneReg) {
 		Optional<Range> range = t.getRange();
 		Location l = null;
@@ -43,11 +43,11 @@ public class ASTParser implements Parser {
 		return location;
 	}
 	
-	public Location extractLinesFromAST(final Map<LineTokens, Location> lineReg, File file, final CompilationUnitReg r, Node n, ListMap<Integer, Location> cloneReg) {
-		Location l = parseToken(lineReg, file, r,  n, cloneReg);
+	public Location extractLinesFromAST(Location prevLocation, File file, final CompilationUnitReg r, Node n, ListMap<Integer, Location> cloneReg) {
+		prevLocation = parseToken(prevLocation, file, r,  n, cloneReg);
 		for (Node child : n.getChildNodes()) {
-			l = setIfNotNull(l, extractLinesFromAST(lineReg, file, r, child, cloneReg));
+			prevLocation = setIfNotNull(prevLocation, extractLinesFromAST(prevLocation, file, r, child, cloneReg));
 		}
-		return l;
+		return prevLocation;
 	}
 }

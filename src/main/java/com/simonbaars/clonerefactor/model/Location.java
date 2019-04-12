@@ -13,6 +13,8 @@ public class Location {
 	private int amountOfTokens;
 	private int tokenHash;
 	
+	private LineTokens tokens = new LineTokens();
+	
 	private Location prevLine;
 	private Location clone;
 	private Location nextLine;

@@ -1,5 +1,6 @@
 package com.simonbaars.clonerefactor.model;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.IntStream;
@@ -13,6 +14,10 @@ public class LineTokens {
 	public LineTokens(List<Node> tokens) {
 		super();
 		this.tokens = tokens;
+	}
+	
+	public LineTokens() {
+		this.tokens = new ArrayList<>();
 	}
 
 	public List<Node> getTokens() {
@@ -40,7 +45,7 @@ public class LineTokens {
 	}
 	
 	@Override
-	public int hashCode() {
+	public int hashCode() {//TODO: This is incorrect
 		int prime = 31;
 		int result = 1;
 		for(Node token : tokens) {
