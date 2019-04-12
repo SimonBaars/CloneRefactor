@@ -18,18 +18,18 @@ public class CloneParser implements Parser {
 	NodeParser astParser = new NodeParser();
 	
 	public List<Sequence> parse(List<File> javaFiles) {
-		final ListMap<Integer, Location> cloneReg = new ListMap<>();
-		Location lastLoc = calculateLineReg(javaFiles, cloneReg);
+		Location lastLoc = calculateLineReg(javaFiles);
 		if(lastLoc!=null)
-			return new CloneDetection().findChains(lastLoc, cloneReg);
+			return new CloneDetection().findChains(lastLoc);
 		return new ArrayList<>();
 	}
 
-	private final Location calculateLineReg(List<File> javaFiles, ListMap<Integer, Location> cloneReg) {
+	private final Location calculateLineReg(List<File> javaFiles) {
 		Location l = null;
 		for(File file : javaFiles) {
+			System.out.println(file);
 			try {
-				l = setIfNotNull(l, parseClassFile(file, cloneReg));
+				l = setIfNotNull(l, parseClassFile(file));
 			} catch (FileNotFoundException e) {
 				return null;
 			}
@@ -37,12 +37,12 @@ public class CloneParser implements Parser {
 		return l;
 	}
 
-	private Location parseClassFile(File file, ListMap<Integer, Location> cloneReg) throws FileNotFoundException {
+	private Location parseClassFile(File file) throws FileNotFoundException {
 		final ParseResult<CompilationUnit> pr = new JavaParser().parse(file);
 		if(pr.isSuccessful() && pr.getResult().isPresent()) {
 			CompilationUnit cu = pr.getResult().get();
-			Location l = astParser.extractLinesFromAST(null, file, cu, cloneReg);
-			astParser.addLineTokensToReg(l, cloneReg);
+			Location l = astParser.extractLinesFromAST(null, file, cu);
+			astParser.addLineTokensToReg(l);
 			return l;
 		}
 		return null;

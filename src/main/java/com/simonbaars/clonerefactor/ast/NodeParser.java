@@ -14,21 +14,21 @@ import com.simonbaars.clonerefactor.model.Location;
 public class NodeParser implements Parser {
 	final Map<LineTokens, Location> lineReg = new HashMap<>();
 	
-	public Location extractLinesFromAST(Location prevLocation, File file, Node n, ListMap<Integer, Location> cloneReg) {
-		prevLocation = parseToken(prevLocation, file,  n, cloneReg);
+	public Location extractLinesFromAST(Location prevLocation, File file, Node n) {
+		prevLocation = parseToken(prevLocation, file,  n);
 		for (Node child : n.getChildNodes()) {
-			prevLocation = setIfNotNull(prevLocation, extractLinesFromAST(prevLocation, file, child, cloneReg));
+			prevLocation = setIfNotNull(prevLocation, extractLinesFromAST(prevLocation, file, child));
 		}
 		return prevLocation;
 	}
 	
-	public Location parseToken(Location prevLocation, File file, Node t, ListMap<Integer, Location> cloneReg) {
+	public Location parseToken(Location prevLocation, File file, Node t) {
 		Optional<Range> range = t.getRange();
 		Location thisLocation = prevLocation;
 		if(range.isPresent()) {
 			int line = range.get().begin.line;
 			if(prevLocation!=null && prevLocation.getLine() != line) {
-				addLineTokensToReg(prevLocation, cloneReg);
+				addLineTokensToReg(prevLocation);
 				thisLocation = new Location(file, line, prevLocation);
 				prevLocation.setNextLine(thisLocation);
 			} else if(prevLocation==null) thisLocation = new Location(file, line, prevLocation);
@@ -39,8 +39,7 @@ public class NodeParser implements Parser {
 		return thisLocation;
 	}
 
-	public Location addLineTokensToReg(Location location, ListMap<Integer, Location> cloneReg) {
-		cloneReg.addTo(location.getTokenHash(), location);
+	public Location addLineTokensToReg(Location location) {
 		if(lineReg.containsKey(location.getTokens())) {
 			location.setClone(lineReg.get(location.getTokens()));
 			lineReg.put(location.getTokens(), location);

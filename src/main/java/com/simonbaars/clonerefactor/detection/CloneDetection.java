@@ -1,9 +1,11 @@
 package com.simonbaars.clonerefactor.detection;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -19,13 +21,15 @@ public class CloneDetection {
 
 	}
 
-	public List<Sequence> findChains(Location lastLoc, ListMap<Integer, Location> clonereg) {
+	public List<Sequence> findChains(Location lastLoc) {
 		Sequence buildingChains = new Sequence();
+		final Set<Location> visitedLocations = new HashSet<>();
 		final List<Sequence> clones = new ArrayList<Sequence>();
 		for(;lastLoc!=null;lastLoc = lastLoc.getPrevLine()) {
 			Sequence newClones = collectClones(lastLoc);
+			visitedLocations.addAll(newClones.getSequence().subList(1, newClones.size()));
 			if(newClones.size()>=1)
-				buildingChains = makeValid(lastLoc, buildingChains, newClones, clones, clonereg); //Because of the recent additions the current sequence may be invalidated
+				buildingChains = makeValid(lastLoc, buildingChains, newClones, clones, visitedLocations); //Because of the recent additions the current sequence may be invalidated
 			if(lastLoc.getPrevLine()!=null) {
 				if(lastLoc.getPrevLine().getFile()!=lastLoc.getFile()) {
 					buildingChains.getSequence().clear();
@@ -36,7 +40,7 @@ public class CloneDetection {
 	}
 
 
-	private Sequence makeValid(Location lastLoc, Sequence oldClones, Sequence newClones, List<Sequence> clones, ListMap<Integer, Location> clonereg) {
+	private Sequence makeValid(Location lastLoc, Sequence oldClones, Sequence newClones, List<Sequence> clones, Set<Location> visitedLocations) {
 		Map<Location /*oldClones*/, Location /*newClones*/> validChains = oldClones.getSequence().stream().distinct().filter(e -> newClones.getSequence().contains(e.getPrevLine())).collect(Collectors.toMap(e -> e, e -> e.getPrevLine()));
 
 		if(validChains.size()!=oldClones.size() && !oldClones.getSequence().isEmpty()) {
@@ -51,7 +55,7 @@ public class CloneDetection {
 			newClone.setAmountOfTokens(oldClone.getAmountOfTokens()+newClone.getAmountOfTokens());
 		}
 
-		if(lastLoc.isLocationParsed(clonereg)){
+		if(visitedLocations.contains(lastLoc)){
 			newClones.getSequence().clear();
 			newClones.getSequence().addAll(validChains.values());
 		}
