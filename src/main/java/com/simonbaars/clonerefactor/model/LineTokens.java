@@ -6,6 +6,9 @@ import java.util.List;
 import java.util.stream.IntStream;
 
 import com.github.javaparser.ast.Node;
+import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
+import com.github.javaparser.ast.body.EnumDeclaration;
+import com.github.javaparser.ast.stmt.BlockStmt;
 import com.simonbaars.clonerefactor.ast.CompareNodes;
 
 public class LineTokens {
@@ -40,18 +43,23 @@ public class LineTokens {
 		if(tokens.size()!=compareTokens.size())
 			return false;
 		CompareNodes c = new CompareNodes();
-		//System.out.println("Compare "+toString()+" with "+tokens.toString()+" => "+this.tokens.equals(((LineTokens)compareTokens).getTokens())+" but actually "+(hashCode() == compareTokens.hashCode()));
-		return IntStream.range(0,tokens.size()).allMatch(i -> c.compare(tokens.get(i), compareTokens.get(i)));//this.tokens.equals(((LineTokens)compareTokens).getTokens());
+		return IntStream.range(0,tokens.size()).allMatch(i -> c.compare(tokens.get(i), compareTokens.get(i)));
 	}
 	
 	@Override
-	public int hashCode() {//TODO: This is incorrect
+	public int hashCode() {
 		int prime = 31;
 		int result = 1;
 		for(Node token : tokens) {
-			result=prime * result + token.hashCode();
+			result=prime * result + getTokenHashCode(token);
 		}
 		return result;
+	}
+
+	private int getTokenHashCode(Node token) {
+		if(token instanceof BlockStmt || token instanceof ClassOrInterfaceDeclaration || token instanceof EnumDeclaration)
+			return 1; //We need to let `equals` handle this
+		return token.hashCode();
 	}
 
 	@Override
