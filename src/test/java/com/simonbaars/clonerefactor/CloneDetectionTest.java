@@ -47,6 +47,7 @@ public class CloneDetectionTest extends TestCase {
      * Test for clones that consist of lines that do not occur elsewhere.
      */
     public void testSimpleClones() {
+    	System.out.println("testSimpleClones");
         List<Sequence> chains = testProject(SIMPLE_PROJECT);
         System.out.println(Arrays.toString(chains.toArray()));
         Sequence c = new Sequence();
@@ -61,6 +62,7 @@ public class CloneDetectionTest extends TestCase {
      * Test for clones that consist of all equal lines.
      */
     public void testEqualLines() {
+    	System.out.println("testEqualLines");
     	List<Sequence> chains = testProject(EQUAL_LINES_PROJECT);
     	System.out.println(Arrays.toString(chains.toArray()));
         Sequence c = new Sequence();
@@ -75,6 +77,7 @@ public class CloneDetectionTest extends TestCase {
      * Test for three clones, of which one starts a line later than the others.
      */
     public void testPartialClonesLeft() {
+    	System.out.println("testPartialClonesLeft");
     	List<Sequence> chains = testProject(PARTIAL_CLONES_LEFT);
     	System.out.println(Arrays.toString(chains.toArray()));
     	Sequence c = new Sequence();
@@ -94,6 +97,7 @@ public class CloneDetectionTest extends TestCase {
      * Test for three clones, of which one ends a line later than the others.
      */
     public void testPartialLinesRight() {
+    	System.out.println("testPartialLinesRight");
     	List<Sequence> chains = testProject(PARTIAL_CLONES_RIGHT);
     	System.out.println(Arrays.toString(chains.toArray()));
     	Sequence c = new Sequence();
@@ -113,6 +117,7 @@ public class CloneDetectionTest extends TestCase {
      * Test for clones in Java enumerations.
      */
     public void testEnumClone() {
+    	System.out.println("testEnumClone");
     	List<Sequence> chains = testProject(ENUM_PROJECT);
     	System.out.println(Arrays.toString(chains.toArray()));
     	Sequence c = new Sequence();
@@ -127,6 +132,7 @@ public class CloneDetectionTest extends TestCase {
      * Test for clones in a single file, with just a single line to separate the clones.
      */
     public void testSingleFile() {
+    	System.out.println("testSingleFile");
     	List<Sequence> chains = testProject(SINGLE_FILE_PROJECT);
     	System.out.println(Arrays.toString(chains.toArray()));
     	Sequence c = new Sequence();
@@ -142,6 +148,7 @@ public class CloneDetectionTest extends TestCase {
      * Test for clones that differ in length but consist of lines with equal tokens.
      */
     public void testUnequalSizeClones() {
+    	System.out.println("testUnequalSizeClones");
     	List<Sequence> chains = testProject(UNEQUAL_SIZE_CLONES_PROJECT);
     	System.out.println(Arrays.toString(chains.toArray()));
         Sequence c = new Sequence();
@@ -156,6 +163,7 @@ public class CloneDetectionTest extends TestCase {
      * Test for clones that span multiple methods.
      */
     public void testSeveralMethodsCloned() {
+    	System.out.println("testSeveralMethodsCloned");
     	List<Sequence> chains = testProject(SEVERAL_METHODS_PROJECT);
     	System.out.println(Arrays.toString(chains.toArray()));
         Sequence c = new Sequence();
@@ -170,6 +178,7 @@ public class CloneDetectionTest extends TestCase {
      * Test for clones in import statements.
      */
     public void testImportStatements() {
+    	System.out.println("testImportStatements");
     	List<Sequence> chains = testProject("EqualImportStatements");
     	System.out.println(Arrays.toString(chains.toArray()));
         List<Sequence> expectedChains = new ArrayList<>();

@@ -1,5 +1,5 @@
 
-public class Clone2 {
+public class Clone3 {
 
 	public static void main3(String[] args) {
 		System.out.println("I'm a clone1");
