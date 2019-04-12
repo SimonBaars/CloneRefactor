@@ -1,14 +1,11 @@
 package com.simonbaars.clonerefactor.ast;
 
 import java.io.File;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Optional;
 
 import com.github.javaparser.Range;
-import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;
-import com.simonbaars.clonerefactor.NodeVisitor;
 import com.simonbaars.clonerefactor.datatype.ListMap;
 import com.simonbaars.clonerefactor.model.CompilationUnitReg;
 import com.simonbaars.clonerefactor.model.LineTokens;
