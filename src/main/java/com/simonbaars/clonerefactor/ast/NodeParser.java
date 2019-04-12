@@ -7,7 +7,6 @@ import java.util.Optional;
 
 import com.github.javaparser.Range;
 import com.github.javaparser.ast.Node;
-import com.simonbaars.clonerefactor.datatype.ListMap;
 import com.simonbaars.clonerefactor.model.LineTokens;
 import com.simonbaars.clonerefactor.model.Location;
 
