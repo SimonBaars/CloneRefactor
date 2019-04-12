@@ -52,6 +52,7 @@ public class FlattenedList<E> implements List<E> {
 		return flatList().toArray();
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T[] toArray(T[] a) {
 		return (T[])toArray();

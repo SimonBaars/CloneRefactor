@@ -43,34 +43,6 @@ public class TestingCommons {
 		if (file.createNewFile())
 			Files.write(Paths.get(file.getAbsolutePath()), content.getBytes(StandardCharsets.UTF_8));
 	}
-	
-
-	/**
-	 * Returns the bytes contained in the given file.
-	 * @param file
-	 * @return
-	 * @throws IOException
-	 */
-	private static byte[] loadFile(File file) throws IOException {
-		try (InputStream is = new FileInputStream(file)) {
-			long length = file.length();
-			if (length > Integer.MAX_VALUE) {
-				throw new IOException("The input file is too large: " + file.getName());
-			}
-			byte[] bytes = new byte[(int) length];
-
-			int offset = 0;
-			int numRead = 0;
-			while (offset < bytes.length && (numRead = is.read(bytes, offset, bytes.length - offset)) >= 0) {
-				offset += numRead;
-			}
-
-			if (offset < bytes.length) {
-				throw new IOException("Could not completely read file " + file.getName());
-			}
-			return bytes;
-		}
-	}
 
 	public static Set<String> getVariables(String checkString, String delimiterBegin, String delimiterEnd) {
 		Set<String> vars = new LinkedHashSet<>();
