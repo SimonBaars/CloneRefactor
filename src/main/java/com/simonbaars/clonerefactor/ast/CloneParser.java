@@ -15,7 +15,7 @@ import com.simonbaars.clonerefactor.model.Sequence;
 
 public class CloneParser implements Parser {
 
-	ASTParser astParser = new ASTParser();
+	NodeParser astParser = new NodeParser();
 	
 	public List<Sequence> parse(List<File> javaFiles) {
 		final ListMap<Integer, Location> cloneReg = new ListMap<>();

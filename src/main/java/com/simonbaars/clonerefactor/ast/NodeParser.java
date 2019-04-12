@@ -11,15 +11,23 @@ import com.simonbaars.clonerefactor.datatype.ListMap;
 import com.simonbaars.clonerefactor.model.LineTokens;
 import com.simonbaars.clonerefactor.model.Location;
 
-public class ASTParser implements Parser {
+public class NodeParser implements Parser {
 	final Map<LineTokens, Location> lineReg = new HashMap<>();
+	
+	public Location extractLinesFromAST(Location prevLocation, File file, Node n, ListMap<Integer, Location> cloneReg) {
+		prevLocation = parseToken(prevLocation, file,  n, cloneReg);
+		for (Node child : n.getChildNodes()) {
+			prevLocation = setIfNotNull(prevLocation, extractLinesFromAST(prevLocation, file, child, cloneReg));
+		}
+		return prevLocation;
+	}
 	
 	public Location parseToken(Location prevLocation, File file, Node t, ListMap<Integer, Location> cloneReg) {
 		Optional<Range> range = t.getRange();
 		Location thisLocation = prevLocation;
 		if(range.isPresent()) {
 			int line = range.get().begin.line;
-			if(prevLocation.getLine() != line) {
+			if(prevLocation!=null && prevLocation.getLine() != line) {
 				addLineTokensToReg(prevLocation, cloneReg);
 				thisLocation = new Location(file, line, prevLocation);
 				prevLocation.setNextLine(thisLocation);
@@ -38,13 +46,5 @@ public class ASTParser implements Parser {
 			lineReg.put(location.getTokens(), location);
 		}
 		return location;
-	}
-	
-	public Location extractLinesFromAST(Location prevLocation, File file, Node n, ListMap<Integer, Location> cloneReg) {
-		prevLocation = parseToken(prevLocation, file,  n, cloneReg);
-		for (Node child : n.getChildNodes()) {
-			prevLocation = setIfNotNull(prevLocation, extractLinesFromAST(prevLocation, file, child, cloneReg));
-		}
-		return prevLocation;
 	}
 }
