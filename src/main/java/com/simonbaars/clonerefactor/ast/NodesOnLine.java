@@ -3,7 +3,7 @@ package com.simonbaars.clonerefactor.ast;
 import com.github.javaparser.ast.Node;
 
 public class NodesOnLine {
-	Node node;
+	List<Node> nodes;
 	NodeType type;
 	
 	public NodesOnLine(Node n) {
