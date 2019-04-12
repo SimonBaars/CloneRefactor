@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Map;
 
 import com.github.javaparser.JavaParser;
-import com.github.javaparser.JavaToken;
 import com.github.javaparser.ParseResult;
 import com.github.javaparser.ast.CompilationUnit;
 import com.simonbaars.clonerefactor.datatype.ListMap;
@@ -31,7 +30,7 @@ public class CloneParser {
 	private static final Location calculateLineReg(List<File> javaFiles, ListMap<Integer, Location> cloneReg) {
 		final Map<LineTokens, Location> lineReg = new HashMap<>();
 		Location l = null;
-		final CompilationUnitReg<JavaToken> r = new CompilationUnitReg();
+		final CompilationUnitReg r = new CompilationUnitReg();
 		for(File file : javaFiles) {
 			try {
 				l = setIfNotNull(l, parseClassFile(lineReg, file, r, cloneReg));
@@ -47,11 +46,11 @@ public class CloneParser {
 		return parseClassFile == null ? l : parseClassFile;
 	}
 
-	private static Location parseClassFile(final Map<LineTokens, Location> lineReg, File file, CompilationUnitReg<JavaToken> r, ListMap<Integer, Location> cloneReg) throws FileNotFoundException {
+	private static Location parseClassFile(final Map<LineTokens, Location> lineReg, File file, CompilationUnitReg r, ListMap<Integer, Location> cloneReg) throws FileNotFoundException {
 		final ParseResult<CompilationUnit> pr = new JavaParser().parse(file);
 		if(pr.isSuccessful() && pr.getResult().isPresent()) {
 			CompilationUnit cu = pr.getResult().get();
-			return new TokenParser().extractLinesFromAST(lineReg, file, r, cloneReg, cu);
+			return new ASTParser().extractLinesFromAST(lineReg, file, r, cloneReg, cu);
 		}
 		return null;
 	}

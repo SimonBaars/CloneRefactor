@@ -5,9 +5,9 @@ import java.util.List;
 
 import com.github.javaparser.ast.Node;
 
-public class CompilationUnitReg<T> {
+public class CompilationUnitReg {
 	private int lastLineNumber = 0;
-	private List<T> thisLine = new ArrayList<>();
+	private List<Node> thisLine = new ArrayList<>();
 	private Location lastLine = null;
 	
 	public CompilationUnitReg() {}
@@ -28,7 +28,7 @@ public class CompilationUnitReg<T> {
 		this.lastLineNumber = line;
 	}
 
-	public List<T> getThisLine() {
+	public List<Node> getThisLine() {
 		return thisLine;
 	}
 	
