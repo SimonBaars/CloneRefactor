@@ -6,6 +6,10 @@ import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.body.Parameter;
+import com.github.javaparser.ast.stmt.DoStmt;
+import com.github.javaparser.ast.stmt.ForEachStmt;
+import com.github.javaparser.ast.stmt.ForStmt;
+import com.github.javaparser.ast.stmt.WhileStmt;
 import com.simonbaars.clonerefactor.model.CompareRules;
 
 public class CompareNodes {
@@ -28,7 +32,34 @@ public class CompareNodes {
 			return compareMethodDeclarations((MethodDeclaration)n1, (MethodDeclaration)n2);
 		else if(n1 instanceof ClassOrInterfaceDeclaration)
 			return compareClassDeclarations((ClassOrInterfaceDeclaration)n1, (ClassOrInterfaceDeclaration)n2);
+		else if(n1 instanceof ForEachStmt)
+			return compareForEachStmt((ForEachStmt)n1, (ForEachStmt)n2);
+		else if(n1 instanceof DoStmt)
+			return compareDoStmt((DoStmt)n1, (DoStmt)n2);
+		else if(n1 instanceof ForStmt)
+			return compareForStmt((ForStmt)n1, (ForStmt)n2);
+		else if(n1 instanceof WhileStmt)
+			return compareWhileStmt((WhileStmt)n1, (WhileStmt)n2);
 		return n1.equals(n2);
+	}
+
+	private boolean compareForEachStmt(ForEachStmt n1, ForEachStmt n2) {
+		return n1.getVariable().equals(n2.getVariable()) &&
+				n1.getIterable().equals(n2.getIterable());
+	}
+
+	private boolean compareDoStmt(DoStmt n1, DoStmt n2) {
+		return n1.getCondition().equals(n2.getCondition());
+	}
+
+	private boolean compareForStmt(ForStmt n1, ForStmt n2) {
+		return n1.getCompare().equals(n2.getCompare()) && 
+				n1.getInitialization().equals(n2.getInitialization()) &&
+				n1.getUpdate().equals(n2.getUpdate());
+	}
+
+	private boolean compareWhileStmt(WhileStmt n1, WhileStmt n2) {
+		return n1.getCondition().equals(n2.getCondition());
 	}
 
 	private boolean compareClassDeclarations(ClassOrInterfaceDeclaration n1, ClassOrInterfaceDeclaration n2) {
