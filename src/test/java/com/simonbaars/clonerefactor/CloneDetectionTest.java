@@ -202,6 +202,7 @@ public class CloneDetectionTest extends TestCase {
 			for(Object expectedChain : expectedChains) {
 				if((chain instanceof List && checkArbitraryOrder((List)chain, (List)expectedChain)) ||
 					(chain instanceof Sequence && checkArbitraryOrder(((Sequence)chain).getSequence(), ((Sequence)expectedChain).getSequence())) ||
+					(chain instanceof Location && ((Location)chain).isSame((Location)expectedChain)) || 
 					(chain instanceof Object && chain.equals(expectedChain))){
 					continue outerloop;
 				}
