@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import com.github.javaparser.Range;
+import com.github.javaparser.ast.ImportDeclaration;
 import com.github.javaparser.ast.Node;
 import com.simonbaars.clonerefactor.model.LineTokens;
 import com.simonbaars.clonerefactor.model.Location;
@@ -14,6 +15,8 @@ public class NodeParser implements Parser {
 	final Map<LineTokens, Location> lineReg = new HashMap<>();
 	
 	public Location extractLinesFromAST(Location prevLocation, File file, Node n) {
+		if(n instanceof ImportDeclaration)
+			return prevLocation;
 		prevLocation = parseToken(prevLocation, file,  n);
 		for (Node child : n.getChildNodes()) {
 			prevLocation = setIfNotNull(prevLocation, extractLinesFromAST(prevLocation, file, child));

@@ -26,7 +26,6 @@ public class CloneParser implements Parser {
 	private final Location calculateLineReg(List<File> javaFiles) {
 		Location l = null;
 		for(File file : javaFiles) {
-			System.out.println(file);
 			try {
 				l = setIfNotNull(l, parseClassFile(file));
 			} catch (FileNotFoundException e) {
