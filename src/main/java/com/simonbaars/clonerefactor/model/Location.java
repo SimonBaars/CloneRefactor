@@ -44,6 +44,11 @@ public class Location {
 		this.amountOfTokens = amountOfTokens;
 	}
 
+	public Location(File file, int line, Location prevLocation) {
+		this(file, line);
+		this.prevLine = prevLocation;
+	}
+
 	public File getFile() {
 		return file;
 	}
@@ -159,6 +164,14 @@ public class Location {
 
 	public void setNextLine(Location nextLine) {
 		this.nextLine = nextLine;
+	}
+
+	public LineTokens getTokens() {
+		return tokens;
+	}
+
+	public void setTokens(LineTokens tokens) {
+		this.tokens = tokens;
 	}
 	
 }

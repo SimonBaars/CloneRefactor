@@ -37,7 +37,7 @@ public class Main {
 		if(javaFiles.size() == 0)
 			throw new NoPathEnteredException();
 		
-		return CloneParser.parse(javaFiles);
+		return new CloneParser().parse(javaFiles);
 	}
 
 	private static List<File> scanProjectForJavaFiles(String path) {

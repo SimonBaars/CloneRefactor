@@ -12,26 +12,26 @@ import com.simonbaars.clonerefactor.model.LineTokens;
 import com.simonbaars.clonerefactor.model.Location;
 
 public class ASTParser implements Parser {
-	public Location parseToken(Location prevLocation, File file,
-			Node t, ListMap<Integer, Location> cloneReg) {
+	final 
+	
+	public Location parseToken(Location prevLocation, File file, Node t, ListMap<Integer, Location> cloneReg) {
 		Optional<Range> range = t.getRange();
-		Location l = null;
+		Location thisLocation = null;
 		if(range.isPresent()) {
 			int line = range.get().begin.line;
-			if(r.lastLineNumberExists() && r.getLastLineNumber()!=line)
-				l = addLineTokensToReg(lineReg, file, r, r.getLastLineNumber(), cloneReg);
+			if(prevLocation.getLine() != line) {
+				thisLocation = new Location(file, line, prevLocation);
+			} else thisLocation = prevLocation;
+			addLineTokensToReg(thisLocation, cloneReg);
 			r.visitLine(line);
 			r.getThisLine().add(t);
 			//if(!it.hasNext())
 			//	l = addLineTokensToReg(lineReg, file, r, line, cloneReg);
 		}
-		return l;
+		return thisLocation;
 	}
 
-	private Location addLineTokensToReg(final Map<LineTokens, Location> lineReg, File file,
-			final CompilationUnitReg r, int line, ListMap<Integer, Location> cloneReg) {
-		LineTokens l = new LineTokens(r.getThisLine());
-		Location location = new Location(file, line, l.size(), l.hashCode());
+	private Location addLineTokensToReg(Location location, ListMap<Integer, Location> cloneReg) {
 		cloneReg.addTo(location.getTokenHash(), location);
 		if(lineReg.containsKey(l)) {
 			location.setClone(lineReg.get(l));
@@ -43,7 +43,7 @@ public class ASTParser implements Parser {
 		return location;
 	}
 	
-	public Location extractLinesFromAST(Location prevLocation, File file, final CompilationUnitReg r, Node n, ListMap<Integer, Location> cloneReg) {
+	public Location extractLinesFromAST(Location prevLocation, File file, Node n, ListMap<Integer, Location> cloneReg) {
 		prevLocation = parseToken(prevLocation, file, r,  n, cloneReg);
 		for (Node child : n.getChildNodes()) {
 			prevLocation = setIfNotNull(prevLocation, extractLinesFromAST(prevLocation, file, r, child, cloneReg));

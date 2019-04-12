@@ -24,7 +24,7 @@ public class RunOnCorpus {
 		outputFolder.mkdirs();
 		File[] corpusFiles = getFilteredCorpusFiles(5, 1000);
 		for(File file : ProgressBar.wrap(Arrays.asList(corpusFiles), new ProgressBarBuilder().setTaskName("Running Clone Detection").setStyle(ProgressBarStyle.ASCII))) {
-			List<Sequence> seq = CloneParser.parse(getJavaFiles(getSourceFolder(file)));
+			List<Sequence> seq = new CloneParser().parse(getJavaFiles(getSourceFolder(file)));
 			try {
 				TestingCommons.writeStringToFile(new File(outputFolder.getAbsolutePath()+"/"+file.getName()+"-"+seq.size()+".txt"), Arrays.toString(seq.toArray()));
 			} catch (IOException e) {

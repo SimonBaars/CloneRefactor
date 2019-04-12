@@ -19,7 +19,9 @@ import com.simonbaars.clonerefactor.model.Sequence;
 
 public class CloneParser {
 
-	public static List<Sequence> parse(List<File> javaFiles) {
+	ASTParser astParser = new ASTParser();
+	
+	public List<Sequence> parse(List<File> javaFiles) {
 		final ListMap<Integer, Location> cloneReg = new ListMap<>();
 		Location lastLoc = calculateLineReg(javaFiles, cloneReg);
 		if(lastLoc!=null)
@@ -27,12 +29,11 @@ public class CloneParser {
 		return new ArrayList<>();
 	}
 
-	private static final Location calculateLineReg(List<File> javaFiles, ListMap<Integer, Location> cloneReg) {
+	private final Location calculateLineReg(List<File> javaFiles, ListMap<Integer, Location> cloneReg) {
 		Location l = null;
-		final CompilationUnitReg r = new CompilationUnitReg();
 		for(File file : javaFiles) {
 			try {
-				l = setIfNotNull(l, parseClassFile(file, r, cloneReg));
+				l = setIfNotNull(l, parseClassFile(file, cloneReg));
 			} catch (FileNotFoundException e) {
 				return null;
 			}
@@ -41,15 +42,15 @@ public class CloneParser {
 		return l;
 	}
 
-	private static<T> T setIfNotNull(T l, T parseClassFile) {
+	private<T> T setIfNotNull(T l, T parseClassFile) {
 		return parseClassFile == null ? l : parseClassFile;
 	}
 
-	private static Location parseClassFile(File file, CompilationUnitReg r, ListMap<Integer, Location> cloneReg) throws FileNotFoundException {
+	private Location parseClassFile(File file, ListMap<Integer, Location> cloneReg) throws FileNotFoundException {
 		final ParseResult<CompilationUnit> pr = new JavaParser().parse(file);
 		if(pr.isSuccessful() && pr.getResult().isPresent()) {
 			CompilationUnit cu = pr.getResult().get();
-			return new ASTParser().extractLinesFromAST(file, r, cu, cloneReg);
+			return new ASTParser().extractLinesFromAST(file, cu, cloneReg);
 		}
 		return null;
 	}
