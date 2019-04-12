@@ -3,21 +3,17 @@ package com.simonbaars.clonerefactor.ast;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import com.github.javaparser.JavaParser;
 import com.github.javaparser.ParseResult;
 import com.github.javaparser.ast.CompilationUnit;
 import com.simonbaars.clonerefactor.datatype.ListMap;
 import com.simonbaars.clonerefactor.detection.CloneDetection;
-import com.simonbaars.clonerefactor.model.CompilationUnitReg;
-import com.simonbaars.clonerefactor.model.LineTokens;
 import com.simonbaars.clonerefactor.model.Location;
 import com.simonbaars.clonerefactor.model.Sequence;
 
-public class CloneParser {
+public class CloneParser implements Parser {
 
 	ASTParser astParser = new ASTParser();
 	
@@ -37,20 +33,17 @@ public class CloneParser {
 			} catch (FileNotFoundException e) {
 				return null;
 			}
-			r.reset();
 		}
 		return l;
-	}
-
-	private<T> T setIfNotNull(T l, T parseClassFile) {
-		return parseClassFile == null ? l : parseClassFile;
 	}
 
 	private Location parseClassFile(File file, ListMap<Integer, Location> cloneReg) throws FileNotFoundException {
 		final ParseResult<CompilationUnit> pr = new JavaParser().parse(file);
 		if(pr.isSuccessful() && pr.getResult().isPresent()) {
 			CompilationUnit cu = pr.getResult().get();
-			return new ASTParser().extractLinesFromAST(file, cu, cloneReg);
+			Location l = astParser.extractLinesFromAST(null, file, cu, cloneReg);
+			astParser.addLineTokensToReg(l, cloneReg);
+			return l;
 		}
 		return null;
 	}

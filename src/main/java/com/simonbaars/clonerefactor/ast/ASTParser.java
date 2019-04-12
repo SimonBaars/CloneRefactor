@@ -16,20 +16,20 @@ public class ASTParser implements Parser {
 	
 	public Location parseToken(Location prevLocation, File file, Node t, ListMap<Integer, Location> cloneReg) {
 		Optional<Range> range = t.getRange();
-		Location thisLocation = null;
+		Location thisLocation = prevLocation;
 		if(range.isPresent()) {
 			int line = range.get().begin.line;
 			if(prevLocation.getLine() != line) {
+				addLineTokensToReg(prevLocation, cloneReg);
 				thisLocation = new Location(file, line, prevLocation);
 				prevLocation.setNextLine(thisLocation);
-			} else thisLocation = prevLocation;
-			if()
-			addLineTokensToReg(thisLocation, cloneReg);
+			}
+			
 		}
 		return thisLocation;
 	}
 
-	private Location addLineTokensToReg(Location location, ListMap<Integer, Location> cloneReg) {
+	public Location addLineTokensToReg(Location location, ListMap<Integer, Location> cloneReg) {
 		cloneReg.addTo(location.getTokenHash(), location);
 		if(lineReg.containsKey(location.getTokens())) {
 			location.setClone(lineReg.get(location.getTokens()));
@@ -40,7 +40,7 @@ public class ASTParser implements Parser {
 		return location;
 	}
 	
-	public Location extractLinesFromAST(Location prevLocation, File file, Node n, ListMap<Integer, Location> cloneReg, boolean isLast) {
+	public Location extractLinesFromAST(Location prevLocation, File file, Node n, ListMap<Integer, Location> cloneReg) {
 		prevLocation = parseToken(prevLocation, file,  n, cloneReg);
 		for (Node child : n.getChildNodes()) {
 			prevLocation = setIfNotNull(prevLocation, extractLinesFromAST(prevLocation, file, child, cloneReg));
