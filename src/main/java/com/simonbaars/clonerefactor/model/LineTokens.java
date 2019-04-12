@@ -2,8 +2,10 @@ package com.simonbaars.clonerefactor.model;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.IntStream;
 
 import com.github.javaparser.ast.Node;
+import com.simonbaars.clonerefactor.ast.CompareNodes;
 
 public class LineTokens {
 	private final List<Node> tokens;
@@ -26,11 +28,15 @@ public class LineTokens {
 	}
 	
 	@Override
-	public boolean equals (Object compareTokens) {
-		if(!(compareTokens instanceof LineTokens))
+	public boolean equals (Object o) {
+		if(!(o instanceof LineTokens))
 			return false;
+		List<Node> compareTokens = ((LineTokens)o).getTokens();
+		if(tokens.size()!=compareTokens.size())
+			return false;
+		CompareNodes c = new CompareNodes();
 		//System.out.println("Compare "+toString()+" with "+tokens.toString()+" => "+this.tokens.equals(((LineTokens)compareTokens).getTokens())+" but actually "+(hashCode() == compareTokens.hashCode()));
-		return this.tokens.equals(((LineTokens)compareTokens).getTokens());
+		return IntStream.range(0,tokens.size()).allMatch(i -> c.compare(tokens.get(i), compareTokens.get(i)));//this.tokens.equals(((LineTokens)compareTokens).getTokens());
 	}
 	
 	@Override
