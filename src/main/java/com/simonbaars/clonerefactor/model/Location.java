@@ -106,7 +106,7 @@ public class Location {
 		this.amountOfLines = amountOfLines;
 	}
 
-	@Override
+	/*@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
@@ -114,17 +114,9 @@ public class Location {
 		result = prime * result + endLine;
 		result = prime * result + ((file == null) ? 0 : file.hashCode());
 		return result;
-	}
+	}*/
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Location other = (Location) obj;
+	public boolean isSame(Location other) {
 		if (beginLine != other.beginLine)
 			return false;
 		if (endLine != other.endLine)
