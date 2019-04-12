@@ -50,7 +50,7 @@ public class CloneParser {
 		final ParseResult<CompilationUnit> pr = new JavaParser().parse(file);
 		if(pr.isSuccessful() && pr.getResult().isPresent()) {
 			CompilationUnit cu = pr.getResult().get();
-			return new ASTParser().extractLinesFromAST(lineReg, file, r, cloneReg, cu);
+			return new ASTParser().extractLinesFromAST(lineReg, file, r, cu, cloneReg);
 		}
 		return null;
 	}

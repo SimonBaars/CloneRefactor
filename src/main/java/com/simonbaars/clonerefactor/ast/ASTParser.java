@@ -8,6 +8,7 @@ import java.util.Optional;
 import com.github.javaparser.Range;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;
+import com.simonbaars.clonerefactor.NodeVisitor;
 import com.simonbaars.clonerefactor.datatype.ListMap;
 import com.simonbaars.clonerefactor.model.CompilationUnitReg;
 import com.simonbaars.clonerefactor.model.LineTokens;
@@ -15,8 +16,7 @@ import com.simonbaars.clonerefactor.model.Location;
 
 public class ASTParser implements Parser {
 	public Location parseToken(final Map<LineTokens, Location> lineReg, File file, final CompilationUnitReg r,
-			Iterator<Node> it, ListMap<Integer, Location> cloneReg) {
-		Node t = it.next();
+			Node t, ListMap<Integer, Location> cloneReg) {
 		Optional<Range> range = t.getRange();
 		Location l = null;
 		if(range.isPresent()) {
@@ -25,8 +25,8 @@ public class ASTParser implements Parser {
 				l = addLineTokensToReg(lineReg, file, r, r.getLastLineNumber(), cloneReg);
 			r.visitLine(line);
 			r.getThisLine().add(t);
-			if(!it.hasNext())
-				l = addLineTokensToReg(lineReg, file, r, line, cloneReg);
+			//if(!it.hasNext())
+			//	l = addLineTokensToReg(lineReg, file, r, line, cloneReg);
 		}
 		return l;
 	}
@@ -46,11 +46,10 @@ public class ASTParser implements Parser {
 		return location;
 	}
 	
-	public Location extractLinesFromAST(final Map<LineTokens, Location> lineReg, File file,
-			CompilationUnitReg r, ListMap<Integer, Location> cloneReg, CompilationUnit cu) {
-		Location l = null;
-		for (Iterator<Node> it = cu.stream().iterator(); it.hasNext();) {
-			l = setIfNotNull(l, parseToken(lineReg, file, r, it, cloneReg));
+	public Location extractLinesFromAST(final Map<LineTokens, Location> lineReg, File file, final CompilationUnitReg r, Node n, ListMap<Integer, Location> cloneReg) {
+		Location l = parseToken(lineReg, file, r,  n, cloneReg);
+		for (Node child : n.getChildNodes()) {
+			l = setIfNotNull(l, extractLinesFromAST(lineReg, file, r, child, cloneReg));
 		}
 		return l;
 	}
