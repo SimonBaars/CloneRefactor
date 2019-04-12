@@ -15,6 +15,10 @@ public class CompareRules {
 		this.maxAmountOfDifferentExpressions = maxAmountOfDifferentExpressions;
 	}
 	
+	public CompareRules() {
+		super();
+	}
+
 	public boolean isCheckClassNames() {
 		return checkClassNames;
 	}

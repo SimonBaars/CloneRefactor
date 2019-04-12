@@ -2,11 +2,11 @@ package com.simonbaars.clonerefactor.ast;
 
 import com.github.javaparser.ast.Node;
 
-public class NodeRegistry {
+public class NodesOnLine {
 	Node node;
 	NodeType type;
 	
-	public NodeRegistry(Node n) {
+	public NodesOnLine(Node n) {
 		this.node = n;
 		this.type = NodeType.getNodeType(n);
 	}
