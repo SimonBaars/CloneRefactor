@@ -31,7 +31,8 @@ public class NodeParser implements Parser {
 				addLineTokensToReg(prevLocation, cloneReg);
 				thisLocation = new Location(file, line, prevLocation);
 				prevLocation.setNextLine(thisLocation);
-			}
+			} else if(prevLocation==null) thisLocation = new Location(file, line, prevLocation);
+			thisLocation.getTokens().add(t);
 			
 		}
 		return thisLocation;
