@@ -2,7 +2,10 @@ package com.simonbaars.clonerefactor.model;
 
 import java.io.File;
 import java.util.List;
+import java.util.Optional;
 
+import com.github.javaparser.TokenRange;
+import com.github.javaparser.ast.Node;
 import com.simonbaars.clonerefactor.datatype.ListMap;
 
 public class Location {
@@ -13,7 +16,7 @@ public class Location {
 	private int amountOfTokens = 0;
 	private int tokenHash;
 	
-	private LineTokens tokens = new LineTokens();
+	private LocationContents tokens = new LocationContents();
 	
 	private Location prevLine;
 	private Location clone;
@@ -158,17 +161,25 @@ public class Location {
 		this.nextLine = nextLine;
 	}
 
-	public LineTokens getTokens() {
+	public LocationContents getTokens() {
 		return tokens;
 	}
 
-	public void setTokens(LineTokens tokens) {
+	public void setTokens(LocationContents tokens) {
 		this.tokens = tokens;
 		this.amountOfTokens = tokens.size();
 	}
 
 	public void incrementTokens() {
 		this.amountOfTokens++;
+	}
+
+	public void calculateTokens(Node n, int line) {
+		Optional<TokenRange> t = n.getTokenRange();
+		if(t.isPresent())
+			getTokens().addTokens(t.get(), line);
+		getTokens().add(n);
+		this.amountOfTokens = getTokens().getTokens().size();
 	}
 	
 }

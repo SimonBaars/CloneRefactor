@@ -3,54 +3,55 @@ package com.simonbaars.clonerefactor.model;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.IntStream;
 
+import com.github.javaparser.JavaToken;
+import com.github.javaparser.Range;
+import com.github.javaparser.TokenRange;
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.EnumDeclaration;
 import com.github.javaparser.ast.stmt.BlockStmt;
 import com.simonbaars.clonerefactor.ast.CompareNodes;
 
-public class LineTokens {
-	private final List<Node> tokens;
-
-	public LineTokens(List<Node> tokens) {
-		super();
-		this.tokens = tokens;
-	}
+public class LocationContents {
+	private final List<Node> nodes;
+	private final List<JavaToken> tokens;
 	
-	public LineTokens() {
+	public LocationContents() {
+		this.nodes = new ArrayList<>();
 		this.tokens = new ArrayList<>();
 	}
 
-	public List<Node> getTokens() {
-		return tokens;
+	public List<Node> getNodes() {
+		return nodes;
 	}
 
 	public int size() {
-		return tokens.size();
+		return nodes.size();
 	}
 	
-	public void add(Node token) {
-		tokens.add(token);
+	public void add(Node n) {
+		nodes.add(n);
 	}
 	
 	@Override
 	public boolean equals (Object o) {
-		if(!(o instanceof LineTokens))
+		if(!(o instanceof LocationContents))
 			return false;
-		List<Node> compareTokens = ((LineTokens)o).getTokens();
-		if(tokens.size()!=compareTokens.size())
+		List<Node> compareTokens = ((LocationContents)o).getNodes();
+		if(nodes.size()!=compareTokens.size())
 			return false;
 		CompareNodes c = new CompareNodes();
-		return IntStream.range(0,tokens.size()).allMatch(i -> c.compare(tokens.get(i), compareTokens.get(i)));
+		return IntStream.range(0,nodes.size()).allMatch(i -> c.compare(nodes.get(i), compareTokens.get(i)));
 	}
 	
 	@Override
 	public int hashCode() {
 		int prime = 31;
 		int result = 1;
-		for(Node token : tokens) {
+		for(Node token : nodes) {
 			result=prime * result + getTokenHashCode(token);
 		}
 		return result;
@@ -64,7 +65,22 @@ public class LineTokens {
 
 	@Override
 	public String toString() {
-		return "LineTokens [tokens=" + Arrays.deepToString(tokens.toArray()) + "]";
+		return "LocationContents [nodes=" + Arrays.deepToString(nodes.toArray()) + "]";
+	}
+
+	public void addTokens(TokenRange tokenRange, int line) {
+		for(JavaToken token : tokenRange) {
+			Optional<Range> r = token.getRange();
+			if(r.isPresent()) {
+				int l = r.get().begin.line;
+				if(l!=line) return;
+			}
+			tokens.add(token);
+		}
+	}
+
+	public List<JavaToken> getTokens() {
+		return tokens;
 	}
 	
 	

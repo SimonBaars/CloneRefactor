@@ -17,11 +17,11 @@ import com.github.javaparser.ast.expr.Expression;
 import com.github.javaparser.ast.nodeTypes.NodeWithBody;
 import com.github.javaparser.ast.nodeTypes.NodeWithIdentifier;
 import com.github.javaparser.ast.stmt.BlockStmt;
-import com.simonbaars.clonerefactor.model.LineTokens;
+import com.simonbaars.clonerefactor.model.LocationContents;
 import com.simonbaars.clonerefactor.model.Location;
 
 public class NodeParser implements Parser {
-	final Map<LineTokens, Location> lineReg = new HashMap<>();
+	final Map<LocationContents, Location> lineReg = new HashMap<>();
 	
 	public Location extractLinesFromAST(Location prevLocation, File file, Node n) {
 		if(n instanceof ImportDeclaration || n instanceof Expression || n instanceof Modifier || n instanceof NodeWithIdentifier)
@@ -57,9 +57,8 @@ public class NodeParser implements Parser {
 				thisLocation = new Location(file, line, prevLocation);
 				prevLocation.setNextLine(thisLocation);
 			} else if(prevLocation==null) thisLocation = new Location(file, line, prevLocation);
-			thisLocation.getTokens().add(n);
-			thisLocation.incrementTokens();
-			
+			thisLocation.calculateTokens(n, line);
+			//thisLocation.incrementTokens();
 		}
 		return thisLocation;
 	}
