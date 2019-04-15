@@ -64,11 +64,11 @@ public class NodeParser implements Parser {
 	}
 
 	public Location addLineTokensToReg(Location location) {
-		if(lineReg.containsKey(location.getTokens())) {
-			location.setClone(lineReg.get(location.getTokens()));
-			lineReg.put(location.getTokens(), location);
+		if(lineReg.containsKey(location.getContents())) {
+			location.setClone(lineReg.get(location.getContents()));
+			lineReg.put(location.getContents(), location);
 		} else {
-			lineReg.put(location.getTokens(), location);
+			lineReg.put(location.getContents(), location);
 		}
 		return location;
 	}

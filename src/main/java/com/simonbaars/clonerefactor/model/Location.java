@@ -16,7 +16,7 @@ public class Location {
 	private int amountOfTokens = 0;
 	private int tokenHash;
 	
-	private LocationContents tokens = new LocationContents();
+	private LocationContents contents = new LocationContents();
 	
 	private Location prevLine;
 	private Location clone;
@@ -161,12 +161,12 @@ public class Location {
 		this.nextLine = nextLine;
 	}
 
-	public LocationContents getTokens() {
-		return tokens;
+	public LocationContents getContents() {
+		return contents;
 	}
 
 	public void setTokens(LocationContents tokens) {
-		this.tokens = tokens;
+		this.contents = tokens;
 		this.amountOfTokens = tokens.size();
 	}
 
@@ -177,9 +177,9 @@ public class Location {
 	public void calculateTokens(Node n, int line) {
 		Optional<TokenRange> t = n.getTokenRange();
 		if(t.isPresent())
-			getTokens().addTokens(t.get(), line);
-		getTokens().add(n);
-		this.amountOfTokens = getTokens().getTokens().size();
+			getContents().addTokens(t.get(), line);
+		getContents().add(n);
+		this.amountOfTokens = getContents().getTokens().size();
 	}
 	
 }
