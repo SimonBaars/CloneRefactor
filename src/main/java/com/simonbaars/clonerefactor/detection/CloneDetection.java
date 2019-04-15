@@ -14,8 +14,9 @@ import com.simonbaars.clonerefactor.model.Location;
 import com.simonbaars.clonerefactor.model.Sequence;
 
 public class CloneDetection {
-	private static final int MIN_AMOUNT_OF_LINES = 3;
+	private static final int MIN_AMOUNT_OF_LINES = 6;
 	private static final int MIN_AMOUNT_OF_TOKENS = 15;
+	private static final int MIN_AMOUNT_OF_NODES = 6; 
 
 	public CloneDetection() {
 
@@ -73,7 +74,7 @@ public class CloneDetection {
 					}
 				}
 				IntStream.range(0, origEl).forEach(i -> l.set(i, new Location(l.get(i))));
-				if(l.stream().collect(Collectors.summingInt(e -> e.getAmountOfTokens())) > MIN_AMOUNT_OF_TOKENS && l.size()>1) {
+				if(l.stream().collect(Collectors.summingInt(e -> e.getAmountOfTokens())) > MIN_AMOUNT_OF_TOKENS && l.stream().collect(Collectors.summingInt(e -> e.getAmountOfNodes())) > MIN_AMOUNT_OF_NODES && l.size()>1) {
 					Sequence newSequence = new Sequence(l);
 					removeDuplicatesOf(clones, newSequence);
 					clones.add(newSequence);

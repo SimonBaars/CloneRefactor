@@ -2,13 +2,11 @@ package com.simonbaars.clonerefactor.ast;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import com.github.javaparser.Position;
 import com.github.javaparser.Range;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.ImportDeclaration;
@@ -16,6 +14,7 @@ import com.github.javaparser.ast.Modifier;
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
+import com.github.javaparser.ast.comments.Comment;
 import com.github.javaparser.ast.expr.Expression;
 import com.github.javaparser.ast.nodeTypes.NodeWithBody;
 import com.github.javaparser.ast.nodeTypes.NodeWithIdentifier;
@@ -28,7 +27,7 @@ public class NodeParser implements Parser {
 	final Map<LocationContents, Location> lineReg = new HashMap<>();
 	
 	public Location extractLinesFromAST(Location prevLocation, File file, Node n) {
-		if(n instanceof ImportDeclaration || n instanceof Expression || n instanceof Modifier || n instanceof NodeWithIdentifier)
+		if(n instanceof ImportDeclaration || n instanceof Expression || n instanceof Modifier || n instanceof NodeWithIdentifier || n instanceof Comment)
 			return prevLocation;
 		if(!(n instanceof CompilationUnit))
 			prevLocation = parseToken(prevLocation, file,  n);
@@ -58,7 +57,7 @@ public class NodeParser implements Parser {
 			thisLocation.calculateTokens(n, range);
 			if(prevLocation!=null) prevLocation.setNextLine(thisLocation);
 			addLineTokensToReg(thisLocation);
-			//System.out.println("Parsing "+n.getClass().getName()+" as "+thisLocation.getContents()+" with range"+thisLocation.getRange());
+			System.out.println("Parsing "+n.getClass().getName()+" as "+thisLocation.getContents()+" with range"+thisLocation.getRange());
 		}
 		return thisLocation;
 	}

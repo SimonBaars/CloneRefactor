@@ -42,6 +42,12 @@ public class SimpleTest extends TestCase {
     public static Test suite() {
         return new TestSuite( SimpleTest.class );
     }
+    
+    public void testCustom() {
+    	System.out.println("custom");
+        List<Sequence> chains = Main.cloneDetection("/Users/sbaars/Downloads/SmallSQL-master");
+        System.out.println(Arrays.toString(chains.toArray()));
+    }
 
     /**
      * Test for clones that consist of lines that do not occur elsewhere.

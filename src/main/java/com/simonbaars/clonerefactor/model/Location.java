@@ -81,7 +81,7 @@ public class Location {
 	}
 
 	public int getAmountOfTokens() {
-		return getContents().getTokens().size();
+		return getContents().getAmountOfTokens();
 	}
 
 	public int getTokenHash() {
@@ -154,6 +154,10 @@ public class Location {
 			throw new IllegalStateException("Files of merging locations do not match! "+file+" != "+oldClone.getFile());
 		contents.merge(oldClone.getContents());
 		range = getRange().withEnd(oldClone.getRange().end);
+	}
+
+	public int getAmountOfNodes() {
+		return getContents().getNodes().size();
 	}
 	
 }
