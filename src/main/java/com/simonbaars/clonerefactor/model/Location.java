@@ -17,12 +17,17 @@ public class Location {
 	
 	private LocationContents contents = new LocationContents();
 	
-	private Location prevLine;
+	private Location prevLocation;
 	private Location clone;
-	private Location nextLine;
+	private Location nextLocation;
 
 	public Location(File file) {
 		this.file=file;
+	}
+
+	public Location(File file, Location prevLocation) {
+		this(file);
+		this.prevLocation = prevLocation;
 	}
 
 	public File getFile() {
@@ -30,11 +35,11 @@ public class Location {
 	}
 	
 	public Location getPrevLine() {
-		return prevLine;
+		return prevLocation;
 	}
 
 	public void setPrevLine(Location nextLine) {
-		this.prevLine = nextLine;
+		this.prevLocation = nextLine;
 	}
 
 	public Location getClone() {
@@ -93,11 +98,11 @@ public class Location {
 	}
 
 	public Location getNextLine() {
-		return nextLine;
+		return nextLocation;
 	}
 
 	public void setNextLine(Location nextLine) {
-		this.nextLine = nextLine;
+		this.nextLocation = nextLine;
 	}
 
 	public LocationContents getContents() {
@@ -111,8 +116,37 @@ public class Location {
 	public void calculateTokens(Node n, Range maxRange) {
 		Optional<TokenRange> t = n.getTokenRange();
 		if(t.isPresent())
-			getContents().addTokens(n, t.get(), maxRange);
+			setRange(getContents().addTokens(n, t.get(), maxRange));
+		else setRange(maxRange);
 		getContents().add(n);
+	}
+
+	public Range getRange() {
+		return range;
+	}
+
+	public void setRange(Range range) {
+		this.range = range;
+	}
+
+	public Location getPrevLocation() {
+		return prevLocation;
+	}
+
+	public void setPrevLocation(Location prevLocation) {
+		this.prevLocation = prevLocation;
+	}
+
+	public Location getNextLocation() {
+		return nextLocation;
+	}
+
+	public void setNextLocation(Location nextLocation) {
+		this.nextLocation = nextLocation;
+	}
+
+	public void setContents(LocationContents contents) {
+		this.contents = contents;
 	}
 	
 }

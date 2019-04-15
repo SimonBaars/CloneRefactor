@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import com.github.javaparser.JavaToken;
@@ -65,7 +66,7 @@ public class LocationContents {
 
 	@Override
 	public String toString() {
-		return "LocationContents [nodes=" + Arrays.deepToString(nodes.toArray()) + "]";
+		return tokens.stream().map(e -> e.asString()).collect(Collectors.joining());
 	}
 
 	public Range addTokens(Node n, TokenRange tokenRange, Range range) {
@@ -74,6 +75,7 @@ public class LocationContents {
 			if(r.isPresent()) {
 				if(!inRange(r.get(), range)) break;
 				tokens.add(token);
+				if(n instanceof ClassOrInterfaceDeclaration && token.asString().equals("{")) break; // We cannot exclude the body of class files, this is a workaround.
 			}
 		}
 		return new Range(tokens.get(0).getRange().get().begin, tokens.get(tokens.size()-1).getRange().get().begin);

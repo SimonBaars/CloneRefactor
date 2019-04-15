@@ -18,8 +18,8 @@ public class CloneParser implements Parser {
 	
 	public List<Sequence> parse(List<File> javaFiles) {
 		Location lastLoc = calculateLineReg(javaFiles);
-		if(lastLoc!=null)
-			return new CloneDetection().findChains(lastLoc);
+		//if(lastLoc!=null)
+		//	return new CloneDetection().findChains(lastLoc);
 		return new ArrayList<>();
 	}
 
@@ -39,9 +39,9 @@ public class CloneParser implements Parser {
 		final ParseResult<CompilationUnit> pr = new JavaParser().parse(file);
 		if(pr.isSuccessful() && pr.getResult().isPresent()) {
 			CompilationUnit cu = pr.getResult().get();
-			Location l = astParser.extractLinesFromAST(null, file, cu);
-			astParser.addLineTokensToReg(l);
-			return l;
+			return astParser.extractLinesFromAST(null, file, cu);
+			//astParser.addLineTokensToReg(l);
+			//return l;
 		}
 		return null;
 	}

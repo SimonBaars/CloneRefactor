@@ -13,7 +13,7 @@ public class PrepareProjectsFolder {
 	private static final File JAVA_PROJECTS_CORPUS_FOLDER = new File("/Users/sbaars/Downloads/java_projects/");
 
 	public static void main(String[] args) {
-		System.out.println(JAVA_PROJECTS_CORPUS_FOLDER.listFiles(f -> isQualified(getSourceFolder(f), 5, 1000) && new File(f.getAbsolutePath()+"/.git").exists()).length);
+		System.out.println(JAVA_PROJECTS_CORPUS_FOLDER.listFiles(f -> isQualified(getSourceFolder(f), 5, 1000) && new File(f.getAbsolutePath()+"/.git").exists()));
 	}
 	
 	public static File[] getFilteredCorpusFiles(int min, int max) {

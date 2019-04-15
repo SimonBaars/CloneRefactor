@@ -2,6 +2,7 @@ package com.simonbaars.clonerefactor.ast;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -53,14 +54,17 @@ public class NodeParser implements Parser {
 		Range range = getActualRange(n);
 		Location thisLocation = prevLocation;
 		if(range!=null) {
-			System.out.println("Parsing "+n.getClass()+" as "+n+" with range"+range);
-			int line = range.begin.line;
-			if(prevLocation!=null && prevLocation.getLine() != line) {
-				addLineTokensToReg(prevLocation);
-				thisLocation = new Location(file, line, prevLocation);
-				prevLocation.setNextLine(thisLocation);
-			} else if(prevLocation==null) thisLocation = new Location(file, line, prevLocation);
-			thisLocation.calculateTokens(n, line);
+			//int line = range.begin.line;
+			//if(prevLocation!=null && prevLocation.getLine() != line) {
+				
+				thisLocation = new Location(file, prevLocation);
+				thisLocation.calculateTokens(n, range);
+				if(prevLocation!=null) prevLocation.setNextLine(thisLocation);
+				addLineTokensToReg(thisLocation);
+				
+				System.out.println("Parsing "+n.getClass().getName()+" as "+thisLocation.getContents()+" with range"+thisLocation.getRange());
+			//} else if(prevLocation==null) thisLocation = new Location(file, line, prevLocation);
+			//thisLocation.calculateTokens(n, line);
 		}
 		return thisLocation;
 	}
