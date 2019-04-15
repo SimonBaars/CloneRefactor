@@ -12,6 +12,7 @@ import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.ImportDeclaration;
 import com.github.javaparser.ast.Modifier;
 import com.github.javaparser.ast.Node;
+import com.github.javaparser.ast.body.ConstructorDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.comments.Comment;
 import com.github.javaparser.ast.expr.Expression;
@@ -19,6 +20,7 @@ import com.github.javaparser.ast.nodeTypes.NodeWithBody;
 import com.github.javaparser.ast.nodeTypes.NodeWithIdentifier;
 import com.github.javaparser.ast.stmt.BlockStmt;
 import com.github.javaparser.ast.stmt.CatchClause;
+import com.github.javaparser.ast.stmt.IfStmt;
 import com.github.javaparser.ast.stmt.Statement;
 import com.github.javaparser.ast.stmt.TryStmt;
 import com.simonbaars.clonerefactor.model.Location;
@@ -73,6 +75,7 @@ public class NodeParser implements Parser {
 		return location;
 	}
 	
+	@SuppressWarnings("rawtypes")
 	public Statement getBody(Node n) {
 		if(n instanceof NodeWithBody)
 			return ((NodeWithBody) n).getBody();
@@ -82,7 +85,11 @@ public class NodeParser implements Parser {
 			return ((TryStmt)n).getTryBlock();
 		} else if(n instanceof CatchClause) {
 			return ((CatchClause)n).getBody();
-		} 
+		} else if(n instanceof IfStmt) {
+			return ((IfStmt)n).getThenStmt();
+		} else if(n instanceof ConstructorDeclaration) {
+			return ((ConstructorDeclaration)n).getBody();
+		}
 		return null;
 	}
 	
