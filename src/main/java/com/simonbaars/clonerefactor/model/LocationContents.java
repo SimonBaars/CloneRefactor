@@ -49,7 +49,8 @@ public class LocationContents {
 	public boolean equals (Object o) {
 		if(!(o instanceof LocationContents))
 			return false;
-		
+		System.out.println("Equality for "+this+" and "+o+" = "+compareNodes(getNodes(), ((LocationContents)o).getNodes()));
+		System.out.println("Token "+nodes.get(0)+" has range "+nodes.get(0).getRange().get());
 		return compareNodes(getNodes(), ((LocationContents)o).getNodes());
 		//return getTokens().equals(((LocationContents)o).getTokens());
 	}
@@ -60,6 +61,7 @@ public class LocationContents {
 	
 		for(int i = 0; i<thisNodes.size(); i++) {
 			Optional<Range> range = thisNodes.get(i).getRange();
+			//System.out.println("Compare "+thisNodes.get(i)+" with "+ otherNodes.get(i)+range.isPresent()+" && "+r.contains(range.get())+" && "+!nodesEqual(thisNodes.get(i), otherNodes.get(i)));
 			if(range.isPresent() && r.contains(range.get()) && !nodesEqual(thisNodes.get(i), otherNodes.get(i)))
 				return false;
 			
@@ -111,7 +113,7 @@ public class LocationContents {
 			}
 		}
 		if(tokens.isEmpty()) return null;
-		r = new Range(tokens.get(0).getRange().get().begin, tokens.get(tokens.size()-1).getRange().get().begin);
+		r = new Range(tokens.get(0).getRange().get().begin, tokens.get(tokens.size()-1).getRange().get().end);
 		return r; //No, we can't merge this with the line above.
 	}
 
