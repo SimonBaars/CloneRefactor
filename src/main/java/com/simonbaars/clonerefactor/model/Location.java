@@ -20,47 +20,13 @@ public class Location {
 	private Location prevLine;
 	private Location clone;
 	private Location nextLine;
-	
-	public Location(File file, int line) {
-		super();
-		this.file = file;
-		this.beginLine = line;
-		this.endLine = line;
-	}
 
-	public Location(File file, int line, int amountOfTokens, int tokenHash) {
-		this(file, line);
-		this.amountOfTokens = amountOfTokens;
-		this.tokenHash = tokenHash;
-	}
-
-	public Location(File file, int beginLine, int endLine) {
-		this.file = file;
-		this.beginLine = beginLine;
-		this.endLine = endLine;
-	}
-
-	public Location(File file, int beginLine, int endLine, int amountOfLines, int amountOfTokens) {
-		this(file, beginLine, endLine);
-		this.amountOfLines = amountOfLines;
-		this.amountOfTokens = amountOfTokens;
-	}
-
-	public Location(File file, int line, Location prevLocation) {
-		this(file, line);
-		this.prevLine = prevLocation;
+	public Location(File file) {
+		this.file=file;
 	}
 
 	public File getFile() {
 		return file;
-	}
-
-	public int getLine() {
-		return beginLine;
-	}
-
-	public int getBeginLine() {
-		return beginLine;
 	}
 	
 	public Location getPrevLine() {
@@ -81,31 +47,11 @@ public class Location {
 
 	@Override
 	public String toString() {
-		return "Location [file=" + file + ", beginLine=" + beginLine + ", endLine = " + endLine + "]";
+		return "Location [file=" + file + ", range=" + range + "]";
 	}
 	
-	public void setEndLine(int endLine) {
-		this.endLine = endLine;
-	}
-	
-	public int getEndLine() {
-		return endLine;
-	}
-	
-	public int lines() {
-		return getEndLine() - getBeginLine() + 1;
-	}
-
-	public void setBeginLine(int beginLine) {
-		this.beginLine = beginLine;
-	}
-
 	public int getAmountOfLines() {
-		return amountOfLines;
-	}
-
-	public void setAmountOfLines(int amountOfLines) {
-		this.amountOfLines = amountOfLines;
+		return range.end.line-range.begin.line+1;
 	}
 
 	/*@Override
@@ -119,9 +65,7 @@ public class Location {
 	}*/
 
 	public boolean isSame(Location other) {
-		if (beginLine != other.beginLine)
-			return false;
-		if (endLine != other.endLine)
+		if (range != other.range)
 			return false;
 		if (file == null) {
 			if (other.file != null)
@@ -132,11 +76,7 @@ public class Location {
 	}
 
 	public int getAmountOfTokens() {
-		return amountOfTokens;
-	}
-
-	public void setAmountOfTokens(int amountOfTokens) {
-		this.amountOfTokens = amountOfTokens;
+		return getContents().getTokens().size();
 	}
 
 	public int getTokenHash() {
@@ -166,19 +106,13 @@ public class Location {
 
 	public void setTokens(LocationContents tokens) {
 		this.contents = tokens;
-		this.amountOfTokens = tokens.size();
-	}
-
-	public void incrementTokens() {
-		this.amountOfTokens++;
 	}
 
 	public void calculateTokens(Node n, Range maxRange) {
 		Optional<TokenRange> t = n.getTokenRange();
 		if(t.isPresent())
-			getContents().addTokens(t.get(), line);
+			getContents().addTokens(n, t.get(), maxRange);
 		getContents().add(n);
-		this.amountOfTokens = getContents().getTokens().size();
 	}
 	
 }
