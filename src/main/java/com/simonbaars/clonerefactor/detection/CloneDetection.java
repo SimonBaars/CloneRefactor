@@ -68,32 +68,18 @@ public class CloneDetection {
 			for(int j = i+1; j<newClones.size(); j++) {
 				Location loc2 = newClones.getSequence().get(j);
 				if(loc1.getFile() == loc2.getFile()) {
-					int beginLineOne = loc1.getBeginLine()+1;
-					int endLineOne = loc1.getEndLine()+1;
-					int beginLineTwo = loc2.getBeginLine();
-					int endLineTwo = loc2.getEndLine();
-					if(overlap(beginLineOne, endLineOne, beginLineTwo, endLineTwo)) {
-						if(endLineOne>endLineTwo) {
-							newClones.getSequence().remove(j);
-							j--;
-						} else {
-							newClones.getSequence().remove(i);
-							i--;
-							continue outerloop;
-						}
+					if(loc1.getRange().contains(loc2.getRange())) {
+						newClones.getSequence().remove(j);
+						j--;
+					} else if(loc2.getRange().contains(loc1.getRange())) {
+						newClones.getSequence().remove(i);
+						i--;
+						continue outerloop;
 					}
 				}
 			}
 		}
 		return newClones;
-	}
-
-	public boolean overlap(int x1, int y1, int x2, int y2) {
-		return between(x2, x1, y1) || between(y2, x1, y1);
-	}
-
-	private boolean between(int x2, int x1, int y1) {
-		return x2>=x1 && x2<=y1;
 	}
 
 	private void checkValidClones(Sequence oldClones, List<Location> endedClones, List<Sequence> clones) {
