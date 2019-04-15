@@ -32,7 +32,9 @@ public class Main {
 	}
 
 	public static List<Sequence> cloneDetection(String path) {
-		List<File> javaFiles = scanProjectForJavaFiles(path);
+		List<File> javaFiles = Arrays.asList(new File(path));
+		if(javaFiles.get(0).isDirectory())
+		    javaFiles = scanProjectForJavaFiles(path);
 		
 		if(javaFiles.size() == 0)
 			throw new NoPathEnteredException();

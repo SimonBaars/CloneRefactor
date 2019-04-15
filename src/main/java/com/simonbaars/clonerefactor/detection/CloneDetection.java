@@ -14,7 +14,7 @@ import com.simonbaars.clonerefactor.model.Location;
 import com.simonbaars.clonerefactor.model.Sequence;
 
 public class CloneDetection {
-	private static final int MIN_AMOUNT_OF_LINES = 1;
+	private static final int MIN_AMOUNT_OF_LINES = 6;
 	private static final int MIN_AMOUNT_OF_TOKENS = 50;
 	private static final int MIN_AMOUNT_OF_NODES = 1; 
 
