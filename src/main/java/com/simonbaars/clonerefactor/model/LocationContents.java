@@ -49,8 +49,9 @@ public class LocationContents {
 	public boolean equals (Object o) {
 		if(!(o instanceof LocationContents))
 			return false;
-		//return compareNodes(getNodes(), ((LocationContents)o).getNodes());
-		return getTokens().equals(((LocationContents)o).getTokens());
+		
+		return compareNodes(getNodes(), ((LocationContents)o).getNodes());
+		//return getTokens().equals(((LocationContents)o).getTokens());
 	}
 	
 	public boolean compareNodes(List<Node> thisNodes, List<Node> otherNodes) {
@@ -58,7 +59,8 @@ public class LocationContents {
 			return false;
 	
 		for(int i = 0; i<thisNodes.size(); i++) {
-			if(r.contains(otherNodes.get(i).getRange().get()) && !nodesEqual(thisNodes.get(i), otherNodes.get(i)))
+			Optional<Range> range = thisNodes.get(i).getRange();
+			if(range.isPresent() && r.contains(range.get()) && !nodesEqual(thisNodes.get(i), otherNodes.get(i)))
 				return false;
 			
 			if(!compareNodes(thisNodes.get(i).getChildNodes(), otherNodes.get(i).getChildNodes()))
@@ -75,13 +77,22 @@ public class LocationContents {
 		return new Long(tokens.stream().filter(e -> Arrays.stream(NO_TOKEN).noneMatch(c -> c.equals(e.getCategory()))).count()).intValue();
 	}
 	
+	public int calcHashcode(List<Node> nodeList, int result, int prime) {
+		for(Node node : nodeList) {
+			Optional<Range> range = node.getRange();
+			if(range.isPresent() && r.contains(range.get()))
+				result = prime*result*node.hashCode();
+			
+			result = calcHashcode(node.getChildNodes(), result, prime);
+		}
+		return result;
+	}
+	
 	@Override
 	public int hashCode() {
 		int prime = 31;
 		int result = 1;
-		for(JavaToken token : tokens) {
-			result=prime * result + token.hashCode();
-		}
+		result = calcHashcode(nodes, prime, result);
 		return result;
 	}
 
@@ -100,7 +111,8 @@ public class LocationContents {
 			}
 		}
 		if(tokens.isEmpty()) return null;
-		return new Range(tokens.get(0).getRange().get().begin, tokens.get(tokens.size()-1).getRange().get().begin);
+		r = new Range(tokens.get(0).getRange().get().begin, tokens.get(tokens.size()-1).getRange().get().begin);
+		return r; //No, we can't merge this with the line above.
 	}
 
 	public List<JavaToken> getTokens() {
