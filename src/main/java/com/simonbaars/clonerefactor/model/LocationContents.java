@@ -88,12 +88,6 @@ public class LocationContents {
 		return result;
 	}
 
-	private int getTokenHashCode(Node token) {
-		if(token instanceof BlockStmt || token instanceof ClassOrInterfaceDeclaration || token instanceof EnumDeclaration)
-			return 1; //We need to let `equals` handle this (a hashtable calls `equals` only if the hashcodes are equal)
-		return token.hashCode();
-	}
-
 	@Override
 	public String toString() {
 		return tokens.stream().map(e -> e.asString()).collect(Collectors.joining());
