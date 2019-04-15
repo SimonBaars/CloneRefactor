@@ -16,12 +16,18 @@ import com.github.javaparser.ast.body.ConstructorDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.comments.Comment;
 import com.github.javaparser.ast.expr.Expression;
+import com.github.javaparser.ast.nodeTypes.NodeWithBlockStmt;
 import com.github.javaparser.ast.nodeTypes.NodeWithBody;
 import com.github.javaparser.ast.nodeTypes.NodeWithIdentifier;
+import com.github.javaparser.ast.nodeTypes.NodeWithOptionalBlockStmt;
 import com.github.javaparser.ast.stmt.BlockStmt;
 import com.github.javaparser.ast.stmt.CatchClause;
 import com.github.javaparser.ast.stmt.IfStmt;
+import com.github.javaparser.ast.stmt.LabeledStmt;
 import com.github.javaparser.ast.stmt.Statement;
+import com.github.javaparser.ast.stmt.SwitchEntry;
+import com.github.javaparser.ast.stmt.SwitchStmt;
+import com.github.javaparser.ast.stmt.SynchronizedStmt;
 import com.github.javaparser.ast.stmt.TryStmt;
 import com.simonbaars.clonerefactor.model.Location;
 import com.simonbaars.clonerefactor.model.LocationContents;
@@ -76,19 +82,23 @@ public class NodeParser implements Parser {
 	}
 	
 	@SuppressWarnings("rawtypes")
-	public Statement getBody(Node n) {
+	public Node getBody(Node n) {
 		if(n instanceof NodeWithBody)
 			return ((NodeWithBody) n).getBody();
-		else if (n instanceof MethodDeclaration && ((MethodDeclaration)n).getBody().isPresent())
-			return ((MethodDeclaration)n).getBody().get();
+		else if (n instanceof NodeWithOptionalBlockStmt && ((NodeWithOptionalBlockStmt)n).getBody().isPresent())
+			return (Statement) ((NodeWithOptionalBlockStmt)n).getBody().get();
 		else if(n instanceof TryStmt) {
 			return ((TryStmt)n).getTryBlock();
-		} else if(n instanceof CatchClause) {
-			return ((CatchClause)n).getBody();
 		} else if(n instanceof IfStmt) {
 			return ((IfStmt)n).getThenStmt();
-		} else if(n instanceof ConstructorDeclaration) {
-			return ((ConstructorDeclaration)n).getBody();
+		} else if(n instanceof NodeWithBlockStmt) {
+			return ((NodeWithBlockStmt)n).getBody();
+		} else if(n instanceof LabeledStmt) {
+			return ((LabeledStmt)n).getStatement();
+		} else if(n instanceof SwitchEntry && !((SwitchEntry)n).getStatements().isEmpty()) {
+			return ((SwitchEntry)n).getStatement(0);
+		} else if(n instanceof SwitchStmt && !((SwitchStmt) n).getEntries().isEmpty()) {
+			return ((SwitchStmt) n).getEntries().get(0).getLabels().get(0);
 		}
 		return null;
 	}
@@ -97,7 +107,7 @@ public class NodeParser implements Parser {
 		Optional<Range> nodeRangeOpt = n.getRange();
 		if(nodeRangeOpt.isPresent()) {
 			Range nodeRange = nodeRangeOpt.get();
-			Statement body = getBody(n);
+			Node body = getBody(n);
 			if(body!=null) { //If this node has a body we want to subtract its range.
 				Optional<Range> bodyRangeOpt = body.getRange();
 				if(bodyRangeOpt.isPresent())
