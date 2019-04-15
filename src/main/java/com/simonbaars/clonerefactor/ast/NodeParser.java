@@ -7,18 +7,21 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import com.github.javaparser.Position;
 import com.github.javaparser.Range;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.ImportDeclaration;
 import com.github.javaparser.ast.Modifier;
 import com.github.javaparser.ast.Node;
+import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.expr.Expression;
 import com.github.javaparser.ast.nodeTypes.NodeWithBody;
 import com.github.javaparser.ast.nodeTypes.NodeWithIdentifier;
 import com.github.javaparser.ast.stmt.BlockStmt;
-import com.simonbaars.clonerefactor.model.LocationContents;
+import com.github.javaparser.ast.stmt.Statement;
 import com.simonbaars.clonerefactor.model.Location;
+import com.simonbaars.clonerefactor.model.LocationContents;
 
 public class NodeParser implements Parser {
 	final Map<LocationContents, Location> lineReg = new HashMap<>();
@@ -47,18 +50,17 @@ public class NodeParser implements Parser {
 	
 	
 	public Location parseToken(Location prevLocation, File file, Node n) {
-		//System.out.println("Parsing "+n.getClass()+" as "+n);
-		Optional<Range> range = n.getRange();
+		Range range = getActualRange(n);
 		Location thisLocation = prevLocation;
-		if(range.isPresent()) {
-			int line = range.get().begin.line;
+		if(range!=null) {
+			System.out.println("Parsing "+n.getClass()+" as "+n+" with range"+range);
+			int line = range.begin.line;
 			if(prevLocation!=null && prevLocation.getLine() != line) {
 				addLineTokensToReg(prevLocation);
 				thisLocation = new Location(file, line, prevLocation);
 				prevLocation.setNextLine(thisLocation);
 			} else if(prevLocation==null) thisLocation = new Location(file, line, prevLocation);
 			thisLocation.calculateTokens(n, line);
-			//thisLocation.incrementTokens();
 		}
 		return thisLocation;
 	}
@@ -71,5 +73,38 @@ public class NodeParser implements Parser {
 			lineReg.put(location.getContents(), location);
 		}
 		return location;
+	}
+	
+	public boolean hasBody(Node n) {
+		return n instanceof NodeWithBody || n instanceof ClassOrInterfaceDeclaration || (n instanceof MethodDeclaration && ((MethodDeclaration)n).getBody().isPresent());
+	}
+	
+	public Statement getBody(Node n) {
+		if(n instanceof NodeWithBody)
+			return ((NodeWithBody) n).getBody();
+		else if (n instanceof MethodDeclaration && ((MethodDeclaration)n).getBody().isPresent())
+			return ((MethodDeclaration)n).getBody().get();
+		return null;
+	}
+	
+	public Range getActualRange(Node n) {
+		Optional<Range> nodeRangeOpt = n.getRange();
+		if(nodeRangeOpt.isPresent()) {
+			Range nodeRange = nodeRangeOpt.get();
+			Statement body = getBody(n);
+			if(body!=null) { //If this node has a body we want to subtract its range.
+				Optional<Range> bodyRangeOpt = body.getRange();
+				if(bodyRangeOpt.isPresent()) {
+					Range bodyRange = bodyRangeOpt.get();
+					return subtractRange(nodeRange, bodyRange);
+				}
+			}
+			return nodeRange;
+		}
+		return null;
+	}
+
+	private Range subtractRange(Range nodeRange, Range bodyRange) {
+		return new Range(nodeRange.begin, bodyRange.begin);
 	}
 }
