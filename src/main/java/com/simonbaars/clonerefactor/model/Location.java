@@ -148,5 +148,12 @@ public class Location {
 	public void setContents(LocationContents contents) {
 		this.contents = contents;
 	}
+
+	public void mergeWith(Location oldClone) {
+		if(file != oldClone.getFile())
+			throw new IllegalStateException("Files of merging locations do not match! "+file+" != "+oldClone.getFile());
+		contents.merge(oldClone.getContents());
+		range = getRange().withBegin(oldClone.getRange().begin);
+	}
 	
 }

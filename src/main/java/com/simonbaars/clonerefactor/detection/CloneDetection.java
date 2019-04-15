@@ -50,9 +50,7 @@ public class CloneDetection {
 		for(Entry<Location, Location> validChain : validChains.entrySet()) {
 			Location newClone = validChain.getValue();
 			Location oldClone = validChain.getKey();
-			newClone.setEndLine(oldClone.getEndLine());
-			newClone.setAmountOfLines(oldClone.getAmountOfLines()+1);
-			newClone.setAmountOfTokens(oldClone.getAmountOfTokens()+newClone.getAmountOfTokens());
+			newClone.mergeWith(oldClone);
 		}
 
 		if(visitedLocations.contains(lastLoc)){

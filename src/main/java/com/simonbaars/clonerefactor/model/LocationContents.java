@@ -91,6 +91,11 @@ public class LocationContents {
 	public List<JavaToken> getTokens() {
 		return tokens;
 	}
+
+	public void merge(LocationContents contents) {
+		nodes.addAll(contents.getNodes());
+		tokens.addAll(contents.getTokens());
+	}
 	
 	
 }
