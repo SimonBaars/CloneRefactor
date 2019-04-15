@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import com.github.javaparser.Position;
+import com.github.javaparser.Range;
 import com.simonbaars.clonerefactor.model.Location;
 import com.simonbaars.clonerefactor.model.Sequence;
 
@@ -51,131 +53,15 @@ public class CloneDetectionTest extends TestCase {
         List<Sequence> chains = testProject(SIMPLE_PROJECT);
         System.out.println(Arrays.toString(chains.toArray()));
         Sequence c = new Sequence();
-        c.add(new Location(getJavaFileFromProject(SIMPLE_PROJECT, "Clone1"), 5, 16));
-        c.add(new Location(getJavaFileFromProject(SIMPLE_PROJECT, "Clone2"), 5, 16));
+        c.add(new Location(getJavaFileFromProject(SIMPLE_PROJECT, "Clone2"), new Range(new Position(5, 3), new Position(16,38))));
+        c.add(new Location(getJavaFileFromProject(SIMPLE_PROJECT, "Clone1"), new Range(new Position(5, 3), new Position(16,38))));
         List<Sequence> expectedChains = new ArrayList<>();
         expectedChains.add(c);
-        Assert.assertTrue(checkArbitraryOrder(chains, expectedChains));
-    }
-    
-	/**
-     * Test for clones that consist of all equal lines.
-     */
-    public void testEqualLines() {
-    	System.out.println("testEqualLines");
-    	List<Sequence> chains = testProject(EQUAL_LINES_PROJECT);
-    	System.out.println(Arrays.toString(chains.toArray()));
-        Sequence c = new Sequence();
-        c.add(new Location(getJavaFileFromProject(EQUAL_LINES_PROJECT, "Clone1"), 5, 16));
-        c.add(new Location(getJavaFileFromProject(EQUAL_LINES_PROJECT, "Clone2"), 5, 16));
-        List<Sequence> expectedChains = new ArrayList<>();
-        expectedChains.add(c);
-        Assert.assertTrue(checkArbitraryOrder(chains, expectedChains));
+        Assert.assertEquals(chains, expectedChains);
     }
     
     /**
-     * Test for three clones, of which one starts a line later than the others.
-     */
-    public void testPartialClonesLeft() {
-    	System.out.println("testPartialClonesLeft");
-    	List<Sequence> chains = testProject(PARTIAL_CLONES_LEFT);
-    	System.out.println(Arrays.toString(chains.toArray()));
-    	Sequence c = new Sequence();
-        c.add(new Location(getJavaFileFromProject(PARTIAL_CLONES_LEFT, "Clone1"), 6, 16));
-        c.add(new Location(getJavaFileFromProject(PARTIAL_CLONES_LEFT, "Clone2"), 6, 16));
-        c.add(new Location(getJavaFileFromProject(PARTIAL_CLONES_LEFT, "Clone3"), 5, 15));
-        Sequence c2 = new Sequence();
-        c2.add(new Location(getJavaFileFromProject(PARTIAL_CLONES_LEFT, "Clone1"), 5, 16));
-        c2.add(new Location(getJavaFileFromProject(PARTIAL_CLONES_LEFT, "Clone2"), 5, 16));
-        List<Sequence> expectedChains = new ArrayList<>();
-        expectedChains.add(c);
-        expectedChains.add(c2);
-        Assert.assertTrue(checkArbitraryOrder(chains, expectedChains));
-    }
-    
-    /**
-     * Test for three clones, of which one ends a line later than the others.
-     */
-    public void testPartialLinesRight() {
-    	System.out.println("testPartialLinesRight");
-    	List<Sequence> chains = testProject(PARTIAL_CLONES_RIGHT);
-    	System.out.println(Arrays.toString(chains.toArray()));
-    	Sequence c = new Sequence();
-        c.add(new Location(getJavaFileFromProject(PARTIAL_CLONES_RIGHT, "Clone1"), 5, 15));
-        c.add(new Location(getJavaFileFromProject(PARTIAL_CLONES_RIGHT, "Clone2"), 5, 15));
-        c.add(new Location(getJavaFileFromProject(PARTIAL_CLONES_RIGHT, "Clone3"), 5, 15));
-        Sequence c2 = new Sequence();
-        c2.add(new Location(getJavaFileFromProject(PARTIAL_CLONES_RIGHT, "Clone1"), 5, 16));
-        c2.add(new Location(getJavaFileFromProject(PARTIAL_CLONES_RIGHT, "Clone2"), 5, 16));
-        List<Sequence> expectedChains = new ArrayList<>();
-        expectedChains.add(c);
-        expectedChains.add(c2);
-        Assert.assertTrue(checkArbitraryOrder(chains, expectedChains));
-    }
-    
-    /**
-     * Test for clones in Java enumerations.
-     */
-    public void testEnumClone() {
-    	System.out.println("testEnumClone");
-    	List<Sequence> chains = testProject(ENUM_PROJECT);
-    	System.out.println(Arrays.toString(chains.toArray()));
-    	Sequence c = new Sequence();
-        c.add(new Location(getJavaFileFromProject(ENUM_PROJECT, "Clone1"), 4, 23));
-        c.add(new Location(getJavaFileFromProject(ENUM_PROJECT, "Clone2"), 4, 23));
-        List<Sequence> expectedChains = new ArrayList<>();
-        expectedChains.add(c);
-        Assert.assertTrue(checkArbitraryOrder(chains, expectedChains));
-    }
-    
-    /**
-     * Test for clones in a single file, with just a single line to separate the clones.
-     */
-    public void testSingleFile() {
-    	System.out.println("testSingleFile");
-    	List<Sequence> chains = testProject(SINGLE_FILE_PROJECT);
-    	System.out.println(Arrays.toString(chains.toArray()));
-    	Sequence c = new Sequence();
-        c.add(new Location(getJavaFileFromProject(SINGLE_FILE_PROJECT, "Clone1"), 5, 14));
-        c.add(new Location(getJavaFileFromProject(SINGLE_FILE_PROJECT, "Clone1"), 16, 25));
-        List<Sequence> expectedChains = new ArrayList<>();
-        expectedChains.add(c);
-        Assert.assertTrue(checkArbitraryOrder(chains, expectedChains));
-    }
-    
-    
-    /**
-     * Test for clones that differ in length but consist of lines with equal tokens.
-     */
-    public void testUnequalSizeClones() {
-    	System.out.println("testUnequalSizeClones");
-    	List<Sequence> chains = testProject(UNEQUAL_SIZE_CLONES_PROJECT);
-    	System.out.println(Arrays.toString(chains.toArray()));
-        Sequence c = new Sequence();
-        c.add(new Location(getJavaFileFromProject(UNEQUAL_SIZE_CLONES_PROJECT, "Clone1"), 5, 16)); //This is not entirely correct, but the question is whether it matters?
-        c.add(new Location(getJavaFileFromProject(UNEQUAL_SIZE_CLONES_PROJECT, "Clone2"), 6, 17));
-        List<Sequence> expectedChains = new ArrayList<>();
-        expectedChains.add(c);
-        Assert.assertTrue(checkArbitraryOrder(chains, expectedChains));
-    }
-    
-    /**
-     * Test for clones that span multiple methods.
-     */
-    public void testSeveralMethodsCloned() {
-    	System.out.println("testSeveralMethodsCloned");
-    	List<Sequence> chains = testProject(SEVERAL_METHODS_PROJECT);
-    	System.out.println(Arrays.toString(chains.toArray()));
-        Sequence c = new Sequence();
-        c.add(new Location(getJavaFileFromProject(SEVERAL_METHODS_PROJECT, "Clone1"), 4, 13)); 
-        c.add(new Location(getJavaFileFromProject(SEVERAL_METHODS_PROJECT, "Clone2"), 4, 13));
-        List<Sequence> expectedChains = new ArrayList<>();
-        expectedChains.add(c);
-        Assert.assertTrue(checkArbitraryOrder(chains, expectedChains));
-    }
-    
-    /**
-     * Test for clones in import statements.
+     * Test for clones in import statements (We don't want any).
      */
     public void testImportStatements() {
     	System.out.println("testImportStatements");
@@ -192,22 +78,16 @@ public class CloneDetectionTest extends TestCase {
 	private File getJavaFileFromProject(String project, String file) {
 		return new File(CloneDetectionTest.class.getClassLoader().getResource(project+File.separator+file+".java").getFile());
 	}
-	
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	private <T> boolean checkArbitraryOrder(List<T> chains, List<T> expectedChains) {
+
+	private <T> boolean checkArbitraryOrder(List<Sequence> chains, List<Sequence> expectedChains) {
+		System.out.println(chains+" vs "+expectedChains);
 		if(chains.size()!=expectedChains.size())
 			return false;
 		
-		outerloop: for(Object chain : chains) {
-			for(Object expectedChain : expectedChains) {
-				if((chain instanceof List && checkArbitraryOrder((List)chain, (List)expectedChain)) ||
-					(chain instanceof Sequence && checkArbitraryOrder(((Sequence)chain).getSequence(), ((Sequence)expectedChain).getSequence())) ||
-					(chain instanceof Location && ((Location)chain).isSame((Location)expectedChain)) || 
-					(chain instanceof Object && chain.equals(expectedChain))){
-					continue outerloop;
-				}
-			}
-			return false;
+		for(Sequence s : chains) {
+			if(!s.getSequence().stream().anyMatch(e -> {
+				return expectedChains.stream().anyMatch(f -> f.getSequence().contains(e));
+			})) return false;
 		}
 		return true;
 	}

@@ -36,6 +36,11 @@ public class Location {
 		this.range = new Range(l2.range.begin, l2.range.end);
 	}
 
+	public Location(File file, Range range) {
+		this.file = file;
+		this.range = range;
+	}
+
 	public File getFile() {
 		return file;
 	}
