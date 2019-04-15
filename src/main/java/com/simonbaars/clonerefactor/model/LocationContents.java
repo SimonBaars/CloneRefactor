@@ -18,6 +18,7 @@ import com.github.javaparser.ast.stmt.BlockStmt;
 import com.simonbaars.clonerefactor.ast.CompareNodes;
 
 public class LocationContents {
+	private Range r;
 	private final List<Node> nodes;
 	private final List<JavaToken> tokens;
 	
@@ -29,6 +30,7 @@ public class LocationContents {
 	}
 
 	public LocationContents(LocationContents contents) {
+		this.r = contents.r;
 		this.nodes = new ArrayList<>(contents.getNodes());
 		this.tokens = new ArrayList<>(contents.getTokens());
 	}
@@ -49,11 +51,29 @@ public class LocationContents {
 	public boolean equals (Object o) {
 		if(!(o instanceof LocationContents))
 			return false;
-		List<Node> compareTokens = ((LocationContents)o).getNodes();
-		if(nodes.size()!=compareTokens.size())
+		//if(nodes.size()!=compareTokens.size())
+		//	return false;
+		//CompareNodes c = new CompareNodes();
+		//return IntStream.range(0,nodes.size()).allMatch(i -> c.compare(nodes.get(i), compareTokens.get(i)));
+		return compareNodes(getNodes(), ((LocationContents)o).getNodes());
+	}
+	
+	public boolean compareNodes(List<Node> thisNodes, List<Node> otherNodes) {
+		if(nodes.size()!=otherNodes.size())
 			return false;
-		CompareNodes c = new CompareNodes();
-		return IntStream.range(0,nodes.size()).allMatch(i -> c.compare(nodes.get(i), compareTokens.get(i)));
+	
+		for(int i = 0; i<nodes.size(); i++) {
+			if(r.contains(otherNodes.get(i).getRange().get()) && !nodesEqual(nodes.get(i), otherNodes.get(i)))
+				return false;
+			
+			if(!compareNodes(thisNodes.get(i).getChildNodes(), otherNodes.get(i).getChildNodes()))
+				return false;
+		}
+		return true;
+	}
+	
+	public boolean nodesEqual(Node n1, Node n2) {
+		return n1.equals(n2);
 	}
 	
 	public int getAmountOfTokens() {
@@ -90,7 +110,8 @@ public class LocationContents {
 				if(n instanceof ClassOrInterfaceDeclaration && token.asString().equals("{")) break; // We cannot exclude the body of class files, this is a workaround.
 			}
 		}
-		return new Range(tokens.get(0).getRange().get().begin, tokens.get(tokens.size()-1).getRange().get().begin);
+		r = new Range(tokens.get(0).getRange().get().begin, tokens.get(tokens.size()-1).getRange().get().begin);
+		return r;
 	}
 
 	public List<JavaToken> getTokens() {
