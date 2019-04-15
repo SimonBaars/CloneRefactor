@@ -68,15 +68,22 @@ public class LocationContents {
 		return "LocationContents [nodes=" + Arrays.deepToString(nodes.toArray()) + "]";
 	}
 
-	public void addTokens(TokenRange tokenRange, int line) {
+	public Range addTokens(Node n, TokenRange tokenRange, Range range) {
 		for(JavaToken token : tokenRange) {
 			Optional<Range> r = token.getRange();
 			if(r.isPresent()) {
-				int l = r.get().begin.line;
-				if(l!=line) return;
+				if(!inRange(r.get(), range)) break;
+				tokens.add(token);
 			}
-			tokens.add(token);
 		}
+		return new Range(tokens.get(0).getRange().get().begin, tokens.get(tokens.size()-1).getRange().get().begin);
+	}
+
+	private boolean inRange(Range range, Range inRange) {
+		return range.begin.line>=inRange.begin.line &&
+				(range.begin.line>inRange.begin.line || range.begin.column >= inRange.begin.column) &&
+				range.end.line<=inRange.end.line && 
+				(range.end.line<inRange.end.line || range.end.column <= inRange.end.column);
 	}
 
 	public List<JavaToken> getTokens() {

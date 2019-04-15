@@ -4,16 +4,15 @@ import java.io.File;
 import java.util.List;
 import java.util.Optional;
 
+import com.github.javaparser.Range;
 import com.github.javaparser.TokenRange;
 import com.github.javaparser.ast.Node;
 import com.simonbaars.clonerefactor.datatype.ListMap;
 
 public class Location {
 	private final File file;
-	private int beginLine;
-	private int endLine;
-	private int amountOfLines = 1;
-	private int amountOfTokens = 0;
+	private Range range;
+	
 	private int tokenHash;
 	
 	private LocationContents contents = new LocationContents();
@@ -174,7 +173,7 @@ public class Location {
 		this.amountOfTokens++;
 	}
 
-	public void calculateTokens(Node n, int line) {
+	public void calculateTokens(Node n, Range maxRange) {
 		Optional<TokenRange> t = n.getTokenRange();
 		if(t.isPresent())
 			getContents().addTokens(t.get(), line);
