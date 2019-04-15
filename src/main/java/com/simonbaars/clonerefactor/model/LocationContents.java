@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import com.github.javaparser.JavaToken;
+import com.github.javaparser.JavaToken.Category;
 import com.github.javaparser.Range;
 import com.github.javaparser.TokenRange;
 import com.github.javaparser.ast.Node;
@@ -19,6 +20,8 @@ import com.simonbaars.clonerefactor.ast.CompareNodes;
 public class LocationContents {
 	private final List<Node> nodes;
 	private final List<JavaToken> tokens;
+	
+	private static final Category[] NO_TOKEN = {Category.COMMENT, Category.EOL, Category.WHITESPACE_NO_EOL};
 	
 	public LocationContents() {
 		this.nodes = new ArrayList<>();
@@ -53,6 +56,10 @@ public class LocationContents {
 		return IntStream.range(0,nodes.size()).allMatch(i -> c.compare(nodes.get(i), compareTokens.get(i)));
 	}
 	
+	public int getAmountOfTokens() {
+		return new Long(tokens.stream().filter(e -> Arrays.stream(NO_TOKEN).noneMatch(c -> c.equals(e.getCategory()))).count()).intValue();
+	}
+	
 	@Override
 	public int hashCode() {
 		int prime = 31;
@@ -71,7 +78,7 @@ public class LocationContents {
 
 	@Override
 	public String toString() {
-		return tokens.stream().map(e -> e.asString()).collect(Collectors.joining());
+		return tokens.stream().map(e -> e.asString()+" "+e.getCategory()).collect(Collectors.joining(","));
 	}
 
 	public Range addTokens(Node n, TokenRange tokenRange, Range range) {

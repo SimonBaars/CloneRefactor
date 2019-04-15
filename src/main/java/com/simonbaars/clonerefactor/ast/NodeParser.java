@@ -98,10 +98,8 @@ public class NodeParser implements Parser {
 			Statement body = getBody(n);
 			if(body!=null) { //If this node has a body we want to subtract its range.
 				Optional<Range> bodyRangeOpt = body.getRange();
-				if(bodyRangeOpt.isPresent()) {
-					Range bodyRange = bodyRangeOpt.get();
-					return subtractRange(nodeRange, bodyRange);
-				}
+				if(bodyRangeOpt.isPresent())
+					return subtractRange(nodeRange, bodyRangeOpt.get());
 			}
 			return nodeRange;
 		}

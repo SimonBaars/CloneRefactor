@@ -18,8 +18,8 @@ public class CloneParser implements Parser {
 	
 	public List<Sequence> parse(List<File> javaFiles) {
 		Location lastLoc = calculateLineReg(javaFiles);
-		//if(lastLoc!=null)
-		//	return new CloneDetection().findChains(lastLoc);
+		if(lastLoc!=null)
+			return new CloneDetection().findChains(lastLoc);
 		return new ArrayList<>();
 	}
 
