@@ -57,28 +57,7 @@ public class CloneDetection {
 			newClones.getSequence().clear();
 			newClones.getSequence().addAll(validChains.values());
 		}
-		mergeClones(newClones);
 
-		return newClones;
-	}
-
-	private  Sequence mergeClones(Sequence newClones) {
-		outerloop: for(int i = 0; i<newClones.size(); i++) {
-			Location loc1 = newClones.getSequence().get(i);
-			for(int j = i+1; j<newClones.size(); j++) {
-				Location loc2 = newClones.getSequence().get(j);
-				if(loc1.getFile() == loc2.getFile()) {
-					if(loc1.getRange().contains(loc2.getRange())) {
-						newClones.getSequence().remove(j);
-						j--;
-					} else if(loc2.getRange().contains(loc1.getRange())) {
-						newClones.getSequence().remove(i);
-						i--;
-						continue outerloop;
-					}
-				}
-			}
-		}
 		return newClones;
 	}
 
@@ -106,16 +85,13 @@ public class CloneDetection {
 	
 	public void removeDuplicatesOf(List<Sequence> clones, Sequence l) {
 		for(int i = clones.size()-1; i>=0; i--) {
-			Sequence clone = clones.get(i);
-			if(clone.getSequence().get(0).getFile() != l.getSequence().get(0).getFile()) //Limit our searching scope for performance purposes
-				break;
 			if(isSubset(clones.get(i), l))
 				clones.remove(i);
 		}
 	}
 	
 	private boolean isSubset(Sequence sequence, Sequence subsetOf) {
-		return sequence.getSequence().size() == subsetOf.size() && subsetOf.getSequence().stream().allMatch(e -> sequence.getSequence().stream().anyMatch(f -> e.getRange().contains(f.getRange())));
+		return sequence.getSequence().stream().allMatch(e -> subsetOf.getSequence().stream().anyMatch(f -> f.getRange().contains(e.getRange())));
 	}
 
 	private Sequence collectClones(Location lastLoc) {
