@@ -94,13 +94,30 @@ public class CloneDetection {
 					}
 				}
 				IntStream.range(0, origEl).forEach(i -> l.set(i, new Location(l.get(i))));
-				if(l.stream().collect(Collectors.summingInt(e -> e.getAmountOfTokens())) > MIN_AMOUNT_OF_TOKENS && l.size()>1)
-					clones.add(new Sequence(l));
+				if(l.stream().collect(Collectors.summingInt(e -> e.getAmountOfTokens())) > MIN_AMOUNT_OF_TOKENS && l.size()>1) {
+					Sequence newSequence = new Sequence(l);
+					removeDuplicatesOf(clones, newSequence);
+					clones.add(newSequence);
+				}
 				continue;
 			}
 		}
 	}
 	
+	public void removeDuplicatesOf(List<Sequence> clones, Sequence l) {
+		for(int i = clones.size()-1; i>=0; i--) {
+			Sequence clone = clones.get(i);
+			if(clone.getSequence().get(0).getFile() != l.getSequence().get(0).getFile()) //Limit our searching scope for performance purposes
+				break;
+			if(isSubset(clones.get(i), l))
+				clones.remove(i);
+		}
+	}
+	
+	private boolean isSubset(Sequence sequence, Sequence subsetOf) {
+		return sequence.getSequence().size() == subsetOf.size() && subsetOf.getSequence().stream().allMatch(e -> sequence.getSequence().stream().anyMatch(f -> e.getRange().contains(f.getRange())));
+	}
+
 	private Sequence collectClones(Location lastLoc) {
 		Sequence c = new Sequence();
 		while(lastLoc!=null) {
