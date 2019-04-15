@@ -2,6 +2,7 @@ package com.simonbaars.clonerefactor.ast;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.ListIterator;
@@ -77,8 +78,9 @@ public class NodeParser implements Parser {
 		if(nodeRangeOpt.isPresent()) {
 			Range nodeRange = nodeRangeOpt.get();
 			ListIterator<Node> it = n.getChildNodes().listIterator(n.getChildNodes().size());
+			//System.out.println(n+" has children "+Arrays.toString(n.getChildNodes().toArray()));
 			for(Node node = it.previous(); it.hasPrevious(); it.previous()) {
-				if(isExcluded(node) && node.getRange().isPresent()) {
+				if(!isExcluded(node) && node.getRange().isPresent()) {
 					nodeRange = nodeRange.withEnd(node.getRange().get().begin);
 				} else break;
 			}

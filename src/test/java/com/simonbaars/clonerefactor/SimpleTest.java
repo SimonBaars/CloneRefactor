@@ -43,11 +43,11 @@ public class SimpleTest extends TestCase {
         return new TestSuite( SimpleTest.class );
     }
     
-    public void testCustom() {
+    /*public void testCustom() {
     	System.out.println("custom");
         List<Sequence> chains = Main.cloneDetection("/Users/sbaars/Downloads/SmallSQL-master/src/main/java");
         System.out.println(Arrays.toString(chains.toArray()));
-    }
+    }*/
 
     /**
      * Test for clones that consist of lines that do not occur elsewhere.
