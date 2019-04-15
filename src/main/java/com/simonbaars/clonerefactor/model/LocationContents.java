@@ -25,6 +25,11 @@ public class LocationContents {
 		this.tokens = new ArrayList<>();
 	}
 
+	public LocationContents(LocationContents contents) {
+		this.nodes = new ArrayList<>(contents.getNodes());
+		this.tokens = new ArrayList<>(contents.getTokens());
+	}
+
 	public List<Node> getNodes() {
 		return nodes;
 	}

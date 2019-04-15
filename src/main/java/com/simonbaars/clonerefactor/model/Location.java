@@ -30,6 +30,12 @@ public class Location {
 		this.prevLocation = prevLocation;
 	}
 
+	public Location(Location l2) {
+		this.file = l2.file;
+		this.contents = new LocationContents(contents);
+		this.range = new Range(range.begin, range.end);
+	}
+
 	public File getFile() {
 		return file;
 	}

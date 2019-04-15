@@ -90,23 +90,17 @@ public class CloneDetection {
 				int origEl = l.size();
 				for(Location l2 : oldClones.getSequence()) {
 					if(l.get(0)!= l2 && l2.getAmountOfLines()>=l.get(0).getAmountOfLines()) {
-						l.add(new Location(l2.getFile(), l2.getBeginLine(), findActualEndLine(l2, l.get(0).getAmountOfLines()), l.get(0).getAmountOfLines(), l.get(0).getAmountOfTokens()));
+						l.add(new Location(l2));
 					}
 				}
-				IntStream.range(0, origEl).forEach(i -> l.set(i, new Location(l.get(i).getFile(), l.get(i).getBeginLine(), l.get(i).getEndLine(), l.get(i).getAmountOfLines(), l.get(i).getAmountOfTokens())));
+				IntStream.range(0, origEl).forEach(i -> l.set(i, new Location(l.get(i))));
 				if(l.stream().collect(Collectors.summingInt(e -> e.getAmountOfTokens())) > MIN_AMOUNT_OF_TOKENS && l.size()>1)
 					clones.add(new Sequence(l));
 				continue;
 			}
 		}
 	}
-
-	private int findActualEndLine(Location l2, int amountOfLines) {
-		if(amountOfLines>1 && l2.getNextLine()!=null && l2.getNextLine().getFile() == l2.getFile())
-			return findActualEndLine(l2.getNextLine(), amountOfLines-1);
-		return l2.getBeginLine();
-	}
-
+	
 	private Sequence collectClones(Location lastLoc) {
 		Sequence c = new Sequence();
 		while(lastLoc!=null) {
