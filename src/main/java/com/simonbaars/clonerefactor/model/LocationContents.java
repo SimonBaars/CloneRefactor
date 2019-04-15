@@ -51,19 +51,15 @@ public class LocationContents {
 	public boolean equals (Object o) {
 		if(!(o instanceof LocationContents))
 			return false;
-		//if(nodes.size()!=compareTokens.size())
-		//	return false;
-		//CompareNodes c = new CompareNodes();
-		//return IntStream.range(0,nodes.size()).allMatch(i -> c.compare(nodes.get(i), compareTokens.get(i)));
 		return compareNodes(getNodes(), ((LocationContents)o).getNodes());
 	}
 	
 	public boolean compareNodes(List<Node> thisNodes, List<Node> otherNodes) {
-		if(nodes.size()!=otherNodes.size())
+		if(thisNodes.size()!=otherNodes.size())
 			return false;
 	
-		for(int i = 0; i<nodes.size(); i++) {
-			if(r.contains(otherNodes.get(i).getRange().get()) && !nodesEqual(nodes.get(i), otherNodes.get(i)))
+		for(int i = 0; i<thisNodes.size(); i++) {
+			if(r.contains(otherNodes.get(i).getRange().get()) && !nodesEqual(thisNodes.get(i), otherNodes.get(i)))
 				return false;
 			
 			if(!compareNodes(thisNodes.get(i).getChildNodes(), otherNodes.get(i).getChildNodes()))

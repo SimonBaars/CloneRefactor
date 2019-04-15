@@ -54,17 +54,11 @@ public class NodeParser implements Parser {
 		Range range = getActualRange(n);
 		Location thisLocation = prevLocation;
 		if(range!=null) {
-			//int line = range.begin.line;
-			//if(prevLocation!=null && prevLocation.getLine() != line) {
-				
-				thisLocation = new Location(file, prevLocation);
-				thisLocation.calculateTokens(n, range);
-				if(prevLocation!=null) prevLocation.setNextLine(thisLocation);
-				addLineTokensToReg(thisLocation);
-				
-				System.out.println("Parsing "+n.getClass().getName()+" as "+thisLocation.getContents()+" with range"+thisLocation.getRange());
-			//} else if(prevLocation==null) thisLocation = new Location(file, line, prevLocation);
-			//thisLocation.calculateTokens(n, line);
+			thisLocation = new Location(file, prevLocation);
+			thisLocation.calculateTokens(n, range);
+			if(prevLocation!=null) prevLocation.setNextLine(thisLocation);
+			addLineTokensToReg(thisLocation);
+			System.out.println("Parsing "+n.getClass().getName()+" as "+thisLocation.getContents()+" with range"+thisLocation.getRange());
 		}
 		return thisLocation;
 	}
@@ -73,7 +67,6 @@ public class NodeParser implements Parser {
 		if(lineReg.containsKey(location.getContents())) {
 			location.setClone(lineReg.get(location.getContents()));
 			lineReg.put(location.getContents(), location);
-			System.out.println("CLONE FOUND!!!");
 		} else {
 			lineReg.put(location.getContents(), location);
 		}
@@ -108,6 +101,6 @@ public class NodeParser implements Parser {
 	}
 
 	private Range subtractRange(Range nodeRange, Range bodyRange) {
-		return new Range(nodeRange.begin, bodyRange.begin);
+		return nodeRange.withEnd(bodyRange.begin);
 	}
 }
