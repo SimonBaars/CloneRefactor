@@ -57,7 +57,7 @@ public class CloneDetectionTest extends TestCase {
         c.add(new Location(getJavaFileFromProject(SIMPLE_PROJECT, "Clone1"), new Range(new Position(5, 3), new Position(16,38))));
         List<Sequence> expectedChains = new ArrayList<>();
         expectedChains.add(c);
-        Assert.assertEquals(chains, expectedChains);
+        Assert.assertEquals(expectedChains, chains);
     }
     
     /**
@@ -68,7 +68,7 @@ public class CloneDetectionTest extends TestCase {
     	List<Sequence> chains = testProject("EqualImportStatements");
     	System.out.println(Arrays.toString(chains.toArray()));
         List<Sequence> expectedChains = new ArrayList<>();
-        Assert.assertTrue(checkArbitraryOrder(chains, expectedChains));
+        Assert.assertEquals(expectedChains, chains);
     }
 
 	private List<Sequence> testProject(String project) {
@@ -77,18 +77,5 @@ public class CloneDetectionTest extends TestCase {
     
 	private File getJavaFileFromProject(String project, String file) {
 		return new File(CloneDetectionTest.class.getClassLoader().getResource(project+File.separator+file+".java").getFile());
-	}
-
-	private <T> boolean checkArbitraryOrder(List<Sequence> chains, List<Sequence> expectedChains) {
-		System.out.println(chains+" vs "+expectedChains);
-		if(chains.size()!=expectedChains.size())
-			return false;
-		
-		for(Sequence s : chains) {
-			if(!s.getSequence().stream().anyMatch(e -> {
-				return expectedChains.stream().anyMatch(f -> f.getSequence().contains(e));
-			})) return false;
-		}
-		return true;
 	}
 }
