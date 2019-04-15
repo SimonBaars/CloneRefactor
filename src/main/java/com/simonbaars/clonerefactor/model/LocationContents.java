@@ -73,19 +73,12 @@ public class LocationContents {
 		for(JavaToken token : tokenRange) {
 			Optional<Range> r = token.getRange();
 			if(r.isPresent()) {
-				if(!inRange(r.get(), range)) break;
+				if(!range.contains(range)) break;
 				tokens.add(token);
 				if(n instanceof ClassOrInterfaceDeclaration && token.asString().equals("{")) break; // We cannot exclude the body of class files, this is a workaround.
 			}
 		}
 		return new Range(tokens.get(0).getRange().get().begin, tokens.get(tokens.size()-1).getRange().get().begin);
-	}
-
-	private boolean inRange(Range range, Range inRange) {
-		return range.begin.line>=inRange.begin.line &&
-				(range.begin.line>inRange.begin.line || range.begin.column >= inRange.begin.column) &&
-				range.end.line<=inRange.end.line && 
-				(range.end.line<inRange.end.line || range.end.column <= inRange.end.column);
 	}
 
 	public List<JavaToken> getTokens() {
