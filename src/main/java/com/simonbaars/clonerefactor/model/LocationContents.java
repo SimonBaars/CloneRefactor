@@ -98,8 +98,8 @@ public class LocationContents {
 				if((n instanceof ClassOrInterfaceDeclaration || n instanceof LocalClassDeclarationStmt) && token.asString().equals("{")) break; // We cannot exclude the body of class files, this is a workaround.
 			}
 		}
-		r = new Range(tokens.get(0).getRange().get().begin, tokens.get(tokens.size()-1).getRange().get().begin);
-		return r;
+		if(tokens.isEmpty()) return null;
+		return new Range(tokens.get(0).getRange().get().begin, tokens.get(tokens.size()-1).getRange().get().begin);
 	}
 
 	public List<JavaToken> getTokens() {
