@@ -51,7 +51,8 @@ public class LocationContents {
 	public boolean equals (Object o) {
 		if(!(o instanceof LocationContents))
 			return false;
-		return compareNodes(getNodes(), ((LocationContents)o).getNodes());
+		//return compareNodes(getNodes(), ((LocationContents)o).getNodes());
+		return getTokens().equals(((LocationContents)o).getTokens());
 	}
 	
 	public boolean compareNodes(List<Node> thisNodes, List<Node> otherNodes) {
@@ -78,11 +79,11 @@ public class LocationContents {
 	
 	@Override
 	public int hashCode() {
-		//int prime = 31;
+		int prime = 31;
 		int result = 1;
-		//for(Node token : nodes) {
-		//	result=prime * result + getTokenHashCode(token);
-		//}
+		for(JavaToken token : tokens) {
+			result=prime * result + token.hashCode();
+		}
 		return result;
 	}
 

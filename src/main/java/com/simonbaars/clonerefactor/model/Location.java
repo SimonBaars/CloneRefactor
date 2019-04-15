@@ -32,8 +32,8 @@ public class Location {
 
 	public Location(Location l2) {
 		this.file = l2.file;
-		this.contents = new LocationContents(contents);
-		this.range = new Range(range.begin, range.end);
+		this.contents = new LocationContents(l2.contents);
+		this.range = new Range(l2.range.begin, l2.range.end);
 	}
 
 	public File getFile() {
@@ -159,7 +159,7 @@ public class Location {
 		if(file != oldClone.getFile())
 			throw new IllegalStateException("Files of merging locations do not match! "+file+" != "+oldClone.getFile());
 		contents.merge(oldClone.getContents());
-		range = getRange().withBegin(oldClone.getRange().begin);
+		range = getRange().withEnd(oldClone.getRange().end);
 	}
 	
 }
