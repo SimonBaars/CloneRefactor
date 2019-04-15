@@ -58,7 +58,7 @@ public class NodeParser implements Parser {
 			thisLocation.calculateTokens(n, range);
 			if(prevLocation!=null) prevLocation.setNextLine(thisLocation);
 			addLineTokensToReg(thisLocation);
-			System.out.println("Parsing "+n.getClass().getName()+" as "+thisLocation.getContents()+" with range"+thisLocation.getRange());
+			//System.out.println("Parsing "+n.getClass().getName()+" as "+thisLocation.getContents()+" with range"+thisLocation.getRange());
 		}
 		return thisLocation;
 	}

@@ -90,8 +90,9 @@ public class CloneDetection {
 		}
 	}
 	
-	private boolean isSubset(Sequence sequence, Sequence subsetOf) {
-		return sequence.getSequence().stream().allMatch(e -> subsetOf.getSequence().stream().anyMatch(f -> f.getRange().contains(e.getRange())));
+	private boolean isSubset(Sequence existentClone, Sequence newClone) {
+		return newClone.getSequence().stream().allMatch(newLoc -> existentClone.getSequence().stream().anyMatch(oldLoc -> oldLoc.getFile() == newLoc.getFile() && newLoc.getRange().contains(oldLoc.getRange())))
+				&& existentClone.getSequence().stream().allMatch(oldLoc -> newClone.getSequence().stream().anyMatch(newLoc -> oldLoc.getFile() == newLoc.getFile() && newLoc.getRange().contains(oldLoc.getRange())));
 	}
 
 	private Sequence collectClones(Location lastLoc) {
