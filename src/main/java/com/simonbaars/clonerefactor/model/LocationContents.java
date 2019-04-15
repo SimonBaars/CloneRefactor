@@ -82,11 +82,11 @@ public class LocationContents {
 	
 	@Override
 	public int hashCode() {
-		int prime = 31;
+		//int prime = 31;
 		int result = 1;
-		for(Node token : nodes) {
-			result=prime * result + getTokenHashCode(token);
-		}
+		//for(Node token : nodes) {
+		//	result=prime * result + getTokenHashCode(token);
+		//}
 		return result;
 	}
 
@@ -105,7 +105,7 @@ public class LocationContents {
 		for(JavaToken token : tokenRange) {
 			Optional<Range> r = token.getRange();
 			if(r.isPresent()) {
-				if(!range.contains(range)) break;
+				if(!range.contains(r.get())) break;
 				tokens.add(token);
 				if(n instanceof ClassOrInterfaceDeclaration && token.asString().equals("{")) break; // We cannot exclude the body of class files, this is a workaround.
 			}
