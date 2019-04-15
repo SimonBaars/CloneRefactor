@@ -65,25 +65,14 @@ public class Location {
 		return range.end.line-range.begin.line+1;
 	}
 
-	/*@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + beginLine;
-		result = prime * result + endLine;
-		result = prime * result + ((file == null) ? 0 : file.hashCode());
-		return result;
-	}*/
-
 	public boolean isSame(Location other) {
 		if (range != other.range)
 			return false;
 		if (file == null) {
 			if (other.file != null)
 				return false;
-		} else if (!file.equals(other.file))
-			return false;
-		return true;
+		}
+		return file.equals(other.file);
 	}
 
 	public int getAmountOfTokens() {
