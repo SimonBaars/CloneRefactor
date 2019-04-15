@@ -12,14 +12,15 @@ import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.ImportDeclaration;
 import com.github.javaparser.ast.Modifier;
 import com.github.javaparser.ast.Node;
-import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.comments.Comment;
 import com.github.javaparser.ast.expr.Expression;
 import com.github.javaparser.ast.nodeTypes.NodeWithBody;
 import com.github.javaparser.ast.nodeTypes.NodeWithIdentifier;
 import com.github.javaparser.ast.stmt.BlockStmt;
+import com.github.javaparser.ast.stmt.CatchClause;
 import com.github.javaparser.ast.stmt.Statement;
+import com.github.javaparser.ast.stmt.TryStmt;
 import com.simonbaars.clonerefactor.model.Location;
 import com.simonbaars.clonerefactor.model.LocationContents;
 
@@ -29,7 +30,7 @@ public class NodeParser implements Parser {
 	public Location extractLinesFromAST(Location prevLocation, File file, Node n) {
 		if(n instanceof ImportDeclaration || n instanceof Expression || n instanceof Modifier || n instanceof NodeWithIdentifier || n instanceof Comment)
 			return prevLocation;
-		if(!(n instanceof CompilationUnit))
+		if(!(n instanceof CompilationUnit || n instanceof BlockStmt))
 			prevLocation = parseToken(prevLocation, file,  n);
 		for (Node child : childrenToParse(n)) {
 			prevLocation = setIfNotNull(prevLocation, extractLinesFromAST(prevLocation, file, child));
@@ -72,15 +73,16 @@ public class NodeParser implements Parser {
 		return location;
 	}
 	
-	public boolean hasBody(Node n) {
-		return n instanceof NodeWithBody || n instanceof ClassOrInterfaceDeclaration || (n instanceof MethodDeclaration && ((MethodDeclaration)n).getBody().isPresent());
-	}
-	
 	public Statement getBody(Node n) {
 		if(n instanceof NodeWithBody)
 			return ((NodeWithBody) n).getBody();
 		else if (n instanceof MethodDeclaration && ((MethodDeclaration)n).getBody().isPresent())
 			return ((MethodDeclaration)n).getBody().get();
+		else if(n instanceof TryStmt) {
+			return ((TryStmt)n).getTryBlock();
+		} else if(n instanceof CatchClause) {
+			return ((CatchClause)n).getBody();
+		} 
 		return null;
 	}
 	

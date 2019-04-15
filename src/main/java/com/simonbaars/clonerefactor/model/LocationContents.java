@@ -15,6 +15,7 @@ import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.EnumDeclaration;
 import com.github.javaparser.ast.stmt.BlockStmt;
+import com.github.javaparser.ast.stmt.LocalClassDeclarationStmt;
 import com.simonbaars.clonerefactor.ast.CompareNodes;
 
 public class LocationContents {
@@ -95,7 +96,7 @@ public class LocationContents {
 
 	@Override
 	public String toString() {
-		return tokens.stream().map(e -> e.asString()+" "+e.getCategory()).collect(Collectors.joining(","));
+		return tokens.stream().map(e -> e.asString()).collect(Collectors.joining());
 	}
 
 	public Range addTokens(Node n, TokenRange tokenRange, Range range) {
@@ -104,7 +105,7 @@ public class LocationContents {
 			if(r.isPresent()) {
 				if(!range.contains(r.get())) break;
 				tokens.add(token);
-				if(n instanceof ClassOrInterfaceDeclaration && token.asString().equals("{")) break; // We cannot exclude the body of class files, this is a workaround.
+				if((n instanceof ClassOrInterfaceDeclaration || n instanceof LocalClassDeclarationStmt) && token.asString().equals("{")) break; // We cannot exclude the body of class files, this is a workaround.
 			}
 		}
 		r = new Range(tokens.get(0).getRange().get().begin, tokens.get(tokens.size()-1).getRange().get().begin);
