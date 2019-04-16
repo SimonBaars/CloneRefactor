@@ -63,8 +63,8 @@ public class CloneDetection {
 				}
 				if(l.stream().collect(Collectors.summingInt(e -> e.getAmountOfTokens())) > MIN_AMOUNT_OF_TOKENS && l.stream().collect(Collectors.summingInt(e -> e.getAmountOfLines())) > MIN_AMOUNT_OF_LINES && l.size()>1) {
 					Sequence newSequence = new Sequence(l);
-					removeDuplicatesOf(newSequence);
-					clones.add(newSequence);
+					if(removeDuplicatesOf(newSequence))
+						clones.add(newSequence);
 				}
 				continue;
 			}
@@ -83,9 +83,10 @@ public class CloneDetection {
 		return l2.getContents().getRange().end;
 	}
 
-	public void removeDuplicatesOf(Sequence l) {
+	public boolean removeDuplicatesOf(Sequence l) {
 		clones.removeIf(e -> isSubset(e, l));
 		l.getSequence().removeIf(e -> l.getSequence().stream().anyMatch(f -> f!=e && f.getFile() == e.getFile() && f.getRange().contains(e.getRange())));
+		return !clones.stream().anyMatch(e -> isSubset(l, e));
 	}
 	
 	private boolean isSubset(Sequence existentClone, Sequence newClone) {

@@ -59,10 +59,8 @@ public class LocationContents {
 		for(int i = 0; i<thisNodes.size(); i++) {
 			Optional<Range> rangeOptional = thisNodes.get(i).getRange();
 			if(rangeOptional.isPresent() && range.contains(rangeOptional.get())){
-				if(!nodesEqual(thisNodes.get(i), otherNodes.get(i))) {
-					System.out.println("False on "+thisNodes.get(i)+", "+otherNodes.get(i));
+				if(!nodesEqual(thisNodes.get(i), otherNodes.get(i)))
 					return false;
-				}
 			} else if(rangeOptional.isPresent() && rangeOptional.get().contains(range) && !compareNodes(thisNodes.get(i).getChildNodes(), otherNodes.get(i).getChildNodes()))
 				return false;
 		}

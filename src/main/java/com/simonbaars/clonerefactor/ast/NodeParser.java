@@ -61,7 +61,7 @@ public class NodeParser implements Parser {
 			thisLocation = new Location(file, prevLocation);
 			thisLocation.calculateTokens(n, range);
 			if(prevLocation!=null) prevLocation.setNextLine(thisLocation);
-			System.out.println("Parsing "+n.getClass().getName()+" as "+thisLocation.getContents()+" at location "+thisLocation);
+			//System.out.println("Parsing "+n.getClass().getName()+" as "+thisLocation.getContents()+" at location "+thisLocation);
 			addLineTokensToReg(thisLocation);
 		}
 		return thisLocation;
@@ -70,7 +70,7 @@ public class NodeParser implements Parser {
 	public Location addLineTokensToReg(Location location) {
 		if(lineReg.containsKey(location.getContents())) {
 			location.setClone(lineReg.get(location.getContents()));
-			System.out.println("Clone at "+location.getClone());
+			//System.out.println("Clone at "+location.getClone());
 			lineReg.put(location.getContents(), location);
 		} else {
 			lineReg.put(location.getContents(), location);
