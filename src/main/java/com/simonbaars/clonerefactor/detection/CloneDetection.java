@@ -23,13 +23,12 @@ public class CloneDetection {
 	}
 
 	public List<Sequence> findChains(Location lastLoc) {
-		Sequence buildingChains = new Sequence();
 		final Set<Location> visitedLocations = new HashSet<>();
-		final List<Sequence> clones = new ArrayList<Sequence>();
-		for(;lastLoc!=null;lastLoc = lastLoc.getPrevLine()) {
+		final List<Sequence> clones = new ArrayList<>();
+		for(Sequence buildingChains = new Sequence();lastLoc!=null;lastLoc = lastLoc.getPrevLine()) {
 			Sequence newClones = collectClones(lastLoc);
 			visitedLocations.addAll(newClones.getSequence().subList(1, newClones.size()));
-			if(newClones.size()>=1)
+			if(!buildingChains.getSequence().isEmpty() || newClones.size()>1)
 				buildingChains = makeValid(lastLoc, buildingChains, newClones, clones, visitedLocations); //Because of the recent additions the current sequence may be invalidated
 			if(lastLoc.getPrevLine()!=null) {
 				if(lastLoc.getPrevLine().getFile()!=lastLoc.getFile()) {
@@ -92,8 +91,7 @@ public class CloneDetection {
 	}
 	
 	private boolean isSubset(Sequence existentClone, Sequence newClone) {
-		return newClone.getSequence().stream().allMatch(newLoc -> existentClone.getSequence().stream().anyMatch(oldLoc -> oldLoc.getFile() == newLoc.getFile() && newLoc.getRange().contains(oldLoc.getRange())))
-				&& existentClone.getSequence().stream().allMatch(oldLoc -> newClone.getSequence().stream().anyMatch(newLoc -> oldLoc.getFile() == newLoc.getFile() && newLoc.getRange().contains(oldLoc.getRange())));
+		return existentClone.getSequence().stream().allMatch(oldLoc -> newClone.getSequence().stream().anyMatch(newLoc -> oldLoc.getFile() == newLoc.getFile() && newLoc.getRange().contains(oldLoc.getRange())));
 	}
 
 	private Sequence collectClones(Location lastLoc) {
