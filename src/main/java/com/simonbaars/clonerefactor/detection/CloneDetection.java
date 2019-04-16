@@ -29,7 +29,7 @@ public class CloneDetection {
 			visitedLocations.addAll(newClones.getSequence().subList(1, newClones.size()));
 			if(!buildingChains.getSequence().isEmpty() || newClones.size()>1)
 				buildingChains = makeValid(lastLoc, buildingChains, newClones); //Because of the recent additions the current sequence may be invalidated
-			if(lastLoc.getPrevLine()!=null && lastLoc.getPrevLine().getFile()!=lastLoc.getFile())
+			if(buildingChains.size() == 1 || (lastLoc.getPrevLine()!=null && lastLoc.getPrevLine().getFile()!=lastLoc.getFile()))
 				buildingChains.getSequence().clear();
 		}
 		return clones;
