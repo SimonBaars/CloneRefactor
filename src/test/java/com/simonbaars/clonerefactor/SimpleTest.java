@@ -58,6 +58,12 @@ public class SimpleTest extends TestCase {
         printNice(chains);
     }
     
+    public void testNestedClone() {
+    	System.out.println("testNestedClone");
+        List<Sequence> chains = testProject("NestedClone");
+        printNice(chains);
+    }
+    
 	/**
      * Test for clones that consist of all equal lines.
      */

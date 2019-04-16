@@ -70,7 +70,7 @@ public class NodeParser implements Parser {
 	public Location addLineTokensToReg(Location location) {
 		if(lineReg.containsKey(location.getContents())) {
 			location.setClone(lineReg.get(location.getContents()));
-			//System.out.println("Clone at "+location.getClone().getRange());
+			System.out.println("Clone at "+location.getClone());
 			lineReg.put(location.getContents(), location);
 		} else {
 			lineReg.put(location.getContents(), location);
