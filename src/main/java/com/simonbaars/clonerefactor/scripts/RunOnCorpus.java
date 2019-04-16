@@ -12,6 +12,7 @@ import java.util.List;
 import com.simonbaars.clonerefactor.ast.CloneParser;
 import com.simonbaars.clonerefactor.common.TestingCommons;
 import com.simonbaars.clonerefactor.model.Sequence;
+import com.simonbaars.clonerefactor.util.PrettyPrinter;
 
 import me.tongfei.progressbar.ProgressBar;
 import me.tongfei.progressbar.ProgressBarBuilder;
@@ -26,7 +27,7 @@ public class RunOnCorpus {
 		for(File file : ProgressBar.wrap(Arrays.asList(corpusFiles), new ProgressBarBuilder().setTaskName("Running Clone Detection").setStyle(ProgressBarStyle.ASCII))) {
 			List<Sequence> seq = new CloneParser().parse(getJavaFiles(getSourceFolder(file)));
 			try {
-				TestingCommons.writeStringToFile(new File(outputFolder.getAbsolutePath()+"/"+file.getName()+"-"+seq.size()+".txt"), Arrays.toString(seq.toArray()));
+				TestingCommons.writeStringToFile(new File(outputFolder.getAbsolutePath()+"/"+file.getName()+"-"+seq.size()+".txt"), PrettyPrinter.prettify(seq));
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
