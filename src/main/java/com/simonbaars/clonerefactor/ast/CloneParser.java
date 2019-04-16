@@ -28,7 +28,7 @@ public class CloneParser implements Parser {
 		Location l = null;
 		for(File file : javaFiles) {
 			try {
-				l = setIfNotNull(l, parseClassFile(file));
+				l = setIfNotNull(l, parseClassFile(file, l));
 			} catch (FileNotFoundException e) {
 				return null;
 			}
@@ -36,11 +36,11 @@ public class CloneParser implements Parser {
 		return l;
 	}
 
-	private Location parseClassFile(File file) throws FileNotFoundException {
+	private Location parseClassFile(File file, Location location) throws FileNotFoundException {
 		final ParseResult<CompilationUnit> pr = new JavaParser().parse(file);
 		if(pr.isSuccessful() && pr.getResult().isPresent()) {
 			CompilationUnit cu = pr.getResult().get();
-			return astParser.extractLinesFromAST(null, file, cu);
+			return astParser.extractLinesFromAST(location, file, cu);
 		}
 		return null;
 	}

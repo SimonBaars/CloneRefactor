@@ -30,7 +30,7 @@ public class NodeParser implements Parser {
 		if(n instanceof ImportDeclaration || isExcluded(n))
 			return prevLocation;
 		if(!(n instanceof CompilationUnit || n instanceof BlockStmt))
-			prevLocation = parseToken(prevLocation, file,  n);
+			prevLocation = setIfNotNull(prevLocation, parseToken(prevLocation, file,  n));
 		for (Node child : childrenToParse(n)) {
 			prevLocation = setIfNotNull(prevLocation, extractLinesFromAST(prevLocation, file, child));
 		}

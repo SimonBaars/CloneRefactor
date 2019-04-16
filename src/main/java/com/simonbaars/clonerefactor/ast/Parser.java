@@ -1,7 +1,7 @@
 package com.simonbaars.clonerefactor.ast;
 
 public interface Parser {
-	public default <T> T setIfNotNull(T l, T parseClassFile) {
-		return parseClassFile == null ? l : parseClassFile;
+	public default <T> T setIfNotNull(T oldObject, T newObject) {
+		return newObject == null ? oldObject : newObject;
 	}
 }
