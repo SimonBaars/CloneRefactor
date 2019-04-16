@@ -80,7 +80,6 @@ public class LocationContents {
 			Optional<Range> rangeOptional = node.getRange();
 			if(rangeOptional.isPresent() && range.contains(rangeOptional.get()))
 				result = prime*result*node.hashCode();
-			
 			result = calcHashcode(node.getChildNodes(), result, prime);
 		}
 		return result;

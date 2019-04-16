@@ -1,4 +1,4 @@
-package com.simonbaars.clonerefactor.common;
+package com.simonbaars.clonerefactor.util;
 
 import java.io.File;
 import java.io.IOException;
@@ -12,12 +12,12 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 /**
- * The TestingCommons class provides all kinds of useful methods when testing with Selenium WebDriver.
+ * The FileUtils class provides all kinds of useful methods when testing with Selenium WebDriver.
  *
  */
-public class TestingCommons {
+public class FileUtils {
 
-	private TestingCommons() {
+	private FileUtils() {
 	}
 
 	public static String getFileAsString(File file) throws IOException {
