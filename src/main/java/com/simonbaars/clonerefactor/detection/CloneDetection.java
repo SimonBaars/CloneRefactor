@@ -87,9 +87,9 @@ public class CloneDetection {
 	}
 
 	private Position backtrace(Location l2, int amountOfNodes) {
-		for(int i = 0; i<amountOfNodes; i++)
+		for(int i = 1; i<amountOfNodes; i++)
 			l2 = l2.getNextLine();
-		return l2.getRange().end;
+		return l2.getContents().getRange().end;
 	}
 
 	public void removeDuplicatesOf(List<Sequence> clones, Sequence l) {

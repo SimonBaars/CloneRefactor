@@ -16,7 +16,7 @@ import com.github.javaparser.ast.body.EnumDeclaration;
 import com.github.javaparser.ast.stmt.LocalClassDeclarationStmt;
 
 public class LocationContents {
-	private Range r;
+	private Range range;
 	private final List<Node> nodes;
 	private final List<JavaToken> tokens;
 	
@@ -28,7 +28,7 @@ public class LocationContents {
 	}
 
 	public LocationContents(LocationContents contents) {
-		this.r = contents.r;
+		this.range = contents.range;
 		this.nodes = new ArrayList<>(contents.getNodes());
 		this.tokens = new ArrayList<>(contents.getTokens());
 	}
@@ -57,8 +57,8 @@ public class LocationContents {
 			return false;
 	
 		for(int i = 0; i<thisNodes.size(); i++) {
-			Optional<Range> range = thisNodes.get(i).getRange();
-			if(range.isPresent() && r.contains(range.get()) && !nodesEqual(thisNodes.get(i), otherNodes.get(i)))
+			Optional<Range> rangeOptional = thisNodes.get(i).getRange();
+			if(rangeOptional.isPresent() && range.contains(rangeOptional.get()) && !nodesEqual(thisNodes.get(i), otherNodes.get(i)))
 				return false;
 			
 			if(!compareNodes(thisNodes.get(i).getChildNodes(), otherNodes.get(i).getChildNodes()))
@@ -77,8 +77,8 @@ public class LocationContents {
 	
 	public int calcHashcode(List<Node> nodeList, int result, int prime) {
 		for(Node node : nodeList) {
-			Optional<Range> range = node.getRange();
-			if(range.isPresent() && r.contains(range.get()))
+			Optional<Range> rangeOptional = node.getRange();
+			if(rangeOptional.isPresent() && range.contains(rangeOptional.get()))
 				result = prime*result*node.hashCode();
 			
 			result = calcHashcode(node.getChildNodes(), result, prime);
@@ -99,18 +99,18 @@ public class LocationContents {
 		return tokens.stream().map(e -> e.asString()).collect(Collectors.joining());
 	}
 
-	public Range addTokens(Node n, TokenRange tokenRange, Range range) {
+	public Range addTokens(Node n, TokenRange tokenRange, Range validRange) {
 		for(JavaToken token : tokenRange) {
 			Optional<Range> r = token.getRange();
 			if(r.isPresent()) {
-				if(!range.contains(r.get())) break;
+				if(!validRange.contains(r.get())) break;
 				tokens.add(token);
 				if((n instanceof ClassOrInterfaceDeclaration || n instanceof LocalClassDeclarationStmt || n instanceof EnumDeclaration) && token.asString().equals("{")) break; // We cannot exclude the body of class files, this is a workaround.
 			}
 		}
 		if(tokens.isEmpty()) return null;
-		r = new Range(tokens.get(0).getRange().get().begin, tokens.get(tokens.size()-1).getRange().get().end);
-		return r; //No, we can't merge this with the line above.
+		range = new Range(tokens.get(0).getRange().get().begin, tokens.get(tokens.size()-1).getRange().get().end);
+		return range; //No, we can't merge this with the line above.
 	}
 
 	public List<JavaToken> getTokens() {
@@ -120,6 +120,14 @@ public class LocationContents {
 	public void merge(LocationContents contents) {
 		nodes.addAll(contents.getNodes());
 		tokens.addAll(contents.getTokens());
+	}
+
+	public Range getRange() {
+		return range;
+	}
+
+	public void setRange(Range range) {
+		this.range = range;
 	}
 	
 	
