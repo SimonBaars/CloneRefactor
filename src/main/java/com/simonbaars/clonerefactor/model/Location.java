@@ -34,9 +34,6 @@ public class Location {
 		this.file = clonedLocation.file;
 		this.contents = new LocationContents(clonedLocation.contents);
 		this.range = new Range(clonedLocation.range.begin, clonedLocation.range.end);
-		this.prevLocation = clonedLocation.prevLocation;
-		this.clone = clonedLocation.clone;
-		this.nextLocation = clonedLocation.nextLocation;
 	}
 
 	public Location(File file, Range range) {
@@ -157,13 +154,12 @@ public class Location {
 		this.contents = contents;
 	}
 
-	public Location mergeWith(Location oldClone) {
+	public void mergeWith(Location oldClone) {
 		if(file != oldClone.getFile())
 			throw new IllegalStateException("Files of merging locations do not match! "+file+" != "+oldClone.getFile());
-		Location copy = new Location(this);
-		copy.contents.merge(oldClone.getContents());
-		copy.range = getRange().withEnd(oldClone.getRange().end);
-		return copy;
+		contents.merge(oldClone.getContents());
+		range = getRange().withEnd(oldClone.getRange().end);
+		//System.out.println("Merged "+this+" with "+oldClone+" into size "+getAmountOfNodes());
 	}
 
 	public int getAmountOfNodes() {
