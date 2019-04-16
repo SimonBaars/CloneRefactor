@@ -14,6 +14,7 @@ import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.EnumDeclaration;
 import com.github.javaparser.ast.stmt.LocalClassDeclarationStmt;
+import com.simonbaars.clonerefactor.exception.NoTokensException;
 
 public class LocationContents {
 	private Range range;
@@ -78,7 +79,7 @@ public class LocationContents {
 	public int calcHashcode(List<Node> nodeList, int result, int prime) {
 		for(Node node : nodeList) {
 			Optional<Range> rangeOptional = node.getRange();
-			if(rangeOptional.isPresent() && range!=null && range.contains(rangeOptional.get()))
+			if(rangeOptional.isPresent() && range.contains(rangeOptional.get()))
 				result = prime*result*node.hashCode();
 			result = calcHashcode(node.getChildNodes(), result, prime);
 		}
@@ -107,7 +108,8 @@ public class LocationContents {
 				if((n instanceof ClassOrInterfaceDeclaration || n instanceof LocalClassDeclarationStmt || n instanceof EnumDeclaration) && token.asString().equals("{")) break; // We cannot exclude the body of class files, this is a workaround.
 			}
 		}
-		if(tokens.isEmpty()) return null;
+		if(tokens.isEmpty())
+			throw new NoTokensException(n, tokenRange, validRange);
 		range = new Range(tokens.get(0).getRange().get().begin, tokens.get(tokens.size()-1).getRange().get().end);
 		return range; //No, we can't merge this with the line above.
 	}
