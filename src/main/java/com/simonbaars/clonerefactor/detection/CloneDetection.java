@@ -14,13 +14,11 @@ import com.simonbaars.clonerefactor.model.Location;
 import com.simonbaars.clonerefactor.model.Sequence;
 
 public class CloneDetection {
-	private static final int MIN_AMOUNT_OF_LINES = 2;
+	private static final int MIN_AMOUNT_OF_LINES = 6;
 	private static final int MIN_AMOUNT_OF_TOKENS = 10;
-	private static final int MIN_AMOUNT_OF_NODES = 2; 
+	private static final int MIN_AMOUNT_OF_NODES = 6; 
 
-	public CloneDetection() {
-
-	}
+	public CloneDetection() {}
 
 	public List<Sequence> findChains(Location lastLoc) {
 		final Set<Location> visitedLocations = new HashSet<>();
@@ -84,10 +82,7 @@ public class CloneDetection {
 	}
 	
 	public void removeDuplicatesOf(List<Sequence> clones, Sequence l) {
-		for(int i = clones.size()-1; i>=0; i--) {
-			if(isSubset(clones.get(i), l))
-				clones.remove(i);
-		}
+		clones.removeIf(e -> isSubset(e, l));
 	}
 	
 	private boolean isSubset(Sequence existentClone, Sequence newClone) {
