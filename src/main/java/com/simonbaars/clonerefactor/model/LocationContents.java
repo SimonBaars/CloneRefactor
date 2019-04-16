@@ -78,7 +78,7 @@ public class LocationContents {
 	public int calcHashcode(List<Node> nodeList, int result, int prime) {
 		for(Node node : nodeList) {
 			Optional<Range> rangeOptional = node.getRange();
-			if(rangeOptional.isPresent() && range.contains(rangeOptional.get()))
+			if(rangeOptional.isPresent() && range!=null && range.contains(rangeOptional.get()))
 				result = prime*result*node.hashCode();
 			result = calcHashcode(node.getChildNodes(), result, prime);
 		}
