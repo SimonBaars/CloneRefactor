@@ -13,6 +13,7 @@ import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.ImportDeclaration;
 import com.github.javaparser.ast.Modifier;
 import com.github.javaparser.ast.Node;
+import com.github.javaparser.ast.PackageDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.comments.Comment;
 import com.github.javaparser.ast.expr.Expression;
@@ -28,7 +29,7 @@ public class NodeParser implements Parser {
 	final Map<LocationContents, Location> lineReg = new HashMap<>();
 	
 	public Location extractLinesFromAST(Location prevLocation, File file, Node n) {
-		if(n instanceof ImportDeclaration || isExcluded(n))
+		if(n instanceof ImportDeclaration || n instanceof PackageDeclaration || isExcluded(n))
 			return prevLocation;
 		if(!(n instanceof CompilationUnit || n instanceof BlockStmt || n instanceof LocalClassDeclarationStmt))
 			prevLocation = setIfNotNull(prevLocation, parseToken(prevLocation, file,  n));
@@ -57,7 +58,7 @@ public class NodeParser implements Parser {
 			thisLocation = new Location(file, prevLocation);
 			thisLocation.calculateTokens(n, range);
 			if(prevLocation!=null) prevLocation.setNextLine(thisLocation);
-			//System.out.println("Parsing "+n.getClass().getName()+" as "+thisLocation.getContents()+" with range"+thisLocation.getRange());
+			System.out.println("Parsing "+n.getClass().getName()+" as "+thisLocation.getContents()+" at location "+thisLocation);
 			addLineTokensToReg(thisLocation);
 		}
 		return thisLocation;
