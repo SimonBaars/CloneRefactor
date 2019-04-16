@@ -61,17 +61,17 @@ public class CloneDetection {
 
 	private void checkValidClones(Sequence oldClones, List<Location> endedClones, List<Sequence> clones) {
 		ListMap<Integer /*Sequence size*/, Location /* Clones */> cloneList = new ListMap<>();
-		endedClones.stream().filter(e -> e.getAmountOfLines() >= MIN_AMOUNT_OF_LINES).forEach(e -> cloneList.addTo(e.getAmountOfLines(), e));
+		endedClones.stream().filter(e -> e.getAmountOfNodes() >= MIN_AMOUNT_OF_NODES).forEach(e -> cloneList.addTo(e.getAmountOfNodes(), e));
 		for(List<Location> l : cloneList.values()) {
 			if(l.stream().anyMatch(e -> endedClones.contains(e))) {
 				int origEl = l.size();
 				for(Location l2 : oldClones.getSequence()) {
-					if(l.get(0)!= l2 && l2.getAmountOfLines()>=l.get(0).getAmountOfLines()) {
+					if(l.get(0)!= l2 && l2.getAmountOfNodes()==l.get(0).getAmountOfNodes()) {
 						l.add(new Location(l2));
 					}
 				}
 				IntStream.range(0, origEl).forEach(i -> l.set(i, new Location(l.get(i))));
-				if(l.stream().collect(Collectors.summingInt(e -> e.getAmountOfTokens())) > MIN_AMOUNT_OF_TOKENS && l.stream().collect(Collectors.summingInt(e -> e.getAmountOfNodes())) > MIN_AMOUNT_OF_NODES && l.size()>1) {
+				if(l.stream().collect(Collectors.summingInt(e -> e.getAmountOfTokens())) > MIN_AMOUNT_OF_TOKENS && l.stream().collect(Collectors.summingInt(e -> e.getAmountOfLines())) > MIN_AMOUNT_OF_LINES && l.size()>1) {
 					Sequence newSequence = new Sequence(l);
 					removeDuplicatesOf(clones, newSequence);
 					clones.add(newSequence);
@@ -83,6 +83,7 @@ public class CloneDetection {
 	
 	public void removeDuplicatesOf(List<Sequence> clones, Sequence l) {
 		clones.removeIf(e -> isSubset(e, l));
+		l.getSequence().removeIf(e -> l.getSequence().stream().anyMatch(f -> f!=e && f.getRange().contains(e.getRange())));
 	}
 	
 	private boolean isSubset(Sequence existentClone, Sequence newClone) {
