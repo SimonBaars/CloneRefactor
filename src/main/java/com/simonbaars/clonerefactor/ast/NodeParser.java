@@ -57,7 +57,7 @@ public class NodeParser implements Parser {
 			thisLocation.calculateTokens(n, range);
 			if(prevLocation!=null) prevLocation.setNextLine(thisLocation);
 			addLineTokensToReg(thisLocation);
-			System.out.println("Parsing "+n.getClass().getName()+" as "+thisLocation.getContents()+" with range"+thisLocation.getRange());
+			//System.out.println("Parsing "+n.getClass().getName()+" as "+thisLocation.getContents()+" with range"+thisLocation.getRange());
 		}
 		return thisLocation;
 	}
@@ -76,9 +76,8 @@ public class NodeParser implements Parser {
 		Optional<Range> nodeRangeOpt = n.getRange();
 		if(nodeRangeOpt.isPresent()) {
 			Range nodeRange = nodeRangeOpt.get();
-			ListIterator<Node> it = n.getChildNodes().listIterator(n.getChildNodes().size());
-			//System.out.println(n+" has children "+Arrays.toString(n.getChildNodes().toArray()));
-			for(Node node = it.previous(); it.hasPrevious(); it.previous()) {
+			for(ListIterator<Node> it = n.getChildNodes().listIterator(n.getChildNodes().size()); it.hasPrevious(); ) {
+				Node node = it.previous();
 				if(!isExcluded(node) && node.getRange().isPresent()) {
 					nodeRange = nodeRange.withEnd(node.getRange().get().begin);
 				} else break;
