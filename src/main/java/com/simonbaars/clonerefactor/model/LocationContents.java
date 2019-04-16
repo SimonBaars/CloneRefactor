@@ -13,7 +13,6 @@ import com.github.javaparser.TokenRange;
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.EnumDeclaration;
-import com.github.javaparser.ast.stmt.LocalClassDeclarationStmt;
 import com.simonbaars.clonerefactor.exception.NoTokensException;
 
 public class LocationContents {
@@ -105,7 +104,7 @@ public class LocationContents {
 			if(r.isPresent()) {
 				if(!validRange.contains(r.get())) break;
 				tokens.add(token);
-				if((n instanceof ClassOrInterfaceDeclaration || n instanceof LocalClassDeclarationStmt || n instanceof EnumDeclaration) && token.asString().equals("{")) break; // We cannot exclude the body of class files, this is a workaround.
+				if((n instanceof ClassOrInterfaceDeclaration || n instanceof EnumDeclaration) && token.asString().equals("{")) break; // We cannot exclude the body of class files, this is a workaround.
 			}
 		}
 		if(tokens.isEmpty())

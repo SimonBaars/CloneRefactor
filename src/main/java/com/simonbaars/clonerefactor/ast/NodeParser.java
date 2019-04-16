@@ -19,6 +19,7 @@ import com.github.javaparser.ast.expr.Expression;
 import com.github.javaparser.ast.nodeTypes.NodeWithBody;
 import com.github.javaparser.ast.nodeTypes.NodeWithIdentifier;
 import com.github.javaparser.ast.stmt.BlockStmt;
+import com.github.javaparser.ast.stmt.LocalClassDeclarationStmt;
 import com.github.javaparser.ast.type.Type;
 import com.simonbaars.clonerefactor.model.Location;
 import com.simonbaars.clonerefactor.model.LocationContents;
@@ -29,7 +30,7 @@ public class NodeParser implements Parser {
 	public Location extractLinesFromAST(Location prevLocation, File file, Node n) {
 		if(n instanceof ImportDeclaration || isExcluded(n))
 			return prevLocation;
-		if(!(n instanceof CompilationUnit || n instanceof BlockStmt))
+		if(!(n instanceof CompilationUnit || n instanceof BlockStmt || n instanceof LocalClassDeclarationStmt))
 			prevLocation = setIfNotNull(prevLocation, parseToken(prevLocation, file,  n));
 		for (Node child : childrenToParse(n)) {
 			prevLocation = setIfNotNull(prevLocation, extractLinesFromAST(prevLocation, file, child));
