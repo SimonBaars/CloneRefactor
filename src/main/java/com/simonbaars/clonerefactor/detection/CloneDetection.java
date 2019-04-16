@@ -83,7 +83,7 @@ public class CloneDetection {
 	
 	public void removeDuplicatesOf(List<Sequence> clones, Sequence l) {
 		clones.removeIf(e -> isSubset(e, l));
-		l.getSequence().removeIf(e -> l.getSequence().stream().anyMatch(f -> f!=e && f.getRange().contains(e.getRange())));
+		l.getSequence().removeIf(e -> l.getSequence().stream().anyMatch(f -> f!=e && f.getFile() == e.getFile() && f.getRange().contains(e.getRange())));
 	}
 	
 	private boolean isSubset(Sequence existentClone, Sequence newClone) {
