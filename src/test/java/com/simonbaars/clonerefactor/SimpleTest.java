@@ -45,7 +45,7 @@ public class SimpleTest extends TestCase {
     
     public void testCustom() {
     	System.out.println("custom");
-        List<Sequence> chains = Main.cloneDetection("/Users/sbaars/Downloads/SmallSQL-master/src/main/java");
+        List<Sequence> chains = Main.cloneDetection("/Users/sbaars/Downloads/SmallSQL-master/src/main/java/");
         System.out.println(Arrays.toString(chains.toArray()));
     }
 

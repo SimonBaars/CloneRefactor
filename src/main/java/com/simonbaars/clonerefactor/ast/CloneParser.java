@@ -3,6 +3,7 @@ package com.simonbaars.clonerefactor.ast;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import com.github.javaparser.JavaParser;
@@ -40,8 +41,6 @@ public class CloneParser implements Parser {
 		if(pr.isSuccessful() && pr.getResult().isPresent()) {
 			CompilationUnit cu = pr.getResult().get();
 			return astParser.extractLinesFromAST(null, file, cu);
-			//astParser.addLineTokensToReg(l);
-			//return l;
 		}
 		return null;
 	}

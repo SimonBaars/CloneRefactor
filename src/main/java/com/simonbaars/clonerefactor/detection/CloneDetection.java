@@ -41,7 +41,7 @@ public class CloneDetection {
 
 
 	private Sequence makeValid(Location lastLoc, Sequence oldClones, Sequence newClones, List<Sequence> clones, Set<Location> visitedLocations) {
-		Map<Location /*oldClones*/, Location /*newClones*/> validChains = oldClones.getSequence().stream().distinct().filter(e -> newClones.getSequence().contains(e.getPrevLine())).collect(Collectors.toMap(e -> e, e -> e.getPrevLine()));
+		Map<Location /*oldClones*/, Location /*newClones*/> validChains = oldClones.getSequence().stream().distinct().filter(e -> newClones.getSequence().stream().anyMatch(f -> f == e.getPrevLine() && f.getFile() == e.getFile())).collect(Collectors.toMap(e -> e, e -> e.getPrevLine()));
 
 		if(validChains.size()!=oldClones.size() && !oldClones.getSequence().isEmpty()) {
 			checkValidClones(oldClones, oldClones.getSequence().stream().filter(e -> !newClones.getSequence().contains(e.getPrevLine())).collect(Collectors.toList()), clones);
