@@ -7,7 +7,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 import com.github.javaparser.Position;
 import com.github.javaparser.Range;
@@ -47,8 +46,8 @@ public class CloneDetection {
 
 		for(Entry<Location, Location> validChain : validChains.entrySet()) {
 			Location l = validChain.getValue().mergeWith(validChain.getKey());
-			validChain.setValue(l);
 			newClones.getSequence().set(newClones.getSequence().indexOf(validChain.getValue()), l);
+			validChain.setValue(l);
 		}
 
 		if(visitedLocations.contains(lastLoc)){
@@ -80,12 +79,12 @@ public class CloneDetection {
 	}
 	
 	private Range getRange(Location l2, Location location) {
-		System.out.println("getRange "+l2+", "+location );
+		//System.out.println("getRange "+l2+", "+location );
 		return l2.getRange().withEnd(backtrace(l2, location.getAmountOfNodes()));
 	}
 
 	private Position backtrace(Location l2, int amountOfNodes) {
-		System.out.println("Backtracing "+l2+" "+amountOfNodes);
+		//System.out.println("Backtracing "+l2+" "+amountOfNodes);
 		for(int i = 1; i<amountOfNodes; i++)
 			l2 = l2.getNextLine();
 		return l2.getContents().getRange().end;
