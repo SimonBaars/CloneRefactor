@@ -8,7 +8,10 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
+import com.github.javaparser.Position;
+import com.github.javaparser.Range;
 import com.simonbaars.clonerefactor.datatype.ListMap;
 import com.simonbaars.clonerefactor.model.Location;
 import com.simonbaars.clonerefactor.model.Sequence;
@@ -28,10 +31,8 @@ public class CloneDetection {
 			visitedLocations.addAll(newClones.getSequence().subList(1, newClones.size()));
 			if(!buildingChains.getSequence().isEmpty() || newClones.size()>1)
 				buildingChains = makeValid(lastLoc, buildingChains, newClones, clones, visitedLocations); //Because of the recent additions the current sequence may be invalidated
-			if(lastLoc.getPrevLine()!=null) {
-				if(lastLoc.getPrevLine().getFile()!=lastLoc.getFile()) {
-					buildingChains.getSequence().clear();
-				}
+			if(lastLoc.getPrevLine()!=null && lastLoc.getPrevLine().getFile()!=lastLoc.getFile()) {
+				buildingChains.getSequence().clear();
 			}
 		}
 		return clones;
@@ -66,8 +67,8 @@ public class CloneDetection {
 			if(l.stream().anyMatch(e -> endedClones.contains(e))) {
 				int origEl = l.size();
 				for(Location l2 : oldClones.getSequence()) {
-					if(l.get(0)!= l2 && l2.getAmountOfNodes()==l.get(0).getAmountOfNodes()) {
-						l.add(new Location(l2));
+					if(l.get(0)!= l2 && l2.getAmountOfNodes()>=l.get(0).getAmountOfNodes()) {
+						l.add(new Location(l2, getRange(l2, l.get(0))));
 					}
 				}
 				IntStream.range(0, origEl).forEach(i -> l.set(i, new Location(l.get(i))));
@@ -81,6 +82,16 @@ public class CloneDetection {
 		}
 	}
 	
+	private Range getRange(Location l2, Location location) {
+		return l2.getRange().withEnd(backtrace(l2, location.getAmountOfNodes()));
+	}
+
+	private Position backtrace(Location l2, int amountOfNodes) {
+		for(int i = 0; i<amountOfNodes; i++)
+			l2 = l2.getNextLine();
+		return l2.getRange().end;
+	}
+
 	public void removeDuplicatesOf(List<Sequence> clones, Sequence l) {
 		clones.removeIf(e -> isSubset(e, l));
 		l.getSequence().removeIf(e -> l.getSequence().stream().anyMatch(f -> f!=e && f.getFile() == e.getFile() && f.getRange().contains(e.getRange())));

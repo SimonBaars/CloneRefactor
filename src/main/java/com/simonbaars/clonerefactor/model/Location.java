@@ -30,15 +30,20 @@ public class Location {
 		this.prevLocation = prevLocation;
 	}
 
-	public Location(Location l2) {
-		this.file = l2.file;
-		this.contents = new LocationContents(l2.contents);
-		this.range = new Range(l2.range.begin, l2.range.end);
+	public Location(Location clonedLocation) {
+		this.file = clonedLocation.file;
+		this.contents = new LocationContents(clonedLocation.contents);
+		this.range = new Range(clonedLocation.range.begin, clonedLocation.range.end);
 	}
 
 	public Location(File file, Range range) {
 		this.file = file;
 		this.range = range;
+	}
+
+	public Location(Location clonedLocation, Range r) {
+		this(clonedLocation);
+		this.range = r;
 	}
 
 	public File getFile() {

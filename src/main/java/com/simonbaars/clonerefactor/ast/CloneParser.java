@@ -3,7 +3,6 @@ package com.simonbaars.clonerefactor.ast;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import com.github.javaparser.JavaParser;
