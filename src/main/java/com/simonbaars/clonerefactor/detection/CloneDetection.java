@@ -18,7 +18,6 @@ public class CloneDetection {
 	private static final int MIN_AMOUNT_OF_LINES = 6;
 	private static final int MIN_AMOUNT_OF_TOKENS = 10;
 	private static final int MIN_AMOUNT_OF_NODES = 6; 
-	final Set<Location> visitedLocations = new HashSet<>();
 	final List<Sequence> clones = new ArrayList<>();
 
 	public CloneDetection() {}
@@ -26,7 +25,6 @@ public class CloneDetection {
 	public List<Sequence> findChains(Location lastLoc) {
 		for(Sequence buildingChains = new Sequence();lastLoc!=null;lastLoc = lastLoc.getPrevLine()) {
 			Sequence newClones = collectClones(lastLoc);
-			visitedLocations.addAll(newClones.getSequence().subList(1, newClones.size()));
 			if(!buildingChains.getSequence().isEmpty() || newClones.size()>1)
 				buildingChains = makeValid(lastLoc, buildingChains, newClones); //Because of the recent additions the current sequence may be invalidated
 			if(buildingChains.size() == 1 || (lastLoc.getPrevLine()!=null && lastLoc.getPrevLine().getFile()!=lastLoc.getFile()))
@@ -48,11 +46,6 @@ public class CloneDetection {
 			Location l = validChain.getValue().mergeWith(validChain.getKey());
 			newClones.getSequence().set(newClones.getSequence().indexOf(validChain.getValue()), l);
 			validChain.setValue(l);
-		}
-
-		if(visitedLocations.contains(lastLoc)){
-			newClones.getSequence().clear();
-			newClones.getSequence().addAll(validChains.values());
 		}
 
 		return newClones;
