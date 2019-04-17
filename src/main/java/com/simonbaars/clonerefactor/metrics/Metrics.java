@@ -12,4 +12,14 @@ public class Metrics {
 	public int amountOfTokensCloned = 0;
 	
 	public final CountMap<Integer> amountPerCloneClassSize = new CountMap<Integer>();
+
+	@Override
+	public String toString() {
+		return "Metrics [totalAmountOfLines=" + totalAmountOfLines + ", totalAmountOfNodes=" + totalAmountOfNodes
+				+ ", totalAmountOfTokens=" + totalAmountOfTokens + ", amountOfLinesCloned=" + amountOfLinesCloned
+				+ ", amountOfNodesCloned=" + amountOfNodesCloned + ", amountOfTokensCloned=" + amountOfTokensCloned
+				+ ", amountPerCloneClassSize=" + amountPerCloneClassSize + "]";
+	}
+	
+	
 }

@@ -2,6 +2,7 @@ package com.simonbaars.clonerefactor.datatype;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class CountMap<K> extends HashMap<K, Integer> {
 	/**
@@ -34,5 +35,10 @@ public class CountMap<K> extends HashMap<K, Integer> {
 		if(!super.containsKey(key))
 			super.put((K) key, 0);
 		return super.get(key);
+	}
+	
+	@Override
+	public String toString() {
+		return entrySet().stream().map(e -> e.getKey()+" => "+e.getValue()).collect(Collectors.joining(", ", "[", "]"));
 	}
 }

@@ -15,14 +15,17 @@ import com.simonbaars.clonerefactor.model.Sequence;
 
 public class CloneParser implements Parser {
 
-	NodeParser astParser;
-	MetricCollector metricCollector = new MetricCollector();
+	private NodeParser astParser;
+	public final MetricCollector metricCollector = new MetricCollector();
 	
 	public List<Sequence> parse(List<File> javaFiles) {
 		astParser = new NodeParser(metricCollector);
 		Location lastLoc = calculateLineReg(javaFiles);
-		if(lastLoc!=null)
-			return new CloneDetection().findChains(lastLoc);
+		if(lastLoc!=null) {
+			List<Sequence> findChains = new CloneDetection().findChains(lastLoc);
+			System.out.println(metricCollector.reportClones(findChains));
+			return findChains;
+		}
 		return new ArrayList<>();
 	}
 
