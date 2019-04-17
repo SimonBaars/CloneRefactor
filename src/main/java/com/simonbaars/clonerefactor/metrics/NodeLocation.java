@@ -12,23 +12,21 @@ import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import com.simonbaars.clonerefactor.model.Sequence;
 
-public enum NodeLocation {
-	COMMONHIERARCHY(8),
-	UNRELATED(9), //done
-	SUPERCLASS(3), //done
-	ANCESTOR(4), //done
-	SIBLING(5), //done
-	FIRSTCOUSIN(6), //done
-	SAMECLASS(2), //done
-	SAMEMETHOD(1), //done
-	SAMEINTERFACE(7);
+public enum NodeLocation { //Please note that the order of these enum values matters
+	SAMEMETHOD, //done
+	SAMECLASS, //done
+	SUPERCLASS, //done
+	ANCESTOR, //done
+	SIBLING, //done
+	FIRSTCOUSIN, //done
+	SAMEINTERFACE,
+	COMMONHIERARCHY,
+	UNRELATED //done
+	;
 	
 	private static final Map<String, ClassOrInterfaceDeclaration> classes = new HashMap<>();
-	private final int order;
 	
-	private NodeLocation(int order) {
-		this.order=order;
-	}
+	private NodeLocation() {}
 	
 	public static NodeLocation getLocation(Node n1, Node n2) {
 		if(isMethod(n1, n2))
