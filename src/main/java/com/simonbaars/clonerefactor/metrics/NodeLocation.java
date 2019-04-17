@@ -60,7 +60,7 @@ public enum NodeLocation { //Please note that the order of these enum values mat
 			return false;
 		ClassOrInterfaceType superclassC1 = c1.getExtendedTypes().get(0);
 		ClassOrInterfaceType superclassC2 = c2.getExtendedTypes().get(0);
-		return superclassC1.getNameAsString().equals("Object") && superclassC2.getNameAsString().equals("Object") && 
+		return !superclassC1.getNameAsString().equals("Object") && !superclassC2.getNameAsString().equals("Object") && 
 				getFullyQualifiedName(c1, superclassC1).equals(getFullyQualifiedName(c2, superclassC2));
 	}
 
