@@ -64,16 +64,18 @@ public enum NodeLocation { //Please note that the order of these enum values mat
 		classes.clear();
 	}
 
-	private static boolean isSiblingOrCousin(ClassOrInterfaceDeclaration c1, ClassOrInterfaceDeclaration c2, int i) {
-		ClassOrInterfaceDeclaration parent1 = goUp(c1, i);
-		ClassOrInterfaceDeclaration parent2 = goUp(c1, i);
-		return parent1!=null && parent1.equals(parent2);
+	private static boolean isSiblingOrCousin(ClassOrInterfaceDeclaration c1, ClassOrInterfaceDeclaration c2, int c1GoUp, int c2GoUp) {
+		ClassOrInterfaceDeclaration parent1 = goUp(c1, c1GoUp);
+		ClassOrInterfaceDeclaration parent2 = goUp(c1, c2GoUp);
+		System.out.println("Sibling check "+i+" = "+getFullyQualifiedName(parent1)+" vs "+getFullyQualifiedName(parent2));
+		return parent1!=null && getFullyQualifiedName(parent1).equals(getFullyQualifiedName(parent2));
 	}
 
 	private static ClassOrInterfaceDeclaration goUp(ClassOrInterfaceDeclaration c1, int i) {
 		if(i>0) {
 			if(!c1.getExtendedTypes().isEmpty()) {
 				String fullyQualifiedName = getFullyQualifiedName(c1, c1.getExtendedTypes(0));
+				System.out.println("goUp "+fullyQualifiedName);
 				if(classes.containsKey(fullyQualifiedName)) {
 					ClassOrInterfaceDeclaration parent = classes.get(fullyQualifiedName);
 					return goUp(parent, i-1);
@@ -111,20 +113,26 @@ public enum NodeLocation { //Please note that the order of these enum values mat
 		});
 	}
 
-	private static String getFullyQualifiedName(Node n, ClassOrInterfaceType t) {
+	private static String getFullyQualifiedName(ClassOrInterfaceDeclaration n, ClassOrInterfaceType t) {
 		String name = "";
 		if(t.getScope().isPresent())
 			name+=getFullyQualifiedName(n, t.getScope().get())+".";
-		else {
+		else if(n!=null) {
 			Optional<String> nameOpt = getCompilationUnit(n).getImports().stream().map(e -> e.getNameAsString()).filter(e -> e.endsWith("."+t.getName())).findAny();
 			if(nameOpt.isPresent()) //TODO: Parse import with asterisk in the else clause.
 				return nameOpt.get();
+			else {
+				String fullyQualifiedName = getFullyQualifiedName(n);
+				name+=fullyQualifiedName.substring(0, fullyQualifiedName.lastIndexOf('.')+1);
+			}
 		}
 		return name+t.getNameAsString();
 	}
 
 	private static String getFullyQualifiedName(ClassOrInterfaceDeclaration c2) {
 		String name = "";
+		if(c2 == null)
+			return null;
 		ClassOrInterfaceDeclaration parentClass = c2.getParentNode().isPresent() ? getClass(c2.getParentNode().get()): null;
 		if(parentClass!=null) {
 			name+=getFullyQualifiedName(parentClass)+".";
@@ -170,7 +178,6 @@ public enum NodeLocation { //Please note that the order of these enum values mat
 		for(int i = 0; i<clone.getSequence().get(0).getContents().getNodes().size(); i++) {
 			for(int j = 0; j<clone.getSequence().size(); j++) {
 				for(int z = j+1; z<clone.getSequence().size(); z++) {
-					System.out.println(clone.getSequence().get(j).getFile()+" vs "+clone.getSequence().get(z).getFile());
 					locations.add(getLocation(clone.getSequence().get(j).getContents().getNodes().get(i), clone.getSequence().get(z).getContents().getNodes().get(i)));
 					System.out.println(locations.get(locations.size()-1));
 				}
