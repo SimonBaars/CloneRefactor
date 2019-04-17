@@ -21,6 +21,20 @@ public class Metrics {
 				+ ", amountPerCloneClassSize=" + amountPerCloneClassSize + ", amountPerLocation=" + amountPerLocation
 				+ "]";
 	}
+	
+	
+	public void add(Metrics metrics) {
+		totalAmountOfLines+=metrics.totalAmountOfLines;
+		totalAmountOfNodes+=metrics.totalAmountOfNodes;
+		totalAmountOfTokens+=metrics.totalAmountOfTokens;
+		
+		amountOfLinesCloned+=metrics.amountOfLinesCloned;
+		amountOfNodesCloned+=metrics.amountOfNodesCloned;
+		amountOfTokensCloned+=metrics.amountOfTokensCloned;
+		
+		amountPerCloneClassSize.addAll(metrics.amountPerCloneClassSize);
+		amountPerLocation.addAll(metrics.amountPerLocation);
+	}
 
 	
 	
