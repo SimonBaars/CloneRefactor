@@ -67,7 +67,7 @@ public enum NodeLocation { //Please note that the order of these enum values mat
 
 	private static boolean isSiblingOrCousin(ClassOrInterfaceDeclaration c1, ClassOrInterfaceDeclaration c2, int c1GoUp, int c2GoUp) {
 		ClassOrInterfaceDeclaration parent1 = goUp(c1, c1GoUp);
-		ClassOrInterfaceDeclaration parent2 = goUp(c1, c2GoUp);
+		ClassOrInterfaceDeclaration parent2 = goUp(c2, c2GoUp);
 		return parent1!=null && getFullyQualifiedName(parent1).equals(getFullyQualifiedName(parent2));
 	}
 
