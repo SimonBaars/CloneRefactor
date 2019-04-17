@@ -1,6 +1,8 @@
 package com.simonbaars.clonerefactor.metrics;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.github.javaparser.ast.CompilationUnit;
@@ -8,21 +10,25 @@ import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
+import com.simonbaars.clonerefactor.model.Sequence;
 
 public enum NodeLocation {
-	COMMONHIERARCHY,
-	UNRELATED, //done
-	SUPERCLASS, //done
-	ANCESTOR, //done
-	SIBLING, //done
-	FIRSTCOUSIN, //done
-	SAMECLASS, //done
-	SAMEMETHOD, //done
-	SAMEINTERFACE;
+	COMMONHIERARCHY(8),
+	UNRELATED(9), //done
+	SUPERCLASS(3), //done
+	ANCESTOR(4), //done
+	SIBLING(5), //done
+	FIRSTCOUSIN(6), //done
+	SAMECLASS(2), //done
+	SAMEMETHOD(1), //done
+	SAMEINTERFACE(7);
 	
 	private static final Map<String, ClassOrInterfaceDeclaration> classes = new HashMap<>();
+	private final int order;
 	
-	private NodeLocation() {}
+	private NodeLocation(int order) {
+		this.order=order;
+	}
 	
 	public static NodeLocation getLocation(Node n1, Node n2) {
 		if(isMethod(n1, n2))
@@ -135,5 +141,17 @@ public enum NodeLocation {
 			} else return null;
 		}
 		return (CompilationUnit)n1;
+	}
+
+	public static NodeLocation getLocation(Sequence clone) {
+		List<NodeLocation> locations = new ArrayList<>();
+		for(int i = 0; i<clone.getSequence().get(0).getContents().getNodes().size(); i++) {
+			for(int j = 0; j<clone.getSequence().size(); j++) {
+				for(int z = 0; z<clone.getSequence().size(); z++) {
+					locations.add(getLocation(clone.getSequence().get(j).getContents().getNodes().get(i), clone.getSequence().get(z).getContents().getNodes().get(i)));
+				}
+			}
+		}
+		return locations.stream().sorted().findFirst().get();
 	}
 }
