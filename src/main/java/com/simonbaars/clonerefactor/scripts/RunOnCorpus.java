@@ -7,13 +7,10 @@ import static com.simonbaars.clonerefactor.scripts.PrepareProjectsFolder.getSour
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.List;
 
 import com.simonbaars.clonerefactor.ast.CloneParser;
 import com.simonbaars.clonerefactor.model.DetectionResults;
-import com.simonbaars.clonerefactor.model.Sequence;
 import com.simonbaars.clonerefactor.util.FileUtils;
-import com.simonbaars.clonerefactor.util.PrettyPrinter;
 
 import me.tongfei.progressbar.ProgressBar;
 import me.tongfei.progressbar.ProgressBarBuilder;

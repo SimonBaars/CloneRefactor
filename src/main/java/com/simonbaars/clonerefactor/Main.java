@@ -19,6 +19,7 @@ import com.simonbaars.clonerefactor.ast.CloneParser;
 import com.simonbaars.clonerefactor.exception.NoJavaFilesFoundException;
 import com.simonbaars.clonerefactor.exception.NoPathEnteredException;
 import com.simonbaars.clonerefactor.metrics.Metrics;
+import com.simonbaars.clonerefactor.model.DetectionResults;
 import com.simonbaars.clonerefactor.model.Sequence;
 
 public class Main {
@@ -28,21 +29,18 @@ public class Main {
 		if(args.length == 0)
 			new NoJavaFilesFoundException();
 		
-		List<Sequence> cloneDetection = cloneDetection(args[0]);
-		System.out.println(Arrays.toString(cloneDetection.toArray()));
-		System.out.println("Done ("+cloneDetection.size()+" clones found) at "+DateTimeFormatter.ofPattern("HH:mm:ss.SSS").format(LocalDateTime.now()));
+		System.out.println(cloneDetection(args[0]));
 	}
 
-	public static Pair<List<Sequence>, Metrics> cloneDetection(String path) {
+	public static DetectionResults cloneDetection(String path) {
 		List<File> javaFiles = Arrays.asList(new File(path));
 		if(javaFiles.get(0).isDirectory())
 		    javaFiles = scanProjectForJavaFiles(path);
 		
 		if(javaFiles.size() == 0)
 			throw new NoPathEnteredException();
-		
-		CloneParser cloneParser = new CloneParser();
-		return new Pair<>(cloneParser.parse(javaFiles), cloneParser.metricCollector.getMetrics());
+	
+		return new CloneParser().parse(javaFiles);
 	}
 
 	private static List<File> scanProjectForJavaFiles(String path) {
