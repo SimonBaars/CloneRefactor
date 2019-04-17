@@ -13,8 +13,6 @@ public class Location {
 	private final File file;
 	private Range range;
 	
-	private int tokenHash;
-	
 	private LocationContents contents = new LocationContents();
 	
 	private Location prevLocation;
@@ -90,19 +88,6 @@ public class Location {
 
 	public int getAmountOfTokens() {
 		return getContents().getAmountOfTokens();
-	}
-
-	public int getTokenHash() {
-		return tokenHash;
-	}
-
-	public void setTokenHash(int tokenHash) {
-		this.tokenHash = tokenHash;
-	}
-
-	public boolean isLocationParsed(ListMap<Integer, Location> reg) {
-		List<Location> list = reg.get(tokenHash);
-		return list.get(list.size()-1) != this;
 	}
 
 	public Location getNextLine() {
