@@ -60,8 +60,10 @@ public enum NodeLocation {
 
 	private static boolean isAncestor(ClassOrInterfaceDeclaration c1, ClassOrInterfaceDeclaration c2) {
 		if(!c1.getExtendedTypes().isEmpty()) {
-			ClassOrInterfaceDeclaration parent = classes.get(c1.getExtendedTypes(0);
-			if(!t.getE)
+			ClassOrInterfaceDeclaration parent = classes.get(getFullyQualifiedName(c1.getExtendedTypes(0)));
+			if(isSuperClass(parent, c2))
+				return true;
+			else return isAncestor(parent, c2);
 		}
 		return false;
 	}
