@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;
@@ -68,7 +69,7 @@ public enum NodeLocation { //Please note that the order of these enum values mat
 	private static ClassOrInterfaceDeclaration goUp(ClassOrInterfaceDeclaration c1, int i) {
 		if(i>0) {
 			if(!c1.getExtendedTypes().isEmpty()) {
-				String fullyQualifiedName = getFullyQualifiedName(c1.getExtendedTypes(0));
+				String fullyQualifiedName = getFullyQualifiedName(c1, c1.getExtendedTypes(0));
 				if(classes.containsKey(fullyQualifiedName)) {
 					ClassOrInterfaceDeclaration parent = classes.get(fullyQualifiedName);
 					return goUp(parent, i-1);
@@ -80,7 +81,7 @@ public enum NodeLocation { //Please note that the order of these enum values mat
 
 	private static boolean isAncestor(ClassOrInterfaceDeclaration c1, ClassOrInterfaceDeclaration c2) {
 		if(!c1.getExtendedTypes().isEmpty()) {
-			String fullyQualifiedName = getFullyQualifiedName(c1.getExtendedTypes(0));
+			String fullyQualifiedName = getFullyQualifiedName(c1, c1.getExtendedTypes(0));
 			if(!classes.containsKey(fullyQualifiedName))
 				return false;
 			ClassOrInterfaceDeclaration parent = classes.get(fullyQualifiedName);
@@ -98,7 +99,19 @@ public enum NodeLocation { //Please note that the order of these enum values mat
 	}
 
 	private static boolean isSuperClass(ClassOrInterfaceDeclaration c1, ClassOrInterfaceDeclaration c2) {
-		return c1.getExtendedTypes().stream().peek(e->System.out.println("Compare "+getFullyQualifiedName(c2)+" to "+getFullyQualifiedName(e)+" to get "+getFullyQualifiedName(c1))).anyMatch(e -> getFullyQualifiedName(c2).equals(getFullyQualifiedName(e)));
+		return c1.getExtendedTypes().stream().anyMatch(e -> getFullyQualifiedName(c2).equals(getFullyQualifiedName(c2, e)));
+	}
+
+	private static String getFullyQualifiedName(Node n, ClassOrInterfaceType t) {
+		String name = "";
+		if(t.getScope().isPresent())
+			name+=getFullyQualifiedName(n, t.getScope().get())+".";
+		else {
+			Optional<String> nameOpt = getCompilationUnit(n).getImports().stream().map(e -> e.getNameAsString()).filter(e -> e.endsWith("."+t.getName())).findAny();
+			if(nameOpt.isPresent()) //TODO: Parse import with asterisk in the else clause.
+				return nameOpt.get();
+		}
+		return name+t.getNameAsString();
 	}
 
 	private static String getFullyQualifiedName(ClassOrInterfaceDeclaration c2) {
