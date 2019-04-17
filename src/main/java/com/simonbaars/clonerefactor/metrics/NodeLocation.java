@@ -33,6 +33,8 @@ public enum NodeLocation { //Please note that the order of these enum values mat
 			return SAMEMETHOD;
 		ClassOrInterfaceDeclaration c1 = getClass(n1);
 		ClassOrInterfaceDeclaration c2 = getClass(n2);
+		if(c1 == null || c2 == null)
+			return UNRELATED;
 		if(c1!=null && c1.equals(c2))
 			return SAMECLASS;
 		if(isSuperClass(c1, c2) || isSuperClass(c2, c1)) 
@@ -66,8 +68,11 @@ public enum NodeLocation { //Please note that the order of these enum values mat
 	private static ClassOrInterfaceDeclaration goUp(ClassOrInterfaceDeclaration c1, int i) {
 		if(i>0) {
 			if(!c1.getExtendedTypes().isEmpty()) {
-				ClassOrInterfaceDeclaration parent = classes.get(getFullyQualifiedName(c1.getExtendedTypes(0)));
-				return goUp(parent, i-1);
+				String fullyQualifiedName = getFullyQualifiedName(c1.getExtendedTypes(0));
+				if(classes.containsKey(fullyQualifiedName)) {
+					ClassOrInterfaceDeclaration parent = classes.get(fullyQualifiedName);
+					return goUp(parent, i-1);
+				} else return null;
 			} else return null;
 		}
 		return c1;
@@ -75,7 +80,10 @@ public enum NodeLocation { //Please note that the order of these enum values mat
 
 	private static boolean isAncestor(ClassOrInterfaceDeclaration c1, ClassOrInterfaceDeclaration c2) {
 		if(!c1.getExtendedTypes().isEmpty()) {
-			ClassOrInterfaceDeclaration parent = classes.get(getFullyQualifiedName(c1.getExtendedTypes(0)));
+			String fullyQualifiedName = getFullyQualifiedName(c1.getExtendedTypes(0));
+			if(!classes.containsKey(fullyQualifiedName))
+				return false;
+			ClassOrInterfaceDeclaration parent = classes.get(fullyQualifiedName);
 			if(isSuperClass(parent, c2))
 				return true;
 			else return isAncestor(parent, c2);
@@ -90,14 +98,7 @@ public enum NodeLocation { //Please note that the order of these enum values mat
 	}
 
 	private static boolean isSuperClass(ClassOrInterfaceDeclaration c1, ClassOrInterfaceDeclaration c2) {
-		return c1.getExtendedTypes().stream().anyMatch(e -> getFullyQualifiedName(c2).equals(getFullyQualifiedName(e)));
-	}
-
-	private static String getFullyQualifiedName(ClassOrInterfaceType e) {
-		String name = "";
-		if(e.getScope().isPresent())
-			name+=getFullyQualifiedName(e.getScope().get())+".";
-		return name+e.getNameAsString();
+		return c1.getExtendedTypes().stream().peek(e->System.out.println("Compare "+getFullyQualifiedName(c2)+" to "+getFullyQualifiedName(e)+" to get "+getFullyQualifiedName(c1))).anyMatch(e -> getFullyQualifiedName(c2).equals(getFullyQualifiedName(e)));
 	}
 
 	private static String getFullyQualifiedName(ClassOrInterfaceDeclaration c2) {
