@@ -65,6 +65,10 @@ public class NodeLocationTest extends TestCase {
     public void testSameClass() {
         test("SameClass", NodeLocation.SAMECLASS);
     }
+    
+    public void testSameExternalSuperClass() {
+        test("ExternalSuperClass", NodeLocation.EXTERNALSUPERCLASS);
+    }
 
 	private void test(String name, NodeLocation loc) {
 		DetectionResults r = testProject(name);
