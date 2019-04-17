@@ -1,9 +1,12 @@
 package com.simonbaars.clonerefactor.metrics;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.github.javaparser.Range;
+import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.simonbaars.clonerefactor.datatype.ListMap;
 import com.simonbaars.clonerefactor.model.Location;
 import com.simonbaars.clonerefactor.model.Sequence;
@@ -34,11 +37,12 @@ public class MetricCollector {
 		return amountOfLines;
 	}
 	
-	public void reportClones(List<Sequence> clones) {
+	public Metrics reportClones(List<Sequence> clones) {
 		parsedLines.clear();
 		for(Sequence clone : clones)
 			reportClone(clone);
 		NodeLocation.clearClasses();
+		return metrics;
 	}
 
 	private void reportClone(Sequence clone) {

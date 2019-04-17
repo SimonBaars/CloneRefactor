@@ -9,14 +9,17 @@ import com.github.javaparser.JavaParser;
 import com.github.javaparser.ParseResult;
 import com.github.javaparser.ast.CompilationUnit;
 import com.simonbaars.clonerefactor.detection.CloneDetection;
+import com.simonbaars.clonerefactor.metrics.MetricCollector;
 import com.simonbaars.clonerefactor.model.Location;
 import com.simonbaars.clonerefactor.model.Sequence;
 
 public class CloneParser implements Parser {
 
-	NodeParser astParser = new NodeParser();
+	NodeParser astParser;
+	MetricCollector metricCollector = new MetricCollector();
 	
 	public List<Sequence> parse(List<File> javaFiles) {
+		astParser = new NodeParser(metricCollector);
 		Location lastLoc = calculateLineReg(javaFiles);
 		if(lastLoc!=null)
 			return new CloneDetection().findChains(lastLoc);
