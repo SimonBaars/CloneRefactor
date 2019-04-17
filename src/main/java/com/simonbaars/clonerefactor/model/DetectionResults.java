@@ -1,5 +1,6 @@
 package com.simonbaars.clonerefactor.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.simonbaars.clonerefactor.metrics.Metrics;
@@ -12,6 +13,12 @@ public class DetectionResults {
 		super();
 		this.metrics = metrics;
 		this.clones = clones;
+	}
+	
+	public DetectionResults() {
+		super();
+		this.metrics = new Metrics();
+		this.clones = new ArrayList<>();
 	}
 	
 	public Metrics getMetrics() {

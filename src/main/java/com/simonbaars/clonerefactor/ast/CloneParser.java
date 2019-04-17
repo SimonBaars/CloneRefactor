@@ -2,7 +2,6 @@ package com.simonbaars.clonerefactor.ast;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
 import java.util.List;
 
 import com.github.javaparser.JavaParser;
@@ -10,6 +9,7 @@ import com.github.javaparser.ParseResult;
 import com.github.javaparser.ast.CompilationUnit;
 import com.simonbaars.clonerefactor.detection.CloneDetection;
 import com.simonbaars.clonerefactor.metrics.MetricCollector;
+import com.simonbaars.clonerefactor.model.DetectionResults;
 import com.simonbaars.clonerefactor.model.Location;
 import com.simonbaars.clonerefactor.model.Sequence;
 
@@ -18,15 +18,14 @@ public class CloneParser implements Parser {
 	private NodeParser astParser;
 	public final MetricCollector metricCollector = new MetricCollector();
 	
-	public List<Sequence> parse(List<File> javaFiles) {
+	public DetectionResults parse(List<File> javaFiles) {
 		astParser = new NodeParser(metricCollector);
 		Location lastLoc = calculateLineReg(javaFiles);
 		if(lastLoc!=null) {
 			List<Sequence> findChains = new CloneDetection().findChains(lastLoc);
-			System.out.println(metricCollector.reportClones(findChains));
-			return findChains;
+			return new DetectionResults(metricCollector.reportClones(findChains), findChains);
 		}
-		return new ArrayList<>();
+		return new DetectionResults();
 	}
 
 	private final Location calculateLineReg(List<File> javaFiles) {

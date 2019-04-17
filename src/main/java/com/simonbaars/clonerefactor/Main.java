@@ -14,9 +14,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import com.github.javaparser.utils.Pair;
 import com.simonbaars.clonerefactor.ast.CloneParser;
 import com.simonbaars.clonerefactor.exception.NoJavaFilesFoundException;
 import com.simonbaars.clonerefactor.exception.NoPathEnteredException;
+import com.simonbaars.clonerefactor.metrics.Metrics;
 import com.simonbaars.clonerefactor.model.Sequence;
 
 public class Main {
@@ -31,7 +33,7 @@ public class Main {
 		System.out.println("Done ("+cloneDetection.size()+" clones found) at "+DateTimeFormatter.ofPattern("HH:mm:ss.SSS").format(LocalDateTime.now()));
 	}
 
-	public static List<Sequence> cloneDetection(String path) {
+	public static Pair<List<Sequence>, Metrics> cloneDetection(String path) {
 		List<File> javaFiles = Arrays.asList(new File(path));
 		if(javaFiles.get(0).isDirectory())
 		    javaFiles = scanProjectForJavaFiles(path);
@@ -39,7 +41,8 @@ public class Main {
 		if(javaFiles.size() == 0)
 			throw new NoPathEnteredException();
 		
-		return new CloneParser().parse(javaFiles);
+		CloneParser cloneParser = new CloneParser();
+		return new Pair<>(cloneParser.parse(javaFiles), cloneParser.metricCollector.getMetrics());
 	}
 
 	private static List<File> scanProjectForJavaFiles(String path) {

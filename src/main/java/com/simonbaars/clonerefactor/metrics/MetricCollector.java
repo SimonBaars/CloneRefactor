@@ -9,9 +9,9 @@ import com.simonbaars.clonerefactor.model.Location;
 import com.simonbaars.clonerefactor.model.Sequence;
 
 public class MetricCollector {
-	private ListMap<File, Integer> parsedLines = new ListMap<>();
-	private ListMap<File, Range> parsedRanges = new ListMap<>();
-	private Metrics metrics = new Metrics();
+	private final ListMap<File, Integer> parsedLines = new ListMap<>();
+	private final ListMap<File, Range> parsedRanges = new ListMap<>();
+	private final Metrics metrics = new Metrics();
 	
 	public MetricCollector() {}
 	
@@ -54,5 +54,9 @@ public class MetricCollector {
 		metrics.amountOfLinesCloned+=getUnparsedLines(l);
 		metrics.amountOfTokensCloned+=l.getAmountOfTokens(); //TODO: This is incorrect, as clones may be checked several times.
 		metrics.amountOfNodesCloned+=l.getAmountOfNodes(); //TODO: Also incorrect, same reason.
+	}
+
+	public Metrics getMetrics() {
+		return metrics;
 	}
 }
