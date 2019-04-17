@@ -150,6 +150,6 @@ public enum NodeLocation { //Please note that the order of these enum values mat
 				}
 			}
 		}
-		return locations.stream().sorted().findFirst().get();
+		return locations.stream().sorted().reduce((first, second) -> second).get();
 	}
 }
