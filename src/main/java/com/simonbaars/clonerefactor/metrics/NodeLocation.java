@@ -33,7 +33,7 @@ public enum NodeLocation {
 			return SAMECLASS;
 		if(isSuperClass(c1, c2) || isSuperClass(c2, c1)) 
 			return SUPERCLASS;
-		if(isAncestor(c1,c2))
+		if(isAncestor(c1,c2) || isAncestor(c2,c1))
 			return ANCESTOR;
 		if(isSiblingOrCousin(c1, c2, 1))
 			return SIBLING;
