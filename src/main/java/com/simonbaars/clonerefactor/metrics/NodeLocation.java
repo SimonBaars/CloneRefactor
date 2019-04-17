@@ -23,6 +23,7 @@ public enum NodeLocation { //Please note that the order of these enum values mat
 	FIRSTCOUSIN, //done
 	SAMEINTERFACE,
 	COMMONHIERARCHY,
+	EXTERNALSUPERCLASS,
 	UNRELATED //done
 	;
 	
@@ -46,9 +47,9 @@ public enum NodeLocation { //Please note that the order of these enum values mat
 			return SUPERCLASS;
 		if(isAncestor(c1,c2) || isAncestor(c2,c1))
 			return ANCESTOR;
-		if(isSiblingOrCousin(c1, c2, 1))
+		if(isSiblingOrCousin(c1, c2, 1, 1))
 			return SIBLING;
-		if(isSiblingOrCousin(c1, c2, 2))
+		if(isSiblingOrCousin(c1, c2, 2, 2))
 			return FIRSTCOUSIN;
 		return UNRELATED;
 	}
@@ -67,7 +68,6 @@ public enum NodeLocation { //Please note that the order of these enum values mat
 	private static boolean isSiblingOrCousin(ClassOrInterfaceDeclaration c1, ClassOrInterfaceDeclaration c2, int c1GoUp, int c2GoUp) {
 		ClassOrInterfaceDeclaration parent1 = goUp(c1, c1GoUp);
 		ClassOrInterfaceDeclaration parent2 = goUp(c1, c2GoUp);
-		System.out.println("Sibling check "+i+" = "+getFullyQualifiedName(parent1)+" vs "+getFullyQualifiedName(parent2));
 		return parent1!=null && getFullyQualifiedName(parent1).equals(getFullyQualifiedName(parent2));
 	}
 
@@ -118,12 +118,18 @@ public enum NodeLocation { //Please note that the order of these enum values mat
 		if(t.getScope().isPresent())
 			name+=getFullyQualifiedName(n, t.getScope().get())+".";
 		else if(n!=null) {
-			Optional<String> nameOpt = getCompilationUnit(n).getImports().stream().map(e -> e.getNameAsString()).filter(e -> e.endsWith("."+t.getName())).findAny();
-			if(nameOpt.isPresent()) //TODO: Parse import with asterisk in the else clause.
+			CompilationUnit compilationUnit = getCompilationUnit(n);
+			Optional<String> nameOpt = compilationUnit.getImports().stream().map(e -> e.getNameAsString()).filter(e -> e.endsWith("."+t.getName())).findAny();
+			if(nameOpt.isPresent()) 
 				return nameOpt.get();
 			else {
 				String fullyQualifiedName = getFullyQualifiedName(n);
 				name+=fullyQualifiedName.substring(0, fullyQualifiedName.lastIndexOf('.')+1);
+				if(!classes.containsKey(name+t.getNameAsString()) && compilationUnit.getImports().stream().anyMatch(e -> e.isAsterisk())) {
+					Optional<String> asteriks = compilationUnit.getImports().stream().filter(e -> e.isAsterisk()).map(e -> e.getNameAsString()+"."+t.getNameAsString()).filter(e -> classes.containsKey(e)).findAny();
+					if(asteriks.isPresent())
+						return asteriks.get();
+				}
 			}
 		}
 		return name+t.getNameAsString();
