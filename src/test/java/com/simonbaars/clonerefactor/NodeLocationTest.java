@@ -60,6 +60,10 @@ public class NodeLocationTest extends TestCase {
     public void testSameExternalSuperClass() {
         test("ExternalSuperClass", NodeLocation.EXTERNALSUPERCLASS);
     }
+    
+    public void testSameHierarchy() {
+        test("SameHierarchy", NodeLocation.COMMONHIERARCHY);
+    }
 
 	private void test(String name, NodeLocation loc) {
 		DetectionResults r = testProject(name);

@@ -1,6 +1,7 @@
 package com.simonbaars.clonerefactor.metrics;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -66,6 +67,7 @@ public enum NodeLocation { //Please note that the order of these enum values mat
 		String className = getFullyQualifiedName(c2);
 		if(classesInHierarchy.contains(className))
 			return true;
+		classesInHierarchy.add(className);
 		if(!c2.getExtendedTypes().isEmpty()) {
 			String fullyQualifiedName = getFullyQualifiedName(c2, c2.getExtendedTypes(0));
 			if(classes.containsKey(fullyQualifiedName))
