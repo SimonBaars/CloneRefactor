@@ -99,7 +99,12 @@ public enum NodeLocation { //Please note that the order of these enum values mat
 	}
 
 	private static boolean isSuperClass(ClassOrInterfaceDeclaration c1, ClassOrInterfaceDeclaration c2) {
-		return c1.getExtendedTypes().stream().anyMatch(e -> getFullyQualifiedName(c2).equals(getFullyQualifiedName(c2, e)));
+		return c1.getExtendedTypes().stream().anyMatch(e -> {
+			String fullyQualifiedName = getFullyQualifiedName(c2, e);
+			if(!classes.containsKey(fullyQualifiedName))
+				return false;
+			return getFullyQualifiedName(c2).equals(fullyQualifiedName);
+		});
 	}
 
 	private static String getFullyQualifiedName(Node n, ClassOrInterfaceType t) {
