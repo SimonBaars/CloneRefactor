@@ -11,15 +11,18 @@ public class Metrics {
 	public int amountOfNodesCloned = 0;
 	public int amountOfTokensCloned = 0;
 	
-	public final CountMap<Integer> amountPerCloneClassSize = new CountMap<Integer>();
-
+	public final CountMap<Integer> amountPerCloneClassSize = new CountMap<>();
+	public final CountMap<NodeLocation> amountPerLocation = new CountMap<>();
 	@Override
 	public String toString() {
 		return "Metrics [totalAmountOfLines=" + totalAmountOfLines + ", totalAmountOfNodes=" + totalAmountOfNodes
 				+ ", totalAmountOfTokens=" + totalAmountOfTokens + ", amountOfLinesCloned=" + amountOfLinesCloned
 				+ ", amountOfNodesCloned=" + amountOfNodesCloned + ", amountOfTokensCloned=" + amountOfTokensCloned
-				+ ", amountPerCloneClassSize=" + amountPerCloneClassSize + "]";
+				+ ", amountPerCloneClassSize=" + amountPerCloneClassSize + ", amountPerLocation=" + amountPerLocation
+				+ "]";
 	}
+
+	
 	
 	
 }
