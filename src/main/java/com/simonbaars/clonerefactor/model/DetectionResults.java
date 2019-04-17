@@ -1,6 +1,7 @@
 package com.simonbaars.clonerefactor.model;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import com.simonbaars.clonerefactor.metrics.Metrics;
@@ -36,4 +37,12 @@ public class DetectionResults {
 	public void setClones(List<Sequence> clones) {
 		this.clones = clones;
 	}
+
+	@Override
+	public String toString() {
+		return "DetectionResults [metrics=" + metrics + "\n"
+				+ "clones=" + Arrays.toString(clones.toArray()).replace("Location [", "\nLocation [").replace("Sequence [sequence=[", "\nSequence [sequence=[") + "]";
+	}
+	
+	
 }

@@ -10,6 +10,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import com.simonbaars.clonerefactor.ast.CloneParser;
+import com.simonbaars.clonerefactor.model.DetectionResults;
 import com.simonbaars.clonerefactor.model.Sequence;
 import com.simonbaars.clonerefactor.util.FileUtils;
 import com.simonbaars.clonerefactor.util.PrettyPrinter;
@@ -25,9 +26,9 @@ public class RunOnCorpus {
 		outputFolder.mkdirs();
 		File[] corpusFiles = getFilteredCorpusFiles(5, 1000);
 		for(File file : ProgressBar.wrap(Arrays.asList(corpusFiles), new ProgressBarBuilder().setTaskName("Running Clone Detection").setStyle(ProgressBarStyle.ASCII))) {
-			List<Sequence> seq = new CloneParser().parse(getJavaFiles(getSourceFolder(file)));
+			DetectionResults res = new CloneParser().parse(getJavaFiles(getSourceFolder(file)));
 			try {
-				FileUtils.writeStringToFile(new File(outputFolder.getAbsolutePath()+"/"+file.getName()+"-"+seq.size()+".txt"), PrettyPrinter.prettify(seq));
+				FileUtils.writeStringToFile(new File(outputFolder.getAbsolutePath()+"/"+file.getName()+"-"+res.getClones().size()+".txt"), res.toString());
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
