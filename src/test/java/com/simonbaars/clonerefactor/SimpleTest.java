@@ -1,13 +1,7 @@
 package com.simonbaars.clonerefactor;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-
 import com.simonbaars.clonerefactor.model.DetectionResults;
-import com.simonbaars.clonerefactor.model.Sequence;
 
-import junit.framework.Assert;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;

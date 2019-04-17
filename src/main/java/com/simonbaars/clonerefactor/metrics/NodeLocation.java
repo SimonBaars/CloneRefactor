@@ -1,6 +1,7 @@
 package com.simonbaars.clonerefactor.metrics;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,14 +31,17 @@ public enum NodeLocation { //Please note that the order of these enum values mat
 	private NodeLocation() {}
 	
 	public static NodeLocation getLocation(Node n1, Node n2) {
-		if(isMethod(n1, n2))
-			return SAMEMETHOD;
+		System.out.println(n1+" vs "+n2);
 		ClassOrInterfaceDeclaration c1 = getClass(n1);
 		ClassOrInterfaceDeclaration c2 = getClass(n2);
 		if(c1 == null || c2 == null)
 			return UNRELATED;
-		if(c1!=null && c1.equals(c2))
+		System.out.println(getFullyQualifiedName(c1)+", "+getFullyQualifiedName(c2));
+		if(c1!=null && getFullyQualifiedName(c1).equals(getFullyQualifiedName(c2))) {
+			if(isMethod(n1, n2))
+				return SAMEMETHOD;
 			return SAMECLASS;
+		}
 		if(isSuperClass(c1, c2) || isSuperClass(c2, c1)) 
 			return SUPERCLASS;
 		if(isAncestor(c1,c2) || isAncestor(c2,c1))
@@ -162,13 +166,17 @@ public enum NodeLocation { //Please note that the order of these enum values mat
 
 	public static NodeLocation getLocation(Sequence clone) {
 		List<NodeLocation> locations = new ArrayList<>();
+		System.out.println("CLONE "+clone);
 		for(int i = 0; i<clone.getSequence().get(0).getContents().getNodes().size(); i++) {
 			for(int j = 0; j<clone.getSequence().size(); j++) {
-				for(int z = 0; z<clone.getSequence().size(); z++) {
+				for(int z = j+1; z<clone.getSequence().size(); z++) {
+					System.out.println(clone.getSequence().get(j).getFile()+" vs "+clone.getSequence().get(z).getFile());
 					locations.add(getLocation(clone.getSequence().get(j).getContents().getNodes().get(i), clone.getSequence().get(z).getContents().getNodes().get(i)));
+					System.out.println(locations.get(locations.size()-1));
 				}
 			}
 		}
+		System.out.println(Arrays.toString(locations.toArray()));
 		return locations.stream().sorted().reduce((first, second) -> second).get();
 	}
 }
