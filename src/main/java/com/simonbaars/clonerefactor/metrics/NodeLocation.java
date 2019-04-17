@@ -1,14 +1,17 @@
 package com.simonbaars.clonerefactor.metrics;
 
+import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
+import com.github.javaparser.ast.type.ClassOrInterfaceType;
 
 public enum NodeLocation {
 	COMMONHIERARCHY,
 	UNRELATED,
 	SUPERCLASS,
 	ANCESTOR,
+	SIBLING,
 	SAMECLASS,
 	SAMEMETHOD,
 	SAMEINTERFACE;
@@ -24,8 +27,31 @@ public enum NodeLocation {
 		ClassOrInterfaceDeclaration c2 = getClass(n2);
 		if(c1!=null && c1.equals(c2))
 			return SAMECLASS;
-		if(!c1.getExtendedTypes().isEmpty() && )
+		if(c1.getExtendedTypes().stream().anyMatch(e -> getFullyQualifiedName(c2).equals(getFullyQualifiedName(e)))) {
+			
+		}
 		return UNRELATED;
+	}
+
+	private static String getFullyQualifiedName(ClassOrInterfaceType e) {
+		String name = "";
+		if(e.getScope().isPresent())
+			name+=getFullyQualifiedName(e.getScope().get())+".";
+		return name+e.getNameAsString();
+	}
+
+	private static Object getFullyQualifiedName(ClassOrInterfaceDeclaration c2) {
+		String name = "";
+		ClassOrInterfaceDeclaration parentClass = getClass(c2);
+		if(parentClass!=null) {
+			name+=getFullyQualifiedName(parentClass)+".";
+		} else {
+			CompilationUnit u = getCompilationUnit(c2);
+			if(u!=null && u.getPackageDeclaration().isPresent()) {
+				name+=u.getPackageDeclaration().get().getNameAsString()+".";
+			}
+		}
+		return name+c2.getNameAsString();
 	}
 
 	private static MethodDeclaration getMethod(Node n1) {
@@ -44,5 +70,14 @@ public enum NodeLocation {
 			} else return null;
 		}
 		return (ClassOrInterfaceDeclaration)n1;
+	}
+	
+	private static CompilationUnit getCompilationUnit(Node n1) {
+		while (!(n1 instanceof CompilationUnit)) {
+			if(n1.getParentNode().isPresent()) {
+				n1 = n1.getParentNode().get();
+			} else return null;
+		}
+		return (CompilationUnit)n1;
 	}
 }
