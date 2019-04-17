@@ -1,5 +1,8 @@
 package com.simonbaars.clonerefactor.metrics;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
@@ -12,9 +15,12 @@ public enum NodeLocation {
 	SUPERCLASS, //done
 	ANCESTOR,
 	SIBLING,
+	FIRSTCOUSIN,
 	SAMECLASS, //done
 	SAMEMETHOD, //done
 	SAMEINTERFACE;
+	
+	private static final Map<String, ClassOrInterfaceDeclaration> classes = new HashMap<>();
 	
 	private NodeLocation() {}
 	
@@ -27,9 +33,37 @@ public enum NodeLocation {
 			return SAMECLASS;
 		if(isSuperClass(c1, c2) || isSuperClass(c2, c1)) 
 			return SUPERCLASS;
-		
-		
+		if(isAncestor(c1,c2))
+			return ANCESTOR;
+		if(isSiblingOrCousin(c1, c2, 1))
+			return SIBLING;
+		if(isSiblingOrCousin(c1, c2, 2))
+			return FIRSTCOUSIN;
 		return UNRELATED;
+	}
+	
+	public static void registerNode(Node n) {
+		if(n instanceof ClassOrInterfaceDeclaration) {
+			ClassOrInterfaceDeclaration n2 = (ClassOrInterfaceDeclaration)n;
+			classes.put(getFullyQualifiedName(n2), n2);
+		}
+	}
+	
+	public static void clearClasses() {
+		classes.clear();
+	}
+
+	private static boolean isSiblingOrCousin(ClassOrInterfaceDeclaration c1, ClassOrInterfaceDeclaration c2, int i) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	private static boolean isAncestor(ClassOrInterfaceDeclaration c1, ClassOrInterfaceDeclaration c2) {
+		if(!c1.getExtendedTypes().isEmpty()) {
+			ClassOrInterfaceDeclaration parent = classes.get(c1.getExtendedTypes(0);
+			if(!t.getE)
+		}
+		return false;
 	}
 
 	private static boolean isMethod(Node n1, Node n2) {
@@ -49,7 +83,7 @@ public enum NodeLocation {
 		return name+e.getNameAsString();
 	}
 
-	private static Object getFullyQualifiedName(ClassOrInterfaceDeclaration c2) {
+	private static String getFullyQualifiedName(ClassOrInterfaceDeclaration c2) {
 		String name = "";
 		ClassOrInterfaceDeclaration parentClass = getClass(c2);
 		if(parentClass!=null) {

@@ -19,6 +19,7 @@ public class MetricCollector {
 		metrics.totalAmountOfLines+=getUnparsedLines(l);
 		metrics.totalAmountOfNodes+=l.getAmountOfNodes();
 		metrics.totalAmountOfTokens+=l.getAmountOfTokens();
+		l.getContents().getNodes().forEach(e -> NodeLocation.registerNode(e));
 	}
 	
 	private int getUnparsedLines(Location l) {
@@ -37,6 +38,7 @@ public class MetricCollector {
 		parsedLines.clear();
 		for(Sequence clone : clones)
 			reportClone(clone);
+		NodeLocation.clearClasses();
 	}
 
 	private void reportClone(Sequence clone) {
