@@ -9,18 +9,9 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 /**
- * Unit test for the clone detector.
+ * Unit test for the node locations.
  */
 public class NodeLocationTest extends TestCase {
-    private static final String SEVERAL_METHODS_PROJECT = "SeveralMethodsCloned";
-	private static final String UNEQUAL_SIZE_CLONES_PROJECT = "UnequalSizeClones";
-	private static final String SINGLE_FILE_PROJECT = "SingleFile";
-	private static final String PARTIAL_CLONES_LEFT = "PartialClonesLeft";
-	private static final String PARTIAL_CLONES_RIGHT = "PartialClonesRight";
-	private static final String SIMPLE_PROJECT = "SimpleClone";
-    private static final String EQUAL_LINES_PROJECT = "EqualLines";
-    private static final String ENUM_PROJECT = "EnumClone";
-    
 
 	/**
      * Create the test case

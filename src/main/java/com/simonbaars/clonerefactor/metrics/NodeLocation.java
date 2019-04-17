@@ -1,7 +1,6 @@
 package com.simonbaars.clonerefactor.metrics;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -52,9 +51,29 @@ public enum NodeLocation { //Please note that the order of these enum values mat
 			return FIRSTCOUSIN;
 		if(hasExternalSuperclass(c1, c2))
 			return EXTERNALSUPERCLASS;
+		if(inSameHierarchy(c1,c2))
+			return COMMONHIERARCHY;
 		return UNRELATED;
 	}
 	
+	private static boolean inSameHierarchy(ClassOrInterfaceDeclaration c1, ClassOrInterfaceDeclaration c2) {
+		List<String> classesInHierarchy = new ArrayList<>();
+		collectSuperclasses(c1, classesInHierarchy);
+		return collectSuperclasses(c2, classesInHierarchy);
+	}
+
+	private static boolean collectSuperclasses(ClassOrInterfaceDeclaration c2, List<String> classesInHierarchy) {
+		String className = getFullyQualifiedName(c2);
+		if(classesInHierarchy.contains(className))
+			return true;
+		if(!c2.getExtendedTypes().isEmpty()) {
+			String fullyQualifiedName = getFullyQualifiedName(c2, c2.getExtendedTypes(0));
+			if(classes.containsKey(fullyQualifiedName))
+				return collectSuperclasses(classes.get(fullyQualifiedName), classesInHierarchy);
+		}
+		return false;
+	}
+
 	private static boolean hasExternalSuperclass(ClassOrInterfaceDeclaration c1, ClassOrInterfaceDeclaration c2) {
 		if(c1.getExtendedTypes().isEmpty() || c2.getExtendedTypes().isEmpty())
 			return false;
@@ -85,11 +104,9 @@ public enum NodeLocation { //Please note that the order of these enum values mat
 		if(i>0) {
 			if(!c1.getExtendedTypes().isEmpty()) {
 				String fullyQualifiedName = getFullyQualifiedName(c1, c1.getExtendedTypes(0));
-				if(classes.containsKey(fullyQualifiedName)) {
-					ClassOrInterfaceDeclaration parent = classes.get(fullyQualifiedName);
-					return goUp(parent, i-1);
-				} else return null;
-			} else return null;
+				if(classes.containsKey(fullyQualifiedName))
+					return goUp(classes.get(fullyQualifiedName), i-1);
+			}
 		}
 		return c1;
 	}
