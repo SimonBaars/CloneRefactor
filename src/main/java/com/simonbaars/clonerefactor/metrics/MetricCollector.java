@@ -38,7 +38,6 @@ public class MetricCollector {
 	}
 
 	private void reportClone(Sequence clone) {
-		// TODO Auto-generated method stub
-		
+		metrics.amountPerCloneClassSize.increment(clone.size());
 	}
 }
