@@ -19,18 +19,26 @@ public enum NodeLocation {
 	private NodeLocation() {}
 	
 	public static NodeLocation getLocation(Node n1, Node n2) {
-		MethodDeclaration m1 = getMethod(n1);
-		MethodDeclaration m2 = getMethod(n2);
-		if(m1!=null && m1.equals(m2))
+		if(isMethod(n1, n2))
 			return SAMEMETHOD;
 		ClassOrInterfaceDeclaration c1 = getClass(n1);
 		ClassOrInterfaceDeclaration c2 = getClass(n2);
 		if(c1!=null && c1.equals(c2))
 			return SAMECLASS;
-		if(c1.getExtendedTypes().stream().anyMatch(e -> getFullyQualifiedName(c2).equals(getFullyQualifiedName(e)))) {
-			
-		}
+		if(isSuperClass(c1, c2) || isSuperClass(c2, c1)) 
+			return SUPERCLASS;
+		
 		return UNRELATED;
+	}
+
+	private static boolean isMethod(Node n1, Node n2) {
+		MethodDeclaration m1 = getMethod(n1);
+		MethodDeclaration m2 = getMethod(n2);
+		return m1!=null && m1.equals(m2);
+	}
+
+	private static boolean isSuperClass(ClassOrInterfaceDeclaration c1, ClassOrInterfaceDeclaration c2) {
+		return c1.getExtendedTypes().stream().anyMatch(e -> getFullyQualifiedName(c2).equals(getFullyQualifiedName(e)));
 	}
 
 	private static String getFullyQualifiedName(ClassOrInterfaceType e) {
