@@ -13,9 +13,9 @@ public enum NodeLocation {
 	COMMONHIERARCHY,
 	UNRELATED, //done
 	SUPERCLASS, //done
-	ANCESTOR,
-	SIBLING,
-	FIRSTCOUSIN,
+	ANCESTOR, //done
+	SIBLING, //done
+	FIRSTCOUSIN, //done
 	SAMECLASS, //done
 	SAMEMETHOD, //done
 	SAMEINTERFACE;
@@ -54,8 +54,19 @@ public enum NodeLocation {
 	}
 
 	private static boolean isSiblingOrCousin(ClassOrInterfaceDeclaration c1, ClassOrInterfaceDeclaration c2, int i) {
-		// TODO Auto-generated method stub
-		return false;
+		ClassOrInterfaceDeclaration parent1 = goUp(c1, i);
+		ClassOrInterfaceDeclaration parent2 = goUp(c1, i);
+		return parent1!=null && parent1.equals(parent2);
+	}
+
+	private static ClassOrInterfaceDeclaration goUp(ClassOrInterfaceDeclaration c1, int i) {
+		if(i>0) {
+			if(!c1.getExtendedTypes().isEmpty()) {
+				ClassOrInterfaceDeclaration parent = classes.get(getFullyQualifiedName(c1.getExtendedTypes(0)));
+				return goUp(parent, i-1);
+			} else return null;
+		}
+		return c1;
 	}
 
 	private static boolean isAncestor(ClassOrInterfaceDeclaration c1, ClassOrInterfaceDeclaration c2) {
