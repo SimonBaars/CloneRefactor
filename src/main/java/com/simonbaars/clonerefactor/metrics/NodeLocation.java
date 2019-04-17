@@ -98,7 +98,7 @@ public enum NodeLocation {
 
 	private static String getFullyQualifiedName(ClassOrInterfaceDeclaration c2) {
 		String name = "";
-		ClassOrInterfaceDeclaration parentClass = getClass(c2);
+		ClassOrInterfaceDeclaration parentClass = c2.getParentNode().isPresent() ? getClass(c2.getParentNode().get()): null;
 		if(parentClass!=null) {
 			name+=getFullyQualifiedName(parentClass)+".";
 		} else {
