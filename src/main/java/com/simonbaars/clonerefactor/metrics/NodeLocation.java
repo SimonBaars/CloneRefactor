@@ -8,12 +8,12 @@ import com.github.javaparser.ast.type.ClassOrInterfaceType;
 
 public enum NodeLocation {
 	COMMONHIERARCHY,
-	UNRELATED,
-	SUPERCLASS,
+	UNRELATED, //done
+	SUPERCLASS, //done
 	ANCESTOR,
 	SIBLING,
-	SAMECLASS,
-	SAMEMETHOD,
+	SAMECLASS, //done
+	SAMEMETHOD, //done
 	SAMEINTERFACE;
 	
 	private NodeLocation() {}
@@ -27,6 +27,7 @@ public enum NodeLocation {
 			return SAMECLASS;
 		if(isSuperClass(c1, c2) || isSuperClass(c2, c1)) 
 			return SUPERCLASS;
+		
 		
 		return UNRELATED;
 	}
