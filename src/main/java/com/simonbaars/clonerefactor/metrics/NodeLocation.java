@@ -34,7 +34,7 @@ public enum NodeLocation { //Please note that the order of these enum values mat
 		System.out.println(n1+" vs "+n2);
 		ClassOrInterfaceDeclaration c1 = getClass(n1);
 		ClassOrInterfaceDeclaration c2 = getClass(n2);
-		if(c1 == null || c2 == null)
+		if(c1 == null || c2 == null || c1.isInterface() || c2.isInterface())
 			return UNRELATED;
 		System.out.println(getFullyQualifiedName(c1)+", "+getFullyQualifiedName(c2));
 		if(c1!=null && getFullyQualifiedName(c1).equals(getFullyQualifiedName(c2))) {
@@ -50,13 +50,18 @@ public enum NodeLocation { //Please note that the order of these enum values mat
 			return SIBLING;
 		if(isSiblingOrCousin(c1, c2, 2, 2))
 			return FIRSTCOUSIN;
-		if(hasExternalSuperclass(c1) && hasExternalSuperclass(c2))
+		if(hasExternalSuperclass(c1, c2))
 			return EXTERNALSUPERCLASS;
 		return UNRELATED;
 	}
 	
-	private static boolean hasExternalSuperclass(ClassOrInterfaceDeclaration c1) {
-		return !c1.getExtendedTypes().isEmpty() && c1.getExtendedTypes().get(0).getNameAsString().equals("Object") && goUp(c1, 1)==null;
+	private static boolean hasExternalSuperclass(ClassOrInterfaceDeclaration c1, ClassOrInterfaceDeclaration c2) {
+		if(c1.getExtendedTypes().isEmpty() || c2.getExtendedTypes().isEmpty())
+			return false;
+		ClassOrInterfaceType superclassC1 = c1.getExtendedTypes().get(0);
+		ClassOrInterfaceType superclassC2 = c2.getExtendedTypes().get(0);
+		return superclassC1.getNameAsString().equals("Object") && superclassC2.getNameAsString().equals("Object") && 
+				getFullyQualifiedName(c1, superclassC1).equals(getFullyQualifiedName(c2, superclassC2));
 	}
 
 	public static void registerNode(Node n) {
@@ -80,7 +85,6 @@ public enum NodeLocation { //Please note that the order of these enum values mat
 		if(i>0) {
 			if(!c1.getExtendedTypes().isEmpty()) {
 				String fullyQualifiedName = getFullyQualifiedName(c1, c1.getExtendedTypes(0));
-				System.out.println("goUp "+fullyQualifiedName);
 				if(classes.containsKey(fullyQualifiedName)) {
 					ClassOrInterfaceDeclaration parent = classes.get(fullyQualifiedName);
 					return goUp(parent, i-1);
@@ -118,17 +122,17 @@ public enum NodeLocation { //Please note that the order of these enum values mat
 		});
 	}
 
-	private static String getFullyQualifiedName(ClassOrInterfaceDeclaration n, ClassOrInterfaceType t) {
+	private static String getFullyQualifiedName(ClassOrInterfaceDeclaration childClass, ClassOrInterfaceType t) {
 		String name = "";
 		if(t.getScope().isPresent())
-			name+=getFullyQualifiedName(n, t.getScope().get())+".";
-		else if(n!=null) {
-			CompilationUnit compilationUnit = getCompilationUnit(n);
+			name+=getFullyQualifiedName(childClass, t.getScope().get())+".";
+		else if(childClass!=null) {
+			CompilationUnit compilationUnit = getCompilationUnit(childClass);
 			Optional<String> nameOpt = compilationUnit.getImports().stream().map(e -> e.getNameAsString()).filter(e -> e.endsWith("."+t.getName())).findAny();
 			if(nameOpt.isPresent()) 
 				return nameOpt.get();
 			else {
-				String fullyQualifiedName = getFullyQualifiedName(n);
+				String fullyQualifiedName = getFullyQualifiedName(childClass);
 				name+=fullyQualifiedName.substring(0, fullyQualifiedName.lastIndexOf('.')+1);
 				if(!classes.containsKey(name+t.getNameAsString()) && compilationUnit.getImports().stream().anyMatch(e -> e.isAsterisk())) {
 					Optional<String> asteriks = compilationUnit.getImports().stream().filter(e -> e.isAsterisk()).map(e -> e.getNameAsString()+"."+t.getNameAsString()).filter(e -> classes.containsKey(e)).findAny();
@@ -185,16 +189,13 @@ public enum NodeLocation { //Please note that the order of these enum values mat
 
 	public static NodeLocation getLocation(Sequence clone) {
 		List<NodeLocation> locations = new ArrayList<>();
-		System.out.println("CLONE "+clone);
 		for(int i = 0; i<clone.getSequence().get(0).getContents().getNodes().size(); i++) {
 			for(int j = 0; j<clone.getSequence().size(); j++) {
 				for(int z = j+1; z<clone.getSequence().size(); z++) {
 					locations.add(getLocation(clone.getSequence().get(j).getContents().getNodes().get(i), clone.getSequence().get(z).getContents().getNodes().get(i)));
-					System.out.println(locations.get(locations.size()-1));
 				}
 			}
 		}
-		System.out.println(Arrays.toString(locations.toArray()));
 		return locations.stream().sorted().reduce((first, second) -> second).get();
 	}
 }
