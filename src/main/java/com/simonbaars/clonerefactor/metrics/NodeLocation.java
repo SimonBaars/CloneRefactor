@@ -21,9 +21,8 @@ public enum NodeLocation { //Please note that the order of these enum values mat
 	ANCESTOR, //done
 	SIBLING, //done
 	FIRSTCOUSIN, //done
-	SAMEINTERFACE,
-	COMMONHIERARCHY,
-	EXTERNALSUPERCLASS,
+	COMMONHIERARCHY, 
+	EXTERNALSUPERCLASS, //done
 	UNRELATED //done
 	;
 	
@@ -51,9 +50,15 @@ public enum NodeLocation { //Please note that the order of these enum values mat
 			return SIBLING;
 		if(isSiblingOrCousin(c1, c2, 2, 2))
 			return FIRSTCOUSIN;
+		if(hasExternalSuperclass(c1) && hasExternalSuperclass(c2))
+			return EXTERNALSUPERCLASS;
 		return UNRELATED;
 	}
 	
+	private static boolean hasExternalSuperclass(ClassOrInterfaceDeclaration c1) {
+		return !c1.getExtendedTypes().isEmpty() && c1.getExtendedTypes().get(0).getNameAsString().equals("Object") && goUp(c1, 1)==null;
+	}
+
 	public static void registerNode(Node n) {
 		if(n instanceof ClassOrInterfaceDeclaration) {
 			ClassOrInterfaceDeclaration n2 = (ClassOrInterfaceDeclaration)n;
@@ -70,7 +75,7 @@ public enum NodeLocation { //Please note that the order of these enum values mat
 		ClassOrInterfaceDeclaration parent2 = goUp(c2, c2GoUp);
 		return parent1!=null && getFullyQualifiedName(parent1).equals(getFullyQualifiedName(parent2));
 	}
-
+	
 	private static ClassOrInterfaceDeclaration goUp(ClassOrInterfaceDeclaration c1, int i) {
 		if(i>0) {
 			if(!c1.getExtendedTypes().isEmpty()) {
