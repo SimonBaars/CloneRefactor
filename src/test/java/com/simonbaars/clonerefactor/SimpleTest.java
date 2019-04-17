@@ -2,10 +2,9 @@ package com.simonbaars.clonerefactor;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
-import com.simonbaars.clonerefactor.model.Location;
+import com.simonbaars.clonerefactor.model.DetectionResults;
 import com.simonbaars.clonerefactor.model.Sequence;
 
 import junit.framework.Assert;
@@ -45,8 +44,7 @@ public class SimpleTest extends TestCase {
     
     public void testCustom() {
     	System.out.println("custom");
-        List<Sequence> chains = Main.cloneDetection("/Users/sbaars/Downloads/java_projects/ardublock");
-        printNice(chains);
+        System.out.println(Main.cloneDetection("/Users/sbaars/Downloads/java_projects/ardublock"));
     }
 
     /**
@@ -54,14 +52,12 @@ public class SimpleTest extends TestCase {
      */
     public void testSimpleClones() {
     	System.out.println("testSimpleClones");
-        List<Sequence> chains = testProject(SIMPLE_PROJECT);
-        printNice(chains);
+    	System.out.println(testProject(SIMPLE_PROJECT));
     }
     
     public void testNestedClone() {
     	System.out.println("testNestedClone");
-        List<Sequence> chains = testProject("NestedClone");
-        printNice(chains);
+    	System.out.println(testProject("NestedClone"));
     }
     
 	/**
@@ -69,8 +65,7 @@ public class SimpleTest extends TestCase {
      */
     public void testEqualLines() {
     	System.out.println("testEqualLines");
-    	List<Sequence> chains = testProject(EQUAL_LINES_PROJECT);
-    	printNice(chains);
+    	System.out.println(testProject(EQUAL_LINES_PROJECT));
     }
     
     /**
@@ -78,8 +73,7 @@ public class SimpleTest extends TestCase {
      */
     public void testPartialClonesLeft() {
     	System.out.println("testPartialClonesLeft");
-    	List<Sequence> chains = testProject(PARTIAL_CLONES_LEFT);
-    	printNice(chains);
+    	System.out.println(testProject(PARTIAL_CLONES_LEFT));
     }
     
     /**
@@ -87,21 +81,15 @@ public class SimpleTest extends TestCase {
      */
     public void testPartialLinesRight() {
     	System.out.println("testPartialLinesRight");
-    	List<Sequence> chains = testProject(PARTIAL_CLONES_RIGHT);
-    	printNice(chains);
+    	System.out.println(testProject(PARTIAL_CLONES_RIGHT));
     }
-    
-    private void printNice(List<Sequence> chains) {
-    	System.out.println(Arrays.toString(chains.toArray()).replace("Location [", "\nLocation [").replace("Sequence [sequence=[", "\nSequence [sequence=["));
-	}
 
 	/**
      * Test for clones in Java enumerations.
      */
     public void testEnumClone() {
     	System.out.println("testEnumClone");
-    	List<Sequence> chains = testProject(ENUM_PROJECT);
-    	printNice(chains);
+    	System.out.println(testProject(ENUM_PROJECT));
     }
     
     /**
@@ -109,8 +97,7 @@ public class SimpleTest extends TestCase {
      */
     public void testSingleFile() {
     	System.out.println("testSingleFile");
-    	List<Sequence> chains = testProject(SINGLE_FILE_PROJECT);
-    	printNice(chains);
+    	System.out.println(testProject(SINGLE_FILE_PROJECT));
     }
     
     
@@ -119,8 +106,7 @@ public class SimpleTest extends TestCase {
      */
     public void testUnequalSizeClones() {
     	System.out.println("testUnequalSizeClones");
-    	List<Sequence> chains = testProject(UNEQUAL_SIZE_CLONES_PROJECT);
-    	printNice(chains);
+    	System.out.println(testProject(UNEQUAL_SIZE_CLONES_PROJECT));
     }
     
     /**
@@ -128,8 +114,7 @@ public class SimpleTest extends TestCase {
      */
     public void testSeveralMethodsCloned() {
     	System.out.println("testSeveralMethodsCloned");
-    	List<Sequence> chains = testProject(SEVERAL_METHODS_PROJECT);
-    	printNice(chains);
+    	System.out.println(testProject(SEVERAL_METHODS_PROJECT));
     }
     
     /**
@@ -137,36 +122,10 @@ public class SimpleTest extends TestCase {
      */
     public void testImportStatements() {
     	System.out.println("testImportStatements");
-    	List<Sequence> chains = testProject("EqualImportStatements");
-    	printNice(chains);
-        List<Sequence> expectedChains = new ArrayList<>();
-        Assert.assertTrue(checkArbitraryOrder(chains, expectedChains));
+    	System.out.println(testProject("EqualImportStatements"));
     }
 
-	private List<Sequence> testProject(String project) {
+	private DetectionResults testProject(String project) {
 		return Main.cloneDetection(SimpleTest.class.getClassLoader().getResource(project).getFile());
-	}
-    
-	private File getJavaFileFromProject(String project, String file) {
-		return new File(SimpleTest.class.getClassLoader().getResource(project+File.separator+file+".java").getFile());
-	}
-	
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	private <T> boolean checkArbitraryOrder(List<T> chains, List<T> expectedChains) {
-		if(chains.size()!=expectedChains.size())
-			return false;
-		
-		outerloop: for(Object chain : chains) {
-			for(Object expectedChain : expectedChains) {
-				if((chain instanceof List && checkArbitraryOrder((List)chain, (List)expectedChain)) ||
-					(chain instanceof Sequence && checkArbitraryOrder(((Sequence)chain).getSequence(), ((Sequence)expectedChain).getSequence())) ||
-					(chain instanceof Location && ((Location)chain).isSame((Location)expectedChain)) || 
-					(chain instanceof Object && chain.equals(expectedChain))){
-					continue outerloop;
-				}
-			}
-			return false;
-		}
-		return true;
 	}
 }
