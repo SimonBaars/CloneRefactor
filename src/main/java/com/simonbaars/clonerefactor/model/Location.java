@@ -1,13 +1,11 @@
 package com.simonbaars.clonerefactor.model;
 
 import java.io.File;
-import java.util.List;
 import java.util.Optional;
 
 import com.github.javaparser.Range;
 import com.github.javaparser.TokenRange;
 import com.github.javaparser.ast.Node;
-import com.simonbaars.clonerefactor.datatype.ListMap;
 
 public class Location {
 	private final File file;

@@ -1,7 +1,6 @@
 package com.simonbaars.clonerefactor.metrics;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,12 +30,10 @@ public enum NodeLocation { //Please note that the order of these enum values mat
 	private NodeLocation() {}
 	
 	public static NodeLocation getLocation(Node n1, Node n2) {
-		System.out.println(n1+" vs "+n2);
 		ClassOrInterfaceDeclaration c1 = getClass(n1);
 		ClassOrInterfaceDeclaration c2 = getClass(n2);
 		if(c1 == null || c2 == null || c1.isInterface() || c2.isInterface())
 			return UNRELATED;
-		System.out.println(getFullyQualifiedName(c1)+", "+getFullyQualifiedName(c2));
 		if(c1!=null && getFullyQualifiedName(c1).equals(getFullyQualifiedName(c2))) {
 			if(isMethod(n1, n2))
 				return SAMEMETHOD;
