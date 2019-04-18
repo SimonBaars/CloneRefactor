@@ -14,11 +14,13 @@ import com.simonbaars.clonerefactor.util.FileUtils;
 public class CorpusThread extends Thread {
 	private final File file;
 	private final File outputFolder;
+	private final File fullMetricsFile;
 	private static final Metrics fullMetrics = new Metrics();
 	
-	public CorpusThread(File file, File outputFolder) {
+	public CorpusThread(File file, File outputFolder, File fullMetricsFile) {
 		this.file=file;
 		this.outputFolder = outputFolder;
+		this.fullMetricsFile = fullMetricsFile;
 		start();
 	}
 	
@@ -33,11 +35,15 @@ public class CorpusThread extends Thread {
 		}
 	}
 
-	private synchronized void addToFullMetrics(DetectionResults res) {
-		fullMetrics.add(res.getMetrics());
+	private void addToFullMetrics(DetectionResults res) {
+		synchronized (fullMetrics) {
+			fullMetrics.add(res.getMetrics());
+		}
 	}
 	
-	private synchronized void writeFullMetricsState() throws IOException {
-		FileUtils.writeStringToFile(new File(outputFolder.getAbsolutePath()+"/full_metrics.txt"), fullMetrics.toString());
+	private void writeFullMetricsState() throws IOException {
+		synchronized (fullMetricsFile) {
+			FileUtils.writeStringToFile(new File(outputFolder.getAbsolutePath()+"/full_metrics.txt"), fullMetrics.toString());
+		}
 	}
 }

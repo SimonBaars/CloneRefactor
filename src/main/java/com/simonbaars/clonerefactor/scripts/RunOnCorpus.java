@@ -19,6 +19,7 @@ import me.tongfei.progressbar.ProgressBarStyle;
 
 public class RunOnCorpus {
 	private static File OUTPUT_FOLDER = new File("/Users/sbaars/clone/output");
+	private static File FULL_METRICS = new File(OUTPUT_FOLDER.getAbsolutePath()+"/full_metrics.txt");
 	private static int NUMBER_OF_THREADS = 4;
 
 	public static void main(String[] args) {
@@ -29,7 +30,8 @@ public class RunOnCorpus {
 			waitForThreadToFinish(threadPool);
 			for(int i = 0; i<threadPool.length; i++) {
 				if(threadPool[i]==null || !threadPool[i].isAlive()) {
-					threadPool[i] = new CorpusThread(file, OUTPUT_FOLDER);
+					threadPool[i] = new CorpusThread(file, OUTPUT_FOLDER, FULL_METRICS);
+					break;
 				}
 			}
 		}
