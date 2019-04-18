@@ -33,4 +33,25 @@
 			<version>0.7.3</version>
 		</dependency>
 	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				<version>1.2.1</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>java</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<mainClass>com.simonbaars.clonerefactor.scripts.RunOnCorpus</mainClass>
+					<commandlineArgs>-Xms1G -Xmx6G -Xss2048m</commandlineArgs>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 </project>
