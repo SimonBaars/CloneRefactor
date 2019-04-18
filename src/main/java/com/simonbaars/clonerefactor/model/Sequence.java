@@ -69,15 +69,15 @@ public class Sequence {
 		return sequence.isEmpty() ? 0 : sequence.get(0).getAmountOfNodes();
 	}
 	
-	public int getLineSize() {
-		return sequence.isEmpty() ? 0 : sequence.get(0).getAmountOfLines();
+	public int getEffectiveLineSize() {
+		return sequence.isEmpty() ? 0 : sequence.get(0).getEffectiveLines();
 	}
 	
 	public int getTotalNodeVolume() {
 		return sequence.stream().mapToInt(e -> e.getAmountOfNodes()).sum();
 	}
 	
-	public int getTotalLineVolume() {
-		return sequence.stream().mapToInt(e -> e.getAmountOfLines()).sum();
+	public int getTotalEffectiveLineVolume() {
+		return sequence.stream().mapToInt(e -> e.getEffectiveLines()).sum();
 	}
 }

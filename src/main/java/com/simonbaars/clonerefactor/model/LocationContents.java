@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import com.github.javaparser.JavaToken;
 import com.github.javaparser.JavaToken.Category;
@@ -72,7 +74,11 @@ public class LocationContents {
 	}
 	
 	public int getAmountOfTokens() {
-		return new Long(tokens.stream().filter(e -> Arrays.stream(NO_TOKEN).noneMatch(c -> c.equals(e.getCategory()))).count()).intValue();
+		return new Long(getEffectiveTokens().count()).intValue();
+	}
+
+	private Stream<JavaToken> getEffectiveTokens() {
+		return tokens.stream().filter(e -> Arrays.stream(NO_TOKEN).noneMatch(c -> c.equals(e.getCategory())));
 	}
 	
 	public int calcHashcode(List<Node> nodeList, int result, int prime) {
@@ -128,6 +134,10 @@ public class LocationContents {
 
 	public void setRange(Range range) {
 		this.range = range;
+	}
+
+	public Set<Integer> getEffectiveLines() {
+		return getEffectiveTokens().map(e -> e.getRange().get().begin.line).collect(Collectors.toSet());
 	}
 	
 	

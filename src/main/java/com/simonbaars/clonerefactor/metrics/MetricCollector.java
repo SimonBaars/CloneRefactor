@@ -11,6 +11,7 @@ import com.simonbaars.clonerefactor.model.Location;
 import com.simonbaars.clonerefactor.model.Sequence;
 
 public class MetricCollector {
+	private final ListMap<File, Integer> parsedEffectiveLines = new ListMap<>();
 	private final ListMap<File, Integer> parsedLines = new ListMap<>();
 	private final ListMap<File, Range> parsedTokens = new ListMap<>();
 	private final ListMap<File, Range> parsedNodes = new ListMap<>();
@@ -19,10 +20,23 @@ public class MetricCollector {
 	public MetricCollector() {}
 	
 	public void reportFoundNode(Location l) {
-		metrics.totalAmountOfLines+=l.getAmountOfLines();
+		metrics.totalAmountOfLines+=getUnparsedLines(l);
 		metrics.totalAmountOfNodes+=l.getAmountOfNodes();
 		metrics.totalAmountOfTokens+=l.getAmountOfTokens();
+		metrics.totalAmountOfEffectiveLines+=getUnparsedEffectiveLines(l);
 		l.getContents().getNodes().forEach(e -> NodeLocation.registerNode(e));
+	}
+	
+	private int getUnparsedEffectiveLines(Location l) {
+		int amountOfLines = 0;
+		for(Integer i : l.getContents().getEffectiveLines()) {
+			List<Integer> lines = parsedEffectiveLines.get(l.getFile());
+			if(!lines.contains(i)) {
+				amountOfLines++;
+				lines.add(i);
+			} 
+		}
+		return amountOfLines;
 	}
 	
 	private int getUnparsedLines(Location l) {
@@ -39,6 +53,7 @@ public class MetricCollector {
 	
 	public Metrics reportClones(List<Sequence> clones) {
 		parsedLines.clear();
+		parsedEffectiveLines.clear();
 		for(Sequence clone : clones)
 			reportClone(clone);
 		NodeLocation.clearClasses();
@@ -49,7 +64,9 @@ public class MetricCollector {
 		metrics.amountPerCloneClassSize.increment(clone.size());
 		metrics.amountPerLocation.increment(NodeLocation.getLocation(clone));
 		metrics.amountPerNodes.increment(clone.getNodeSize());
-		metrics.amountPerTotalVolume.increment(clone.getTotalNodeVolume());
+		metrics.amountPerTotalNodeVolume.increment(clone.getTotalNodeVolume());
+		metrics.amountPerEffectiveLines.increment(clone.getEffectiveLineSize());
+		metrics.amountPerTotalEffectiveLineVolume.increment(clone.getTotalEffectiveLineVolume());
 		for(Location l : clone.getSequence()) {
 			reportClonedLocation(l);
 		}
@@ -59,6 +76,8 @@ public class MetricCollector {
 		metrics.amountOfLinesCloned+=getUnparsedLines(l);
 		metrics.amountOfTokensCloned+=getUnparsedTokens(l);
 		metrics.amountOfNodesCloned+=getUnparsedNodes(l);
+		metrics.amountOfEffectiveLinesCloned+=getUnparsedEffectiveLines(l);
+		
 	}
 
 	private int getUnparsedTokens(Location l) {

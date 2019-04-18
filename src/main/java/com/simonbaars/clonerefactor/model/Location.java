@@ -73,6 +73,10 @@ public class Location {
 	public int getAmountOfLines() {
 		return range.end.line-range.begin.line+1;
 	}
+	
+	public int getEffectiveLines() {
+		return getContents().getEffectiveLines().size();
+	}
 
 	public boolean isSame(Location other) {
 		if (range != other.range)
