@@ -2,19 +2,20 @@ package com.simonbaars.clonerefactor.metrics;
 
 import java.io.File;
 import java.util.List;
+import java.util.Set;
 
 import com.github.javaparser.JavaToken;
 import com.github.javaparser.Range;
 import com.github.javaparser.ast.Node;
-import com.simonbaars.clonerefactor.datatype.ListMap;
+import com.simonbaars.clonerefactor.datatype.SetMap;
 import com.simonbaars.clonerefactor.model.Location;
 import com.simonbaars.clonerefactor.model.Sequence;
 
 public class MetricCollector {
-	private final ListMap<File, Integer> parsedEffectiveLines = new ListMap<>();
-	private final ListMap<File, Integer> parsedLines = new ListMap<>();
-	private final ListMap<File, Range> parsedTokens = new ListMap<>();
-	private final ListMap<File, Range> parsedNodes = new ListMap<>();
+	private final SetMap<File, Integer> parsedEffectiveLines = new SetMap<>();
+	private final SetMap<File, Integer> parsedLines = new SetMap<>();
+	private final SetMap<File, Range> parsedTokens = new SetMap<>();
+	private final SetMap<File, Range> parsedNodes = new SetMap<>();
 	private final Metrics metrics = new Metrics();
 	
 	public MetricCollector() {}
@@ -30,7 +31,7 @@ public class MetricCollector {
 	private int getUnparsedEffectiveLines(Location l) {
 		int amountOfLines = 0;
 		for(Integer i : l.getContents().getEffectiveLines()) {
-			List<Integer> lines = parsedEffectiveLines.get(l.getFile());
+			Set<Integer> lines = parsedEffectiveLines.get(l.getFile());
 			if(!lines.contains(i)) {
 				amountOfLines++;
 				lines.add(i);
@@ -42,7 +43,7 @@ public class MetricCollector {
 	private int getUnparsedLines(Location l) {
 		int amountOfLines = 0;
 		for(int i = l.getRange().begin.line; i<=l.getRange().end.line; i++) {
-			List<Integer> lines = parsedLines.get(l.getFile());
+			Set<Integer> lines = parsedLines.get(l.getFile());
 			if(!lines.contains(i)) {
 				amountOfLines++;
 				lines.add(i);
@@ -83,12 +84,10 @@ public class MetricCollector {
 	private int getUnparsedTokens(Location l) {
 		int amount = 0;
 		for(JavaToken n : l.getContents().getTokens()) {
-			if(n.getRange().isPresent()) {
-				Range r = n.getRange().get();
-				if(!parsedTokens.get(l.getFile()).contains(r)) {
-					parsedTokens.addTo(l.getFile(), r);
-					amount++;
-				}
+			Range r = n.getRange().get();
+			if(!parsedTokens.get(l.getFile()).contains(r)) {
+				parsedTokens.addTo(l.getFile(), r);
+				amount++;
 			}
 		}
 		return amount;

@@ -45,7 +45,6 @@ public class CloneDetection {
 			newClones.getSequence().set(newClones.getSequence().indexOf(validChain.getValue()), l);
 			validChain.setValue(l);
 		}
-
 		return newClones;
 	}
 
