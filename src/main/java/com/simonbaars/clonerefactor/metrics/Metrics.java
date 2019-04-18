@@ -44,6 +44,7 @@ public class Metrics {
 		amountOfLinesCloned+=metrics.amountOfLinesCloned;
 		amountOfNodesCloned+=metrics.amountOfNodesCloned;
 		amountOfTokensCloned+=metrics.amountOfTokensCloned;
+		amountOfEffectiveLinesCloned+=metrics.amountOfEffectiveLinesCloned;
 		
 		amountPerCloneClassSize.addAll(metrics.amountPerCloneClassSize);
 		amountPerLocation.addAll(metrics.amountPerLocation);

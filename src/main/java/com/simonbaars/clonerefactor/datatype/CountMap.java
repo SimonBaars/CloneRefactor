@@ -29,6 +29,10 @@ public class CountMap<K> extends HashMap<K, Integer> {
         return super.put(key, super.containsKey(key) ? super.get(key) + 1 : 1);
     }
 	
+	public Integer increment(K key, int amount) {
+        return super.put(key, super.containsKey(key) ? super.get(key) + amount : amount);
+    }
+	
 	@SuppressWarnings("unchecked")
 	@Override 
 	public Integer get(Object key){
@@ -43,6 +47,6 @@ public class CountMap<K> extends HashMap<K, Integer> {
 	}
 
 	public void addAll(CountMap<K> amountPerCloneClassSize) {
-		amountPerCloneClassSize.entrySet().stream().forEach(e -> this.put(e.getKey(), e.getValue()));
+		amountPerCloneClassSize.entrySet().stream().forEach(e -> this.increment(e.getKey(), e.getValue()));
 	}
 }

@@ -26,7 +26,7 @@ public class RunOnCorpus {
 		CorpusThread[] threadPool = new CorpusThread[NUMBER_OF_THREADS];
 		OUTPUT_FOLDER.mkdirs();
 		File[] corpusFiles = getFilteredCorpusFiles(5, 1000);
-		for(File file : ProgressBar.wrap(Arrays.asList(corpusFiles), new ProgressBarBuilder().setTaskName("Running Clone Detection").setStyle(ProgressBarStyle.ASCII))) {
+		for(File file : ProgressBar.wrap(Arrays.asList(corpusFiles), new ProgressBarBuilder().setTaskName("Running Clone Detection"))) {
 			waitForThreadToFinish(threadPool);
 			for(int i = 0; i<threadPool.length; i++) {
 				if(threadPool[i]==null || !threadPool[i].isAlive()) {
