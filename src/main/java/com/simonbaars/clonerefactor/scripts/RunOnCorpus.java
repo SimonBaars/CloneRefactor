@@ -18,21 +18,30 @@ import me.tongfei.progressbar.ProgressBarBuilder;
 import me.tongfei.progressbar.ProgressBarStyle;
 
 public class RunOnCorpus {
+	private static File OUTPUT_FOLDER = new File("/Users/sbaars/clone/output");
+	private static int NUMBER_OF_THREADS = 4;
 
 	public static void main(String[] args) {
-		File outputFolder = new File("/Users/sbaars/clone/output");
-		outputFolder.mkdirs();
+		CorpusThread[] threadPool = new CorpusThread[NUMBER_OF_THREADS];
+		OUTPUT_FOLDER.mkdirs();
 		File[] corpusFiles = getFilteredCorpusFiles(5, 1000);
-		Metrics fullMetrics = new Metrics();
 		for(File file : ProgressBar.wrap(Arrays.asList(corpusFiles), new ProgressBarBuilder().setTaskName("Running Clone Detection").setStyle(ProgressBarStyle.ASCII))) {
-			DetectionResults res = new CloneParser().parse(getJavaFiles(getSourceFolder(file)));
-			fullMetrics.add(res.getMetrics());
-			try {
-				FileUtils.writeStringToFile(new File(outputFolder.getAbsolutePath()+"/"+file.getName()+"-"+res.getClones().size()+".txt"), res.toString());
-			} catch (IOException e) {
-				e.printStackTrace();
+			waitForThreadToFinish(threadPool);
+			for(int i = 0; i<threadPool.length; i++) {
+				if(threadPool[i]==null || !threadPool[i].isAlive()) {
+					threadPool[i] = new CorpusThread(file, OUTPUT_FOLDER);
+				}
 			}
 		}
-		System.out.println(fullMetrics);
+	}
+
+	private static void waitForThreadToFinish(CorpusThread[] threadPool) {
+		while(Arrays.stream(threadPool).allMatch(e -> e!=null && e.isAlive())) {
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException e1) {
+				Thread.currentThread().interrupt();
+			}
+		}
 	}
 }
