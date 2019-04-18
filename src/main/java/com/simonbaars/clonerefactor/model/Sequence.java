@@ -64,4 +64,20 @@ public class Sequence {
 			return false;
 		return true;
 	}
+
+	public int getNodeSize() {
+		return sequence.isEmpty() ? 0 : sequence.get(0).getAmountOfNodes();
+	}
+	
+	public int getLineSize() {
+		return sequence.isEmpty() ? 0 : sequence.get(0).getAmountOfLines();
+	}
+	
+	public int getTotalNodeVolume() {
+		return sequence.stream().mapToInt(e -> e.getAmountOfNodes()).sum();
+	}
+	
+	public int getTotalLineVolume() {
+		return sequence.stream().mapToInt(e -> e.getAmountOfLines()).sum();
+	}
 }

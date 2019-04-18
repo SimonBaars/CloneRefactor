@@ -13,6 +13,9 @@ public class Metrics {
 	
 	public final CountMap<Integer> amountPerCloneClassSize = new CountMap<>();
 	public final CountMap<NodeLocation> amountPerLocation = new CountMap<>();
+	public final CountMap<Integer> amountPerNodes = new CountMap<>();
+	public final CountMap<Integer> amountPerTotalVolume = new CountMap<>();
+	
 	@Override
 	public String toString() {
 		return "Metrics [totalAmountOfLines=" + totalAmountOfLines + ", totalAmountOfNodes=" + totalAmountOfNodes

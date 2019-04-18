@@ -48,6 +48,8 @@ public class MetricCollector {
 	private void reportClone(Sequence clone) {
 		metrics.amountPerCloneClassSize.increment(clone.size());
 		metrics.amountPerLocation.increment(NodeLocation.getLocation(clone));
+		metrics.amountPerNodes.increment(clone.getNodeSize());
+		metrics.amountPerTotalVolume.increment(clone.getTotalNodeVolume());
 		for(Location l : clone.getSequence()) {
 			reportClonedLocation(l);
 		}
