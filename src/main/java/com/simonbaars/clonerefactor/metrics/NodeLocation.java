@@ -20,7 +20,7 @@ public enum NodeLocation { //Please note that the order of these enum values mat
 	ANCESTOR, //done
 	SIBLING, //done
 	FIRSTCOUSIN, //done
-	COMMONHIERARCHY, 
+	COMMONHIERARCHY, //done
 	EXTERNALSUPERCLASS, //done
 	UNRELATED //done
 	;
