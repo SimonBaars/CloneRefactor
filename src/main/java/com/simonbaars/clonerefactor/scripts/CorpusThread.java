@@ -13,37 +13,18 @@ import com.simonbaars.clonerefactor.util.FileUtils;
 
 public class CorpusThread extends Thread {
 	private final File file;
-	private final File outputFolder;
-	private final File fullMetricsFile;
-	private static final Metrics fullMetrics = new Metrics();
+	public DetectionResults res;
 	
-	public CorpusThread(File file, File outputFolder, File fullMetricsFile) {
+	public CorpusThread(File file) {
 		this.file=file;
-		this.outputFolder = outputFolder;
-		this.fullMetricsFile = fullMetricsFile;
 		start();
 	}
 	
 	public void run() {
-		DetectionResults res = new CloneParser().parse(getJavaFiles(getSourceFolder(file)));
-		addToFullMetrics(res);
 		try {
-			FileUtils.writeStringToFile(new File(outputFolder.getAbsolutePath()+"/"+file.getName()+"-"+res.getClones().size()+".txt"), res.toString());
-			writeFullMetricsState();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-
-	private void addToFullMetrics(DetectionResults res) {
-		synchronized (fullMetrics) {
-			fullMetrics.add(res.getMetrics());
-		}
-	}
-	
-	private void writeFullMetricsState() throws IOException {
-		synchronized (fullMetricsFile) {
-			FileUtils.writeStringToFile(new File(outputFolder.getAbsolutePath()+"/full_metrics.txt"), fullMetrics.toString());
+			res = new CloneParser().parse(getJavaFiles(getSourceFolder(file)));
+		} catch (Exception e) {
+			e.printStackTrace(); // For now we just want to debug this :D.
 		}
 	}
 }

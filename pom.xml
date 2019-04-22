@@ -59,7 +59,7 @@
 				</executions>
 				<configuration>
 					<mainClass>com.simonbaars.clonerefactor.scripts.RunOnCorpus</mainClass>
-					<commandlineArgs>-Xms1G -Xmx6G -Xss2048m</commandlineArgs>
+					<commandlineArgs>-Xms1G -Xmx6G -Xss10m</commandlineArgs>
 				</configuration>
 			</plugin>
 		</plugins>
