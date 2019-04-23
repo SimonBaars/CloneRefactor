@@ -14,6 +14,11 @@ public class Metrics {
 	public int amountOfNodesCloned = 0;
 	public int amountOfTokensCloned = 0;
 	
+	public int overlappingNodes = 0;
+	public int overlappingEffectiveLines = 0;
+	public int overlappingTokens = 0;
+	public int overlappingLines = 0;
+	
 	public final CountMap<Integer> amountPerCloneClassSize = new CountMap<>();
 	public final CountMap<RelationType> amountPerLocation = new CountMap<>();
 	

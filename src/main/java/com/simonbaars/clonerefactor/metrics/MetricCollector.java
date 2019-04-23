@@ -23,33 +23,33 @@ public class MetricCollector {
 	public MetricCollector() {}
 	
 	public void reportFoundNode(Location l) {
-		metrics.totalAmountOfLines+=getUnparsedLines(l);
+		metrics.totalAmountOfLines+=getUnparsedLines(l, false);
 		metrics.totalAmountOfNodes+=l.getAmountOfNodes();
 		metrics.totalAmountOfTokens+=l.getAmountOfTokens();
-		metrics.totalAmountOfEffectiveLines+=getUnparsedEffectiveLines(l);
+		metrics.totalAmountOfEffectiveLines+=getUnparsedEffectiveLines(l, false);
 		l.getContents().getNodes().forEach(e -> relationFinder.registerNode(e));
 	}
 	
-	private int getUnparsedEffectiveLines(Location l) {
+	private int getUnparsedEffectiveLines(Location l, boolean countOverlap) {
 		int amountOfLines = 0;
 		for(Integer i : l.getContents().getEffectiveLines()) {
 			Set<Integer> lines = parsedEffectiveLines.get(l.getFile());
 			if(!lines.contains(i)) {
 				amountOfLines++;
 				lines.add(i);
-			} 
+			} else if(countOverlap) metrics.overlappingEffectiveLines++;
 		}
 		return amountOfLines;
 	}
 	
-	private int getUnparsedLines(Location l) {
+	private int getUnparsedLines(Location l, boolean countOverlap) {
 		int amountOfLines = 0;
 		for(int i = l.getRange().begin.line; i<=l.getRange().end.line; i++) {
 			Set<Integer> lines = parsedLines.get(l.getFile());
 			if(!lines.contains(i)) {
 				amountOfLines++;
 				lines.add(i);
-			} 
+			} else if(countOverlap) metrics.overlappingLines++;
 		}
 		return amountOfLines;
 	}
@@ -76,33 +76,33 @@ public class MetricCollector {
 	}
 
 	private void reportClonedLocation(Location l) {
-		metrics.amountOfLinesCloned+=getUnparsedLines(l);
-		metrics.amountOfTokensCloned+=getUnparsedTokens(l);
-		metrics.amountOfNodesCloned+=getUnparsedNodes(l);
-		metrics.amountOfEffectiveLinesCloned+=getUnparsedEffectiveLines(l);
+		metrics.amountOfLinesCloned+=getUnparsedLines(l, true);
+		metrics.amountOfTokensCloned+=getUnparsedTokens(l, true);
+		metrics.amountOfNodesCloned+=getUnparsedNodes(l, true);
+		metrics.amountOfEffectiveLinesCloned+=getUnparsedEffectiveLines(l, true);
 		
 	}
 
-	private int getUnparsedTokens(Location l) {
+	private int getUnparsedTokens(Location l, boolean countOverlap) {
 		int amount = 0;
 		for(JavaToken n : l.getContents().getTokens()) {
 			Range r = n.getRange().get();
 			if(!parsedTokens.get(l.getFile()).contains(r)) {
 				parsedTokens.addTo(l.getFile(), r);
 				amount++;
-			}
+			} else if(countOverlap) metrics.overlappingTokens++;
 		}
 		return amount;
 	}
 
-	private int getUnparsedNodes(Location l) {
+	private int getUnparsedNodes(Location l, boolean countOverlap) {
 		int amount = 0;
 		for(Node n : l.getContents().getNodes()) {
 			Range r = n.getRange().get();
 			if(!parsedNodes.get(l.getFile()).contains(r)) {
 				parsedNodes.addTo(l.getFile(), r);
 				amount++;
-			}
+			} else if(countOverlap) metrics.overlappingNodes++;
 		}
 		return amount;
 	}
