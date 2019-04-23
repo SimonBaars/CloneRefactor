@@ -29,7 +29,7 @@ public class CloneRelation implements MetricEnum { //Please note that the order 
 	
 	private final Map<String, ClassOrInterfaceDeclaration> classes = new HashMap<>();
 	
-	private CloneRelation() {}
+	public CloneRelation() {}
 	
 	public RelationType getLocation(Node n1, Node n2) {
 		ClassOrInterfaceDeclaration c1 = getClass(n1);

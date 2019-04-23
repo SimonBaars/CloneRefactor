@@ -1,6 +1,7 @@
 package com.simonbaars.clonerefactor;
 
 import com.simonbaars.clonerefactor.metrics.enums.CloneRelation;
+import com.simonbaars.clonerefactor.metrics.enums.CloneRelation.RelationType;
 import com.simonbaars.clonerefactor.model.DetectionResults;
 
 import junit.framework.Assert;
@@ -30,42 +31,42 @@ public class NodeLocationTest extends TestCase {
     }
     
     public void testAncestor() {
-        test("Ancestor", CloneRelation.ANCESTOR);
+        test("Ancestor", RelationType.ANCESTOR);
     }
     
     public void testFirstCousin() {
-        test("FirstCousin", CloneRelation.FIRSTCOUSIN);
+        test("FirstCousin", RelationType.FIRSTCOUSIN);
     }
     
     public void testSibling() {
-        test("Sibling", CloneRelation.SIBLING);
+        test("Sibling", RelationType.SIBLING);
     }
     
     public void testSuperClass() {
-        test("SuperClass", CloneRelation.SUPERCLASS);
+        test("SuperClass", RelationType.SUPERCLASS);
     }
     
     public void testMethod() {
-        test("SingleFile", CloneRelation.SAMEMETHOD);
+        test("SingleFile", RelationType.SAMEMETHOD);
     }
     
     public void testNoRelation() {
-        test("SimpleClone", CloneRelation.UNRELATED);
+        test("SimpleClone", RelationType.UNRELATED);
     }
     
     public void testSameClass() {
-        test("SameClass", CloneRelation.SAMECLASS);
+        test("SameClass", RelationType.SAMECLASS);
     }
     
     public void testSameExternalSuperClass() {
-        test("ExternalSuperClass", CloneRelation.EXTERNALSUPERCLASS);
+        test("ExternalSuperClass", RelationType.EXTERNALSUPERCLASS);
     }
     
     public void testSameHierarchy() {
-        test("SameHierarchy", CloneRelation.COMMONHIERARCHY);
+        test("SameHierarchy", RelationType.COMMONHIERARCHY);
     }
 
-	private void test(String name, CloneRelation loc) {
+	private void test(String name, RelationType loc) {
 		DetectionResults r = testProject(name);
         Assert.assertEquals(loc, r.getMetrics().amountPerLocation.keySet().iterator().next());
 	}

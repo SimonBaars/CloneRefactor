@@ -18,6 +18,7 @@ public class MetricCollector {
 	private final SetMap<File, Range> parsedTokens = new SetMap<>();
 	private final SetMap<File, Range> parsedNodes = new SetMap<>();
 	private final Metrics metrics = new Metrics();
+	private final CloneRelation relationFinder = new CloneRelation();
 	
 	public MetricCollector() {}
 	
@@ -26,7 +27,7 @@ public class MetricCollector {
 		metrics.totalAmountOfNodes+=l.getAmountOfNodes();
 		metrics.totalAmountOfTokens+=l.getAmountOfTokens();
 		metrics.totalAmountOfEffectiveLines+=getUnparsedEffectiveLines(l);
-		l.getContents().getNodes().forEach(e -> CloneRelation.registerNode(e));
+		l.getContents().getNodes().forEach(e -> relationFinder.registerNode(e));
 	}
 	
 	private int getUnparsedEffectiveLines(Location l) {
@@ -58,13 +59,13 @@ public class MetricCollector {
 		parsedEffectiveLines.clear();
 		for(Sequence clone : clones)
 			reportClone(clone);
-		CloneRelation.clearClasses();
+		relationFinder.clearClasses();
 		return metrics;
 	}
 
 	private void reportClone(Sequence clone) {
 		metrics.amountPerCloneClassSize.increment(clone.size());
-		metrics.amountPerLocation.increment(CloneRelation.getLocation(clone));
+		metrics.amountPerLocation.increment(relationFinder.getLocation(clone));
 		metrics.amountPerNodes.increment(clone.getNodeSize());
 		metrics.amountPerTotalNodeVolume.increment(clone.getTotalNodeVolume());
 		metrics.amountPerEffectiveLines.increment(clone.getEffectiveLineSize());

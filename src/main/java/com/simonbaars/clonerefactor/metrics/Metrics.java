@@ -1,7 +1,7 @@
 package com.simonbaars.clonerefactor.metrics;
 
 import com.simonbaars.clonerefactor.datatype.CountMap;
-import com.simonbaars.clonerefactor.metrics.enums.CloneRelation;
+import com.simonbaars.clonerefactor.metrics.enums.CloneRelation.RelationType;
 
 public class Metrics {
 	public int totalAmountOfLines = 0;
@@ -15,7 +15,7 @@ public class Metrics {
 	public int amountOfTokensCloned = 0;
 	
 	public final CountMap<Integer> amountPerCloneClassSize = new CountMap<>();
-	public final CountMap<CloneRelation> amountPerLocation = new CountMap<>();
+	public final CountMap<RelationType> amountPerLocation = new CountMap<>();
 	
 	public final CountMap<Integer> amountPerNodes = new CountMap<>();
 	public final CountMap<Integer> amountPerTotalNodeVolume = new CountMap<>();
