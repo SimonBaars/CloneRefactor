@@ -39,7 +39,7 @@ public class Main {
 		
 		if(javaFiles.size() == 0)
 			throw new NoPathEnteredException();
-	
+
 		return new CloneParser().parse(javaFiles);
 	}
 

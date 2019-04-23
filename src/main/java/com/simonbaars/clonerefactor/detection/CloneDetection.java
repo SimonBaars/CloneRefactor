@@ -35,7 +35,7 @@ public class CloneDetection {
 	private Sequence makeValid(Location lastLoc, Sequence oldClones, Sequence newClones) {
 		Map<Location /*oldClones*/, Location /*newClones*/> validChains = oldClones.getSequence().stream().distinct().filter(oldClone -> 
 			newClones.getSequence().stream().anyMatch(newClone -> newClone.getFile() == oldClone.getFile() && newClone.getContents().getRange().equals(oldClone.getPrevLine().getContents().getRange()))).collect(Collectors.toMap(e -> e, e -> e.getPrevLine()));
-
+		
 		if(validChains.size()!=oldClones.size() && !oldClones.getSequence().isEmpty()) {
 			checkValidClones(oldClones, oldClones.getSequence().stream().filter(e -> !newClones.getSequence().contains(e.getPrevLine())).collect(Collectors.toList()));
 		}
@@ -45,6 +45,11 @@ public class CloneDetection {
 			newClones.getSequence().set(newClones.getSequence().indexOf(validChain.getValue()), l);
 			validChain.setValue(l);
 		}
+		
+		if(lastLoc.getPrevLine()==null || lastLoc.getPrevLine().getFile()!=lastLoc.getFile()) {
+			checkValidClones(newClones, newClones.getSequence());
+		}
+		
 		return newClones;
 	}
 

@@ -79,6 +79,7 @@ public class CloneContentsTest extends TestCase {
 
 	private void test(String name, ContentsType loc) {
 		DetectionResults r = testProject(name);
+		System.out.println(r);
         Assert.assertEquals(loc, r.getMetrics().amountPerContents.keySet().iterator().next());
 	}
 
