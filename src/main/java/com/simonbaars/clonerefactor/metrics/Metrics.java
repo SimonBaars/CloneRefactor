@@ -20,29 +20,32 @@ public class Metrics {
 	public int overlappingEffectiveLines = 0;
 	public int overlappingTokens = 0;
 	public int overlappingLines = 0;
-	
-	public final CountMap<Integer> amountPerCloneClassSize = new CountMap<>();
+
 	public final CountMap<RelationType> amountPerRelation = new CountMap<>();
 	public final CountMap<LocationType> amountPerLocation = new CountMap<>();
 	public final CountMap<ContentsType> amountPerContents = new CountMap<>();
 	
+	public final CountMap<Integer> amountPerCloneClassSize = new CountMap<>();
 	public final CountMap<Integer> amountPerNodes = new CountMap<>();
 	public final CountMap<Integer> amountPerTotalNodeVolume = new CountMap<>();
 	
 	public final CountMap<Integer> amountPerEffectiveLines = new CountMap<>();
 	public final CountMap<Integer> amountPerTotalEffectiveLineVolume = new CountMap<>();
-	
+
 	@Override
 	public String toString() {
 		return "Metrics [totalAmountOfLines=" + totalAmountOfLines + ", totalAmountOfEffectiveLines="
 				+ totalAmountOfEffectiveLines + ", totalAmountOfNodes=" + totalAmountOfNodes + ", totalAmountOfTokens="
 				+ totalAmountOfTokens + ", amountOfLinesCloned=" + amountOfLinesCloned
 				+ ", amountOfEffectiveLinesCloned=" + amountOfEffectiveLinesCloned + ", amountOfNodesCloned="
-				+ amountOfNodesCloned + ", amountOfTokensCloned=" + amountOfTokensCloned + ", amountPerCloneClassSize="
-				+ amountPerCloneClassSize + ", amountPerRelation=" + amountPerRelation + ", amountPerNodes="
-				+ amountPerNodes + ", amountPerTotalNodeVolume=" + amountPerTotalNodeVolume
-				+ ", amountPerEffectiveLines=" + amountPerEffectiveLines + ", amountPerTotalEffectiveLineVolume="
-				+ amountPerTotalEffectiveLineVolume + "]";
+				+ amountOfNodesCloned + ", amountOfTokensCloned=" + amountOfTokensCloned + ", overlappingNodes="
+				+ overlappingNodes + ", overlappingEffectiveLines=" + overlappingEffectiveLines + ", overlappingTokens="
+				+ overlappingTokens + ", overlappingLines=" + overlappingLines + ", amountPerCloneClassSize="
+				+ amountPerCloneClassSize + ", amountPerRelation=" + amountPerRelation + ", amountPerLocation="
+				+ amountPerLocation + ", amountPerContents=" + amountPerContents + ", amountPerNodes=" + amountPerNodes
+				+ ", amountPerTotalNodeVolume=" + amountPerTotalNodeVolume + ", amountPerEffectiveLines="
+				+ amountPerEffectiveLines + ", amountPerTotalEffectiveLineVolume=" + amountPerTotalEffectiveLineVolume
+				+ "]";
 	}
 
 	public void add(Metrics metrics) {
@@ -56,9 +59,16 @@ public class Metrics {
 		amountOfTokensCloned+=metrics.amountOfTokensCloned;
 		amountOfEffectiveLinesCloned+=metrics.amountOfEffectiveLinesCloned;
 		
-		amountPerCloneClassSize.addAll(metrics.amountPerCloneClassSize);
-		amountPerRelation.addAll(metrics.amountPerRelation);
+		overlappingNodes += metrics.overlappingNodes;
+		overlappingEffectiveLines = metrics.overlappingEffectiveLines;
+		overlappingTokens = metrics.overlappingTokens;
+		overlappingLines = metrics.overlappingLines;
 		
+		amountPerRelation.addAll(metrics.amountPerRelation);
+		amountPerLocation.addAll(metrics.amountPerLocation);
+		amountPerContents.addAll(metrics.amountPerContents);
+		
+		amountPerCloneClassSize.addAll(metrics.amountPerCloneClassSize);
 		amountPerNodes.addAll(metrics.amountPerNodes);
 		amountPerTotalNodeVolume.addAll(metrics.amountPerTotalNodeVolume);
 		
