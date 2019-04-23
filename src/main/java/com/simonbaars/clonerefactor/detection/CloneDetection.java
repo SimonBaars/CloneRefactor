@@ -57,19 +57,18 @@ public class CloneDetection {
 		ListMap<Integer /*Sequence size*/, Location /* Clones */> cloneList = new ListMap<>();
 		endedClones.stream().filter(e -> e.getAmountOfNodes() >= MIN_AMOUNT_OF_NODES).forEach(e -> cloneList.addTo(e.getAmountOfNodes(), e));
 		for(List<Location> l : cloneList.values()) {
-			if(l.stream().anyMatch(e -> endedClones.contains(e))) {
-				for(Location l2 : oldClones.getSequence()) {
-					if(l.get(0)!= l2 && l2.getAmountOfNodes()>=l.get(0).getAmountOfNodes()) {
-						l.add(new Location(l2, getRange(l2, l.get(0))));
-					}
+			for(Location l2 : oldClones.getSequence()) {
+				if(l.get(0)!= l2 && l2.getAmountOfNodes()>=l.get(0).getAmountOfNodes()) {
+					l.add(new Location(l2, getRange(l2, l.get(0))));
 				}
-				if(l.stream().collect(Collectors.summingInt(e -> e.getAmountOfTokens())) > MIN_AMOUNT_OF_TOKENS && l.stream().collect(Collectors.summingInt(e -> e.getAmountOfLines())) > MIN_AMOUNT_OF_LINES && l.size()>1) {
-					Sequence newSequence = new Sequence(l);
-					if(removeDuplicatesOf(newSequence))
-						clones.add(newSequence);
-				}
-				continue;
 			}
+			if(l.stream().collect(Collectors.summingInt(e -> e.getAmountOfTokens())) > MIN_AMOUNT_OF_TOKENS && l.stream().collect(Collectors.summingInt(e -> e.getAmountOfLines())) > MIN_AMOUNT_OF_LINES && l.size()>1) {
+				Sequence newSequence = new Sequence(l);
+				if(removeDuplicatesOf(newSequence))
+					clones.add(newSequence);
+				System.out.println("Clone added "+clones.get(clones.size()-1));
+			}
+			continue;
 		}
 	}
 	
