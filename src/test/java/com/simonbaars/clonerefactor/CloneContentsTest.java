@@ -1,7 +1,6 @@
 package com.simonbaars.clonerefactor;
 
 import com.simonbaars.clonerefactor.metrics.enums.CloneContents.ContentsType;
-import com.simonbaars.clonerefactor.metrics.enums.CloneLocation.LocationType;
 import com.simonbaars.clonerefactor.model.DetectionResults;
 
 import junit.framework.Assert;
@@ -31,7 +30,7 @@ public class CloneContentsTest extends TestCase {
     }
     
     public void testFullMethod() {
-        test("SimpleClone", ContentsType.FULLMETHOD);
+        test("EqualFullMethods", ContentsType.FULLMETHOD);
     }
     
     public void testPartialMethod() {
@@ -42,11 +41,11 @@ public class CloneContentsTest extends TestCase {
         test("SeveralMethodsCloned", ContentsType.SEVERALMETHODS);
     }
     
-    public void testMethodLevel1() {
+    public void testOnlyFields() {
         test("OnlyFields", ContentsType.ONLYFIELDS);
     }
     
-    public void testMethodLevel2() {
+    public void testIncludesFields() {
         test("IncludesFields", ContentsType.INCLUDESFIELDS);
     }
 

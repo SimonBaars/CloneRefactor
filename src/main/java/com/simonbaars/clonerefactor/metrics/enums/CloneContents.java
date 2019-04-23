@@ -18,12 +18,12 @@ import java.util.List;
 import java.util.Optional;
 
 import com.github.javaparser.ast.Node;
-import com.github.javaparser.ast.body.BodyDeclaration;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.EnumConstantDeclaration;
 import com.github.javaparser.ast.body.EnumDeclaration;
 import com.github.javaparser.ast.body.FieldDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
+import com.github.javaparser.ast.stmt.BlockStmt;
 import com.simonbaars.clonerefactor.ast.NodeParser;
 import com.simonbaars.clonerefactor.metrics.enums.CloneContents.ContentsType;
 import com.simonbaars.clonerefactor.model.Sequence;
@@ -78,7 +78,7 @@ public class CloneContents implements MetricEnum<ContentsType> {
 
 	private Node getLastStatement(Node n) {
 		List<Node> children = n.getChildNodes();
-		if(children.get(children.size()-1) instanceof BodyDeclaration)
+		if(children.get(children.size()-1) instanceof BlockStmt)
 			children = children.get(children.size()-1).getChildNodes();
 		Optional<Node> reduce = children.stream().filter(e -> !NodeParser.isExcluded(e)).reduce((first, second) -> second);
 		return reduce.isPresent() ? reduce.get() : n;
