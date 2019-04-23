@@ -103,6 +103,6 @@ public class NodeParser implements Parser {
 	}
 
 	public static boolean isExcluded(Node n) {
-		return n instanceof Expression || n instanceof Modifier || n instanceof NodeWithIdentifier || n instanceof Comment || n instanceof Type || n instanceof AnnotationMemberDeclaration || n instanceof Parameter || n instanceof ReceiverParameter || (n instanceof VariableDeclarationExpr && n.getParentNode().get() instanceof FieldDeclaration);
+		return n instanceof Expression || n instanceof Modifier || n instanceof NodeWithIdentifier || n instanceof Comment || n instanceof Type || n instanceof AnnotationMemberDeclaration || n instanceof Parameter || n instanceof ReceiverParameter;
 	}
 }
