@@ -1,6 +1,7 @@
 package com.simonbaars.clonerefactor.metrics;
 
 import com.simonbaars.clonerefactor.datatype.CountMap;
+import com.simonbaars.clonerefactor.metrics.enums.CloneRelation;
 
 public class Metrics {
 	public int totalAmountOfLines = 0;

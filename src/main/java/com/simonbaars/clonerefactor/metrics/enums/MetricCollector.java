@@ -1,4 +1,4 @@
-package com.simonbaars.clonerefactor.metrics;
+package com.simonbaars.clonerefactor.metrics.enums;
 
 import java.io.File;
 import java.util.List;
@@ -8,6 +8,7 @@ import com.github.javaparser.JavaToken;
 import com.github.javaparser.Range;
 import com.github.javaparser.ast.Node;
 import com.simonbaars.clonerefactor.datatype.SetMap;
+import com.simonbaars.clonerefactor.metrics.Metrics;
 import com.simonbaars.clonerefactor.model.Location;
 import com.simonbaars.clonerefactor.model.Sequence;
 

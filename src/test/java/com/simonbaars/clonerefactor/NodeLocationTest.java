@@ -1,6 +1,6 @@
 package com.simonbaars.clonerefactor;
 
-import com.simonbaars.clonerefactor.metrics.CloneRelation;
+import com.simonbaars.clonerefactor.metrics.enums.CloneRelation;
 import com.simonbaars.clonerefactor.model.DetectionResults;
 
 import junit.framework.Assert;

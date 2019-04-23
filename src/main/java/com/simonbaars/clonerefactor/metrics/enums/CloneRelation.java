@@ -1,4 +1,4 @@
-package com.simonbaars.clonerefactor.metrics;
+package com.simonbaars.clonerefactor.metrics.enums;
 
 import java.util.ArrayList;
 import java.util.HashMap;
