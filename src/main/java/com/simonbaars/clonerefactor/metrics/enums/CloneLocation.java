@@ -1,5 +1,11 @@
 package com.simonbaars.clonerefactor.metrics.enums;
 
+import static com.simonbaars.clonerefactor.metrics.enums.CloneLocation.LocationType.CLASSLEVEL;
+import static com.simonbaars.clonerefactor.metrics.enums.CloneLocation.LocationType.ENUMLEVEL;
+import static com.simonbaars.clonerefactor.metrics.enums.CloneLocation.LocationType.INTERFACELEVEL;
+import static com.simonbaars.clonerefactor.metrics.enums.CloneLocation.LocationType.METHODLEVEL;
+import static com.simonbaars.clonerefactor.metrics.enums.CloneLocation.LocationType.OUTSIDE;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -7,7 +13,6 @@ import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.simonbaars.clonerefactor.metrics.enums.CloneLocation.LocationType;
-import static com.simonbaars.clonerefactor.metrics.enums.CloneLocation.LocationType.*;
 import com.simonbaars.clonerefactor.model.Sequence;
 
 public class CloneLocation implements MetricEnum<LocationType> {

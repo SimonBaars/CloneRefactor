@@ -1,8 +1,16 @@
 package com.simonbaars.clonerefactor.metrics.enums;
 
+import static com.simonbaars.clonerefactor.metrics.enums.CloneRelation.RelationType.ANCESTOR;
+import static com.simonbaars.clonerefactor.metrics.enums.CloneRelation.RelationType.COMMONHIERARCHY;
+import static com.simonbaars.clonerefactor.metrics.enums.CloneRelation.RelationType.EXTERNALSUPERCLASS;
+import static com.simonbaars.clonerefactor.metrics.enums.CloneRelation.RelationType.FIRSTCOUSIN;
+import static com.simonbaars.clonerefactor.metrics.enums.CloneRelation.RelationType.SAMECLASS;
+import static com.simonbaars.clonerefactor.metrics.enums.CloneRelation.RelationType.SAMEMETHOD;
+import static com.simonbaars.clonerefactor.metrics.enums.CloneRelation.RelationType.SIBLING;
+import static com.simonbaars.clonerefactor.metrics.enums.CloneRelation.RelationType.SUPERCLASS;
+import static com.simonbaars.clonerefactor.metrics.enums.CloneRelation.RelationType.UNRELATED;
+
 import java.util.ArrayList;
-import static com.simonbaars.clonerefactor.metrics.enums.CloneRelation.RelationType.*;
-import com.simonbaars.clonerefactor.metrics.enums.CloneRelation.RelationType;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,6 +21,7 @@ import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
+import com.simonbaars.clonerefactor.metrics.enums.CloneRelation.RelationType;
 import com.simonbaars.clonerefactor.model.Sequence;
 
 public class CloneRelation implements MetricEnum<RelationType> { //Please note that the order of these enum values matters
