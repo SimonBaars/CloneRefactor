@@ -1,6 +1,7 @@
 package com.simonbaars.clonerefactor.metrics;
 
 import com.simonbaars.clonerefactor.datatype.CountMap;
+import com.simonbaars.clonerefactor.metrics.enums.CloneLocation.LocationType;
 import com.simonbaars.clonerefactor.metrics.enums.CloneRelation.RelationType;
 
 public class Metrics {
@@ -20,7 +21,8 @@ public class Metrics {
 	public int overlappingLines = 0;
 	
 	public final CountMap<Integer> amountPerCloneClassSize = new CountMap<>();
-	public final CountMap<RelationType> amountPerLocation = new CountMap<>();
+	public final CountMap<RelationType> amountPerRelation = new CountMap<>();
+	public final CountMap<LocationType> amountPerLocation = new CountMap<>();
 	
 	public final CountMap<Integer> amountPerNodes = new CountMap<>();
 	public final CountMap<Integer> amountPerTotalNodeVolume = new CountMap<>();
@@ -35,7 +37,7 @@ public class Metrics {
 				+ totalAmountOfTokens + ", amountOfLinesCloned=" + amountOfLinesCloned
 				+ ", amountOfEffectiveLinesCloned=" + amountOfEffectiveLinesCloned + ", amountOfNodesCloned="
 				+ amountOfNodesCloned + ", amountOfTokensCloned=" + amountOfTokensCloned + ", amountPerCloneClassSize="
-				+ amountPerCloneClassSize + ", amountPerLocation=" + amountPerLocation + ", amountPerNodes="
+				+ amountPerCloneClassSize + ", amountPerRelation=" + amountPerRelation + ", amountPerNodes="
 				+ amountPerNodes + ", amountPerTotalNodeVolume=" + amountPerTotalNodeVolume
 				+ ", amountPerEffectiveLines=" + amountPerEffectiveLines + ", amountPerTotalEffectiveLineVolume="
 				+ amountPerTotalEffectiveLineVolume + "]";
@@ -53,7 +55,7 @@ public class Metrics {
 		amountOfEffectiveLinesCloned+=metrics.amountOfEffectiveLinesCloned;
 		
 		amountPerCloneClassSize.addAll(metrics.amountPerCloneClassSize);
-		amountPerLocation.addAll(metrics.amountPerLocation);
+		amountPerRelation.addAll(metrics.amountPerRelation);
 		
 		amountPerNodes.addAll(metrics.amountPerNodes);
 		amountPerTotalNodeVolume.addAll(metrics.amountPerTotalNodeVolume);

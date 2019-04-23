@@ -68,7 +68,7 @@ public class NodeLocationTest extends TestCase {
 
 	private void test(String name, RelationType loc) {
 		DetectionResults r = testProject(name);
-        Assert.assertEquals(loc, r.getMetrics().amountPerLocation.keySet().iterator().next());
+        Assert.assertEquals(loc, r.getMetrics().amountPerRelation.keySet().iterator().next());
 	}
 
 	private DetectionResults testProject(String project) {

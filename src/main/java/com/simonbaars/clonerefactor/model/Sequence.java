@@ -80,4 +80,8 @@ public class Sequence {
 	public int getTotalEffectiveLineVolume() {
 		return sequence.stream().mapToInt(e -> e.getEffectiveLines()).sum();
 	}
+
+	public Location getAny() {
+		return sequence.get(0);
+	}
 }
