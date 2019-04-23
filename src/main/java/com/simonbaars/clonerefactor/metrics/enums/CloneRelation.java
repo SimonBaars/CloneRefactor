@@ -176,33 +176,6 @@ public enum CloneRelation { //Please note that the order of these enum values ma
 		return name+c2.getNameAsString();
 	}
 
-	private static MethodDeclaration getMethod(Node n1) {
-		while (!(n1 instanceof MethodDeclaration)) {
-			if(n1.getParentNode().isPresent()) {
-				n1 = n1.getParentNode().get();
-			} else return null;
-		}
-		return (MethodDeclaration)n1;
-	}
-	
-	private static ClassOrInterfaceDeclaration getClass(Node n1) {
-		while (!(n1 instanceof ClassOrInterfaceDeclaration)) {
-			if(n1.getParentNode().isPresent()) {
-				n1 = n1.getParentNode().get();
-			} else return null;
-		}
-		return (ClassOrInterfaceDeclaration)n1;
-	}
-	
-	private static CompilationUnit getCompilationUnit(Node n1) {
-		while (!(n1 instanceof CompilationUnit)) {
-			if(n1.getParentNode().isPresent()) {
-				n1 = n1.getParentNode().get();
-			} else return null;
-		}
-		return (CompilationUnit)n1;
-	}
-
 	public static CloneRelation getLocation(Sequence clone) {
 		List<CloneRelation> locations = new ArrayList<>();
 		for(int i = 0; i<clone.getSequence().get(0).getContents().getNodes().size(); i++) {

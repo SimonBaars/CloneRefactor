@@ -25,7 +25,7 @@ import com.github.javaparser.ast.nodeTypes.NodeWithIdentifier;
 import com.github.javaparser.ast.stmt.BlockStmt;
 import com.github.javaparser.ast.stmt.LocalClassDeclarationStmt;
 import com.github.javaparser.ast.type.Type;
-import com.simonbaars.clonerefactor.metrics.enums.MetricCollector;
+import com.simonbaars.clonerefactor.metrics.MetricCollector;
 import com.simonbaars.clonerefactor.model.Location;
 import com.simonbaars.clonerefactor.model.LocationContents;
 
