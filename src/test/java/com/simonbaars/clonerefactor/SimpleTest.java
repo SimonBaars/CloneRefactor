@@ -38,7 +38,7 @@ public class SimpleTest extends TestCase {
     
     public void testCustom() {
     	System.out.println("custom");
-        System.out.println(Main.cloneDetection("/Users/sbaars/Downloads/java_projects/stanford-corenlp"));
+        //System.out.println(Main.cloneDetection("/Users/sbaars/Downloads/java_projects/stanford-corenlp"));
     }
 
     /**

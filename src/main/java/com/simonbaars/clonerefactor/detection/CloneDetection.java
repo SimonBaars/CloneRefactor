@@ -66,7 +66,6 @@ public class CloneDetection {
 				Sequence newSequence = new Sequence(l);
 				if(removeDuplicatesOf(newSequence))
 					clones.add(newSequence);
-				System.out.println("Clone added "+clones.get(clones.size()-1));
 			}
 			continue;
 		}
