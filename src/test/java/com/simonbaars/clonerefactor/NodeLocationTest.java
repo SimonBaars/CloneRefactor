@@ -1,6 +1,6 @@
 package com.simonbaars.clonerefactor;
 
-import com.simonbaars.clonerefactor.metrics.NodeLocation;
+import com.simonbaars.clonerefactor.metrics.CloneRelation;
 import com.simonbaars.clonerefactor.model.DetectionResults;
 
 import junit.framework.Assert;
@@ -30,42 +30,42 @@ public class NodeLocationTest extends TestCase {
     }
     
     public void testAncestor() {
-        test("Ancestor", NodeLocation.ANCESTOR);
+        test("Ancestor", CloneRelation.ANCESTOR);
     }
     
     public void testFirstCousin() {
-        test("FirstCousin", NodeLocation.FIRSTCOUSIN);
+        test("FirstCousin", CloneRelation.FIRSTCOUSIN);
     }
     
     public void testSibling() {
-        test("Sibling", NodeLocation.SIBLING);
+        test("Sibling", CloneRelation.SIBLING);
     }
     
     public void testSuperClass() {
-        test("SuperClass", NodeLocation.SUPERCLASS);
+        test("SuperClass", CloneRelation.SUPERCLASS);
     }
     
     public void testMethod() {
-        test("SingleFile", NodeLocation.SAMEMETHOD);
+        test("SingleFile", CloneRelation.SAMEMETHOD);
     }
     
     public void testNoRelation() {
-        test("SimpleClone", NodeLocation.UNRELATED);
+        test("SimpleClone", CloneRelation.UNRELATED);
     }
     
     public void testSameClass() {
-        test("SameClass", NodeLocation.SAMECLASS);
+        test("SameClass", CloneRelation.SAMECLASS);
     }
     
     public void testSameExternalSuperClass() {
-        test("ExternalSuperClass", NodeLocation.EXTERNALSUPERCLASS);
+        test("ExternalSuperClass", CloneRelation.EXTERNALSUPERCLASS);
     }
     
     public void testSameHierarchy() {
-        test("SameHierarchy", NodeLocation.COMMONHIERARCHY);
+        test("SameHierarchy", CloneRelation.COMMONHIERARCHY);
     }
 
-	private void test(String name, NodeLocation loc) {
+	private void test(String name, CloneRelation loc) {
 		DetectionResults r = testProject(name);
         Assert.assertEquals(loc, r.getMetrics().amountPerLocation.keySet().iterator().next());
 	}

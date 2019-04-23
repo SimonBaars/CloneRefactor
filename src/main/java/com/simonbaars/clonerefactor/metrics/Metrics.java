@@ -14,7 +14,7 @@ public class Metrics {
 	public int amountOfTokensCloned = 0;
 	
 	public final CountMap<Integer> amountPerCloneClassSize = new CountMap<>();
-	public final CountMap<NodeLocation> amountPerLocation = new CountMap<>();
+	public final CountMap<CloneRelation> amountPerLocation = new CountMap<>();
 	
 	public final CountMap<Integer> amountPerNodes = new CountMap<>();
 	public final CountMap<Integer> amountPerTotalNodeVolume = new CountMap<>();

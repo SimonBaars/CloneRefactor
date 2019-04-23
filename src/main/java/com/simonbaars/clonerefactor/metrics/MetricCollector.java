@@ -25,7 +25,7 @@ public class MetricCollector {
 		metrics.totalAmountOfNodes+=l.getAmountOfNodes();
 		metrics.totalAmountOfTokens+=l.getAmountOfTokens();
 		metrics.totalAmountOfEffectiveLines+=getUnparsedEffectiveLines(l);
-		l.getContents().getNodes().forEach(e -> NodeLocation.registerNode(e));
+		l.getContents().getNodes().forEach(e -> CloneRelation.registerNode(e));
 	}
 	
 	private int getUnparsedEffectiveLines(Location l) {
@@ -57,13 +57,13 @@ public class MetricCollector {
 		parsedEffectiveLines.clear();
 		for(Sequence clone : clones)
 			reportClone(clone);
-		NodeLocation.clearClasses();
+		CloneRelation.clearClasses();
 		return metrics;
 	}
 
 	private void reportClone(Sequence clone) {
 		metrics.amountPerCloneClassSize.increment(clone.size());
-		metrics.amountPerLocation.increment(NodeLocation.getLocation(clone));
+		metrics.amountPerLocation.increment(CloneRelation.getLocation(clone));
 		metrics.amountPerNodes.increment(clone.getNodeSize());
 		metrics.amountPerTotalNodeVolume.increment(clone.getTotalNodeVolume());
 		metrics.amountPerEffectiveLines.increment(clone.getEffectiveLineSize());

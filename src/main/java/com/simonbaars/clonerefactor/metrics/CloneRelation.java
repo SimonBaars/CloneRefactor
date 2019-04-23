@@ -13,7 +13,7 @@ import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import com.simonbaars.clonerefactor.model.Sequence;
 
-public enum NodeLocation { //Please note that the order of these enum values matters
+public enum CloneRelation { //Please note that the order of these enum values matters
 	SAMEMETHOD, //done
 	SAMECLASS, //done
 	SUPERCLASS, //done
@@ -27,9 +27,9 @@ public enum NodeLocation { //Please note that the order of these enum values mat
 	
 	private static final Map<String, ClassOrInterfaceDeclaration> classes = new HashMap<>();
 	
-	private NodeLocation() {}
+	private CloneRelation() {}
 	
-	public static NodeLocation getLocation(Node n1, Node n2) {
+	public static CloneRelation getLocation(Node n1, Node n2) {
 		ClassOrInterfaceDeclaration c1 = getClass(n1);
 		ClassOrInterfaceDeclaration c2 = getClass(n2);
 		if(c1 == null || c2 == null || c1.isInterface() || c2.isInterface())
@@ -203,8 +203,8 @@ public enum NodeLocation { //Please note that the order of these enum values mat
 		return (CompilationUnit)n1;
 	}
 
-	public static NodeLocation getLocation(Sequence clone) {
-		List<NodeLocation> locations = new ArrayList<>();
+	public static CloneRelation getLocation(Sequence clone) {
+		List<CloneRelation> locations = new ArrayList<>();
 		for(int i = 0; i<clone.getSequence().get(0).getContents().getNodes().size(); i++) {
 			for(int j = 0; j<clone.getSequence().size(); j++) {
 				for(int z = j+1; z<clone.getSequence().size(); z++) {
