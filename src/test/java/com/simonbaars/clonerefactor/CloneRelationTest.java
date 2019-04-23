@@ -1,6 +1,5 @@
 package com.simonbaars.clonerefactor;
 
-import com.simonbaars.clonerefactor.metrics.enums.CloneRelation;
 import com.simonbaars.clonerefactor.metrics.enums.CloneRelation.RelationType;
 import com.simonbaars.clonerefactor.model.DetectionResults;
 
@@ -12,14 +11,14 @@ import junit.framework.TestSuite;
 /**
  * Unit test for the node locations.
  */
-public class NodeLocationTest extends TestCase {
+public class CloneRelationTest extends TestCase {
 
 	/**
      * Create the test case
      *
      * @param testName name of the test case
      */
-    public NodeLocationTest( String testName ) {
+    public CloneRelationTest( String testName ) {
         super( testName );
     }
 
@@ -27,7 +26,7 @@ public class NodeLocationTest extends TestCase {
      * @return the suite of tests being tested
      */
     public static Test suite() {
-        return new TestSuite( NodeLocationTest.class );
+        return new TestSuite( CloneRelationTest.class );
     }
     
     public void testAncestor() {
@@ -72,6 +71,6 @@ public class NodeLocationTest extends TestCase {
 	}
 
 	private DetectionResults testProject(String project) {
-		return Main.cloneDetection(NodeLocationTest.class.getClassLoader().getResource(project).getFile());
+		return Main.cloneDetection(CloneRelationTest.class.getClassLoader().getResource(project).getFile());
 	}
 }
