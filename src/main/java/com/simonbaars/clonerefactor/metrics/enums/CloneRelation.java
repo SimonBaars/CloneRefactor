@@ -1,6 +1,7 @@
 package com.simonbaars.clonerefactor.metrics.enums;
 
 import java.util.ArrayList;
+import static com.simonbaars.clonerefactor.metrics.enums.CloneRelation.RelationType.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,23 +14,24 @@ import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import com.simonbaars.clonerefactor.model.Sequence;
 
-public enum CloneRelation { //Please note that the order of these enum values matters
-	SAMEMETHOD, //done
-	SAMECLASS, //done
-	SUPERCLASS, //done
-	ANCESTOR, //done
-	SIBLING, //done
-	FIRSTCOUSIN, //done
-	COMMONHIERARCHY, //done
-	EXTERNALSUPERCLASS, //done
-	UNRELATED //done
-	;
+public class CloneRelation implements MetricEnum { //Please note that the order of these enum values matters
+	public enum RelationType {
+		SAMEMETHOD, //done
+		SAMECLASS, //done
+		SUPERCLASS, //done
+		ANCESTOR, //done
+		SIBLING, //done
+		FIRSTCOUSIN, //done
+		COMMONHIERARCHY, //done
+		EXTERNALSUPERCLASS, //done
+		UNRELATED //done
+	}
 	
-	private static final Map<String, ClassOrInterfaceDeclaration> classes = new HashMap<>();
+	private final Map<String, ClassOrInterfaceDeclaration> classes = new HashMap<>();
 	
 	private CloneRelation() {}
 	
-	public static CloneRelation getLocation(Node n1, Node n2) {
+	public RelationType getLocation(Node n1, Node n2) {
 		ClassOrInterfaceDeclaration c1 = getClass(n1);
 		ClassOrInterfaceDeclaration c2 = getClass(n2);
 		if(c1 == null || c2 == null || c1.isInterface() || c2.isInterface())
@@ -54,13 +56,13 @@ public enum CloneRelation { //Please note that the order of these enum values ma
 		return UNRELATED;
 	}
 	
-	private static boolean inSameHierarchy(ClassOrInterfaceDeclaration c1, ClassOrInterfaceDeclaration c2) {
+	private boolean inSameHierarchy(ClassOrInterfaceDeclaration c1, ClassOrInterfaceDeclaration c2) {
 		List<String> classesInHierarchy = new ArrayList<>();
 		collectSuperclasses(c1, classesInHierarchy);
 		return collectSuperclasses(c2, classesInHierarchy);
 	}
 
-	private static boolean collectSuperclasses(ClassOrInterfaceDeclaration c2, List<String> classesInHierarchy) {
+	private boolean collectSuperclasses(ClassOrInterfaceDeclaration c2, List<String> classesInHierarchy) {
 		String className = getFullyQualifiedName(c2);
 		if(classesInHierarchy.contains(className))
 			return true;
@@ -73,7 +75,7 @@ public enum CloneRelation { //Please note that the order of these enum values ma
 		return false;
 	}
 
-	private static boolean hasExternalSuperclass(ClassOrInterfaceDeclaration c1, ClassOrInterfaceDeclaration c2) {
+	private boolean hasExternalSuperclass(ClassOrInterfaceDeclaration c1, ClassOrInterfaceDeclaration c2) {
 		if(c1.getExtendedTypes().isEmpty() || c2.getExtendedTypes().isEmpty())
 			return false;
 		ClassOrInterfaceType superclassC1 = c1.getExtendedTypes().get(0);
@@ -82,24 +84,24 @@ public enum CloneRelation { //Please note that the order of these enum values ma
 				getFullyQualifiedName(c1, superclassC1).equals(getFullyQualifiedName(c2, superclassC2));
 	}
 
-	public static void registerNode(Node n) {
+	public void registerNode(Node n) {
 		if(n instanceof ClassOrInterfaceDeclaration) {
 			ClassOrInterfaceDeclaration n2 = (ClassOrInterfaceDeclaration)n;
 			classes.put(getFullyQualifiedName(n2), n2);
 		}
 	}
 	
-	public static void clearClasses() {
+	public void clearClasses() {
 		classes.clear();
 	}
 
-	private static boolean isSiblingOrCousin(ClassOrInterfaceDeclaration c1, ClassOrInterfaceDeclaration c2, int c1GoUp, int c2GoUp) {
+	private boolean isSiblingOrCousin(ClassOrInterfaceDeclaration c1, ClassOrInterfaceDeclaration c2, int c1GoUp, int c2GoUp) {
 		ClassOrInterfaceDeclaration parent1 = goUp(c1, c1GoUp);
 		ClassOrInterfaceDeclaration parent2 = goUp(c2, c2GoUp);
 		return parent1!=null && getFullyQualifiedName(parent1).equals(getFullyQualifiedName(parent2));
 	}
 	
-	private static ClassOrInterfaceDeclaration goUp(ClassOrInterfaceDeclaration c1, int i) {
+	private ClassOrInterfaceDeclaration goUp(ClassOrInterfaceDeclaration c1, int i) {
 		if(i>0) {
 			if(!c1.getExtendedTypes().isEmpty()) {
 				String fullyQualifiedName = getFullyQualifiedName(c1, c1.getExtendedTypes(0));
@@ -110,7 +112,7 @@ public enum CloneRelation { //Please note that the order of these enum values ma
 		return c1;
 	}
 
-	private static boolean isAncestor(ClassOrInterfaceDeclaration c1, ClassOrInterfaceDeclaration c2) {
+	private boolean isAncestor(ClassOrInterfaceDeclaration c1, ClassOrInterfaceDeclaration c2) {
 		if(!c1.getExtendedTypes().isEmpty()) {
 			String fullyQualifiedName = getFullyQualifiedName(c1, c1.getExtendedTypes(0));
 			if(!classes.containsKey(fullyQualifiedName))
@@ -123,13 +125,13 @@ public enum CloneRelation { //Please note that the order of these enum values ma
 		return false;
 	}
 
-	private static boolean isMethod(Node n1, Node n2) {
+	private boolean isMethod(Node n1, Node n2) {
 		MethodDeclaration m1 = getMethod(n1);
 		MethodDeclaration m2 = getMethod(n2);
 		return m1!=null && m1.equals(m2);
 	}
 
-	private static boolean isSuperClass(ClassOrInterfaceDeclaration c1, ClassOrInterfaceDeclaration c2) {
+	private boolean isSuperClass(ClassOrInterfaceDeclaration c1, ClassOrInterfaceDeclaration c2) {
 		return c1.getExtendedTypes().stream().anyMatch(e -> {
 			String fullyQualifiedName = getFullyQualifiedName(c2, e);
 			if(!classes.containsKey(fullyQualifiedName))
@@ -138,7 +140,7 @@ public enum CloneRelation { //Please note that the order of these enum values ma
 		});
 	}
 
-	private static String getFullyQualifiedName(ClassOrInterfaceDeclaration childClass, ClassOrInterfaceType t) {
+	private String getFullyQualifiedName(ClassOrInterfaceDeclaration childClass, ClassOrInterfaceType t) {
 		String name = "";
 		if(t.getScope().isPresent())
 			name+=getFullyQualifiedName(childClass, t.getScope().get())+".";
@@ -160,7 +162,7 @@ public enum CloneRelation { //Please note that the order of these enum values ma
 		return name+t.getNameAsString();
 	}
 
-	private static String getFullyQualifiedName(ClassOrInterfaceDeclaration c2) {
+	private String getFullyQualifiedName(ClassOrInterfaceDeclaration c2) {
 		String name = "";
 		if(c2 == null)
 			return null;
@@ -176,8 +178,8 @@ public enum CloneRelation { //Please note that the order of these enum values ma
 		return name+c2.getNameAsString();
 	}
 
-	public static CloneRelation getLocation(Sequence clone) {
-		List<CloneRelation> locations = new ArrayList<>();
+	public RelationType getLocation(Sequence clone) {
+		List<RelationType> locations = new ArrayList<>();
 		for(int i = 0; i<clone.getSequence().get(0).getContents().getNodes().size(); i++) {
 			for(int j = 0; j<clone.getSequence().size(); j++) {
 				for(int z = j+1; z<clone.getSequence().size(); z++) {
