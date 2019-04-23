@@ -2,6 +2,7 @@ package com.simonbaars.clonerefactor.metrics.enums;
 
 import java.util.ArrayList;
 import static com.simonbaars.clonerefactor.metrics.enums.CloneRelation.RelationType.*;
+import com.simonbaars.clonerefactor.metrics.enums.CloneRelation.RelationType;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,7 +15,7 @@ import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import com.simonbaars.clonerefactor.model.Sequence;
 
-public class CloneRelation implements MetricEnum { //Please note that the order of these enum values matters
+public class CloneRelation implements MetricEnum<RelationType> { //Please note that the order of these enum values matters
 	public enum RelationType {
 		SAMEMETHOD, //done
 		SAMECLASS, //done
@@ -178,7 +179,8 @@ public class CloneRelation implements MetricEnum { //Please note that the order 
 		return name+c2.getNameAsString();
 	}
 
-	public RelationType getLocation(Sequence clone) {
+	@Override
+	public RelationType get(Sequence clone) {
 		List<RelationType> locations = new ArrayList<>();
 		for(int i = 0; i<clone.getSequence().get(0).getContents().getNodes().size(); i++) {
 			for(int j = 0; j<clone.getSequence().size(); j++) {

@@ -65,7 +65,7 @@ public class MetricCollector {
 
 	private void reportClone(Sequence clone) {
 		metrics.amountPerCloneClassSize.increment(clone.size());
-		metrics.amountPerLocation.increment(relationFinder.getLocation(clone));
+		metrics.amountPerLocation.increment(relationFinder.get(clone));
 		metrics.amountPerNodes.increment(clone.getNodeSize());
 		metrics.amountPerTotalNodeVolume.increment(clone.getTotalNodeVolume());
 		metrics.amountPerEffectiveLines.increment(clone.getEffectiveLineSize());
