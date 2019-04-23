@@ -1,4 +1,4 @@
-public interface InterfaceClone1 {
+public interface InterfaceClone {
 
 	public void clone1();
 	public void clone2();

@@ -1,6 +1,6 @@
 package nl.tudelft.jpacman.clone;
 
-public enum CloneEnum1 {
+public enum CloneEnum {
 	BLA,
 	BLA1,
 	BLA2,
