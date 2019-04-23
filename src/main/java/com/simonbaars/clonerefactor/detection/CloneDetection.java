@@ -58,7 +58,7 @@ public class CloneDetection {
 		endedClones.stream().filter(e -> e.getAmountOfNodes() >= MIN_AMOUNT_OF_NODES).forEach(e -> cloneList.addTo(e.getAmountOfNodes(), e));
 		for(List<Location> l : cloneList.values()) {
 			for(Location l2 : oldClones.getSequence()) {
-				if(l.get(0)!= l2 && l2.getAmountOfNodes()>=l.get(0).getAmountOfNodes()) {
+				if(!l.contains(l2) && l2.getAmountOfNodes()>=l.get(0).getAmountOfNodes()) {
 					l.add(new Location(l2, getRange(l2, l.get(0))));
 				}
 			}
