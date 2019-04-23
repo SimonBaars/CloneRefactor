@@ -62,19 +62,19 @@ public class CloneContentsTest extends TestCase {
     }
     
     public void testHasClassDeclaration() {
-        test("HasClassDeclaraton", ContentsType.HASCLASSDECLARATION);
+        test("HasClassDeclaration", ContentsType.HASCLASSDECLARATION);
     }
     
     public void testHasEnumDeclaration() {
-        test("HasEnumDeclaraton", ContentsType.HASENUMDECLARATION);
+        test("HasEnumDeclaration", ContentsType.HASENUMDECLARATION);
     }
     
     public void testHasInterfaceDeclaration() {
-        test("HasInterfaceDeclaraton", ContentsType.HASINTERFACEDECLARATION);
+        test("HasInterfaceDeclaration", ContentsType.HASINTERFACEDECLARATION);
     }
     
     public void testHasEnumFields() {
-        test("HasEnumFields", ContentsType.HASENUMFIELDS);
+        test("EnumClone", ContentsType.HASENUMFIELDS);
     }
 
 	private void test(String name, ContentsType loc) {
