@@ -1,7 +1,6 @@
 package com.simonbaars.clonerefactor;
 
 import com.simonbaars.clonerefactor.metrics.enums.CloneLocation.LocationType;
-import com.simonbaars.clonerefactor.metrics.enums.CloneRelation.RelationType;
 import com.simonbaars.clonerefactor.model.DetectionResults;
 
 import junit.framework.Assert;

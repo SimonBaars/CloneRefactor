@@ -15,6 +15,7 @@ import static com.simonbaars.clonerefactor.metrics.enums.CloneContents.ContentsT
 import static com.simonbaars.clonerefactor.metrics.enums.CloneContents.ContentsType.SEVERALMETHODS;
 
 import java.util.List;
+import java.util.Optional;
 
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.BodyDeclaration;
@@ -79,6 +80,7 @@ public class CloneContents implements MetricEnum<ContentsType> {
 		List<Node> children = n.getChildNodes();
 		if(children.get(children.size()-1) instanceof BodyDeclaration)
 			children = children.get(children.size()-1).getChildNodes();
-		return children.stream().filter(e -> !NodeParser.isExcluded(e)).reduce((first, second) -> second).get();
+		Optional<Node> reduce = children.stream().filter(e -> !NodeParser.isExcluded(e)).reduce((first, second) -> second);
+		return reduce.isPresent() ? reduce.get() : n;
 	}
 }
