@@ -48,6 +48,34 @@ public class CloneContentsTest extends TestCase {
     public void testIncludesFields() {
         test("IncludesFields", ContentsType.INCLUDESFIELDS);
     }
+    
+    public void testFullClass() {
+        test("FullClass", ContentsType.FULLCLASS);
+    }
+    
+    public void testFullEnum() {
+        test("FullEnum", ContentsType.FULLENUM);
+    }
+    
+    public void testFullInterface() {
+        test("FullInterface", ContentsType.FULLINTERFACE);
+    }
+    
+    public void testHasClassDeclaration() {
+        test("HasClassDeclaraton", ContentsType.HASCLASSDECLARATION);
+    }
+    
+    public void testHasEnumDeclaration() {
+        test("HasEnumDeclaraton", ContentsType.HASENUMDECLARATION);
+    }
+    
+    public void testHasInterfaceDeclaration() {
+        test("HasInterfaceDeclaraton", ContentsType.HASINTERFACEDECLARATION);
+    }
+    
+    public void testHasEnumFields() {
+        test("HasEnumFields", ContentsType.HASENUMFIELDS);
+    }
 
 	private void test(String name, ContentsType loc) {
 		DetectionResults r = testProject(name);
