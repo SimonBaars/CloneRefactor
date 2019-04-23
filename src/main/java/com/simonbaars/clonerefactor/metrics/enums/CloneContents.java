@@ -14,8 +14,10 @@ import static com.simonbaars.clonerefactor.metrics.enums.CloneContents.ContentsT
 import static com.simonbaars.clonerefactor.metrics.enums.CloneContents.ContentsType.PARTIALMETHOD;
 import static com.simonbaars.clonerefactor.metrics.enums.CloneContents.ContentsType.SEVERALMETHODS;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
@@ -48,9 +50,11 @@ public class CloneContents implements MetricEnum<ContentsType> {
 	@Override
 	public ContentsType get(Sequence sequence) {
 		List<Node> nodes = sequence.getAny().getContents().getNodes();
+		System.out.println(Arrays.toString(nodes.toArray()));
+		System.out.println(nodes.stream().map(e -> e.getClass().toString()).collect(Collectors.joining(", ")));
 		if(nodes.get(0) instanceof MethodDeclaration && nodes.get(nodes.size()-1) == getLastStatement(nodes.get(0))) {
 			return FULLMETHOD;
-		} else if(getMethod(nodes.get(0)) == getMethod(nodes.get(nodes.size()-1))) {
+		} else if(getMethod(nodes.get(0))!=null && getMethod(nodes.get(0)) == getMethod(nodes.get(nodes.size()-1))) {
 			return PARTIALMETHOD;
 		} else if(nodes.stream().allMatch(e -> getMethod(e)!=null)) {
 			return SEVERALMETHODS;
