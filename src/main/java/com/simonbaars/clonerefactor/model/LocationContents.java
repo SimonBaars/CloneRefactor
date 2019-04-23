@@ -61,16 +61,12 @@ public class LocationContents {
 		for(int i = 0; i<thisNodes.size(); i++) {
 			Optional<Range> rangeOptional = thisNodes.get(i).getRange();
 			if(rangeOptional.isPresent() && range.contains(rangeOptional.get())){
-				if(!nodesEqual(thisNodes.get(i), otherNodes.get(i)))
+				if(!CompareNodes.nodesEqual(thisNodes.get(i), otherNodes.get(i)))
 					return false;
 			} else if(rangeOptional.isPresent() && rangeOptional.get().contains(range) && !compareNodes(thisNodes.get(i).getChildNodes(), otherNodes.get(i).getChildNodes()))
 				return false;
 		}
 		return true;
-	}
-	
-	public boolean nodesEqual(Node n1, Node n2) {
-		return n1.equals(n2);
 	}
 	
 	public int getAmountOfTokens() {
