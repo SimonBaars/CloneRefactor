@@ -15,6 +15,7 @@ import com.github.javaparser.TokenRange;
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.EnumDeclaration;
+import com.simonbaars.clonerefactor.detection.CompareNodes;
 import com.simonbaars.clonerefactor.exception.NoTokensException;
 
 public class LocationContents {
