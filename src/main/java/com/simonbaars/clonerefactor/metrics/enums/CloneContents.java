@@ -27,7 +27,6 @@ import com.github.javaparser.ast.body.FieldDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.stmt.BlockStmt;
 import com.simonbaars.clonerefactor.ast.NodeParser;
-import com.simonbaars.clonerefactor.detection.CompareNodes;
 import com.simonbaars.clonerefactor.metrics.enums.CloneContents.ContentsType;
 import com.simonbaars.clonerefactor.model.Sequence;
 
@@ -53,7 +52,7 @@ public class CloneContents implements MetricEnum<ContentsType> {
 		List<Node> nodes = sequence.getAny().getContents().getNodes();
 		System.out.println(Arrays.toString(nodes.toArray()));
 		System.out.println(nodes.stream().map(e -> e.getClass().toString()).collect(Collectors.joining(", ")));
-		if(nodes.get(0) instanceof MethodDeclaration && checkIsCompleteBody(sequence, nodes)) {
+		if(nodes.get(0) instanceof MethodDeclaration && nodes.get(nodes.size()-1) == getLastStatement(nodes.get(0))) {
 			return FULLMETHOD;
 		} else if(getMethod(nodes.get(0))!=null && getMethod(nodes.get(0)) == getMethod(nodes.get(nodes.size()-1))) {
 			return PARTIALMETHOD;
@@ -61,11 +60,11 @@ public class CloneContents implements MetricEnum<ContentsType> {
 			return SEVERALMETHODS;
 		} else if(nodes.stream().allMatch(e -> getMethod(e)== null && e instanceof FieldDeclaration)) {
 			return ONLYFIELDS;
-		} else if(nodes.get(0) instanceof ClassOrInterfaceDeclaration && !((ClassOrInterfaceDeclaration)nodes.get(0)).isInterface() && checkIsCompleteBody(sequence, nodes)) {
+		} else if(nodes.get(0) instanceof ClassOrInterfaceDeclaration && !((ClassOrInterfaceDeclaration)nodes.get(0)).isInterface() && nodes.get(nodes.size()-1) == getLastStatement(nodes.get(0))) {
 			return FULLCLASS;
-		} else if(nodes.get(0) instanceof ClassOrInterfaceDeclaration && ((ClassOrInterfaceDeclaration)nodes.get(0)).isInterface() && checkIsCompleteBody(sequence, nodes)) {
+		} else if(nodes.get(0) instanceof ClassOrInterfaceDeclaration && ((ClassOrInterfaceDeclaration)nodes.get(0)).isInterface() && nodes.get(nodes.size()-1) == getLastStatement(nodes.get(0))) {
 			return FULLINTERFACE;
-		} else if(nodes.get(0) instanceof EnumDeclaration && checkIsCompleteBody(sequence, nodes)) {
+		} else if(nodes.get(0) instanceof EnumDeclaration && nodes.get(nodes.size()-1) == getLastStatement(nodes.get(0))) {
 			return FULLENUM;
 		} else if(nodes.stream().anyMatch(e -> e instanceof ClassOrInterfaceDeclaration && !((ClassOrInterfaceDeclaration)e).isInterface())) {
 			return HASCLASSDECLARATION;
@@ -81,7 +80,14 @@ public class CloneContents implements MetricEnum<ContentsType> {
 		return MIXED;
 	}
 
-	private boolean checkIsCompleteBody(Sequence sequence, List<Node> nodes) {
-		return CompareNodes.nodesEqual(nodes.get(0), sequence.getSequence().get(1).getContents().getNodes().get(0));
+	private Node getLastStatement(Node n) {
+		List<Node> children = n.getChildNodes();
+		Optional<Node> reduce = children.stream().filter(e -> !NodeParser.isExcluded(e)).reduce((first, second) -> second);
+		if(reduce.isPresent()) {
+			n = reduce.get();
+			if(!n.getChildNodes().isEmpty())
+				return getLastStatement(n);
+		}
+		return n;
 	}
 }
