@@ -13,6 +13,9 @@ import static com.simonbaars.clonerefactor.metrics.enums.CloneContents.ContentsT
 import static com.simonbaars.clonerefactor.metrics.enums.CloneContents.ContentsType.ONLYFIELDS;
 import static com.simonbaars.clonerefactor.metrics.enums.CloneContents.ContentsType.PARTIALMETHOD;
 import static com.simonbaars.clonerefactor.metrics.enums.CloneContents.ContentsType.SEVERALMETHODS;
+import static com.simonbaars.clonerefactor.metrics.enums.CloneContents.ContentsType.FULLCONSTRUCTOR;
+import static com.simonbaars.clonerefactor.metrics.enums.CloneContents.ContentsType.PARTIALCONSTRUCTOR;
+import static com.simonbaars.clonerefactor.metrics.enums.CloneContents.ContentsType.INCLUDESCONSTRUCTOR;
 
 import java.util.Arrays;
 import java.util.List;
@@ -20,6 +23,7 @@ import java.util.Optional;
 
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
+import com.github.javaparser.ast.body.ConstructorDeclaration;
 import com.github.javaparser.ast.body.EnumConstantDeclaration;
 import com.github.javaparser.ast.body.EnumDeclaration;
 import com.github.javaparser.ast.body.FieldDeclaration;
@@ -33,6 +37,8 @@ public class CloneContents implements MetricEnum<ContentsType> {
 		FULLMETHOD, 
 		PARTIALMETHOD, 
 		SEVERALMETHODS, 
+		FULLCONSTRUCTOR,
+		PARTIALCONSTRUCTOR,
 		ONLYFIELDS, 
 		FULLCLASS, 
 		FULLINTERFACE,
@@ -42,6 +48,7 @@ public class CloneContents implements MetricEnum<ContentsType> {
 		HASENUMDECLARATION, 
 		HASENUMFIELDS,
 		INCLUDESFIELDS,
+		INCLUDESCONSTRUCTOR,
 		OTHER;
 	}
 
@@ -52,6 +59,10 @@ public class CloneContents implements MetricEnum<ContentsType> {
 			return FULLMETHOD;
 		} else if(getMethod(nodes.get(0))!=null && getMethod(nodes.get(0)) == getMethod(nodes.get(nodes.size()-1))) {
 			return PARTIALMETHOD;
+		} else if(nodes.get(0) instanceof ConstructorDeclaration && nodes.get(nodes.size()-1) == getLastStatement(nodes.get(0))) {
+			return FULLCONSTRUCTOR;
+		} else if(getMethod(nodes.get(0))!=null && getConstructor(nodes.get(0)) == getConstructor(nodes.get(nodes.size()-1))) {
+			return PARTIALCONSTRUCTOR;
 		} else if(nodes.stream().allMatch(e -> getMethod(e)!=null)) {
 			return SEVERALMETHODS;
 		} else if(nodes.stream().allMatch(e -> getMethod(e)== null && e instanceof FieldDeclaration)) {
@@ -72,8 +83,10 @@ public class CloneContents implements MetricEnum<ContentsType> {
 			return HASENUMFIELDS;
 		} else if(nodes.stream().anyMatch(e -> getMethod(e)== null && e instanceof FieldDeclaration)) {
 			return INCLUDESFIELDS;
+		} else if(nodes.stream().anyMatch(e -> getConstructor(e)!=null)) {
+			return INCLUDESCONSTRUCTOR;
 		}
-		System.out.println(Arrays.toString(nodes.toArray()));
+		//System.out.println(Arrays.toString(nodes.toArray()));
 		return OTHER;
 	}
 
