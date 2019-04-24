@@ -61,7 +61,7 @@ public class CloneContents implements MetricEnum<ContentsType> {
 			return PARTIALMETHOD;
 		} else if(nodes.get(0) instanceof ConstructorDeclaration && nodes.get(nodes.size()-1) == getLastStatement(nodes.get(0))) {
 			return FULLCONSTRUCTOR;
-		} else if(getMethod(nodes.get(0))!=null && getConstructor(nodes.get(0)) == getConstructor(nodes.get(nodes.size()-1))) {
+		} else if(getConstructor(nodes.get(0))!=null && getConstructor(nodes.get(0)) == getConstructor(nodes.get(nodes.size()-1))) {
 			return PARTIALCONSTRUCTOR;
 		} else if(nodes.stream().allMatch(e -> getMethod(e)!=null)) {
 			return SEVERALMETHODS;
