@@ -11,6 +11,7 @@ import java.util.List;
 
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
+import com.github.javaparser.ast.body.ConstructorDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.simonbaars.clonerefactor.metrics.enums.CloneLocation.LocationType;
 import com.simonbaars.clonerefactor.model.Sequence;
@@ -18,6 +19,7 @@ import com.simonbaars.clonerefactor.model.Sequence;
 public class CloneLocation implements MetricEnum<LocationType> {
 	public enum LocationType{
 		METHODLEVEL,
+		CONSTRUCTORLEVEL,
 		CLASSLEVEL,
 		INTERFACELEVEL,
 		ENUMLEVEL,
@@ -36,6 +38,8 @@ public class CloneLocation implements MetricEnum<LocationType> {
 	private LocationType getLocation(Node node, int i) {
 		if(getMethod(node)!=null && (!(node instanceof MethodDeclaration) || i == 0))
 			return METHODLEVEL;
+		if(getConstructor(node)!=null && (!(node instanceof ConstructorDeclaration) || i == 0))
+			return CONSTRUCTORLEVEL;
 		ClassOrInterfaceDeclaration class1 = getClass(node);
 		if(class1 != null) {
 			if(class1.isInterface())

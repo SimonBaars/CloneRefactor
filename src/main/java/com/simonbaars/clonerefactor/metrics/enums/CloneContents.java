@@ -9,11 +9,12 @@ import static com.simonbaars.clonerefactor.metrics.enums.CloneContents.ContentsT
 import static com.simonbaars.clonerefactor.metrics.enums.CloneContents.ContentsType.HASENUMFIELDS;
 import static com.simonbaars.clonerefactor.metrics.enums.CloneContents.ContentsType.HASINTERFACEDECLARATION;
 import static com.simonbaars.clonerefactor.metrics.enums.CloneContents.ContentsType.INCLUDESFIELDS;
-import static com.simonbaars.clonerefactor.metrics.enums.CloneContents.ContentsType.MIXED;
+import static com.simonbaars.clonerefactor.metrics.enums.CloneContents.ContentsType.OTHER;
 import static com.simonbaars.clonerefactor.metrics.enums.CloneContents.ContentsType.ONLYFIELDS;
 import static com.simonbaars.clonerefactor.metrics.enums.CloneContents.ContentsType.PARTIALMETHOD;
 import static com.simonbaars.clonerefactor.metrics.enums.CloneContents.ContentsType.SEVERALMETHODS;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -41,7 +42,7 @@ public class CloneContents implements MetricEnum<ContentsType> {
 		HASENUMDECLARATION, 
 		HASENUMFIELDS,
 		INCLUDESFIELDS,
-		MIXED;
+		OTHER;
 	}
 
 	@Override
@@ -72,7 +73,8 @@ public class CloneContents implements MetricEnum<ContentsType> {
 		} else if(nodes.stream().anyMatch(e -> getMethod(e)== null && e instanceof FieldDeclaration)) {
 			return INCLUDESFIELDS;
 		}
-		return MIXED;
+		System.out.println(Arrays.toString(nodes.toArray()));
+		return OTHER;
 	}
 
 	private Node getLastStatement(Node n) {

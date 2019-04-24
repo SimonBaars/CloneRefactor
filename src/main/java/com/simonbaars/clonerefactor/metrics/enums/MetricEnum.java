@@ -3,6 +3,7 @@ package com.simonbaars.clonerefactor.metrics.enums;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
+import com.github.javaparser.ast.body.ConstructorDeclaration;
 import com.github.javaparser.ast.body.EnumDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.simonbaars.clonerefactor.model.Sequence;
@@ -18,6 +19,15 @@ public interface MetricEnum<MyEnum extends Enum> {
 			} else return null;
 		}
 		return (MethodDeclaration)n1;
+	}
+	
+	public default ConstructorDeclaration getConstructor(Node n1) {
+		while (!(n1 instanceof ConstructorDeclaration)) {
+			if(n1.getParentNode().isPresent()) {
+				n1 = n1.getParentNode().get();
+			} else return null;
+		}
+		return (ConstructorDeclaration)n1;
 	}
 	
 	public default ClassOrInterfaceDeclaration getClass(Node n1) {
