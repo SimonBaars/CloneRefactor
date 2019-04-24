@@ -1,6 +1,7 @@
 package com.simonbaars.clonerefactor.metrics.enums;
 
 import static com.simonbaars.clonerefactor.metrics.enums.CloneLocation.LocationType.CLASSLEVEL;
+import static com.simonbaars.clonerefactor.metrics.enums.CloneLocation.LocationType.CONSTRUCTORLEVEL;
 import static com.simonbaars.clonerefactor.metrics.enums.CloneLocation.LocationType.ENUMLEVEL;
 import static com.simonbaars.clonerefactor.metrics.enums.CloneLocation.LocationType.INTERFACELEVEL;
 import static com.simonbaars.clonerefactor.metrics.enums.CloneLocation.LocationType.METHODLEVEL;

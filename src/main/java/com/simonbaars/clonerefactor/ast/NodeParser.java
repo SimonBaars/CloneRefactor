@@ -22,6 +22,7 @@ import com.github.javaparser.ast.body.ReceiverParameter;
 import com.github.javaparser.ast.body.VariableDeclarator;
 import com.github.javaparser.ast.comments.Comment;
 import com.github.javaparser.ast.expr.Expression;
+import com.github.javaparser.ast.nodeTypes.NodeWithBlockStmt;
 import com.github.javaparser.ast.nodeTypes.NodeWithBody;
 import com.github.javaparser.ast.nodeTypes.NodeWithIdentifier;
 import com.github.javaparser.ast.stmt.BlockStmt;
@@ -55,9 +56,10 @@ public class NodeParser implements Parser {
 		if(parent instanceof MethodDeclaration) {
 			Optional<BlockStmt> body = ((MethodDeclaration)parent).getBody();
 			return body.isPresent() ? body.get().getChildNodes() : new ArrayList<>(0);
-		} else if(parent instanceof NodeWithBody)
+		}else if(parent instanceof NodeWithBody)
 			return ((NodeWithBody)parent).getBody().getChildNodes();
-		
+		else if (parent instanceof NodeWithBlockStmt)
+			return ((NodeWithBlockStmt)parent).getBody().getChildNodes();
 		return parent.getChildNodes();
 	}
 	
