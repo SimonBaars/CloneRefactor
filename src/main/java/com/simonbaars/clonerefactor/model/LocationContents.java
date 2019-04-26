@@ -15,7 +15,6 @@ import com.github.javaparser.TokenRange;
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.EnumDeclaration;
-import com.simonbaars.clonerefactor.detection.CompareNodes;
 import com.simonbaars.clonerefactor.exception.NoTokensException;
 
 public class LocationContents {
@@ -62,12 +61,35 @@ public class LocationContents {
 		for(int i = 0; i<thisNodes.size(); i++) {
 			Optional<Range> rangeOptional = thisNodes.get(i).getRange();
 			if(rangeOptional.isPresent() && range.contains(rangeOptional.get())){
-				if(!CompareNodes.nodesEqual(thisNodes.get(i), otherNodes.get(i)))
+				if(!thisNodes.get(i).equals(otherNodes.get(i)))
 					return false;
 			} else if(rangeOptional.isPresent() && rangeOptional.get().contains(range) && !compareNodes(thisNodes.get(i).getChildNodes(), otherNodes.get(i).getChildNodes()))
 				return false;
 		}
 		return true;
+	}
+	
+	public List<Node> getNodesForCompare(){
+		return getNodesForCompare(getNodes());
+	}
+	
+	public List<Node> getNodesForCompare(List<Node> parents){
+		List<Node> nodes = new ArrayList<>();
+		for(Node node : parents) {
+			Optional<Range> rangeOptional = node.getRange();
+			if(rangeOptional.isPresent() && range.contains(rangeOptional.get()))
+				nodes.add(node);
+			nodes.addAll(getNodesForCompare(node.getChildNodes()));
+		}
+		return nodes;
+	}
+	
+	public String getEffectiveTokenTypes() {
+		return getEffectiveTokens().map(e -> "["+e.asString()+", "+e.getCategory()+", "+e.getKind()+"]").collect(Collectors.joining(", "));
+	}
+	
+	public String getNodeTypes() {
+		return getNodesForCompare().stream().map(e -> "["+e.toString()+", "+e.getClass()+"]").collect(Collectors.joining(", "));
 	}
 	
 	public int getAmountOfTokens() {
@@ -113,7 +135,7 @@ public class LocationContents {
 		if(tokens.isEmpty())
 			throw new NoTokensException(n, tokenRange, validRange);
 		range = new Range(tokens.get(0).getRange().get().begin, tokens.get(tokens.size()-1).getRange().get().end);
-		return range; //No, we can't merge this with the line above.
+		return range; 
 	}
 
 	public List<JavaToken> getTokens() {
