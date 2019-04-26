@@ -32,7 +32,7 @@ import com.simonbaars.clonerefactor.metrics.MetricCollector;
 import com.simonbaars.clonerefactor.model.Location;
 import com.simonbaars.clonerefactor.model.LocationContents;
 
-public class NodeParser implements Parser {
+public class NodeParser implements Parser, RequiresNodeOperations {
 	final Map<LocationContents, Location> lineReg = new HashMap<>();
 	private final MetricCollector metricCollector;
 	
@@ -49,18 +49,6 @@ public class NodeParser implements Parser {
 			prevLocation = setIfNotNull(prevLocation, extractLinesFromAST(prevLocation, file, child));
 		}
 		return prevLocation;
-	}
-	
-	@SuppressWarnings("rawtypes")
-	public List<Node> childrenToParse(Node parent){
-		if(parent instanceof MethodDeclaration) {
-			Optional<BlockStmt> body = ((MethodDeclaration)parent).getBody();
-			return body.isPresent() ? body.get().getChildNodes() : new ArrayList<>(0);
-		}else if(parent instanceof NodeWithBody)
-			return ((NodeWithBody)parent).getBody().getChildNodes();
-		else if (parent instanceof NodeWithBlockStmt)
-			return ((NodeWithBlockStmt)parent).getBody().getChildNodes();
-		return parent.getChildNodes();
 	}
 	
 	
@@ -102,9 +90,5 @@ public class NodeParser implements Parser {
 			return nodeRange;
 		}
 		return null;
-	}
-
-	public static boolean isExcluded(Node n) {
-		return n instanceof Expression || n instanceof Modifier || n instanceof NodeWithIdentifier || n instanceof Comment || n instanceof Type || n instanceof AnnotationMemberDeclaration || n instanceof Parameter || n instanceof ReceiverParameter || (n instanceof VariableDeclarator && n.getParentNode().get() instanceof FieldDeclaration);
 	}
 }
