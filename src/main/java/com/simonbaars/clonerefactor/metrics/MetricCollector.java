@@ -10,6 +10,7 @@ import com.github.javaparser.ast.Node;
 import com.simonbaars.clonerefactor.datatype.SetMap;
 import com.simonbaars.clonerefactor.metrics.enums.CloneContents;
 import com.simonbaars.clonerefactor.metrics.enums.CloneLocation;
+import com.simonbaars.clonerefactor.metrics.enums.CloneRefactorability;
 import com.simonbaars.clonerefactor.metrics.enums.CloneRelation;
 import com.simonbaars.clonerefactor.model.Location;
 import com.simonbaars.clonerefactor.model.Sequence;
@@ -23,6 +24,7 @@ public class MetricCollector {
 	private final CloneRelation relationFinder = new CloneRelation();
 	private final CloneLocation locationFinder = new CloneLocation();
 	private final CloneContents contentsFinder = new CloneContents();
+	private final CloneRefactorability extractFinder = new CloneRefactorability();
 	
 	public MetricCollector() {}
 	
@@ -74,6 +76,7 @@ public class MetricCollector {
 		metrics.amountPerRelation.increment(relationFinder.get(clone));
 		metrics.amountPerLocation.increment(locationFinder.get(clone));
 		metrics.amountPerContents.increment(contentsFinder.get(clone));
+		metrics.amountPerExtract.increment(extractFinder.get(clone));
 		metrics.amountPerNodes.increment(clone.getNodeSize());
 		metrics.amountPerTotalNodeVolume.increment(clone.getTotalNodeVolume());
 		metrics.amountPerEffectiveLines.increment(clone.getEffectiveLineSize());
