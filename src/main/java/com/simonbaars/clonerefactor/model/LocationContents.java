@@ -78,6 +78,7 @@ public class LocationContents {
 			Optional<Range> rangeOptional = node.getRange();
 			if(rangeOptional.isPresent() && range.contains(rangeOptional.get()))
 				nodes.add(node);
+			else System.out.println("OUTSIDE "+node);
 			nodes.addAll(getNodesForCompare(node.getChildNodes()));
 		}
 		return nodes;
@@ -88,7 +89,7 @@ public class LocationContents {
 	}
 	
 	public String getNodeTypes() {
-		return getNodesForCompare().stream().map(e -> "["+e.toString()+", "+e.getClass()+"]").collect(Collectors.joining(", "));
+		return getNodesForCompare().stream().map(e -> "["+e.toString()+", "+e.getClass().getName()+"]").collect(Collectors.joining(", "));
 	}
 	
 	public int getAmountOfTokens() {
@@ -119,7 +120,7 @@ public class LocationContents {
 
 	@Override
 	public String toString() {
-		return tokens.stream().map(e -> e.asString()).collect(Collectors.joining());
+		return getEffectiveTokens().map(e -> e.asString()).collect(Collectors.joining());
 	}
 
 	public Range addTokens(Node n, TokenRange tokenRange, Range validRange) {
@@ -128,7 +129,7 @@ public class LocationContents {
 			if(r.isPresent()) {
 				if(!validRange.contains(r.get())) break;
 				tokens.add(token);
-				if((n instanceof NodeWithImplements) && token.asString().equals("{")) break; // We cannot exclude the body of class files, this is a workaround.
+				if(n instanceof NodeWithImplements && token.asString().equals("{")) break; // We cannot exclude the body of class files, this is a workaround.
 			}
 		}
 		if(tokens.isEmpty())

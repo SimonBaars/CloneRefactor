@@ -29,8 +29,8 @@ public class MetricCollector {
 	public MetricCollector() {}
 	
 	public void reportFoundNode(Location l) {
-		//System.out.println(l+" "+l.getContents().getNodeTypes());
-		//System.out.println(l+" "+l.getContents().getEffectiveTokenTypes());
+		//System.out.println(l.getContents().toString());
+		//System.out.println(l.getContents().getEffectiveTokenTypes());
 		metrics.totalAmountOfLines+=getUnparsedLines(l, false);
 		metrics.totalAmountOfNodes+=l.getAmountOfNodes();
 		metrics.totalAmountOfTokens+=l.getAmountOfTokens();

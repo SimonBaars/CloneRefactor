@@ -24,17 +24,17 @@ import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import com.simonbaars.clonerefactor.metrics.enums.CloneRelation.RelationType;
 import com.simonbaars.clonerefactor.model.Sequence;
 
-public class CloneRelation implements MetricEnum<RelationType> { //Please note that the order of these enum values matters
-	public enum RelationType {
-		SAMEMETHOD, //done
-		SAMECLASS, //done
-		SUPERCLASS, //done
-		ANCESTOR, //done
-		SIBLING, //done
-		FIRSTCOUSIN, //done
-		COMMONHIERARCHY, //done
-		EXTERNALSUPERCLASS, //done
-		UNRELATED //done
+public class CloneRelation implements MetricEnum<RelationType> { 
+	public enum RelationType { //Please note that the order of these enum constants matters
+		SAMEMETHOD,
+		SAMECLASS,
+		SUPERCLASS,
+		ANCESTOR,
+		SIBLING,
+		FIRSTCOUSIN,
+		COMMONHIERARCHY,
+		EXTERNALSUPERCLASS,
+		UNRELATED
 	}
 	
 	private final Map<String, ClassOrInterfaceDeclaration> classes = new HashMap<>();
