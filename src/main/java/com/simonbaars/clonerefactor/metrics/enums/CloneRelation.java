@@ -19,6 +19,7 @@ import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
+import com.github.javaparser.resolution.UnsolvedSymbolException;
 import com.simonbaars.clonerefactor.metrics.enums.CloneRelation.RelationType;
 import com.simonbaars.clonerefactor.model.Sequence;
 
@@ -149,11 +150,19 @@ public class CloneRelation implements MetricEnum<RelationType> {
 	}
 
 	private String getFullyQualifiedName(ClassOrInterfaceType t) {
-		return t.resolve().getQualifiedName();
+		try { 
+			return t.resolve().getQualifiedName();
+		} catch (UnsolvedSymbolException e) {
+			return t.getNameAsString();
+		}
 	}
 
 	private String getFullyQualifiedName(ClassOrInterfaceDeclaration c2) {
-		return c2.resolve().getQualifiedName();
+		try { 
+			return c2.resolve().getQualifiedName();
+		} catch (UnsolvedSymbolException e) {
+			return c2.getNameAsString();
+		}
 	}
 
 	@Override
