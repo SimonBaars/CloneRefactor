@@ -2,9 +2,9 @@ package com.simonbaars.clonerefactor.compare;
 
 import com.github.javaparser.JavaToken;
 
-public class ComparableToken {
+public class ComparableToken implements Compare {
 	
-	private JavaToken token;
+	private final JavaToken token;
 	
 	public ComparableToken(JavaToken token) {
 		super();
@@ -14,5 +14,10 @@ public class ComparableToken {
 	@Override
 	public boolean equals(Object o) {
 		return token.equals(((ComparableToken)o).token);
+	}
+
+	@Override
+	public boolean isValid() {
+		return true;
 	}
 }
