@@ -19,7 +19,14 @@ public class CompareVariable implements Compare {
 		if(!Compare.super.compare(o, type))
 			return false;
 		ResolvedValueDeclaration compareDec = ((CompareVariable)o).dec;
-		return type == CloneType.TYPE1 ? dec.equals(compareDec) : dec.getType().equals(compareDec.getType());
+		if(type == CloneType.TYPE1 && dec.getName()!=null && !dec.getName().equals(compareDec.getName())) {
+			return false;
+		}
+		try {
+			return dec.getType().equals(compareDec.getType());
+		} catch (Exception e) {
+			return false;
+		}
 	}
 
 	@Override
@@ -29,6 +36,10 @@ public class CompareVariable implements Compare {
 
 	@Override
 	public int getHashCode() {
-		return dec.getType().hashCode();
+		try {
+			return dec.getType().hashCode();
+		} catch(Exception e) {
+			return -2;
+		}
 	}
 }
