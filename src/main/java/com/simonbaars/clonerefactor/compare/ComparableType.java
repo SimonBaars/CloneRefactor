@@ -23,4 +23,9 @@ public class ComparableType implements Compare {
 	public boolean isValid() {
 		return type!=null;
 	}
+
+	@Override
+	public int getHashCode() {
+		return type.hashCode();
+	}
 }

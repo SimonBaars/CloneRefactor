@@ -16,4 +16,9 @@ public class ComparableLiteral implements Compare {
 	public boolean isValid() {
 		return type!=CloneType.TYPE1;
 	}
+
+	@Override
+	public int getHashCode() {
+		return -1;
+	}
 }

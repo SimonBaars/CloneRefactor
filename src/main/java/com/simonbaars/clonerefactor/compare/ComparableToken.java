@@ -20,4 +20,9 @@ public class ComparableToken implements Compare {
 	public boolean isValid() {
 		return true;
 	}
+
+	@Override
+	public int getHashCode() {
+		return node.hashCode();
+	}
 }

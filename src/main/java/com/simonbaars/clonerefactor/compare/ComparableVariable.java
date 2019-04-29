@@ -26,4 +26,9 @@ public class ComparableVariable implements Compare {
 	public boolean isValid() {
 		return dec!=null;
 	}
+
+	@Override
+	public int getHashCode() {
+		return dec.getType().hashCode();
+	}
 }

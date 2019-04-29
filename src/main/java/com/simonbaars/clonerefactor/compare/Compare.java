@@ -1,6 +1,5 @@
 package com.simonbaars.clonerefactor.compare;
 
-import com.github.javaparser.JavaToken;
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.expr.LiteralExpr;
 import com.github.javaparser.ast.expr.NameExpr;
@@ -8,6 +7,8 @@ import com.github.javaparser.ast.type.ReferenceType;
 
 public interface Compare {
 	public boolean isValid();
+	
+	public int getHashCode();
 	
 	public static Compare create(Node node, CloneType type) {
 		Compare c = null;
