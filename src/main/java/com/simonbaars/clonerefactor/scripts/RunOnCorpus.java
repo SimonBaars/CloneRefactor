@@ -17,7 +17,7 @@ import me.tongfei.progressbar.ProgressBarBuilder;
 public class RunOnCorpus {
 	private static File OUTPUT_FOLDER = new File(SavePaths.getFullOutputFolder());
 	private static File FULL_METRICS = new File(OUTPUT_FOLDER.getParent()+"/full_metrics.txt");
-	private static int NUMBER_OF_THREADS = 4;
+	private static int NUMBER_OF_THREADS = 1;
 	private static final Metrics fullMetrics = new Metrics();
 
 	public static void main(String[] args) {
