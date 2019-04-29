@@ -1,6 +1,5 @@
 package com.simonbaars.clonerefactor;
 
-import com.simonbaars.clonerefactor.metrics.enums.CloneContents.ContentsType;
 import com.simonbaars.clonerefactor.metrics.enums.CloneRefactorability.Refactorability;
 import com.simonbaars.clonerefactor.model.DetectionResults;
 

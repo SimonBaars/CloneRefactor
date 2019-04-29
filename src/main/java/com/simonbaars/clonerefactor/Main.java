@@ -45,23 +45,5 @@ public class Main {
 		SourceRoot sourceRoot = new SourceRoot(path, config);
 		return new CloneParser().parse(sourceRoot.getCompilationUnits());
 	}
-	
-	private static List<File> scanProjectForJavaFiles(String path) {
-		List<File> javaFiles = new ArrayList<>();
-		try {
-			Files.walkFileTree(Paths.get(path), new SimpleFileVisitor<Path>() {
-			    @Override
-			    public FileVisitResult visitFile(Path filePath, BasicFileAttributes attrs) throws IOException {
-			    	File file = filePath.toFile();
-					if(file.getName().endsWith(".java"))
-			    		javaFiles.add(file);
-			    	return FileVisitResult.CONTINUE;
-			    }
-			});
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return javaFiles;
-	}
 
 }
