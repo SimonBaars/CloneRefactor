@@ -15,8 +15,6 @@ public class CorpusThread extends Thread {
 	}
 	
 	public void run() {
-		System.out.println("START");
 		res = Main.cloneDetection(file.getParentFile().getParentFile().getParentFile().toPath(), file.toPath());
-		System.out.println("DONE");
 	}
 }
