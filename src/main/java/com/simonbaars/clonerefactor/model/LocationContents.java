@@ -14,24 +14,29 @@ import com.github.javaparser.Range;
 import com.github.javaparser.TokenRange;
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.nodeTypes.NodeWithImplements;
+import com.simonbaars.clonerefactor.compare.CloneType;
+import com.simonbaars.clonerefactor.compare.Compare;
 import com.simonbaars.clonerefactor.exception.NoTokensException;
 
 public class LocationContents {
 	private Range range;
 	private final List<Node> nodes;
 	private final List<JavaToken> tokens;
+	private final List<Compare> compare;
 	
 	private static final Category[] NO_TOKEN = {Category.COMMENT, Category.EOL, Category.WHITESPACE_NO_EOL};
 	
 	public LocationContents() {
 		this.nodes = new ArrayList<>();
 		this.tokens = new ArrayList<>();
+		this.compare = new ArrayList<>();
 	}
 
 	public LocationContents(LocationContents contents) {
 		this.range = contents.range;
 		this.nodes = new ArrayList<>(contents.getNodes());
 		this.tokens = new ArrayList<>(contents.getTokens());
+		this.compare = new ArrayList<>(contents.getCompare());
 	}
 
 	public List<Node> getNodes() {
@@ -134,6 +139,7 @@ public class LocationContents {
 		if(tokens.isEmpty())
 			throw new NoTokensException(n, tokenRange, validRange);
 		range = new Range(tokens.get(0).getRange().get().begin, tokens.get(tokens.size()-1).getRange().get().end);
+		getNodesForCompare(Arrays.asList(n)).forEach(e -> getCompare().add(Compare.create(e, CloneType.TYPE1)));
 		return range; 
 	}
 
@@ -156,6 +162,10 @@ public class LocationContents {
 
 	public Set<Integer> getEffectiveLines() {
 		return getEffectiveTokens().map(e -> e.getRange().get().begin.line).collect(Collectors.toSet());
+	}
+
+	public List<Compare> getCompare() {
+		return compare;
 	}
 	
 	
