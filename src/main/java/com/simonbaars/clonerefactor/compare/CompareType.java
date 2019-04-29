@@ -3,10 +3,10 @@ package com.simonbaars.clonerefactor.compare;
 import com.github.javaparser.ast.type.ReferenceType;
 import com.github.javaparser.resolution.types.ResolvedReferenceType;
 
-public class ComparableType implements Compare {
+public class CompareType implements Compare {
 	private final ResolvedReferenceType type;
 	
-	public ComparableType(ReferenceType t) {
+	public CompareType(ReferenceType t) {
 		ResolvedReferenceType refType = null;
 		try {
 			refType = (ResolvedReferenceType)t.resolve();
@@ -15,7 +15,7 @@ public class ComparableType implements Compare {
 	}
 	
 	public boolean equals(Object o) {
-		ResolvedReferenceType otherType = ((ComparableType)o).type;
+		ResolvedReferenceType otherType = ((CompareType)o).type;
 		return type.equals(otherType);
 	}
 

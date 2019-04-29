@@ -1,9 +1,9 @@
 package com.simonbaars.clonerefactor.compare;
 
-public class ComparableLiteral implements Compare {
+public class CompareLiteral implements Compare {
 	private final CloneType type;
 	
-	public ComparableLiteral(CloneType type) {
+	public CompareLiteral(CloneType type) {
 		this.type = type;
 	}
 	

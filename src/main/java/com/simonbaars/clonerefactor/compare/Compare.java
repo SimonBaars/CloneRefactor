@@ -13,14 +13,14 @@ public interface Compare {
 	public static Compare create(Node node, CloneType type) {
 		Compare c = null;
 		if(node instanceof ReferenceType)
-			c = new ComparableType((ReferenceType)node);
+			c = new CompareType((ReferenceType)node);
 		else if(node instanceof NameExpr)
-			c = new ComparableVariable((NameExpr)node);
+			c = new CompareVariable((NameExpr)node);
 		else if(node instanceof LiteralExpr)
-			c = new ComparableLiteral(type);
+			c = new CompareLiteral(type);
 		if(c!=null && c.isValid())
 			return c;
-		return new ComparableToken(node);
+		return new CompareToken(node);
 	}
 
 	public default boolean compare(Compare c, CloneType type) {

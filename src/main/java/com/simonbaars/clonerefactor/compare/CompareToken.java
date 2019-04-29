@@ -2,18 +2,18 @@ package com.simonbaars.clonerefactor.compare;
 
 import com.github.javaparser.ast.Node;
 
-public class ComparableToken implements Compare {
+public class CompareToken implements Compare {
 	
 	private final Node node;
 	
-	public ComparableToken(Node node) {
+	public CompareToken(Node node) {
 		super();
 		this.node = node;
 	}
 
 	@Override
 	public boolean equals(Object o) {
-		return node.equals(((ComparableToken)o).node);
+		return node.equals(((CompareToken)o).node);
 	}
 
 	@Override

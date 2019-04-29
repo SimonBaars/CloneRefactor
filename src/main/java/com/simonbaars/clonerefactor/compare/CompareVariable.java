@@ -3,10 +3,10 @@ package com.simonbaars.clonerefactor.compare;
 import com.github.javaparser.ast.expr.NameExpr;
 import com.github.javaparser.resolution.declarations.ResolvedValueDeclaration;
 
-public class ComparableVariable implements Compare {
+public class CompareVariable implements Compare {
 	private final ResolvedValueDeclaration dec;
 	
-	public ComparableVariable(NameExpr t) {
+	public CompareVariable(NameExpr t) {
 		ResolvedValueDeclaration refType = null;
 		try {
 			refType = t.resolve();
@@ -18,7 +18,7 @@ public class ComparableVariable implements Compare {
 	public boolean compare(Compare o, CloneType type) {
 		if(!Compare.super.compare(o, type))
 			return false;
-		ResolvedValueDeclaration compareDec = ((ComparableVariable)o).dec;
+		ResolvedValueDeclaration compareDec = ((CompareVariable)o).dec;
 		return type == CloneType.TYPE1 ? dec.equals(compareDec) : dec.getType().equals(compareDec.getType());
 	}
 
