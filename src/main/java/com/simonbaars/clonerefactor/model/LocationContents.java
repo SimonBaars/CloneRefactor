@@ -55,22 +55,7 @@ public class LocationContents {
 	public boolean equals (Object o) {
 		if(!(o instanceof LocationContents))
 			return false;
-		return compareNodes(getNodes(), ((LocationContents)o).getNodes());
-	}
-	
-	public boolean compareNodes(List<Node> thisNodes, List<Node> otherNodes) {
-		if(thisNodes.size()!=otherNodes.size())
-			return false;
-		
-		for(int i = 0; i<thisNodes.size(); i++) {
-			Optional<Range> rangeOptional = thisNodes.get(i).getRange();
-			if(rangeOptional.isPresent() && range.contains(rangeOptional.get())){
-				if(!thisNodes.get(i).equals(otherNodes.get(i)))
-					return false;
-			} else if(rangeOptional.isPresent() && rangeOptional.get().contains(range) && !compareNodes(thisNodes.get(i).getChildNodes(), otherNodes.get(i).getChildNodes()))
-				return false;
-		}
-		return true;
+		return compare.equals(((LocationContents)o).compare);
 	}
 	
 	public List<Node> getNodesForCompare(){
@@ -104,21 +89,13 @@ public class LocationContents {
 		return tokens.stream().filter(e -> Arrays.stream(NO_TOKEN).noneMatch(c -> c.equals(e.getCategory())));
 	}
 	
-	public int calcHashcode(List<Node> nodeList, int result, int prime) {
-		for(Node node : nodeList) {
-			Optional<Range> rangeOptional = node.getRange();
-			if(rangeOptional.isPresent() && range.contains(rangeOptional.get()))
-				result = prime*result*node.hashCode();
-			result = calcHashcode(node.getChildNodes(), result, prime);
-		}
-		return result;
-	}
-	
 	@Override
 	public int hashCode() {
 		int prime = 31;
 		int result = 1;
-		result = calcHashcode(nodes, prime, result);
+		for(Compare node : compare) {
+			result = prime*result*node.getHashCode();
+		}
 		return result;
 	}
 
