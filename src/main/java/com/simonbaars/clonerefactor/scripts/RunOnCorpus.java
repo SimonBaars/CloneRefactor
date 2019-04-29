@@ -4,9 +4,7 @@ import static com.simonbaars.clonerefactor.scripts.PrepareProjectsFolder.getFilt
 
 import java.io.File;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.Arrays;
-import java.util.Date;
 
 import com.simonbaars.clonerefactor.metrics.Metrics;
 import com.simonbaars.clonerefactor.model.DetectionResults;
