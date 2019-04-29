@@ -13,13 +13,16 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.github.javaparser.ParseResult;
 import com.github.javaparser.ParserConfiguration;
+import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.expr.Expression;
 import com.github.javaparser.ast.type.Type;
 import com.github.javaparser.resolution.SymbolResolver;
 import com.github.javaparser.resolution.types.ResolvedType;
 import com.github.javaparser.utils.SourceRoot;
+import com.github.javaparser.utils.SourceRoot.Callback.Result;
 import com.simonbaars.clonerefactor.ast.CloneParser;
 import com.simonbaars.clonerefactor.exception.NoJavaFilesFoundException;
 import com.simonbaars.clonerefactor.model.DetectionResults;
@@ -43,7 +46,7 @@ public class Main {
 				.setLexicalPreservationEnabled(false) //Disabled for now, we'll enable it when we start refactoring.
 				.setStoreTokens(true);
 		SourceRoot sourceRoot = new SourceRoot(path, config);
-		return new CloneParser().parse(sourceRoot.getCompilationUnits());
+		return new CloneParser().parse(sourceRoot);
 	}
 
 }

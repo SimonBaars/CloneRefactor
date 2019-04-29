@@ -1,12 +1,17 @@
 package com.simonbaars.clonerefactor.ast;
 
+import java.io.IOException;
+import java.nio.file.Path;
 import java.util.List;
 
+import com.github.javaparser.ParseResult;
 import com.github.javaparser.ast.CompilationUnit;
+import com.github.javaparser.utils.SourceRoot;
 import com.simonbaars.clonerefactor.detection.CloneDetection;
 import com.simonbaars.clonerefactor.metrics.MetricCollector;
 import com.simonbaars.clonerefactor.model.DetectionResults;
 import com.simonbaars.clonerefactor.model.Location;
+import com.simonbaars.clonerefactor.model.LocationHolder;
 import com.simonbaars.clonerefactor.model.Sequence;
 
 public class CloneParser implements Parser {
@@ -14,9 +19,9 @@ public class CloneParser implements Parser {
 	private NodeParser astParser;
 	public final MetricCollector metricCollector = new MetricCollector();
 	
-	public DetectionResults parse(List<CompilationUnit> list) {
+	public DetectionResults parse(SourceRoot sourceRoot) {
 		astParser = new NodeParser(metricCollector);
-		Location lastLoc = calculateLineReg(list);
+		Location lastLoc = calculateLineReg(sourceRoot);
 		if(lastLoc!=null) {
 			List<Sequence> findChains = new CloneDetection().findChains(lastLoc);
 			return new DetectionResults(metricCollector.reportClones(findChains), findChains);
@@ -24,11 +29,21 @@ public class CloneParser implements Parser {
 		return new DetectionResults();
 	}
 
-	private final Location calculateLineReg(List<CompilationUnit> list) {
-		Location l = null;
-		for(CompilationUnit cu : list) {
-			l = astParser.extractLinesFromAST(l, cu, cu);;
+	private final Location calculateLineReg(SourceRoot sourceRoot) {
+		final LocationHolder lh = new LocationHolder();
+		try {
+			sourceRoot.parseParallelized(new SourceRoot.Callback() {
+				@Override
+				public Result process(Path localPath, Path absolutePath, ParseResult<CompilationUnit> result) {
+					CompilationUnit cu = result.getResult().get();
+					lh.setLocation(astParser.extractLinesFromAST(lh.getLocation(), cu, cu));
+					return Result.DONT_SAVE;
+				}
+			});
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
-		return l;
+		
+		return lh.getLocation();
 	}
 }
