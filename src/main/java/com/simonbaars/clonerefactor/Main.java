@@ -26,8 +26,12 @@ public class Main {
 	}
 
 	public static DetectionResults cloneDetection(Path path) {
+		return cloneDetection(path, path);
+	}
+	
+	public static DetectionResults cloneDetection(Path path, Path sourceRoot) {
 		ProjectRoot r = new SymbolSolverCollectionStrategy().collect(path);
-		return new CloneParser().parse(r.getSourceRoot(path).get());
+		return new CloneParser().parse(r.getSourceRoot(sourceRoot).get());
 	}
 
 }
