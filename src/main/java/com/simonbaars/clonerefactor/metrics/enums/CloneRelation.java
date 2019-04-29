@@ -151,6 +151,8 @@ public class CloneRelation implements MetricEnum<RelationType> {
 	}
 
 	private String getFullyQualifiedName(ClassOrInterfaceDeclaration childClass, ClassOrInterfaceType t) {
+		if(t!=null)
+			System.out.println(t.resolve().getQualifiedName());
 		String name = "";
 		if(t.getScope().isPresent())
 			name+=getFullyQualifiedName(childClass, t.getScope().get())+".";

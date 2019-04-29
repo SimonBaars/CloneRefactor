@@ -19,13 +19,10 @@ public class CloneParser implements Parser {
 
 	private NodeParser astParser;
 	public final MetricCollector metricCollector = new MetricCollector();
-	private final ParserConfiguration config = new ParserConfiguration()
-			.setLexicalPreservationEnabled(false) //Disabled for now, we'll enable it when we start refactoring.
-			.setStoreTokens(true);
 	
-	public DetectionResults parse(SourceRoot sourceRoot) {
+	public DetectionResults parse(SourceRoot sourceRoot, ParserConfiguration config) {
 		astParser = new NodeParser(metricCollector);
-		Location lastLoc = calculateLineReg(sourceRoot);
+		Location lastLoc = calculateLineReg(sourceRoot, config);
 		if(lastLoc!=null) {
 			List<Sequence> findChains = new CloneDetection().findChains(lastLoc);
 			return new DetectionResults(metricCollector.reportClones(findChains), findChains);
@@ -33,7 +30,7 @@ public class CloneParser implements Parser {
 		return new DetectionResults();
 	}
 
-	private final Location calculateLineReg(SourceRoot sourceRoot) {
+	private final Location calculateLineReg(SourceRoot sourceRoot, ParserConfiguration config) {
 		final LocationHolder lh = new LocationHolder();
 		try {
 			sourceRoot.parse("", config, new SourceRoot.Callback() {
