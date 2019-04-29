@@ -5,6 +5,7 @@ import java.nio.file.Path;
 import java.util.List;
 
 import com.github.javaparser.ParseResult;
+import com.github.javaparser.ParserConfiguration;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.utils.SourceRoot;
 import com.simonbaars.clonerefactor.detection.CloneDetection;
@@ -19,6 +20,10 @@ public class CloneParser implements Parser {
 	private NodeParser astParser;
 	public final MetricCollector metricCollector = new MetricCollector();
 	
+	private final ParserConfiguration config = new ParserConfiguration()
+			.setLexicalPreservationEnabled(false) //Disabled for now, we'll enable it when we start refactoring.
+			.setStoreTokens(true);
+	
 	public DetectionResults parse(SourceRoot sourceRoot) {
 		astParser = new NodeParser(metricCollector);
 		Location lastLoc = calculateLineReg(sourceRoot);
@@ -32,7 +37,7 @@ public class CloneParser implements Parser {
 	private final Location calculateLineReg(SourceRoot sourceRoot) {
 		final LocationHolder lh = new LocationHolder();
 		try {
-			sourceRoot.parse("", new SourceRoot.Callback() {
+			sourceRoot.parse("", config, new SourceRoot.Callback() {
 				@Override
 				public Result process(Path localPath, Path absolutePath, ParseResult<CompilationUnit> result) {
 					CompilationUnit cu = result.getResult().get();

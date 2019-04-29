@@ -1,5 +1,3 @@
-package nl.tudelft.jpacman.clone;
-
 public enum CloneEnum1 {
 	BLA,
 	BLA1,

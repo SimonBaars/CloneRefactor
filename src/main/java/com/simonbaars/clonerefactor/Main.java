@@ -6,6 +6,8 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 import com.github.javaparser.ParserConfiguration;
+import com.github.javaparser.symbolsolver.utils.SymbolSolverCollectionStrategy;
+import com.github.javaparser.utils.ProjectRoot;
 import com.github.javaparser.utils.SourceRoot;
 import com.simonbaars.clonerefactor.ast.CloneParser;
 import com.simonbaars.clonerefactor.exception.NoJavaFilesFoundException;
@@ -26,11 +28,8 @@ public class Main {
 	}
 
 	public static DetectionResults cloneDetection(Path path) {
-		ParserConfiguration config = new ParserConfiguration()
-				.setLexicalPreservationEnabled(false) //Disabled for now, we'll enable it when we start refactoring.
-				.setStoreTokens(true);
-		SourceRoot sourceRoot = new SourceRoot(path, config);
-		return new CloneParser().parse(sourceRoot);
+		ProjectRoot r = new SymbolSolverCollectionStrategy().collect(path);
+		return new CloneParser().parse(r.getSourceRoot(path).get());
 	}
 
 }
