@@ -78,7 +78,6 @@ public class LocationContents {
 			Optional<Range> rangeOptional = node.getRange();
 			if(rangeOptional.isPresent() && range.contains(rangeOptional.get()))
 				nodes.add(node);
-			else System.out.println("OUTSIDE "+node);
 			nodes.addAll(getNodesForCompare(node.getChildNodes()));
 		}
 		return nodes;
