@@ -17,7 +17,7 @@ import me.tongfei.progressbar.ProgressBarBuilder;
 public class RunOnCorpus {
 	private static File OUTPUT_FOLDER = new File(SavePaths.getFullOutputFolder());
 	private static File FULL_METRICS = new File(OUTPUT_FOLDER.getParent()+"/full_metrics.txt");
-	private static int NUMBER_OF_THREADS = 8;
+	private static int NUMBER_OF_THREADS = 4;
 	private static final Metrics fullMetrics = new Metrics();
 
 	public static void main(String[] args) {
@@ -32,6 +32,7 @@ public class RunOnCorpus {
 
 	private static void analyzeAllProjects(CorpusThread[] threadPool, File[] corpusFiles) {
 		for(File file : ProgressBar.wrap(Arrays.asList(corpusFiles), new ProgressBarBuilder().setTaskName("Running Clone Detection"))) {
+			System.out.println("Start "+file);
 			waitForThreadToFinish(threadPool);
 			for(int i = 0; i<threadPool.length; i++) {
 				if(threadPool[i]==null || !threadPool[i].isAlive()) {

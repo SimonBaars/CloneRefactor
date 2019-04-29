@@ -44,6 +44,12 @@ public class SimpleTest extends TestCase {
 		System.out.println(Main.cloneDetection(Paths.get(path), Paths.get(path+"src/main/java/")));
     }
 
+    public void testCustom2() {
+    	System.out.println("custom2");
+        String path = "/Users/sbaars/clone/java_projects/MavenSpringHibernateMockito/";
+		System.out.println(Main.cloneDetection(Paths.get(path), Paths.get(path+"src/main/java/")));
+    }
+    
     /**
      * Test for clones that consist of lines that do not occur elsewhere.
      */
