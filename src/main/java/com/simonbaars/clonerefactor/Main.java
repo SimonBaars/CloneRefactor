@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import com.github.javaparser.utils.SourceRoot;
 import com.simonbaars.clonerefactor.ast.CloneParser;
 import com.simonbaars.clonerefactor.exception.NoJavaFilesFoundException;
 import com.simonbaars.clonerefactor.exception.NoPathEnteredException;
@@ -30,16 +31,14 @@ public class Main {
 	}
 
 	public static DetectionResults cloneDetection(String path) {
-		List<File> javaFiles = Arrays.asList(new File(path));
-		if(javaFiles.get(0).isDirectory())
-		    javaFiles = scanProjectForJavaFiles(path);
-		
-		if(javaFiles.size() == 0)
-			throw new NoPathEnteredException();
-
-		return new CloneParser().parse(javaFiles);
+		return cloneDetection(Paths.get(path));
 	}
 
+	public static DetectionResults cloneDetection(Path path) {
+		SourceRoot sourceRoot = new SourceRoot(path);
+		return new CloneParser().parse(sourceRoot.getCompilationUnits());
+	}
+	
 	private static List<File> scanProjectForJavaFiles(String path) {
 		List<File> javaFiles = new ArrayList<>();
 		try {

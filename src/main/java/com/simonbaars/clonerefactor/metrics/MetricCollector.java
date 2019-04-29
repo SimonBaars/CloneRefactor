@@ -1,6 +1,6 @@
 package com.simonbaars.clonerefactor.metrics;
 
-import java.io.File;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Set;
 
@@ -16,10 +16,10 @@ import com.simonbaars.clonerefactor.model.Location;
 import com.simonbaars.clonerefactor.model.Sequence;
 
 public class MetricCollector {
-	private final SetMap<File, Integer> parsedEffectiveLines = new SetMap<>();
-	private final SetMap<File, Integer> parsedLines = new SetMap<>();
-	private final SetMap<File, Range> parsedTokens = new SetMap<>();
-	private final SetMap<File, Range> parsedNodes = new SetMap<>();
+	private final SetMap<Path, Integer> parsedEffectiveLines = new SetMap<>();
+	private final SetMap<Path, Integer> parsedLines = new SetMap<>();
+	private final SetMap<Path, Range> parsedTokens = new SetMap<>();
+	private final SetMap<Path, Range> parsedNodes = new SetMap<>();
 	private final Metrics metrics = new Metrics();
 	private final CloneRelation relationFinder = new CloneRelation();
 	private final CloneLocation locationFinder = new CloneLocation();

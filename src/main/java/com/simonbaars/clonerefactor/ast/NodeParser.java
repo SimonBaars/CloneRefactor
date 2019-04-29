@@ -1,6 +1,5 @@
 package com.simonbaars.clonerefactor.ast;
 
-import java.io.File;
 import java.util.HashMap;
 import java.util.ListIterator;
 import java.util.Map;
@@ -25,23 +24,23 @@ public class NodeParser implements Parser, RequiresNodeOperations {
 		this.metricCollector = metricCollector;
 	}
 
-	public Location extractLinesFromAST(Location prevLocation, File file, Node n) {
+	public Location extractLinesFromAST(Location prevLocation, CompilationUnit cu, Node n) {
 		if(n instanceof ImportDeclaration || n instanceof PackageDeclaration || isExcluded(n))
 			return prevLocation;
 		if(!(n instanceof CompilationUnit || n instanceof BlockStmt || n instanceof LocalClassDeclarationStmt))
-			prevLocation = setIfNotNull(prevLocation, parseToken(prevLocation, file,  n));
+			prevLocation = setIfNotNull(prevLocation, parseToken(prevLocation, cu,  n));
 		for (Node child : childrenToParse(n)) {
-			prevLocation = setIfNotNull(prevLocation, extractLinesFromAST(prevLocation, file, child));
+			prevLocation = setIfNotNull(prevLocation, extractLinesFromAST(prevLocation, cu, child));
 		}
 		return prevLocation;
 	}
 	
 	
-	public Location parseToken(Location prevLocation, File file, Node n) {
+	public Location parseToken(Location prevLocation, CompilationUnit cu, Node n) {
 		Range range = getActualRange(n);
 		Location thisLocation = prevLocation;
 		if(range!=null) {
-			thisLocation = new Location(file, prevLocation);
+			thisLocation = new Location(cu.getStorage().get().getPath(), prevLocation);
 			thisLocation.calculateTokens(n, range);
 			if(prevLocation!=null) prevLocation.setNextLine(thisLocation);
 			//System.out.println("Parsing "+n.getClass().getName()+" as "+thisLocation.getContents()+" at location "+thisLocation);

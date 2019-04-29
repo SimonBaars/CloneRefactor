@@ -1,11 +1,8 @@
 package com.simonbaars.clonerefactor.scripts;
 
-import static com.simonbaars.clonerefactor.scripts.PrepareProjectsFolder.getJavaFiles;
-import static com.simonbaars.clonerefactor.scripts.PrepareProjectsFolder.getSourceFolder;
-
 import java.io.File;
 
-import com.simonbaars.clonerefactor.ast.CloneParser;
+import com.simonbaars.clonerefactor.Main;
 import com.simonbaars.clonerefactor.model.DetectionResults;
 
 public class CorpusThread extends Thread {
@@ -19,7 +16,7 @@ public class CorpusThread extends Thread {
 	
 	public void run() {
 		try {
-			res = new CloneParser().parse(getJavaFiles(getSourceFolder(file)));
+			res = Main.cloneDetection(file.toPath());
 		} catch (Exception e) {
 			e.printStackTrace(); // For now we just want to debug this :D.
 		}

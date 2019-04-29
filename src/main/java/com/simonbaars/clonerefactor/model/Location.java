@@ -1,6 +1,6 @@
 package com.simonbaars.clonerefactor.model;
 
-import java.io.File;
+import java.nio.file.Path;
 import java.util.Optional;
 
 import com.github.javaparser.Range;
@@ -8,7 +8,7 @@ import com.github.javaparser.TokenRange;
 import com.github.javaparser.ast.Node;
 
 public class Location {
-	private final File file;
+	private final Path file;
 	private Range range;
 	
 	private LocationContents contents = new LocationContents();
@@ -17,11 +17,11 @@ public class Location {
 	private Location clone;
 	private Location nextLocation;
 
-	public Location(File file) {
+	public Location(Path file) {
 		this.file=file;
 	}
 
-	public Location(File file, Location prevLocation) {
+	public Location(Path file, Location prevLocation) {
 		this(file);
 		this.prevLocation = prevLocation;
 	}
@@ -35,7 +35,7 @@ public class Location {
 		this.nextLocation = clonedLocation.nextLocation;
 	}
 
-	public Location(File file, Range range) {
+	public Location(Path file, Range range) {
 		this.file = file;
 		this.range = range;
 	}
@@ -45,7 +45,7 @@ public class Location {
 		this.range = r;
 	}
 
-	public File getFile() {
+	public Path getFile() {
 		return file;
 	}
 	
