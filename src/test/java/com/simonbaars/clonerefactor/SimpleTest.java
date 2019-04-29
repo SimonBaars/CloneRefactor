@@ -1,8 +1,10 @@
 package com.simonbaars.clonerefactor;
 
+import java.io.File;
 import java.nio.file.Paths;
 
 import com.simonbaars.clonerefactor.model.DetectionResults;
+import com.simonbaars.clonerefactor.scripts.CorpusThread;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -48,6 +50,17 @@ public class SimpleTest extends TestCase {
     	System.out.println("custom2");
     	String path = "/Users/sbaars/clone/java_projects/gatein-forge-plugin/";
 		System.out.println(Main.cloneDetection(Paths.get(path), Paths.get(path+"src/main/java/")));
+    }
+    
+    public void testThread() {
+    	System.out.println("custom2");
+    	CorpusThread t = new CorpusThread(new File("/Users/sbaars/clone/java_projects/gatein-forge-plugin/src/main/java/"));
+    	while(t.isAlive())
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException e) {
+				Thread.currentThread().interrupt();
+			}
     }
     
     /**
