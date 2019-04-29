@@ -36,8 +36,10 @@ public class CloneParser implements Parser {
 			sourceRoot.parse("", config, new SourceRoot.Callback() {
 				@Override
 				public Result process(Path localPath, Path absolutePath, ParseResult<CompilationUnit> result) {
-					CompilationUnit cu = result.getResult().get();
-					lh.setLocation(astParser.extractLinesFromAST(lh.getLocation(), cu, cu));
+					if(result.getResult().isPresent()) {
+						CompilationUnit cu = result.getResult().get();
+						lh.setLocation(astParser.extractLinesFromAST(lh.getLocation(), cu, cu));
+					}
 					return Result.DONT_SAVE;
 				}
 			});
