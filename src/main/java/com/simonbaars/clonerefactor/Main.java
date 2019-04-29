@@ -4,9 +4,11 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Optional;
 
 import com.github.javaparser.symbolsolver.utils.SymbolSolverCollectionStrategy;
 import com.github.javaparser.utils.ProjectRoot;
+import com.github.javaparser.utils.SourceRoot;
 import com.simonbaars.clonerefactor.ast.CloneParser;
 import com.simonbaars.clonerefactor.exception.NoJavaFilesFoundException;
 import com.simonbaars.clonerefactor.model.DetectionResults;
@@ -31,7 +33,10 @@ public class Main {
 	
 	public static DetectionResults cloneDetection(Path path, Path sourceRoot) {
 		ProjectRoot r = new SymbolSolverCollectionStrategy().collect(path);
-		return new CloneParser().parse(r.getSourceRoot(sourceRoot).get());
+		Optional<SourceRoot> sr = r.getSourceRoot(sourceRoot);
+		if(!sr.isPresent())
+			return null; //Faulty project
+		return new CloneParser().parse(sr.get());
 	}
 
 }

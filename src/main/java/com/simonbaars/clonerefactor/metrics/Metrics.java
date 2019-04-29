@@ -33,6 +33,8 @@ public class Metrics {
 	
 	public final CountMap<Integer> amountPerEffectiveLines = new CountMap<>();
 	public final CountMap<Integer> amountPerTotalEffectiveLineVolume = new CountMap<>();
+	
+	public int skipped = 0;
 
 	@Override
 	public String toString() {
@@ -42,11 +44,12 @@ public class Metrics {
 				+ ", amountOfEffectiveLinesCloned=" + amountOfEffectiveLinesCloned + ", amountOfNodesCloned="
 				+ amountOfNodesCloned + ", amountOfTokensCloned=" + amountOfTokensCloned + ", overlappingNodes="
 				+ overlappingNodes + ", overlappingEffectiveLines=" + overlappingEffectiveLines + ", overlappingTokens="
-				+ overlappingTokens + ", overlappingLines=" + overlappingLines + ", amountPerCloneClassSize="
-				+ amountPerCloneClassSize + ", amountPerRelation=" + amountPerRelation + ", amountPerLocation="
-				+ amountPerLocation + ", amountPerContents=" + amountPerContents + ", amountPerNodes=" + amountPerNodes
-				+ ", amountPerTotalNodeVolume=" + amountPerTotalNodeVolume + ", amountPerEffectiveLines="
-				+ amountPerEffectiveLines + ", amountPerTotalEffectiveLineVolume=" + amountPerTotalEffectiveLineVolume
+				+ overlappingTokens + ", overlappingLines=" + overlappingLines + ", amountPerRelation="
+				+ amountPerRelation + ", amountPerLocation=" + amountPerLocation + ", amountPerContents="
+				+ amountPerContents + ", amountPerExtract=" + amountPerExtract + ", amountPerCloneClassSize="
+				+ amountPerCloneClassSize + ", amountPerNodes=" + amountPerNodes + ", amountPerTotalNodeVolume="
+				+ amountPerTotalNodeVolume + ", amountPerEffectiveLines=" + amountPerEffectiveLines
+				+ ", amountPerTotalEffectiveLineVolume=" + amountPerTotalEffectiveLineVolume + ", skipped=" + skipped
 				+ "]";
 	}
 
@@ -77,6 +80,8 @@ public class Metrics {
 		
 		amountPerEffectiveLines.addAll(metrics.amountPerEffectiveLines);
 		amountPerTotalEffectiveLineVolume.addAll(metrics.amountPerTotalEffectiveLineVolume);
+		
+		skipped+=metrics.skipped;
 	}
 
 	

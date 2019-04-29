@@ -46,7 +46,7 @@ public class SimpleTest extends TestCase {
 
     public void testCustom2() {
     	System.out.println("custom2");
-        String path = "/Users/sbaars/clone/java_projects/MavenSpringHibernateMockito/";
+    	String path = "/Users/sbaars/clone/java_projects/gatein-forge-plugin/";
 		System.out.println(Main.cloneDetection(Paths.get(path), Paths.get(path+"src/main/java/")));
     }
     

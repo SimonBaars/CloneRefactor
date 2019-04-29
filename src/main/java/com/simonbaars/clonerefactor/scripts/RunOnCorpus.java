@@ -61,8 +61,9 @@ public class RunOnCorpus {
 
 	private static void writePreviousThreadResults(CorpusThread[] threadPool, File file, int i) {
 		if(threadPool[i]!=null && !threadPool[i].isAlive()) {
-			if(threadPool[i].res !=null)
+			if(threadPool[i].res != null)
 				writeResults(file, threadPool[i].res);
+			else fullMetrics.skipped++;
 			threadPool[i]=null;
 		}
 	}

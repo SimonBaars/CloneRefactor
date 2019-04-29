@@ -19,7 +19,6 @@ public class CloneParser implements Parser {
 
 	private NodeParser astParser;
 	public final MetricCollector metricCollector = new MetricCollector();
-	
 	private final ParserConfiguration config = new ParserConfiguration()
 			.setLexicalPreservationEnabled(false) //Disabled for now, we'll enable it when we start refactoring.
 			.setStoreTokens(true);
