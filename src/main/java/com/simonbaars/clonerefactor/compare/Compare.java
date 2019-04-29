@@ -9,7 +9,7 @@ import com.github.javaparser.ast.type.ReferenceType;
 public interface Compare {
 	public boolean isValid();
 	
-	public static Compare create(JavaToken token, Node node, CloneType type) {
+	public static Compare create(Node node, CloneType type) {
 		Compare c = null;
 		if(node instanceof ReferenceType)
 			c = new ComparableType((ReferenceType)node);
@@ -19,7 +19,7 @@ public interface Compare {
 			c = new ComparableLiteral(type);
 		if(c!=null && c.isValid())
 			return c;
-		return new ComparableToken(token);
+		return new ComparableToken(node);
 	}
 
 	public default boolean compare(Compare c, CloneType type) {

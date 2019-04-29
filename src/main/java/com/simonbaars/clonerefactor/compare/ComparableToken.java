@@ -1,19 +1,19 @@
 package com.simonbaars.clonerefactor.compare;
 
-import com.github.javaparser.JavaToken;
+import com.github.javaparser.ast.Node;
 
 public class ComparableToken implements Compare {
 	
-	private final JavaToken token;
+	private final Node node;
 	
-	public ComparableToken(JavaToken token) {
+	public ComparableToken(Node node) {
 		super();
-		this.token = token;
+		this.node = node;
 	}
 
 	@Override
 	public boolean equals(Object o) {
-		return token.equals(((ComparableToken)o).token);
+		return node.equals(((ComparableToken)o).node);
 	}
 
 	@Override
