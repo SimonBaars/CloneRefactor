@@ -32,7 +32,7 @@ public class CloneParser implements Parser {
 	private final Location calculateLineReg(SourceRoot sourceRoot) {
 		final LocationHolder lh = new LocationHolder();
 		try {
-			sourceRoot.parseParallelized(new SourceRoot.Callback() {
+			sourceRoot.parse("", new SourceRoot.Callback() {
 				@Override
 				public Result process(Path localPath, Path absolutePath, ParseResult<CompilationUnit> result) {
 					CompilationUnit cu = result.getResult().get();
