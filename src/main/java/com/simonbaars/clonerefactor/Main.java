@@ -5,10 +5,8 @@ import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-import com.github.javaparser.ParserConfiguration;
 import com.github.javaparser.symbolsolver.utils.SymbolSolverCollectionStrategy;
 import com.github.javaparser.utils.ProjectRoot;
-import com.github.javaparser.utils.SourceRoot;
 import com.simonbaars.clonerefactor.ast.CloneParser;
 import com.simonbaars.clonerefactor.exception.NoJavaFilesFoundException;
 import com.simonbaars.clonerefactor.model.DetectionResults;
