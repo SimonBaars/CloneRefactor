@@ -1,5 +1,7 @@
 package com.simonbaars.clonerefactor;
 
+import java.nio.file.Paths;
+
 import com.simonbaars.clonerefactor.model.DetectionResults;
 
 import junit.framework.Test;
@@ -38,7 +40,8 @@ public class SimpleTest extends TestCase {
     
     public void testCustom() {
     	System.out.println("custom");
-        System.out.println(Main.cloneDetection("/Users/sbaars/Downloads/java_projects/ardublock/src/main/java"));
+        String path = "/Users/sbaars/clone/java_projects/ardublock/";
+		System.out.println(Main.cloneDetection(Paths.get(path), Paths.get(path+"src/main/java/")));
     }
 
     /**
