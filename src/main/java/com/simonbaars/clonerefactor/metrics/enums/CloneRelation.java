@@ -78,7 +78,7 @@ public class CloneRelation implements MetricEnum<RelationType> {
 			return true;
 		classesInHierarchy.add(className);
 		if(!c2.getExtendedTypes().isEmpty()) {
-			String fullyQualifiedName = getFullyQualifiedName(c2, c2.getExtendedTypes(0));
+			String fullyQualifiedName = getFullyQualifiedName(c2.getExtendedTypes(0));
 			if(classes.containsKey(fullyQualifiedName))
 				return collectSuperclasses(classes.get(fullyQualifiedName), classesInHierarchy);
 		}
@@ -91,7 +91,7 @@ public class CloneRelation implements MetricEnum<RelationType> {
 		ClassOrInterfaceType superclassC1 = c1.getExtendedTypes().get(0);
 		ClassOrInterfaceType superclassC2 = c2.getExtendedTypes().get(0);
 		return !superclassC1.getNameAsString().equals("Object") && !superclassC2.getNameAsString().equals("Object") && 
-				getFullyQualifiedName(c1, superclassC1).equals(getFullyQualifiedName(c2, superclassC2));
+				getFullyQualifiedName(superclassC1).equals(getFullyQualifiedName(superclassC2));
 	}
 
 	public void registerNode(Node n) {
@@ -114,7 +114,7 @@ public class CloneRelation implements MetricEnum<RelationType> {
 	private ClassOrInterfaceDeclaration goUp(ClassOrInterfaceDeclaration c1, int i) {
 		if(i>0) {
 			if(!c1.getExtendedTypes().isEmpty()) {
-				String fullyQualifiedName = getFullyQualifiedName(c1, c1.getExtendedTypes(0));
+				String fullyQualifiedName = getFullyQualifiedName(c1.getExtendedTypes(0));
 				if(classes.containsKey(fullyQualifiedName))
 					return goUp(classes.get(fullyQualifiedName), i-1);
 			}
@@ -124,7 +124,7 @@ public class CloneRelation implements MetricEnum<RelationType> {
 
 	private boolean isAncestor(ClassOrInterfaceDeclaration c1, ClassOrInterfaceDeclaration c2) {
 		if(!c1.getExtendedTypes().isEmpty()) {
-			String fullyQualifiedName = getFullyQualifiedName(c1, c1.getExtendedTypes(0));
+			String fullyQualifiedName = getFullyQualifiedName(c1.getExtendedTypes(0));
 			if(!classes.containsKey(fullyQualifiedName))
 				return false;
 			ClassOrInterfaceDeclaration parent = classes.get(fullyQualifiedName);
@@ -143,51 +143,19 @@ public class CloneRelation implements MetricEnum<RelationType> {
 
 	private boolean isSuperClass(ClassOrInterfaceDeclaration c1, ClassOrInterfaceDeclaration c2) {
 		return c1.getExtendedTypes().stream().anyMatch(e -> {
-			String fullyQualifiedName = getFullyQualifiedName(c2, e);
+			String fullyQualifiedName = getFullyQualifiedName(e);
 			if(!classes.containsKey(fullyQualifiedName))
 				return false;
 			return getFullyQualifiedName(c2).equals(fullyQualifiedName);
 		});
 	}
 
-	private String getFullyQualifiedName(ClassOrInterfaceDeclaration childClass, ClassOrInterfaceType t) {
-		if(t!=null)
-			System.out.println(t.resolve().getQualifiedName());
-		String name = "";
-		if(t.getScope().isPresent())
-			name+=getFullyQualifiedName(childClass, t.getScope().get())+".";
-		else if(childClass!=null) {
-			CompilationUnit compilationUnit = getCompilationUnit(childClass);
-			Optional<String> nameOpt = compilationUnit.getImports().stream().map(e -> e.getNameAsString()).filter(e -> e.endsWith("."+t.getName())).findAny();
-			if(nameOpt.isPresent()) 
-				return nameOpt.get();
-			else {
-				String fullyQualifiedName = getFullyQualifiedName(childClass);
-				name+=fullyQualifiedName.substring(0, fullyQualifiedName.lastIndexOf('.')+1);
-				if(!classes.containsKey(name+t.getNameAsString()) && compilationUnit.getImports().stream().anyMatch(e -> e.isAsterisk())) {
-					Optional<String> asteriks = compilationUnit.getImports().stream().filter(e -> e.isAsterisk()).map(e -> e.getNameAsString()+"."+t.getNameAsString()).filter(e -> classes.containsKey(e)).findAny();
-					if(asteriks.isPresent())
-						return asteriks.get();
-				}
-			}
-		}
-		return name+t.getNameAsString();
+	private String getFullyQualifiedName(ClassOrInterfaceType t) {
+		return t.resolve().getQualifiedName();
 	}
 
 	private String getFullyQualifiedName(ClassOrInterfaceDeclaration c2) {
-		String name = "";
-		if(c2 == null)
-			return null;
-		ClassOrInterfaceDeclaration parentClass = c2.getParentNode().isPresent() ? getClass(c2.getParentNode().get()): null;
-		if(parentClass!=null) {
-			name+=getFullyQualifiedName(parentClass)+".";
-		} else {
-			CompilationUnit u = getCompilationUnit(c2);
-			if(u!=null && u.getPackageDeclaration().isPresent()) {
-				name+=u.getPackageDeclaration().get().getNameAsString()+".";
-			}
-		}
-		return name+c2.getNameAsString();
+		return c2.resolve().getQualifiedName();
 	}
 
 	@Override
