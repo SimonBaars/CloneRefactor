@@ -71,7 +71,6 @@
 				</executions>
 				<configuration>
 					<mainClass>com.simonbaars.clonerefactor.scripts.RunOnCorpus</mainClass>
-					<commandlineArgs>-Xms6G -Xmx6G -Xss100m</commandlineArgs>
 				</configuration>
 			</plugin>
 		</plugins>
