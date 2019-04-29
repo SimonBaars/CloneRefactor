@@ -8,9 +8,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.simonbaars.clonerefactor.util.SavePaths;
+
 public class PrepareProjectsFolder {
 	
-	private static final File JAVA_PROJECTS_CORPUS_FOLDER = new File("/Users/sbaars/Downloads/java_projects/");
+	private static final File JAVA_PROJECTS_CORPUS_FOLDER = new File(SavePaths.getJavaProjectFolder());
 
 	public static void main(String[] args) {
 		System.out.println(JAVA_PROJECTS_CORPUS_FOLDER.listFiles(f -> isQualified(getSourceFolder(f), 5, 1000))[2888]);

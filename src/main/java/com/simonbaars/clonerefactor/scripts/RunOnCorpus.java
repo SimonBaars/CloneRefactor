@@ -11,13 +11,14 @@ import java.util.Date;
 import com.simonbaars.clonerefactor.metrics.Metrics;
 import com.simonbaars.clonerefactor.model.DetectionResults;
 import com.simonbaars.clonerefactor.util.FileUtils;
+import com.simonbaars.clonerefactor.util.SavePaths;
 
 import me.tongfei.progressbar.ProgressBar;
 import me.tongfei.progressbar.ProgressBarBuilder;
 
 public class RunOnCorpus {
-	private static File OUTPUT_FOLDER = new File("/Users/sbaars/clone/output "+new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
-	private static File FULL_METRICS = new File(OUTPUT_FOLDER.getAbsolutePath()+"/full_metrics.txt");
+	private static File OUTPUT_FOLDER = new File(SavePaths.getFullOutputFolder());
+	private static File FULL_METRICS = new File(OUTPUT_FOLDER.getParent()+"/full_metrics.txt");
 	private static int NUMBER_OF_THREADS = 4;
 	private static final Metrics fullMetrics = new Metrics();
 
