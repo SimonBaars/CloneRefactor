@@ -29,7 +29,6 @@ public class SavePaths {
 
 	private static String getPathForOS() {
 		switch(OperatingSystem.get()) {
-			case MACOS: return System.getProperty("user.home") + File.separator + "Library" + File.separator + "Application Support";
 			case WINDOWS: return System.getenv("APPDATA");
 			default: return System.getProperty("user.home");
 		}
