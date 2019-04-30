@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import com.github.javaparser.JavaToken;
@@ -55,7 +56,10 @@ public class LocationContents {
 	public boolean equals (Object o) {
 		if(!(o instanceof LocationContents))
 			return false;
-		return compare.equals(((LocationContents)o).compare);
+		LocationContents other = (LocationContents)o;
+		if(compare.size()!=other.compare.size())
+			return false;
+		return IntStream.range(0, compare.size()).allMatch(i -> compare.get(i).compare(other.compare.get(i), CloneType.TYPE1));
 	}
 	
 	public List<Node> getNodesForCompare(){
@@ -66,8 +70,12 @@ public class LocationContents {
 		List<Node> nodes = new ArrayList<>();
 		for(Node node : parents) {
 			Optional<Range> rangeOptional = node.getRange();
-			if(rangeOptional.isPresent() && range.contains(rangeOptional.get()))
-				nodes.add(node);
+			if(rangeOptional.isPresent()) {
+				if(range.contains(rangeOptional.get())) {
+					nodes.add(node);
+				} else if (rangeOptional.get().begin.isAfter(range.end))
+					return nodes;
+			}
 			nodes.addAll(getNodesForCompare(node.getChildNodes()));
 		}
 		return nodes;
