@@ -25,4 +25,9 @@ public class CompareNode implements Compare {
 	public int getHashCode() {
 		return node.hashCode();
 	}
+
+	@Override
+	public String toString() {
+		return "CompareNode [node=" + node + "]";
+	}
 }

@@ -28,4 +28,9 @@ public class CompareType implements Compare {
 	public int getHashCode() {
 		return type.hashCode();
 	}
+
+	@Override
+	public String toString() {
+		return "CompareType [type=" + type + "]";
+	}
 }
