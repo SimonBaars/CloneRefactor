@@ -2,6 +2,7 @@ package com.simonbaars.clonerefactor.compare;
 
 import com.github.javaparser.JavaToken;
 import com.github.javaparser.ast.expr.LiteralExpr;
+import com.github.javaparser.ast.expr.MethodCallExpr;
 import com.github.javaparser.ast.expr.NameExpr;
 import com.github.javaparser.ast.expr.SimpleName;
 import com.github.javaparser.ast.type.ReferenceType;
@@ -21,6 +22,8 @@ public interface Compare {
 			c = new CompareLiteral(type);
 		else if(tokenOrNode instanceof SimpleName)
 			c = new CompareName(type);
+		else if(tokenOrNode instanceof MethodCallExpr)
+			c = new CompareMethodCall((MethodCallExpr)tokenOrNode);
 		if(c!=null && c.isValid())
 			return c;
 		return new CompareToken(e);

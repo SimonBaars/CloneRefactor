@@ -19,7 +19,7 @@ public class CompareName implements Compare {
 
 	@Override
 	public boolean isValid() {
-		return type!=CloneType.TYPE1; //We make it invalid if the type is 1, so it will be compared using token comparison.
+		return type.isNotTypeOne(); //We make it invalid if the type is 1, so it will be compared using token comparison.
 	}
 
 	@Override

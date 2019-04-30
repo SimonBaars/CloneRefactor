@@ -15,8 +15,7 @@ public class CompareType implements Compare {
 	}
 	
 	public boolean equals(Object o) {
-		ResolvedReferenceType otherType = ((CompareType)o).type;
-		return type.equals(otherType);
+		return type.equals(((CompareType)o).type);
 	}
 
 	@Override

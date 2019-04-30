@@ -132,8 +132,7 @@ public class LocationContents {
 		
 		for(int i = 0; i<getTokens().size(); i++) {
 			JavaToken token = getTokens().get(i);
-			
-			if(CloneDetection.type != CloneType.TYPE1) {
+			if(CloneDetection.type.isNotTypeOne()) {
 				Optional<Entry<Range, Node>> thisMethodOptional = compareMap.entrySet().stream().filter(e -> e.getValue() instanceof MethodCallExpr && e.getKey().contains(token.getRange().get())).findAny();
 				if(thisMethodOptional.isPresent()) {
 					Entry<Range, Node> thisMethod = thisMethodOptional.get();
@@ -141,11 +140,8 @@ public class LocationContents {
 					for(; thisMethod.getKey().contains(getTokens().get(i+1).getRange().get()) && i<getTokens().size(); i++);
 					continue;
 				}
-				
 			}
 			getCompare().add(Compare.create(compareMap.containsKey(token.getRange().get()) ? compareMap.get(token.getRange().get()) : token, token, CloneDetection.type));
-			
-			
 		}
 		//getTokens().forEach(e -> getCompare().add(Compare.create(e.getRange().isPresent() && compareMap.containsKey(e.getRange().get()) ? compareMap.get(e.getRange().get()) : e, e, CloneDetection.type)));
 		//System.out.println(getCompare().stream().map(e -> e.toString()).collect(Collectors.joining(", ", "[", "]")));
