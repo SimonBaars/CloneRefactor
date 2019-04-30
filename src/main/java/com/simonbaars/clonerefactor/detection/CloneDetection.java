@@ -8,14 +8,18 @@ import java.util.stream.Collectors;
 
 import com.github.javaparser.Position;
 import com.github.javaparser.Range;
+import com.simonbaars.clonerefactor.compare.CloneType;
 import com.simonbaars.clonerefactor.datatype.ListMap;
 import com.simonbaars.clonerefactor.model.Location;
 import com.simonbaars.clonerefactor.model.Sequence;
 
 public class CloneDetection {
+	/* Clone detection thresholds and settings. */
 	private static final int MIN_AMOUNT_OF_LINES = 6;
 	private static final int MIN_AMOUNT_OF_TOKENS = 10;
-	private static final int MIN_AMOUNT_OF_NODES = 6; 
+	private static final int MIN_AMOUNT_OF_NODES = 6;
+	public static final CloneType type = CloneType.TYPE2;
+	
 	final List<Sequence> clones = new ArrayList<>();
 
 	public CloneDetection() {}

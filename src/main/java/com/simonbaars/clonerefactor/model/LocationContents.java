@@ -20,6 +20,7 @@ import com.github.javaparser.ast.expr.NameExpr;
 import com.github.javaparser.ast.nodeTypes.NodeWithImplements;
 import com.simonbaars.clonerefactor.compare.CloneType;
 import com.simonbaars.clonerefactor.compare.Compare;
+import com.simonbaars.clonerefactor.detection.CloneDetection;
 import com.simonbaars.clonerefactor.exception.NoTokensException;
 
 public class LocationContents {
@@ -64,7 +65,7 @@ public class LocationContents {
 			return false;
 		//if(other.tokens.equals(tokens) && !IntStream.range(0, compare.size()).allMatch(i -> compare.get(i).compare(other.compare.get(i), CloneType.TYPE1)))
 		//	System.out.println(Arrays.toString(other.compare.toArray())+System.lineSeparator()+Arrays.toString(compare.toArray())+System.lineSeparator()+IntStream.range(0, compare.size()).peek(i -> System.out.println(compare.get(i)+", "+other.compare.get(i)+", "+compare.get(i).compare(other.compare.get(i), CloneType.TYPE1))).allMatch(i -> compare.get(i).compare(other.compare.get(i), CloneType.TYPE1)));
-		return IntStream.range(0, compare.size()).allMatch(i -> compare.get(i).compare(other.compare.get(i), CloneType.TYPE1));
+		return IntStream.range(0, compare.size()).allMatch(i -> compare.get(i).compare(other.compare.get(i), CloneDetection.type));
 	}
 	
 	public Map<Range, Node> getNodesForCompare(){
@@ -128,7 +129,7 @@ public class LocationContents {
 			throw new NoTokensException(n, tokenRange, validRange);
 		range = new Range(tokens.get(0).getRange().get().begin, tokens.get(tokens.size()-1).getRange().get().end);
 		Map<Range, Node> compareMap = getNodesForCompare(Arrays.asList(n));
-		getTokens().forEach(e -> getCompare().add(Compare.create(e.getRange().isPresent() && compareMap.containsKey(e.getRange().get()) ? compareMap.get(e.getRange().get()) : e, e, CloneType.TYPE1)));
+		getTokens().forEach(e -> getCompare().add(Compare.create(e.getRange().isPresent() && compareMap.containsKey(e.getRange().get()) ? compareMap.get(e.getRange().get()) : e, e, CloneDetection.type)));
 		return range; 
 	}
 
