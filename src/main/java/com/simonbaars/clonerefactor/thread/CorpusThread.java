@@ -1,4 +1,4 @@
-package com.simonbaars.clonerefactor.scripts;
+package com.simonbaars.clonerefactor.thread;
 
 import java.io.File;
 

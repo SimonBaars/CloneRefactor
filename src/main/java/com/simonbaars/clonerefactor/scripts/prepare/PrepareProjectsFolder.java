@@ -1,4 +1,4 @@
-package com.simonbaars.clonerefactor.scripts;
+package com.simonbaars.clonerefactor.scripts.prepare;
 
 import java.io.File;
 import java.io.IOException;

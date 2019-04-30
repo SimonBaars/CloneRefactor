@@ -1,6 +1,6 @@
 package com.simonbaars.clonerefactor.scripts;
 
-import static com.simonbaars.clonerefactor.scripts.PrepareProjectsFolder.getFilteredCorpusFiles;
+import static com.simonbaars.clonerefactor.scripts.prepare.PrepareProjectsFolder.getFilteredCorpusFiles;
 
 import java.io.File;
 import java.io.IOException;
@@ -8,6 +8,7 @@ import java.util.Arrays;
 
 import com.simonbaars.clonerefactor.metrics.Metrics;
 import com.simonbaars.clonerefactor.model.DetectionResults;
+import com.simonbaars.clonerefactor.thread.CorpusThread;
 import com.simonbaars.clonerefactor.util.FileUtils;
 import com.simonbaars.clonerefactor.util.SavePaths;
 

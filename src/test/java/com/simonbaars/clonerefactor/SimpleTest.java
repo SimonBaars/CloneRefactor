@@ -4,7 +4,7 @@ import java.io.File;
 import java.nio.file.Paths;
 
 import com.simonbaars.clonerefactor.model.DetectionResults;
-import com.simonbaars.clonerefactor.scripts.CorpusThread;
+import com.simonbaars.clonerefactor.thread.CorpusThread;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
