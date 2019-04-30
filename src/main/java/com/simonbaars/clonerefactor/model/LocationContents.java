@@ -2,7 +2,9 @@ package com.simonbaars.clonerefactor.model;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -14,6 +16,7 @@ import com.github.javaparser.JavaToken.Category;
 import com.github.javaparser.Range;
 import com.github.javaparser.TokenRange;
 import com.github.javaparser.ast.Node;
+import com.github.javaparser.ast.expr.NameExpr;
 import com.github.javaparser.ast.nodeTypes.NodeWithImplements;
 import com.simonbaars.clonerefactor.compare.CloneType;
 import com.simonbaars.clonerefactor.compare.Compare;
@@ -64,21 +67,23 @@ public class LocationContents {
 		return IntStream.range(0, compare.size()).allMatch(i -> compare.get(i).compare(other.compare.get(i), CloneType.TYPE1));
 	}
 	
-	public List<Node> getNodesForCompare(){
+	public Map<Range, Node> getNodesForCompare(){
 		return getNodesForCompare(getNodes());
 	}
 	
-	public List<Node> getNodesForCompare(List<Node> parents){
-		List<Node> nodes = new ArrayList<>();
+	public Map<Range, Node> getNodesForCompare(List<Node> parents){
+		Map<Range, Node> nodes = new HashMap<>();
 		for(Node node : parents) {
 			Optional<Range> rangeOptional = node.getRange();
 			if(rangeOptional.isPresent()) {
-				if(range.contains(rangeOptional.get())) {
-					nodes.add(node);
-				} else if (rangeOptional.get().begin.isAfter(range.end))
+				Range r = rangeOptional.get();
+				if(range.contains(r)) {
+					nodes.put(r, node);
+				} else if (r.begin.isAfter(range.end))
 					return nodes;
 			}
-			nodes.addAll(getNodesForCompare(node.getChildNodes()));
+			if(!(node instanceof NameExpr))
+				nodes.putAll(getNodesForCompare(node.getChildNodes()));
 		}
 		return nodes;
 	}
@@ -86,11 +91,7 @@ public class LocationContents {
 	public String getEffectiveTokenTypes() {
 		return getEffectiveTokens().map(e -> "["+e.asString()+", "+e.getCategory()+", "+e.getKind()+"]").collect(Collectors.joining(", "));
 	}
-	
-	public String getNodeTypes() {
-		return getNodesForCompare().stream().map(e -> "["+e.toString()+", "+e.getClass().getName()+"]").collect(Collectors.joining(", "));
-	}
-	
+
 	public int getAmountOfTokens() {
 		return new Long(getEffectiveTokens().count()).intValue();
 	}
