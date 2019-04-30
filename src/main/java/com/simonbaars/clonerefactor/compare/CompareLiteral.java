@@ -11,6 +11,11 @@ public class CompareLiteral implements Compare {
 	public boolean compare(Compare o, CloneType t) {
 		return Compare.super.compare(o, t);
 	}
+	
+	@Override
+	public boolean equals(Object o) {
+		return true; //We compare using the interface default compare method.
+	}
 
 	@Override
 	public boolean isValid() {
