@@ -3,6 +3,7 @@ package com.simonbaars.clonerefactor.compare;
 import com.github.javaparser.JavaToken;
 import com.github.javaparser.ast.expr.LiteralExpr;
 import com.github.javaparser.ast.expr.NameExpr;
+import com.github.javaparser.ast.expr.SimpleName;
 import com.github.javaparser.ast.type.ReferenceType;
 
 public interface Compare {
@@ -18,6 +19,8 @@ public interface Compare {
 			c = new CompareVariable((NameExpr)tokenOrNode);
 		else if(tokenOrNode instanceof LiteralExpr)
 			c = new CompareLiteral(type);
+		else if(tokenOrNode instanceof SimpleName)
+			c = new CompareName(type);
 		if(c!=null && c.isValid())
 			return c;
 		return new CompareToken(e);

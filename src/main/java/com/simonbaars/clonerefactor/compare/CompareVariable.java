@@ -42,11 +42,8 @@ public class CompareVariable implements Compare {
 
 	@Override
 	public int getHashCode() {
-		try {
-			return type.hashCode();
-		} catch(Exception e) {
-			return -2;
-		}
+		if(type!=null) type.hashCode();
+		return -3;
 	}
 
 	@Override
