@@ -12,7 +12,6 @@ import com.simonbaars.clonerefactor.util.FileUtils;
 import com.simonbaars.clonerefactor.util.SavePaths;
 
 import me.tongfei.progressbar.ProgressBar;
-import me.tongfei.progressbar.ProgressBarBuilder;
 
 public class RunOnCorpus {
 	private static File OUTPUT_FOLDER = new File(SavePaths.getFullOutputFolder());
@@ -31,7 +30,7 @@ public class RunOnCorpus {
 	}
 
 	private static void analyzeAllProjects(CorpusThread[] threadPool, File[] corpusFiles) {
-		for(File file : ProgressBar.wrap(Arrays.asList(corpusFiles), new ProgressBarBuilder().setTaskName("Running Clone Detection"))) {
+		for(File file : ProgressBar.wrap(Arrays.asList(corpusFiles), "Running Clone Detection")) {
 			waitForThreadToFinish(threadPool);
 			for(int i = 0; i<threadPool.length; i++) {
 				if(threadPool[i]==null || !threadPool[i].isAlive()) {
