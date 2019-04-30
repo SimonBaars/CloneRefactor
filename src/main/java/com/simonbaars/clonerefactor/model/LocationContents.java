@@ -59,6 +59,8 @@ public class LocationContents {
 		LocationContents other = (LocationContents)o;
 		if(compare.size()!=other.compare.size())
 			return false;
+		//if(other.tokens.equals(tokens) && !IntStream.range(0, compare.size()).allMatch(i -> compare.get(i).compare(other.compare.get(i), CloneType.TYPE1)))
+		//		System.out.println(Arrays.toString(other.compare.toArray())+System.lineSeparator()+Arrays.toString(compare.toArray())+System.lineSeparator()+IntStream.range(0, compare.size()).peek(i -> System.out.println(compare.get(i)+", "+other.compare.get(i)+", "+compare.get(i).compare(other.compare.get(i), CloneType.TYPE1))).allMatch(i -> compare.get(i).compare(other.compare.get(i), CloneType.TYPE1)));
 		return IntStream.range(0, compare.size()).allMatch(i -> compare.get(i).compare(other.compare.get(i), CloneType.TYPE1));
 	}
 	
