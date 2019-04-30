@@ -28,6 +28,6 @@ public class CompareToken implements Compare {
 
 	@Override
 	public String toString() {
-		return "CompareNode [token=" + token + "]";
+		return "CompareToken [token=" + token + "]";
 	}
 }
