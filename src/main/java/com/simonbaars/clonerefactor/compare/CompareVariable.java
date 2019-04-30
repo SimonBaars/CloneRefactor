@@ -27,7 +27,7 @@ public class CompareVariable implements Compare {
 		if(cloneType == CloneType.TYPE1 && dec.getName()!=null && !dec.getName().equals(compareDec.dec.getName())) {
 			return false;
 		}
-		return type == null || type.equals(compareDec.type);
+		return (type == null && compareDec.type == null) || (type!=null && type.equals(compareDec.type));
 	}
 	
 	@Override
