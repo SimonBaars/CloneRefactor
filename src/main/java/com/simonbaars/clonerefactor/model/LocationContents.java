@@ -16,9 +16,9 @@ import com.github.javaparser.JavaToken.Category;
 import com.github.javaparser.Range;
 import com.github.javaparser.TokenRange;
 import com.github.javaparser.ast.Node;
+import com.github.javaparser.ast.expr.MethodCallExpr;
 import com.github.javaparser.ast.expr.NameExpr;
 import com.github.javaparser.ast.nodeTypes.NodeWithImplements;
-import com.simonbaars.clonerefactor.compare.CloneType;
 import com.simonbaars.clonerefactor.compare.Compare;
 import com.simonbaars.clonerefactor.detection.CloneDetection;
 import com.simonbaars.clonerefactor.exception.NoTokensException;
@@ -117,6 +117,29 @@ public class LocationContents {
 	}
 
 	public Range addTokens(Node n, TokenRange tokenRange, Range validRange) {
+		addTokensInRange(n, tokenRange, validRange);
+		if(tokens.isEmpty())
+			throw new NoTokensException(n, tokenRange, validRange);
+		range = new Range(tokens.get(0).getRange().get().begin, tokens.get(tokens.size()-1).getRange().get().end);
+		createCompareList(n);
+		return range; 
+	}
+
+	private void createCompareList(Node n) {
+		Map<Range, Node> compareMap = getNodesForCompare(Arrays.asList(n));
+		
+		for(int i = 0; i<getTokens().size(); i++) {
+			//getCompare().add(Compare.create(e.getRange().isPresent() && compareMap.containsKey(e.getRange().get()) ? compareMap.get(e.getRange().get()) : e, e, CloneDetection.type)))
+			if(compareMap.entrySet().stream().anyMatch(e -> e.getValue() instanceof MethodCallExpr)) {
+				
+			}
+		}
+		getTokens().forEach(e -> getCompare().add(Compare.create(e.getRange().isPresent() && compareMap.containsKey(e.getRange().get()) ? compareMap.get(e.getRange().get()) : e, e, CloneDetection.type)));
+		System.out.println(getCompare().stream().map(e -> e.toString()).collect(Collectors.joining(", ", "[", "]")));
+		System.out.println(compareMap.values().stream().map(e -> e.toString()+" "+e.getClass().getSimpleName()).collect(Collectors.joining(", ")));
+	}
+
+	private void addTokensInRange(Node n, TokenRange tokenRange, Range validRange) {
 		for(JavaToken token : tokenRange) {
 			Optional<Range> r = token.getRange();
 			if(r.isPresent()) {
@@ -125,12 +148,6 @@ public class LocationContents {
 				if(n instanceof NodeWithImplements && token.asString().equals("{")) break; // We cannot exclude the body of class files, this is a workaround.
 			}
 		}
-		if(tokens.isEmpty())
-			throw new NoTokensException(n, tokenRange, validRange);
-		range = new Range(tokens.get(0).getRange().get().begin, tokens.get(tokens.size()-1).getRange().get().end);
-		Map<Range, Node> compareMap = getNodesForCompare(Arrays.asList(n));
-		getTokens().forEach(e -> getCompare().add(Compare.create(e.getRange().isPresent() && compareMap.containsKey(e.getRange().get()) ? compareMap.get(e.getRange().get()) : e, e, CloneDetection.type)));
-		return range; 
 	}
 
 	public List<JavaToken> getTokens() {
