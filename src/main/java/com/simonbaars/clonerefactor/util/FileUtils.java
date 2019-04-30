@@ -102,4 +102,8 @@ public class FileUtils {
 			default: return number+"th";
 		}
 	}
+
+	public static String getFileAsString(String string) throws IOException {
+		return getFileAsString(new File(string));
+	}
 }
