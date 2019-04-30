@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -19,6 +20,7 @@ import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.expr.MethodCallExpr;
 import com.github.javaparser.ast.expr.NameExpr;
 import com.github.javaparser.ast.nodeTypes.NodeWithImplements;
+import com.simonbaars.clonerefactor.compare.CloneType;
 import com.simonbaars.clonerefactor.compare.Compare;
 import com.simonbaars.clonerefactor.detection.CloneDetection;
 import com.simonbaars.clonerefactor.exception.NoTokensException;
@@ -129,14 +131,25 @@ public class LocationContents {
 		Map<Range, Node> compareMap = getNodesForCompare(Arrays.asList(n));
 		
 		for(int i = 0; i<getTokens().size(); i++) {
-			//getCompare().add(Compare.create(e.getRange().isPresent() && compareMap.containsKey(e.getRange().get()) ? compareMap.get(e.getRange().get()) : e, e, CloneDetection.type)))
-			if(compareMap.entrySet().stream().anyMatch(e -> e.getValue() instanceof MethodCallExpr)) {
+			JavaToken token = getTokens().get(i);
+			
+			if(CloneDetection.type != CloneType.TYPE1) {
+				Optional<Entry<Range, Node>> thisMethodOptional = compareMap.entrySet().stream().filter(e -> e.getValue() instanceof MethodCallExpr && e.getKey().contains(token.getRange().get())).findAny();
+				if(thisMethodOptional.isPresent()) {
+					Entry<Range, Node> thisMethod = thisMethodOptional.get();
+					getCompare().add(Compare.create(thisMethod.getValue(), token, CloneDetection.type));
+					for(; thisMethod.getKey().contains(getTokens().get(i+1).getRange().get()) && i<getTokens().size(); i++);
+					continue;
+				}
 				
 			}
+			getCompare().add(Compare.create(compareMap.containsKey(token.getRange().get()) ? compareMap.get(token.getRange().get()) : token, token, CloneDetection.type));
+			
+			
 		}
-		getTokens().forEach(e -> getCompare().add(Compare.create(e.getRange().isPresent() && compareMap.containsKey(e.getRange().get()) ? compareMap.get(e.getRange().get()) : e, e, CloneDetection.type)));
-		System.out.println(getCompare().stream().map(e -> e.toString()).collect(Collectors.joining(", ", "[", "]")));
-		System.out.println(compareMap.values().stream().map(e -> e.toString()+" "+e.getClass().getSimpleName()).collect(Collectors.joining(", ")));
+		//getTokens().forEach(e -> getCompare().add(Compare.create(e.getRange().isPresent() && compareMap.containsKey(e.getRange().get()) ? compareMap.get(e.getRange().get()) : e, e, CloneDetection.type)));
+		//System.out.println(getCompare().stream().map(e -> e.toString()).collect(Collectors.joining(", ", "[", "]")));
+		//System.out.println(compareMap.values().stream().map(e -> e.toString()+" "+e.getClass().getSimpleName()).collect(Collectors.joining(", ")));
 	}
 
 	private void addTokensInRange(Node n, TokenRange tokenRange, Range validRange) {
