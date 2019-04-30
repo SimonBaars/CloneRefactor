@@ -127,7 +127,8 @@ public class LocationContents {
 		if(tokens.isEmpty())
 			throw new NoTokensException(n, tokenRange, validRange);
 		range = new Range(tokens.get(0).getRange().get().begin, tokens.get(tokens.size()-1).getRange().get().end);
-		getNodesForCompare(Arrays.asList(n)).forEach(e -> getCompare().add(Compare.create(e, CloneType.TYPE1)));
+		Map<Range, Node> compareMap = getNodesForCompare();
+		getTokens().forEach(e -> getCompare().add(Compare.create(e.getRange().isPresent() && compareMap.containsKey(e.getRange().get()) ? compareMap.get(e.getRange()) : e, e, CloneType.TYPE1)));
 		return range; 
 	}
 
