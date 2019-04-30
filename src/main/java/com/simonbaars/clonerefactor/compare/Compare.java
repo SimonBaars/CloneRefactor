@@ -20,7 +20,7 @@ public interface Compare {
 			c = new CompareLiteral(type);
 		if(c!=null && c.isValid())
 			return c;
-		return new CompareToken(node);
+		return new CompareNode(node);
 	}
 
 	public default boolean compare(Compare c, CloneType type) {
