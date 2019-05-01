@@ -14,16 +14,16 @@ import com.simonbaars.clonerefactor.util.SavePaths;
 
 import me.tongfei.progressbar.ProgressBar;
 
-public class CollectDependencies {
+public class CollectDependenciesSources {
 
-	private static final int MAVEN_PROCESS_TIMEOUT = 10000;
+	private static final int MAVEN_PROCESS_TIMEOUT = 60000;
 
 	public static void main(String[] args) throws IOException {
 		String file = FileUtils.getFileAsString(SavePaths.getApplicationDataFolder()+"filtered_projects.txt");
-		FileOutputStream fos = new FileOutputStream(new File(SavePaths.getApplicationDataFolder()+"valid_projects.txt"));
+		FileOutputStream fos = new FileOutputStream(new File(SavePaths.getApplicationDataFolder()+"valid_projects_sources.txt"));
 		for(String s : ProgressBar.wrap(Arrays.asList(file.split("\n")), "Cloning Git Projects")) {
 			try {
-				File location = new File(SavePaths.createDirectoryIfNotExists(SavePaths.getGitFolder()+s.substring(s.lastIndexOf('/')+1)));
+				File location = new File(SavePaths.createDirectoryIfNotExists(SavePaths.getGitSourcesFolder()+s.substring(s.lastIndexOf('/')+1)));
 				Git git = Git.cloneRepository()
 						  .setURI("https://github.com"+s+".git")
 						  .setDirectory(location)
@@ -45,7 +45,7 @@ public class CollectDependencies {
 
 	private static StringBuffer gatherMavenDependencies(File workingDirectory) throws IOException {
 		new File(workingDirectory.getAbsolutePath()+File.separator+"lib").mkdirs();
-		String[] mvnInstall = new String[] {"/usr/local/bin/mvn", "dependency:copy-dependencies", "-DoutputDirectory=lib"};
+		String[] mvnInstall = new String[] {"/usr/local/bin/mvn", "dependency:copy-dependencies", "-Dclassifier=sources", "-DoutputDirectory=lib"};
 		Process proc = new ProcessBuilder(mvnInstall).directory(workingDirectory).start();
 		return readProcessBuffer(proc);
 	}
