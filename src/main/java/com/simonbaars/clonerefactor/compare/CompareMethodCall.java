@@ -16,7 +16,10 @@ public class CompareMethodCall extends Compare {
 		ResolvedMethodDeclaration refType = null;
 		try {
 			refType = t.resolve();
-		} catch (Exception e) {}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		//System.out.println("Refers to method "+refType.getQualifiedSignature());
 		type = refType;
 		t.getArguments().stream().map(e -> {
 			if(e instanceof NameExpr) 

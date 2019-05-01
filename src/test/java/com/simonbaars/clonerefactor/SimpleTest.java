@@ -52,6 +52,12 @@ public class SimpleTest extends TestCase {
 		System.out.println(Main.cloneDetection(Paths.get(path), Paths.get(path+"src/main/java/")));
     }
     
+    public void testProjectPlusDependencies() {
+    	System.out.println("ProjectPlusDependencies");
+    	String path = "/Users/sbaars/clone/git/json-collection/";
+		System.out.println(Main.parseProject(Paths.get(path), Paths.get(path+"src/main/java/")));
+    }
+    
     public void testThread() {
     	System.out.println("custom2");
     	CorpusThread t = new CorpusThread(new File("/Users/sbaars/clone/java_projects/gatein-forge-plugin/src/main/java/"));

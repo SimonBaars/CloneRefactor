@@ -37,7 +37,7 @@ public class CollectDependencies {
 					fos.write(s.getBytes());
 					fos.write(System.lineSeparator().getBytes());
 				}
-			} catch (GitAPIException e) {
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
