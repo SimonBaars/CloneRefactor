@@ -2,6 +2,7 @@ package com.simonbaars.clonerefactor.compare;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.github.javaparser.ast.expr.MethodCallExpr;
 import com.github.javaparser.ast.expr.NameExpr;
@@ -16,18 +17,15 @@ public class CompareMethodCall extends Compare {
 		ResolvedMethodDeclaration refType = null;
 		try {
 			refType = t.resolve();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		//System.out.println("Refers to method "+refType.getQualifiedSignature());
+		} catch (Exception e) {}
 		type = refType;
-		t.getArguments().stream().map(e -> {
+		estimatedTypes.addAll(t.getArguments().stream().map(e -> {
 			if(e instanceof NameExpr) 
 				try {
 					return ((NameExpr)e).resolve().getType();
 				} catch (Exception ex) {}
 			return e.getClass();
-		});
+		}).collect(Collectors.toList()));
 	}
 	
 	public boolean equals(Object c) {

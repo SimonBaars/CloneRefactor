@@ -10,9 +10,11 @@ import java.time.format.DateTimeFormatter;
 
 import com.github.javaparser.ParserConfiguration;
 import com.github.javaparser.symbolsolver.JavaSymbolSolver;
+import com.github.javaparser.symbolsolver.resolution.typesolvers.ClassLoaderTypeSolver;
 import com.github.javaparser.symbolsolver.resolution.typesolvers.CombinedTypeSolver;
 import com.github.javaparser.symbolsolver.resolution.typesolvers.JarTypeSolver;
 import com.github.javaparser.symbolsolver.resolution.typesolvers.JavaParserTypeSolver;
+import com.github.javaparser.symbolsolver.resolution.typesolvers.MemoryTypeSolver;
 import com.github.javaparser.symbolsolver.resolution.typesolvers.ReflectionTypeSolver;
 import com.github.javaparser.symbolsolver.utils.SymbolSolverCollectionStrategy;
 import com.github.javaparser.utils.ProjectRoot;
@@ -56,6 +58,8 @@ public class Main {
 		CombinedTypeSolver combinedTypeSolver = new CombinedTypeSolver();
         combinedTypeSolver.add(new ReflectionTypeSolver());
         combinedTypeSolver.add(new JavaParserTypeSolver(sourceRoot));
+       // combinedTypeSolver.add(new ClassLoaderTypeSolver(Main.class.getClassLoader()));
+        //combinedTypeSolver.add(new MemoryTypeSolver());
         
         File file = new File(path.toString()+File.separator+"lib");
 		if(file.exists()) {
@@ -73,17 +77,14 @@ public class Main {
 				}
         	}
         }
-        
-		final ProjectRoot projectRoot = 
-			    new SymbolSolverCollectionStrategy()
-			    .collect(path);
-		projectRoot.addSourceRoot(sourceRoot);
+		
 		final ParserConfiguration config = new ParserConfiguration()
     			.setLexicalPreservationEnabled(false) //Disabled for now, we'll enable it when we start refactoring.
     			.setStoreTokens(true)
     			.setSymbolResolver(new JavaSymbolSolver(combinedTypeSolver));
 		
-		return new CloneParser().parse(projectRoot.getSourceRoot(sourceRoot).get(), config);
+		SourceRoot root = new SourceRoot(sourceRoot);
+		return new CloneParser().parse(root, config);
 	}
 
 }
