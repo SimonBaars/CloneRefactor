@@ -1,11 +1,15 @@
 package com.simonbaars.clonerefactor.compare;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.github.javaparser.ast.expr.MethodCallExpr;
+import com.github.javaparser.ast.expr.NameExpr;
 import com.github.javaparser.resolution.declarations.ResolvedMethodDeclaration;
 
 public class CompareMethodCall extends Compare {
 	private final ResolvedMethodDeclaration type;
-	private final MethodCallExpr call;
+	private final List<Object> estimatedTypes = new ArrayList<>();
 	
 	public CompareMethodCall(CloneType cloneType, MethodCallExpr t) {
 		super(cloneType);
@@ -13,21 +17,21 @@ public class CompareMethodCall extends Compare {
 		try {
 			refType = t.resolve();
 		} catch (Exception e) {}
-		t.getArguments().parallelStream().forEach(e -> System.out.println(e.getClass()));
 		type = refType;
-		call = t;
+		t.getArguments().stream().map(e -> {
+			if(e instanceof NameExpr) 
+				try {
+					return ((NameExpr)e).resolve().getType();
+				} catch (Exception ex) {}
+			return e.getClass();
+		});
 	}
 	
 	public boolean equals(Object c) {
 		CompareMethodCall other = (CompareMethodCall)c;
-		if(type!=null && other.type !=null) {
-			if(cloneType.isNotTypeOne())
-				return type.getTypeParameters().equals(other.type.getTypeParameters());
-			return type.equals(other.type);
-		}
-		if(cloneType.isNotTypeOne())
-			return call.getArguments().for.get().equals(other.call.getTypeArguments().get());
-		return call.getTokenRange().get().equals(other.call.getTokenRange().get());
+		if(type!=null && other.type !=null)
+			return type.getTypeParameters().equals(other.type.getTypeParameters());
+		return estimatedTypes.equals(other.estimatedTypes);
 	}
 
 	@Override
@@ -37,14 +41,9 @@ public class CompareMethodCall extends Compare {
 
 	@Override
 	public int getHashCode() {
-		if(type!=null) {
-			if(cloneType.isNotTypeOne())
-				return type.getTypeParameters().hashCode();
-			return type.hashCode();
-		}
-		if(cloneType.isNotTypeOne())
-			return call.getTypeArguments().get().hashCode();
-		return call.getTokenRange().get().hashCode();
+		if(type!=null)
+			return type.getTypeParameters().hashCode();
+		return estimatedTypes.hashCode();
 	}
 
 	@Override
