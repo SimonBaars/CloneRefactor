@@ -25,7 +25,7 @@ public class CompareMethodCall extends Compare {
 			return type.equals(other.type);
 		}
 		if(cloneType.isNotTypeOne())
-			return call.getTypeArguments().get().equals(other.call.getTypeArguments());
+			return call.getTypeArguments().get().equals(other.call.getTypeArguments().get());
 		return call.getTokenRange().get().equals(other.call.getTokenRange().get());
 	}
 
@@ -36,7 +36,14 @@ public class CompareMethodCall extends Compare {
 
 	@Override
 	public int getHashCode() {
-		return type == null ? call.hashCode() : type.hashCode();
+		if(type!=null) {
+			if(cloneType.isNotTypeOne())
+				return type.getTypeParameters().hashCode();
+			return type.hashCode();
+		}
+		if(cloneType.isNotTypeOne())
+			call.getTypeArguments().get().hashCode();
+		return call.getTokenRange().get().hashCode();
 	}
 
 	@Override

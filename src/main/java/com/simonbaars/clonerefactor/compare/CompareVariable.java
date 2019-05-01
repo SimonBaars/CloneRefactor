@@ -37,7 +37,7 @@ public class CompareVariable extends Compare {
 	@Override
 	public int getHashCode() {
 		if(type!=null) return cloneType.isNotTypeOne() ? type.hashCode() : type.hashCode() + dec.getName().hashCode();
-		return -3;
+		return cloneType.isNotTypeOne() ? -3 : dec.getName().hashCode();
 	}
 
 	@Override
