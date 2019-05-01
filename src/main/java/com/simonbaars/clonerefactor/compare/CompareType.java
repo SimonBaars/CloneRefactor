@@ -3,10 +3,11 @@ package com.simonbaars.clonerefactor.compare;
 import com.github.javaparser.ast.type.ReferenceType;
 import com.github.javaparser.resolution.types.ResolvedReferenceType;
 
-public class CompareType implements Compare {
+public class CompareType extends Compare {
 	private final ResolvedReferenceType type;
 	
-	public CompareType(ReferenceType t) {
+	public CompareType(CloneType cloneType, ReferenceType t) {
+		super(cloneType);
 		ResolvedReferenceType refType = null;
 		try {
 			refType = (ResolvedReferenceType)t.resolve();

@@ -3,11 +3,12 @@ package com.simonbaars.clonerefactor.compare;
 import com.github.javaparser.ast.expr.MethodCallExpr;
 import com.github.javaparser.resolution.declarations.ResolvedMethodDeclaration;
 
-public class CompareMethodCall implements Compare {
+public class CompareMethodCall extends Compare {
 	private final ResolvedMethodDeclaration type;
 	private final MethodCallExpr call;
 	
-	public CompareMethodCall(MethodCallExpr t) {
+	public CompareMethodCall(CloneType cloneType, MethodCallExpr t) {
+		super(cloneType);
 		ResolvedMethodDeclaration refType = null;
 		try {
 			refType = t.resolve();
@@ -16,10 +17,7 @@ public class CompareMethodCall implements Compare {
 		call = t;
 	}
 	
-	@Override
-	public boolean compare(Compare c, CloneType cloneType) {
-		if(!Compare.super.compare(c, cloneType))
-			return false;
+	public boolean equals(Object c) {
 		CompareMethodCall other = (CompareMethodCall)c;
 		if(type!=null && other.type !=null) {
 			if(cloneType.isNotTypeOne())
@@ -29,10 +27,6 @@ public class CompareMethodCall implements Compare {
 		if(cloneType.isNotTypeOne())
 			return call.getTypeArguments().get().equals(other.call.getTypeArguments());
 		return call.getTokenRange().get().equals(other.call.getTokenRange().get());
-	}
-	
-	public boolean equals(Object o) {
-		return true;
 	}
 
 	@Override

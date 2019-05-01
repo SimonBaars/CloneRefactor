@@ -1,25 +1,18 @@
 package com.simonbaars.clonerefactor.compare;
 
-public class CompareLiteral implements Compare {
-	private final CloneType type;
-	
-	public CompareLiteral(CloneType type) {
-		this.type = type;
-	}
-	
-	@Override
-	public boolean compare(Compare o, CloneType t) {
-		return Compare.super.compare(o, t);
+public class CompareLiteral extends Compare {
+	public CompareLiteral(CloneType cloneType) {
+		super(cloneType);
 	}
 	
 	@Override
 	public boolean equals(Object o) {
-		return true; //We compare using the interface default compare method.
+		return true; //Type two literals will always be flagged as equals, as we don't take them into account.
 	}
 
 	@Override
 	public boolean isValid() {
-		return type.isNotTypeOne(); //We make it invalid if the type is 1, so it will be compared using token comparison.
+		return cloneType.isNotTypeOne(); //We make it invalid if the type is 1, so it will be compared using token comparison.
 	}
 
 	@Override

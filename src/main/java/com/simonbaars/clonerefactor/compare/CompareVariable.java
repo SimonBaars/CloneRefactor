@@ -4,11 +4,12 @@ import com.github.javaparser.ast.expr.NameExpr;
 import com.github.javaparser.resolution.declarations.ResolvedValueDeclaration;
 import com.github.javaparser.resolution.types.ResolvedType;
 
-public class CompareVariable implements Compare {
+public class CompareVariable extends Compare {
 	private final ResolvedValueDeclaration dec;
 	private final ResolvedType type;
 	
-	public CompareVariable(NameExpr t) {
+	public CompareVariable(CloneType cloneType, NameExpr t) {
+		super(cloneType);
 		ResolvedValueDeclaration refType = null;
 		ResolvedType resolvedType = null;
 		try {
@@ -20,19 +21,12 @@ public class CompareVariable implements Compare {
 	}
 	
 	@Override
-	public boolean compare(Compare o, CloneType cloneType) {
-		if(!Compare.super.compare(o, cloneType))
-			return false;
+	public boolean equals(Object o) {
 		CompareVariable compareDec = ((CompareVariable)o);
-		if(cloneType == CloneType.TYPE1 && dec.getName()!=null && !dec.getName().equals(compareDec.dec.getName())) {
+		if(cloneType == CloneType.TYPE1 && !dec.getName().equals(compareDec.dec.getName())) {
 			return false;
 		}
 		return (type == null && compareDec.type == null) || (type!=null && type.equals(compareDec.type));
-	}
-	
-	@Override
-	public boolean equals(Object o) {
-		return true; //We compare using the compare method.
 	}
 
 	@Override
@@ -42,7 +36,7 @@ public class CompareVariable implements Compare {
 
 	@Override
 	public int getHashCode() {
-		if(type!=null) type.hashCode();
+		if(type!=null) return cloneType.isNotTypeOne() ? type.hashCode() : type.hashCode() + dec.getName().hashCode();
 		return -3;
 	}
 

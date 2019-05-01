@@ -2,12 +2,12 @@ package com.simonbaars.clonerefactor.compare;
 
 import com.github.javaparser.JavaToken;
 
-public class CompareToken implements Compare {
+public class CompareToken extends Compare {
 	
 	private final JavaToken token;
 	
-	public CompareToken(JavaToken token) {
-		super();
+	public CompareToken(CloneType cloneType, JavaToken token) {
+		super(cloneType);
 		this.token = token;
 	}
 
