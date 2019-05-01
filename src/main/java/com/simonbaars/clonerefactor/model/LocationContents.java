@@ -20,7 +20,6 @@ import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.expr.MethodCallExpr;
 import com.github.javaparser.ast.expr.NameExpr;
 import com.github.javaparser.ast.nodeTypes.NodeWithImplements;
-import com.simonbaars.clonerefactor.compare.CloneType;
 import com.simonbaars.clonerefactor.compare.Compare;
 import com.simonbaars.clonerefactor.detection.CloneDetection;
 import com.simonbaars.clonerefactor.exception.NoTokensException;

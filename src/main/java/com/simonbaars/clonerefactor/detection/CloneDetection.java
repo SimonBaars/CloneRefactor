@@ -19,6 +19,8 @@ public class CloneDetection {
 	private static final int MIN_AMOUNT_OF_TOKENS = 10;
 	private static final int MIN_AMOUNT_OF_NODES = 6;
 	public static final CloneType type = CloneType.TYPE2;
+	//public static final int MAX_LITERAL_VARIABILITY = 2;
+	//public static final int MAX_METHOD_CALL_VARIABILITY = 2;
 	
 	final List<Sequence> clones = new ArrayList<>();
 
@@ -76,12 +78,10 @@ public class CloneDetection {
 	}
 	
 	private Range getRange(Location l2, Location location) {
-		//System.out.println("getRange "+l2+", "+location );
 		return l2.getRange().withEnd(backtrace(l2, location.getAmountOfNodes()));
 	}
 
 	private Position backtrace(Location l2, int amountOfNodes) {
-		//System.out.println("Backtracing "+l2+" "+amountOfNodes);
 		for(int i = 1; i<amountOfNodes; i++)
 			l2 = l2.getNextLine();
 		return l2.getContents().getRange().end;
