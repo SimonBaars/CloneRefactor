@@ -10,14 +10,10 @@ import java.time.format.DateTimeFormatter;
 
 import com.github.javaparser.ParserConfiguration;
 import com.github.javaparser.symbolsolver.JavaSymbolSolver;
-import com.github.javaparser.symbolsolver.resolution.typesolvers.ClassLoaderTypeSolver;
 import com.github.javaparser.symbolsolver.resolution.typesolvers.CombinedTypeSolver;
 import com.github.javaparser.symbolsolver.resolution.typesolvers.JarTypeSolver;
 import com.github.javaparser.symbolsolver.resolution.typesolvers.JavaParserTypeSolver;
-import com.github.javaparser.symbolsolver.resolution.typesolvers.MemoryTypeSolver;
 import com.github.javaparser.symbolsolver.resolution.typesolvers.ReflectionTypeSolver;
-import com.github.javaparser.symbolsolver.utils.SymbolSolverCollectionStrategy;
-import com.github.javaparser.utils.ProjectRoot;
 import com.github.javaparser.utils.SourceRoot;
 import com.simonbaars.clonerefactor.ast.CloneParser;
 import com.simonbaars.clonerefactor.exception.NoJavaFilesFoundException;
@@ -45,6 +41,8 @@ public class Main {
 		CombinedTypeSolver combinedTypeSolver = new CombinedTypeSolver();
         combinedTypeSolver.add(new ReflectionTypeSolver());
         combinedTypeSolver.add(new JavaParserTypeSolver(sourceRoot));
+        
+        addLibrariesToTypeSolver(path, combinedTypeSolver);
        
         final ParserConfiguration config = new ParserConfiguration()
     			.setLexicalPreservationEnabled(false) //Disabled for now, we'll enable it when we start refactoring.
@@ -53,15 +51,9 @@ public class Main {
         SourceRoot root = new SourceRoot(sourceRoot);
 		return new CloneParser().parse(root, config);
 	}
-	
-	public static DetectionResults parseProject(Path path, Path sourceRoot) {
-		CombinedTypeSolver combinedTypeSolver = new CombinedTypeSolver();
-        combinedTypeSolver.add(new ReflectionTypeSolver());
-        combinedTypeSolver.add(new JavaParserTypeSolver(sourceRoot));
-       // combinedTypeSolver.add(new ClassLoaderTypeSolver(Main.class.getClassLoader()));
-        //combinedTypeSolver.add(new MemoryTypeSolver());
-        
-        File file = new File(path.toString()+File.separator+"lib");
+
+	private static void addLibrariesToTypeSolver(Path path, CombinedTypeSolver combinedTypeSolver) {
+		File file = new File(path.toString()+File.separator+"lib");
 		if(file.exists()) {
         	for(File f : file.listFiles(new FilenameFilter() {
 				
@@ -77,14 +69,6 @@ public class Main {
 				}
         	}
         }
-		
-		final ParserConfiguration config = new ParserConfiguration()
-    			.setLexicalPreservationEnabled(false) //Disabled for now, we'll enable it when we start refactoring.
-    			.setStoreTokens(true)
-    			.setSymbolResolver(new JavaSymbolSolver(combinedTypeSolver));
-		
-		SourceRoot root = new SourceRoot(sourceRoot);
-		return new CloneParser().parse(root, config);
 	}
 
 }
