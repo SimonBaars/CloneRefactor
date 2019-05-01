@@ -41,4 +41,8 @@ public class SavePaths {
 	public static String getJavaProjectFolder() {
 		return getApplicationDataFolder()+"java_projects"+File.separator;
 	}
+
+	public static String getGitFolder() {
+		return getApplicationDataFolder()+"git"+File.separator;
+	}
 }
