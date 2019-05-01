@@ -30,9 +30,18 @@ public class CompareMethodCall extends Compare {
 	
 	public boolean equals(Object c) {
 		CompareMethodCall other = (CompareMethodCall)c;
-		if(type!=null && other.type !=null)
-			return type.getTypeParameters().equals(other.type.getTypeParameters());
+		if(type!=null && other.type !=null) {
+			String methodSignature = type.getQualifiedSignature();
+			String compareMethodSignature = other.type.getSignature();
+			if(cloneType.isNotTypeOne()) 
+				return getOnlyArguments(methodSignature).equals(getOnlyArguments(compareMethodSignature));
+			return methodSignature.equals(compareMethodSignature);
+		}
 		return estimatedTypes.equals(other.estimatedTypes);
+	}
+	
+	private String getOnlyArguments(String methodSignature) {
+		return methodSignature.substring(methodSignature.indexOf('('));
 	}
 
 	@Override

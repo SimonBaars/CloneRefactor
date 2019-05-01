@@ -131,14 +131,12 @@ public class LocationContents {
 		
 		for(int i = 0; i<getTokens().size(); i++) {
 			JavaToken token = getTokens().get(i);
-			if(CloneDetection.type.isNotTypeOne()) {
-				Optional<Entry<Range, Node>> thisMethodOptional = compareMap.entrySet().stream().filter(e -> e.getValue() instanceof MethodCallExpr && e.getKey().contains(token.getRange().get())).findAny();
-				if(thisMethodOptional.isPresent()) {
-					Entry<Range, Node> thisMethod = thisMethodOptional.get();
-					getCompare().add(Compare.create(thisMethod.getValue(), token, CloneDetection.type));
-					for(; thisMethod.getKey().contains(getTokens().get(i+1).getRange().get()) && i<getTokens().size(); i++);
-					continue;
-				}
+			Optional<Entry<Range, Node>> thisMethodOptional = compareMap.entrySet().stream().filter(e -> e.getValue() instanceof MethodCallExpr && e.getKey().contains(token.getRange().get())).findAny();
+			if(thisMethodOptional.isPresent()) {
+				Entry<Range, Node> thisMethod = thisMethodOptional.get();
+				getCompare().add(Compare.create(thisMethod.getValue(), token, CloneDetection.type));
+				for(; thisMethod.getKey().contains(getTokens().get(i+1).getRange().get()) && i<getTokens().size(); i++);
+				continue;
 			}
 			getCompare().add(Compare.create(compareMap.containsKey(token.getRange().get()) ? compareMap.get(token.getRange().get()) : token, token, CloneDetection.type));
 		}
