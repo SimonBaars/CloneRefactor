@@ -13,6 +13,7 @@ public class CompareMethodCall extends Compare {
 		try {
 			refType = t.resolve();
 		} catch (Exception e) {}
+		t.getArguments().parallelStream().forEach(e -> System.out.println(e.getClass()));
 		type = refType;
 		call = t;
 	}
@@ -25,7 +26,7 @@ public class CompareMethodCall extends Compare {
 			return type.equals(other.type);
 		}
 		if(cloneType.isNotTypeOne())
-			return call.getTypeArguments().get().equals(other.call.getTypeArguments().get());
+			return call.getArguments().for.get().equals(other.call.getTypeArguments().get());
 		return call.getTokenRange().get().equals(other.call.getTokenRange().get());
 	}
 
@@ -42,7 +43,7 @@ public class CompareMethodCall extends Compare {
 			return type.hashCode();
 		}
 		if(cloneType.isNotTypeOne())
-			call.getTypeArguments().get().hashCode();
+			return call.getTypeArguments().get().hashCode();
 		return call.getTokenRange().get().hashCode();
 	}
 
