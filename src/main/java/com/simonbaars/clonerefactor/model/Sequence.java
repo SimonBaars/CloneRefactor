@@ -5,7 +5,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-public class Sequence {
+public class Sequence implements Comparable<Sequence> {
 	final List<Location> sequence;
 
 	public Sequence(List<Location> collection) {
@@ -83,5 +83,10 @@ public class Sequence {
 
 	public Location getAny() {
 		return sequence.get(0);
+	}
+
+	@Override
+	public int compareTo(Sequence o) {
+		return Integer.compare(getTotalNodeVolume(), o.getTotalNodeVolume());
 	}
 }

@@ -142,6 +142,6 @@ public class SimpleTest extends TestCase {
     }
 
 	private DetectionResults testProject(String project) {
-		return Main.cloneDetection(SimpleTest.class.getClassLoader().getResource(project).getFile());
+		return Main.cloneDetection(SimpleTest.class.getClassLoader().getResource(project).getFile()).sorted();
 	}
 }
