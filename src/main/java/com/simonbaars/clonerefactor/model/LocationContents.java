@@ -135,8 +135,12 @@ public class LocationContents {
 			if(thisMethodOptional.isPresent()) {
 				Entry<Range, Node> thisMethod = thisMethodOptional.get();
 				getCompare().add(Compare.create(thisMethod.getValue(), token, CloneDetection.type));
-				for(; thisMethod.getKey().contains(getTokens().get(i+1).getRange().get()) && i<getTokens().size(); i++);
-				continue;
+				if(CloneDetection.type.isNotTypeOne()) {
+					for(; thisMethod.getKey().contains(getTokens().get(i+1).getRange().get()) && i<getTokens().size(); i++);
+					continue;
+				} else {
+					compareMap.remove(thisMethod.getKey());
+				}
 			}
 			getCompare().add(Compare.create(compareMap.containsKey(token.getRange().get()) ? compareMap.get(token.getRange().get()) : token, token, CloneDetection.type));
 		}
@@ -180,6 +184,4 @@ public class LocationContents {
 	public List<Compare> getCompare() {
 		return compare;
 	}
-	
-	
 }
