@@ -28,8 +28,8 @@ public class LibTest extends TestCase {
         return new TestSuite( LibTest.class );
     }
     
-    public void testCustom() {
-    	System.out.println("custom");
+    public void testJSONCollection() {
+    	System.out.println("json-collection");
         String path = "/Users/sbaars/clone/git/json-collection/";
 		System.out.println(Main.cloneDetection(Paths.get(path), Paths.get(path+"src/main/java/")).sorted());
     }
