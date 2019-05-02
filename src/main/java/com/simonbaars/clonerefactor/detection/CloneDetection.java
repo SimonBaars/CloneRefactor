@@ -15,10 +15,10 @@ import com.simonbaars.clonerefactor.model.Sequence;
 
 public class CloneDetection {
 	/* Clone detection thresholds and settings. */
-	private static final int MIN_AMOUNT_OF_LINES = 6;
-	private static final int MIN_AMOUNT_OF_TOKENS = 10;
+	private static final int MIN_AMOUNT_OF_LINES = 1;
+	private static final int MIN_AMOUNT_OF_TOKENS = 12;
 	private static final int MIN_AMOUNT_OF_NODES = 6;
-	public static final CloneType type = CloneType.TYPE2;
+	public static final CloneType type = CloneType.TYPE1;
 	//public static final int MAX_LITERAL_VARIABILITY = 2;
 	//public static final int MAX_METHOD_CALL_VARIABILITY = 2;
 	
