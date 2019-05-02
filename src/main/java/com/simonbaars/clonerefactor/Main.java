@@ -56,7 +56,6 @@ public class Main {
 		File file = new File(path.toString()+File.separator+"lib");
 		if(file.exists()) {
         	for(File f : file.listFiles(new FilenameFilter() {
-				
 				@Override
 				public boolean accept(File dir, String name) {
 					return name.toLowerCase().endsWith(".jar");
