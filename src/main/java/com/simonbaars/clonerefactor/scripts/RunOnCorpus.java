@@ -22,7 +22,6 @@ public class RunOnCorpus {
 		CorpusThread[] threadPool = new CorpusThread[NUMBER_OF_THREADS];
 		OUTPUT_FOLDER.mkdirs();
 		File[] corpusFiles = new File(SavePaths.getApplicationDataFolder()+"git").listFiles();
-		System.out.println(Arrays.toString(corpusFiles));
 		analyzeAllProjects(threadPool, corpusFiles);
 		System.out.println("Finishing up :)");
 		finishFinalThreads(threadPool);
