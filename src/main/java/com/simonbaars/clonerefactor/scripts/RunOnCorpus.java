@@ -1,7 +1,5 @@
 package com.simonbaars.clonerefactor.scripts;
 
-import static com.simonbaars.clonerefactor.scripts.prepare.PrepareProjectsFolder.getFilteredCorpusFiles;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
@@ -17,13 +15,13 @@ import me.tongfei.progressbar.ProgressBar;
 public class RunOnCorpus {
 	private static File OUTPUT_FOLDER = new File(SavePaths.getFullOutputFolder());
 	private static File FULL_METRICS = new File(OUTPUT_FOLDER.getParent()+"/full_metrics.txt");
-	private static int NUMBER_OF_THREADS = 8;
+	private static int NUMBER_OF_THREADS = 4;
 	private static final Metrics fullMetrics = new Metrics();
 
 	public static void main(String[] args) {
 		CorpusThread[] threadPool = new CorpusThread[NUMBER_OF_THREADS];
 		OUTPUT_FOLDER.mkdirs();
-		File[] corpusFiles = getFilteredCorpusFiles(0, 1000);
+		File[] corpusFiles = new File(SavePaths.getApplicationDataFolder()+"git").listFiles();
 		analyzeAllProjects(threadPool, corpusFiles);
 		System.out.println("Finishing up :)");
 		finishFinalThreads(threadPool);
