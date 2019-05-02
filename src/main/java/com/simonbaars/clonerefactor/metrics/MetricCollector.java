@@ -14,6 +14,7 @@ import com.simonbaars.clonerefactor.metrics.enums.CloneRefactorability;
 import com.simonbaars.clonerefactor.metrics.enums.CloneRelation;
 import com.simonbaars.clonerefactor.model.Location;
 import com.simonbaars.clonerefactor.model.Sequence;
+import com.simonbaars.clonerefactor.model.simple.AbstractCloneInstance;
 
 public class MetricCollector {
 	private final SetMap<Path, Integer> parsedEffectiveLines = new SetMap<>();
@@ -92,7 +93,7 @@ public class MetricCollector {
 		metrics.amountOfTokensCloned+=getUnparsedTokens(l, true);
 		metrics.amountOfNodesCloned+=getUnparsedNodes(l, true);
 		metrics.amountOfEffectiveLinesCloned+=getUnparsedEffectiveLines(l, true);
-		
+		metrics.amountPerDetailedCloneContents.increment(new AbstractCloneInstance(l));
 	}
 
 	private int getUnparsedTokens(Location l, boolean countOverlap) {
