@@ -87,6 +87,8 @@ public class Sequence implements Comparable<Sequence> {
 
 	@Override
 	public int compareTo(Sequence o) {
-		return Integer.compare(getTotalNodeVolume(), o.getTotalNodeVolume());
+		if(getNodeSize() == o.getNodeSize())
+			return Integer.compare(o.size(), size());
+		return Integer.compare(o.getNodeSize(), getNodeSize());
 	}
 }
