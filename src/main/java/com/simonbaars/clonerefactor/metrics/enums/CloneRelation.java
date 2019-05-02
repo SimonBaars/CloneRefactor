@@ -152,7 +152,7 @@ public class CloneRelation implements MetricEnum<RelationType> {
 	private String getFullyQualifiedName(ClassOrInterfaceType t) {
 		try { 
 			return t.resolve().getQualifiedName();
-		} catch (UnsolvedSymbolException | IllegalStateException e) {
+		} catch (Exception e) {
 			return t.getNameAsString();
 		}
 	}
@@ -160,7 +160,7 @@ public class CloneRelation implements MetricEnum<RelationType> {
 	private String getFullyQualifiedName(ClassOrInterfaceDeclaration c2) {
 		try { 
 			return c2.resolve().getQualifiedName();
-		} catch (UnsolvedSymbolException | IllegalStateException e) {
+		} catch (Exception e) {
 			return c2.getNameAsString();
 		}
 	}
