@@ -43,7 +43,7 @@ public class NodeParser implements Parser, RequiresNodeOperations {
 			thisLocation = new Location(cu.getStorage().get().getPath(), prevLocation);
 			thisLocation.calculateTokens(n, range);
 			if(prevLocation!=null) prevLocation.setNextLine(thisLocation);
-			//System.out.println("Parsing "+n.getClass().getName()+" as "+thisLocation.getContents()+" at location "+thisLocation);
+			//System.out.println("Parsing "+n.getClass().getName()+" as "+thisLocation.getContents().toNodeClasses()+" at location "+thisLocation);
 			addLineTokensToReg(thisLocation);
 		}
 		return thisLocation;

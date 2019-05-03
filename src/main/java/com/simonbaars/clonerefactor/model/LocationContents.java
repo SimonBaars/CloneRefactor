@@ -17,10 +17,10 @@ import com.github.javaparser.JavaToken.Category;
 import com.github.javaparser.Range;
 import com.github.javaparser.TokenRange;
 import com.github.javaparser.ast.Node;
-import com.github.javaparser.ast.expr.MethodCallExpr;
 import com.github.javaparser.ast.expr.NameExpr;
 import com.github.javaparser.ast.nodeTypes.NodeWithImplements;
 import com.simonbaars.clonerefactor.compare.Compare;
+import com.simonbaars.clonerefactor.compare.CompareToken;
 import com.simonbaars.clonerefactor.detection.CloneDetection;
 import com.simonbaars.clonerefactor.exception.NoTokensException;
 
@@ -131,16 +131,14 @@ public class LocationContents {
 		
 		for(int i = 0; i<getTokens().size(); i++) {
 			JavaToken token = getTokens().get(i);
-			Optional<Entry<Range, Node>> thisMethodOptional = compareMap.entrySet().stream().filter(e -> e.getValue() instanceof MethodCallExpr && e.getKey().contains(token.getRange().get())).findAny();
-			if(thisMethodOptional.isPresent()) {
-				Entry<Range, Node> thisMethod = thisMethodOptional.get();
-				getCompare().add(Compare.create(thisMethod.getValue(), token, CloneDetection.type));
-				if(CloneDetection.type.isNotTypeOne()) {
-					for(; thisMethod.getKey().contains(getTokens().get(i+1).getRange().get()) && i<getTokens().size(); i++);
+			Optional<Entry<Range, Node>> thisNodeOptional = compareMap.entrySet().stream().filter(e -> e.getKey().contains(token.getRange().get())).findAny();
+			if(thisNodeOptional.isPresent()) {
+				Entry<Range, Node> thisNode = thisNodeOptional.get();
+				getCompare().add(Compare.create(thisNode.getValue(), token, CloneDetection.type));
+				if(!(getCompare().get(getCompare().size()-1) instanceof CompareToken) && CloneDetection.type.isNotTypeOne()) {
+					for(; thisNode.getKey().contains(getTokens().get(i+1).getRange().get()) && i<getTokens().size(); i++);
 					continue;
-				} else {
-					compareMap.remove(thisMethod.getKey());
-				}
+				} else compareMap.remove(thisNode.getKey());
 			}
 			getCompare().add(Compare.create(compareMap.containsKey(token.getRange().get()) ? compareMap.get(token.getRange().get()) : token, token, CloneDetection.type));
 		}
@@ -183,5 +181,9 @@ public class LocationContents {
 
 	public List<Compare> getCompare() {
 		return compare;
+	}
+
+	public String toNodeClasses() {
+		return getNodesForCompare().values().stream().map(e -> e.toString()+ " => " +e.getClass().getName()).collect(Collectors.joining(", ", "[", "]"));
 	}
 }
