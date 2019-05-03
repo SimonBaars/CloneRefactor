@@ -8,10 +8,11 @@ import com.github.javaparser.JavaToken;
 import com.github.javaparser.ast.expr.MethodCallExpr;
 import com.github.javaparser.ast.expr.NameExpr;
 import com.github.javaparser.resolution.declarations.ResolvedMethodDeclaration;
+import com.simonbaars.clonerefactor.model.FiltersTokens;
 
-public class CompareMethodCall extends Compare {
+public class CompareMethodCall extends Compare implements FiltersTokens {
 	private final ResolvedMethodDeclaration type;
-	private final List<JavaToken> myTokens = new ArrayList<>();
+	private final List<JavaToken> myTokens;
 	private final List<Object> estimatedTypes = new ArrayList<>();
 	
 	public CompareMethodCall(CloneType cloneType, MethodCallExpr t) {
@@ -22,8 +23,7 @@ public class CompareMethodCall extends Compare {
 		} catch (Exception e) {}
 		type = refType;
 		estimateTypes(t);
-		for(JavaToken token : t.getTokenRange().get())
-			myTokens.add(token);
+		myTokens = getEffectiveTokenList(t.getTokenRange().get());
 	}
 
 	/*
