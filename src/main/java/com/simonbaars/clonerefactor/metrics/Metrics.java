@@ -5,7 +5,6 @@ import com.simonbaars.clonerefactor.metrics.enums.CloneContents.ContentsType;
 import com.simonbaars.clonerefactor.metrics.enums.CloneLocation.LocationType;
 import com.simonbaars.clonerefactor.metrics.enums.CloneRefactorability.Refactorability;
 import com.simonbaars.clonerefactor.metrics.enums.CloneRelation.RelationType;
-import com.simonbaars.clonerefactor.model.simple.AbstractCloneInstance;
 
 public class Metrics {
 	public int totalAmountOfLines = 0;
@@ -35,8 +34,6 @@ public class Metrics {
 	public final CountMap<Integer> amountPerEffectiveLines = new CountMap<>();
 	public final CountMap<Integer> amountPerTotalEffectiveLineVolume = new CountMap<>();
 	
-	public final CountMap<AbstractCloneInstance> amountPerDetailedCloneContents = new CountMap<>();
-	
 	public int skipped = 0;
 
 
@@ -54,8 +51,7 @@ public class Metrics {
 				+ amountPerContents + ", amountPerExtract=" + amountPerExtract + ", amountPerCloneClassSize="
 				+ amountPerCloneClassSize + ", amountPerNodes=" + amountPerNodes + ", amountPerTotalNodeVolume="
 				+ amountPerTotalNodeVolume + ", amountPerEffectiveLines=" + amountPerEffectiveLines
-				+ ", amountPerTotalEffectiveLineVolume=" + amountPerTotalEffectiveLineVolume
-				+ ", amountPerDetailedCloneContents=" + amountPerDetailedCloneContents + ", skipped=" + skipped + "]";
+				+ ", amountPerTotalEffectiveLineVolume=" + amountPerTotalEffectiveLineVolume + ", skipped=" + skipped + "]";
 	}
 
 
@@ -87,8 +83,6 @@ public class Metrics {
 		
 		amountPerEffectiveLines.addAll(metrics.amountPerEffectiveLines);
 		amountPerTotalEffectiveLineVolume.addAll(metrics.amountPerTotalEffectiveLineVolume);
-		
-		amountPerDetailedCloneContents.addAll(metrics.amountPerDetailedCloneContents);
 		
 		skipped+=metrics.skipped;
 	}
