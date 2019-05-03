@@ -45,7 +45,7 @@ public class CompareMethodCall extends Compare implements FiltersTokens {
 			return false;
 		if(type!=null && other.type !=null) {
 			String methodSignature = type.getQualifiedSignature();
-			String compareMethodSignature = other.type.getSignature();
+			String compareMethodSignature = other.type.getQualifiedSignature();
 			if(cloneType.isNotTypeOne()) 
 				return getOnlyArguments(methodSignature).equals(getOnlyArguments(compareMethodSignature));
 			return methodSignature.equals(compareMethodSignature);
@@ -71,6 +71,6 @@ public class CompareMethodCall extends Compare implements FiltersTokens {
 
 	@Override
 	public String toString() {
-		return "CompareType [type=" + type + "]";
+		return "CompareMethodCall [type=" + type + "]";
 	}
 }
