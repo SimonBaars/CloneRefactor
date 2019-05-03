@@ -135,12 +135,12 @@ public class LocationContents {
 			if(thisNodeOptional.isPresent()) {
 				Entry<Range, Node> thisNode = thisNodeOptional.get();
 				getCompare().add(Compare.create(thisNode.getValue(), token, CloneDetection.type));
-				if(getCompare().get(getCompare().size()-1) instanceof CompareToken)
-					compareMap.remove(thisNode.getKey()); 
-				else for(; thisNode.getKey().contains(getTokens().get(i+1).getRange().get()) && i<getTokens().size(); i++);
-				continue;
+				if(!(getCompare().get(getCompare().size()-1) instanceof CompareToken) && CloneDetection.type.isNotTypeOne()) {
+					for(; thisNode.getKey().contains(getTokens().get(i+1).getRange().get()) && i<getTokens().size(); i++);
+					continue;
+				} else compareMap.remove(thisNode.getKey());
 			}
-			getCompare().add(Compare.create(token, token, CloneDetection.type));
+			getCompare().add(Compare.create(compareMap.containsKey(token.getRange().get()) ? compareMap.get(token.getRange().get()) : token, token, CloneDetection.type));
 		}
 		//getTokens().forEach(e -> getCompare().add(Compare.create(e.getRange().isPresent() && compareMap.containsKey(e.getRange().get()) ? compareMap.get(e.getRange().get()) : e, e, CloneDetection.type)));
 		//System.out.println(getCompare().stream().map(e -> e.toString()).collect(Collectors.joining(", ", "[", "]")));
