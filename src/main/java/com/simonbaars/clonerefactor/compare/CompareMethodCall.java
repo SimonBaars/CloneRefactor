@@ -4,12 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.github.javaparser.JavaToken;
 import com.github.javaparser.ast.expr.MethodCallExpr;
 import com.github.javaparser.ast.expr.NameExpr;
 import com.github.javaparser.resolution.declarations.ResolvedMethodDeclaration;
 
 public class CompareMethodCall extends Compare {
 	private final ResolvedMethodDeclaration type;
+	private final List<JavaToken> myTokens = new ArrayList<>();
 	private final List<Object> estimatedTypes = new ArrayList<>();
 	
 	public CompareMethodCall(CloneType cloneType, MethodCallExpr t) {
@@ -20,6 +22,8 @@ public class CompareMethodCall extends Compare {
 		} catch (Exception e) {}
 		type = refType;
 		estimateTypes(t);
+		for(JavaToken token : t.getTokenRange().get())
+			myTokens.add(token);
 	}
 
 	/*
@@ -37,6 +41,8 @@ public class CompareMethodCall extends Compare {
 	
 	public boolean equals(Object c) {
 		CompareMethodCall other = (CompareMethodCall)c;
+		if(cloneType == CloneType.TYPE1 && !myTokens.equals(other.myTokens))
+			return false;
 		if(type!=null && other.type !=null) {
 			String methodSignature = type.getQualifiedSignature();
 			String compareMethodSignature = other.type.getSignature();
