@@ -13,7 +13,6 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import com.github.javaparser.JavaToken;
-import com.github.javaparser.JavaToken.Category;
 import com.github.javaparser.Range;
 import com.github.javaparser.TokenRange;
 import com.github.javaparser.ast.Node;
@@ -24,13 +23,11 @@ import com.simonbaars.clonerefactor.compare.CompareToken;
 import com.simonbaars.clonerefactor.detection.CloneDetection;
 import com.simonbaars.clonerefactor.exception.NoTokensException;
 
-public class LocationContents {
+public class LocationContents implements FiltersTokens {
 	private Range range;
 	private final List<Node> nodes;
 	private final List<JavaToken> tokens;
 	private final List<Compare> compare;
-	
-	private static final Category[] NO_TOKEN = {Category.COMMENT, Category.EOL, Category.WHITESPACE_NO_EOL};
 	
 	public LocationContents() {
 		this.nodes = new ArrayList<>();
@@ -97,11 +94,11 @@ public class LocationContents {
 	public int getAmountOfTokens() {
 		return new Long(getEffectiveTokens().count()).intValue();
 	}
-
-	private Stream<JavaToken> getEffectiveTokens() {
-		return tokens.stream().filter(e -> Arrays.stream(NO_TOKEN).noneMatch(c -> c.equals(e.getCategory())));
-	}
 	
+	private Stream<JavaToken> getEffectiveTokens() {
+		return getEffectiveTokens(tokens);
+	}
+
 	@Override
 	public int hashCode() {
 		int prime = 31;
@@ -128,20 +125,18 @@ public class LocationContents {
 
 	private void createCompareList(Node n) {
 		Map<Range, Node> compareMap = getNodesForCompare(Arrays.asList(n));
-		
-		for(int i = 0; i<getTokens().size(); i++) {
-			JavaToken token = getTokens().get(i);
+		getEffectiveTokens().forEach(token -> {
 			Optional<Entry<Range, Node>> thisNodeOptional = compareMap.entrySet().stream().filter(e -> e.getKey().contains(token.getRange().get())).findAny();
 			if(thisNodeOptional.isPresent()) {
 				Entry<Range, Node> thisNode = thisNodeOptional.get();
-				getCompare().add(Compare.create(thisNode.getValue(), token, CloneDetection.type));
-				if(getCompare().get(getCompare().size()-1) instanceof CompareToken)
-					compareMap.remove(thisNode.getKey()); 
-				else for(; thisNode.getKey().contains(getTokens().get(i+1).getRange().get()) && i<getTokens().size(); i++);
-				continue;
-			}
-			getCompare().add(Compare.create(token, token, CloneDetection.type));
-		}
+				if(thisNode != null){
+					getCompare().add(Compare.create(thisNode.getValue(), token, CloneDetection.type));
+					if(getCompare().get(getCompare().size()-1) instanceof CompareToken)
+						compareMap.remove(thisNode.getKey()); 
+					else thisNode.setValue(null);
+				}
+			} else getCompare().add(Compare.create(token, token, CloneDetection.type));
+		});
 		//getTokens().forEach(e -> getCompare().add(Compare.create(e.getRange().isPresent() && compareMap.containsKey(e.getRange().get()) ? compareMap.get(e.getRange().get()) : e, e, CloneDetection.type)));
 		//System.out.println(getCompare().stream().map(e -> e.toString()).collect(Collectors.joining(", ", "[", "]")));
 		//System.out.println(compareMap.values().stream().map(e -> e.toString()+" "+e.getClass().getSimpleName()).collect(Collectors.joining(", ")));
