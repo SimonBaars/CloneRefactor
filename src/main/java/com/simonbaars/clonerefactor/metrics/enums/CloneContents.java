@@ -29,6 +29,7 @@ import com.github.javaparser.ast.body.FieldDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.simonbaars.clonerefactor.ast.RequiresNodeOperations;
 import com.simonbaars.clonerefactor.metrics.enums.CloneContents.ContentsType;
+import com.simonbaars.clonerefactor.model.LocationContents;
 import com.simonbaars.clonerefactor.model.Sequence;
 
 public class CloneContents implements MetricEnum<ContentsType>, RequiresNodeOperations {
@@ -53,7 +54,11 @@ public class CloneContents implements MetricEnum<ContentsType>, RequiresNodeOper
 
 	@Override
 	public ContentsType get(Sequence sequence) {
-		List<Node> nodes = sequence.getAny().getContents().getNodes();
+		return get(sequence.getAny().getContents());
+	}
+
+	public ContentsType get(LocationContents c) {
+		List<Node> nodes = c.getNodes();
 		if(nodes.get(0) instanceof MethodDeclaration && nodes.get(nodes.size()-1) == getLastStatement(nodes.get(0))) {
 			return FULLMETHOD;
 		} else if(getMethod(nodes.get(0))!=null && getMethod(nodes.get(0)) == getMethod(nodes.get(nodes.size()-1))) {
@@ -85,7 +90,6 @@ public class CloneContents implements MetricEnum<ContentsType>, RequiresNodeOper
 		} else if(nodes.stream().anyMatch(e -> getConstructor(e)!=null)) {
 			return INCLUDESCONSTRUCTOR;
 		}
-		//System.out.println(Arrays.toString(nodes.toArray()));
 		return OTHER;
 	}
 

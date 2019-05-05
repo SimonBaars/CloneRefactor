@@ -82,6 +82,7 @@ public class MetricCollector {
 		metrics.amountPerTotalNodeVolume.increment(clone.getTotalNodeVolume());
 		metrics.amountPerEffectiveLines.increment(clone.getEffectiveLineSize());
 		metrics.amountPerTotalEffectiveLineVolume.increment(clone.getTotalEffectiveLineVolume());
+		clone.setMetrics(relationFinder, extractFinder);
 		for(Location l : clone.getSequence()) {
 			reportClonedLocation(l);
 		}
@@ -92,6 +93,8 @@ public class MetricCollector {
 		metrics.amountOfTokensCloned+=getUnparsedTokens(l, true);
 		metrics.amountOfNodesCloned+=getUnparsedNodes(l, true);
 		metrics.amountOfEffectiveLinesCloned+=getUnparsedEffectiveLines(l, true);
+		l.setMetrics(locationFinder);
+		l.getContents().setMetrics(contentsFinder);
 	}
 
 	private int getUnparsedTokens(Location l, boolean countOverlap) {

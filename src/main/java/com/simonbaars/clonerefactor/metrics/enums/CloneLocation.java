@@ -15,6 +15,7 @@ import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.ConstructorDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.simonbaars.clonerefactor.metrics.enums.CloneLocation.LocationType;
+import com.simonbaars.clonerefactor.model.Location;
 import com.simonbaars.clonerefactor.model.Sequence;
 
 public class CloneLocation implements MetricEnum<LocationType> {
@@ -29,9 +30,13 @@ public class CloneLocation implements MetricEnum<LocationType> {
 
 	@Override
 	public LocationType get(Sequence sequence) {
+		return get(sequence.getSequence().get(0));
+	}
+	
+	public LocationType get(Location l) {
 		List<LocationType> locations = new ArrayList<>();
-		for(int i = 0; i<sequence.getSequence().get(0).getContents().getNodes().size(); i++) {
-			locations.add(getLocation(sequence.getSequence().get(0).getContents().getNodes().get(i), i));
+		for(int i = 0; i<l.getContents().getNodes().size(); i++) {
+			locations.add(getLocation(l.getContents().getNodes().get(i), i));
 		}
 		return locations.stream().sorted().reduce((first, second) -> second).get();
 	}

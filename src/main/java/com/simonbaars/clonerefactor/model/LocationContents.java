@@ -1,6 +1,5 @@
 package com.simonbaars.clonerefactor.model;
 
-import java.io.ObjectInputStream.GetField;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -23,6 +22,8 @@ import com.simonbaars.clonerefactor.compare.Compare;
 import com.simonbaars.clonerefactor.compare.CompareToken;
 import com.simonbaars.clonerefactor.detection.CloneDetection;
 import com.simonbaars.clonerefactor.exception.NoTokensException;
+import com.simonbaars.clonerefactor.metrics.enums.CloneContents;
+import com.simonbaars.clonerefactor.metrics.enums.CloneContents.ContentsType;
 
 public class LocationContents implements FiltersTokens {
 	private static boolean tokenCompare = true;
@@ -31,6 +32,8 @@ public class LocationContents implements FiltersTokens {
 	private final List<Node> nodes;
 	private final List<JavaToken> tokens;
 	private final List<Compare> compare;
+	
+	private ContentsType contentsType;
 	
 	public LocationContents() {
 		this.nodes = new ArrayList<>();
@@ -186,5 +189,14 @@ public class LocationContents implements FiltersTokens {
 
 	public String toNodeClasses() {
 		return getNodesForCompare().values().stream().map(e -> e.toString()+ " => " +e.getClass().getName()).collect(Collectors.joining(", ", "[", "]"));
+	}
+	
+	public ContentsType getContentsType() {
+		return contentsType;
+	}
+	
+	public void setMetrics(CloneContents c) {
+		this.contentsType = c.get(this);
+		
 	}
 }

@@ -5,8 +5,16 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
+import com.simonbaars.clonerefactor.metrics.enums.CloneRefactorability;
+import com.simonbaars.clonerefactor.metrics.enums.CloneRefactorability.Refactorability;
+import com.simonbaars.clonerefactor.metrics.enums.CloneRelation;
+import com.simonbaars.clonerefactor.metrics.enums.CloneRelation.RelationType;
+
 public class Sequence implements Comparable<Sequence> {
 	final List<Location> sequence;
+	
+	private RelationType relationType;
+	private Refactorability refactorability;
 
 	public Sequence(List<Location> collection) {
 		super();
@@ -90,5 +98,18 @@ public class Sequence implements Comparable<Sequence> {
 		if(getNodeSize() == o.getNodeSize())
 			return Integer.compare(o.size(), size());
 		return Integer.compare(o.getNodeSize(), getNodeSize());
+	}
+	
+	public void setMetrics(CloneRelation relation, CloneRefactorability r) {
+		relationType = relation.get(this);
+		refactorability = r.get(this);
+	}
+	
+	public RelationType getRelationType() {
+		return relationType;
+	}
+	
+	public Refactorability getRefactorability() {
+		return refactorability;
 	}
 }

@@ -6,6 +6,8 @@ import java.util.Optional;
 import com.github.javaparser.Range;
 import com.github.javaparser.TokenRange;
 import com.github.javaparser.ast.Node;
+import com.simonbaars.clonerefactor.metrics.enums.CloneLocation;
+import com.simonbaars.clonerefactor.metrics.enums.CloneLocation.LocationType;
 
 public class Location {
 	private final Path file;
@@ -16,6 +18,8 @@ public class Location {
 	private Location prevLocation;
 	private Location clone;
 	private Location nextLocation;
+
+	private LocationType locationType;
 
 	public Location(Path file) {
 		this.file=file;
@@ -155,5 +159,13 @@ public class Location {
 
 	public int getAmountOfNodes() {
 		return getContents().getNodes().size();
+	}
+
+	public LocationType getLocationType() {
+		return locationType;
+	}
+	
+	public void setMetrics(CloneLocation l) {
+		this.locationType = l.get(this);
 	}
 }
