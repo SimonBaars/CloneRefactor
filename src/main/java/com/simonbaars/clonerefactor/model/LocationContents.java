@@ -1,5 +1,6 @@
 package com.simonbaars.clonerefactor.model;
 
+import java.io.ObjectInputStream.GetField;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -24,6 +25,8 @@ import com.simonbaars.clonerefactor.detection.CloneDetection;
 import com.simonbaars.clonerefactor.exception.NoTokensException;
 
 public class LocationContents implements FiltersTokens {
+	private static boolean tokenCompare = true;
+	
 	private Range range;
 	private final List<Node> nodes;
 	private final List<JavaToken> tokens;
@@ -63,6 +66,8 @@ public class LocationContents implements FiltersTokens {
 			return false;
 		//if(other.tokens.equals(tokens) && !IntStream.range(0, compare.size()).allMatch(i -> compare.get(i).compare(other.compare.get(i))))
 		//	System.out.println(Arrays.toString(other.compare.toArray())+System.lineSeparator()+Arrays.toString(compare.toArray())+System.lineSeparator()+IntStream.range(0, compare.size()).peek(i -> System.out.println(compare.get(i)+", "+other.compare.get(i)+", "+compare.get(i).compare(other.compare.get(i)))).allMatch(i -> compare.get(i).compare(other.compare.get(i))));
+		if(tokenCompare)
+			return getEffectiveTokenList(tokens).equals(getEffectiveTokenList(other.tokens));
 		return IntStream.range(0, compare.size()).allMatch(i -> compare.get(i).compare(other.compare.get(i)));
 	}
 	
@@ -119,7 +124,8 @@ public class LocationContents implements FiltersTokens {
 		if(tokens.isEmpty())
 			throw new NoTokensException(n, tokenRange, validRange);
 		range = new Range(tokens.get(0).getRange().get().begin, tokens.get(tokens.size()-1).getRange().get().end);
-		createCompareList(n);
+		if(!tokenCompare)
+			createCompareList(n);
 		return range; 
 	}
 

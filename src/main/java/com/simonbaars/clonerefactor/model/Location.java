@@ -156,5 +156,4 @@ public class Location {
 	public int getAmountOfNodes() {
 		return getContents().getNodes().size();
 	}
-	
 }
