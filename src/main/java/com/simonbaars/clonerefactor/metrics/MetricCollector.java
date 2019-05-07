@@ -74,15 +74,13 @@ public class MetricCollector {
 
 	private void reportClone(Sequence clone) {
 		metrics.amountPerCloneClassSize.increment(clone.size());
-		metrics.amountPerRelation.increment(relationFinder.get(clone));
-		metrics.amountPerLocation.increment(locationFinder.get(clone));
-		metrics.amountPerContents.increment(contentsFinder.get(clone));
-		metrics.amountPerExtract.increment(extractFinder.get(clone));
 		metrics.amountPerNodes.increment(clone.getNodeSize());
 		metrics.amountPerTotalNodeVolume.increment(clone.getTotalNodeVolume());
 		metrics.amountPerEffectiveLines.increment(clone.getEffectiveLineSize());
 		metrics.amountPerTotalEffectiveLineVolume.increment(clone.getTotalEffectiveLineVolume());
 		clone.setMetrics(relationFinder, extractFinder);
+		metrics.amountPerRelation.increment(clone.getRelationType());
+		metrics.amountPerExtract.increment(clone.getRefactorability());
 		for(Location l : clone.getSequence()) {
 			reportClonedLocation(l);
 		}
@@ -95,6 +93,8 @@ public class MetricCollector {
 		metrics.amountOfEffectiveLinesCloned+=getUnparsedEffectiveLines(l, true);
 		l.setMetrics(locationFinder);
 		l.getContents().setMetrics(contentsFinder);
+		metrics.amountPerLocation.increment(l.getLocationType());
+		metrics.amountPerContents.increment(l.getContents().getContentsType());
 	}
 
 	private int getUnparsedTokens(Location l, boolean countOverlap) {
