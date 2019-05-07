@@ -7,6 +7,7 @@ import java.util.Date;
 public class SavePaths {
 	
 	private static String dataFolder = "clone";
+	private static final String format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
 
 	private SavePaths() {}
 	
@@ -35,7 +36,11 @@ public class SavePaths {
 	}
 
 	public static String getFullOutputFolder() {
-		return SavePaths.createDirectoryIfNotExists(SavePaths.getOutputFolder())+new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date())+File.separator+"full"+File.separator;
+		return getMyOutputFolder()+"full"+File.separator;
+	}
+	
+	public static String getMyOutputFolder() {
+		return SavePaths.createDirectoryIfNotExists(SavePaths.getOutputFolder())+format+File.separator;
 	}
 
 	public static String getJavaProjectFolder() {
@@ -48,5 +53,9 @@ public class SavePaths {
 	
 	public static String getGitSourcesFolder() {
 		return getApplicationDataFolder()+"gitsrc"+File.separator;
+	}
+
+	public static String getErrorFolder() {
+		return getMyOutputFolder()+"errors"+File.separator;
 	}
 }

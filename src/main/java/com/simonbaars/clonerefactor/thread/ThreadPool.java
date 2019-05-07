@@ -20,7 +20,6 @@ public class ThreadPool {
 	private final int NUMBER_OF_THREADS = 4;
 	private final int THREAD_TIMEOUT = 100000;
 	private final Metrics fullMetrics = new Metrics();
-	private final List<CorpusThreadException> errorLog = new ArrayList<>();
 	private final List<String> includedProjects = new ArrayList<>();
 	
 	private final CorpusThread[] threads;
@@ -73,16 +72,8 @@ public class ThreadPool {
 	}
 
 	private void finishUp() {
-		File path = new File(SavePaths.createDirectoryIfNotExists(SavePaths.getOutputFolder()+"errors"));
-		for(CorpusThreadException e : errorLog) {
-			try {
-				FileUtils.writeStringToFile(new File(path.getAbsolutePath()+File.separator+e.file.getName()+".txt"), ExceptionUtils.getFullStackTrace(e));
-			} catch (IOException e1) {
-				e1.printStackTrace();
-			}
-		}
 		try {
-			FileUtils.writeStringToFile(new File(SavePaths.getOutputFolder()+"included_projects.txt"), Arrays.toString(includedProjects.toArray()));
+			FileUtils.writeStringToFile(new File(SavePaths.getMyOutputFolder()+"included_projects.txt"), Arrays.toString(includedProjects.toArray()));
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
@@ -98,8 +89,16 @@ public class ThreadPool {
 			if(threads[i].res != null) {
 				writeResults(file, threads[i].res);
 				includedProjects.add(threads[i].getFile().getName());
-			} else errorLog.add(threads[i].error);
+			} else writeError(i);
 			threads[i]=null;
+		}
+	}
+
+	private void writeError(int i) {
+		try {
+			FileUtils.writeStringToFile(new File(SavePaths.getErrorFolder()+threads[i].error.file.getName()+".txt"), ExceptionUtils.getFullStackTrace(threads[i].error));
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
 
