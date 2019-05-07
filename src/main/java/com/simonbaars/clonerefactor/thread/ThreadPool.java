@@ -9,6 +9,7 @@ import java.util.stream.IntStream;
 
 import org.apache.commons.lang.exception.ExceptionUtils;
 
+import com.github.javaparser.symbolsolver.javaparsermodel.JavaParserFacade;
 import com.simonbaars.clonerefactor.metrics.Metrics;
 import com.simonbaars.clonerefactor.model.DetectionResults;
 import com.simonbaars.clonerefactor.util.FileUtils;
@@ -90,6 +91,7 @@ public class ThreadPool {
 				writeResults(file, threads[i].res);
 				includedProjects.add(threads[i].getFile().getName());
 			} else writeError(i);
+			JavaParserFacade.clearInstances();
 			threads[i]=null;
 		}
 	}
