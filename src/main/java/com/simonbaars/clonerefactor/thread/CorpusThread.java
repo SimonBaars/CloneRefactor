@@ -5,6 +5,7 @@ import java.nio.file.Paths;
 
 import com.simonbaars.clonerefactor.Main;
 import com.simonbaars.clonerefactor.model.DetectionResults;
+import com.simonbaars.clonerefactor.util.Wait;
 
 public class CorpusThread extends Thread {
 	private final File file;
@@ -26,8 +27,14 @@ public class CorpusThread extends Thread {
 		}
 	}
 
+	@SuppressWarnings("deprecation")
 	public void timeout() {
 		interrupt();
+		if(!new Wait(5000).until(() -> !isAlive())) {
+			System.out.println("Thread stuck! Have to kill forcefully!");
+			Thread.dumpStack();
+			stop();
+		}
 		error = new CorpusThreadException(file, "Thread has exceeded its timeout!");
 	}
 	
