@@ -9,9 +9,11 @@ import com.simonbaars.clonerefactor.model.DetectionResults;
 public class CorpusThread extends Thread {
 	private final File file;
 	public DetectionResults res;
+	public final long creationTime;
 	
 	public CorpusThread(File file) {
 		this.file=file;
+		this.creationTime = System.currentTimeMillis();
 		start();
 	}
 	
