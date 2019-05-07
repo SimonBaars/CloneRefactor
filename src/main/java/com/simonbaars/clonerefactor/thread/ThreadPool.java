@@ -98,8 +98,10 @@ public class ThreadPool {
 
 	private void writeError(int i) {
 		try {
-			FileUtils.writeStringToFile(new File(SavePaths.createDirectoryIfNotExists(SavePaths.getErrorFolder())+threads[i].error.file.getName()+".txt"), ExceptionUtils.getFullStackTrace(threads[i].error));
+			FileUtils.writeStringToFile(new File(SavePaths.createDirectoryIfNotExists(SavePaths.getErrorFolder())+threads[i].getFile().getName()+".txt"), ExceptionUtils.getFullStackTrace(threads[i].error));
 		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (NullPointerException e) {
 			e.printStackTrace();
 		}
 	}

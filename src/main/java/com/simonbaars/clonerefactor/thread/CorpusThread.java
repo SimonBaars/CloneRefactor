@@ -2,6 +2,7 @@ package com.simonbaars.clonerefactor.thread;
 
 import java.io.File;
 import java.nio.file.Paths;
+import java.util.concurrent.TimeoutException;
 
 import com.simonbaars.clonerefactor.Main;
 import com.simonbaars.clonerefactor.model.DetectionResults;
@@ -10,7 +11,7 @@ public class CorpusThread extends Thread {
 	private final File file;
 	public DetectionResults res;
 	public final long creationTime;
-	public CorpusThreadException error;
+	public Exception error;
 	
 	public CorpusThread(File file) {
 		this.file=file;
@@ -22,14 +23,14 @@ public class CorpusThread extends Thread {
 		try {
 			res = Main.cloneDetection(file.toPath(), Paths.get(file.getAbsolutePath()+"/src/main/java"));
 		} catch(Exception e) {
-			error = new CorpusThreadException(file, e);
+			error = e;
 		}
 	}
 
 	@SuppressWarnings("deprecation")
 	public void timeout() {
 		stop();
-		error = new CorpusThreadException(file, "Thread has exceeded its timeout!");
+		error = new TimeoutException("Thread has exceeded its timeout!");
 	}
 	
 	public File getFile() {
