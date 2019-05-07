@@ -42,7 +42,7 @@ public class ThreadPool {
 	}
 
 	private void nullifyThreadIfStarved() {
-		IntStream.range(0,size()).filter(i -> threads[i].creationTime+THREAD_TIMEOUT<System.currentTimeMillis()).forEach(i -> {
+		IntStream.range(0,size()).filter(i -> threads[i]!=null && threads[i].creationTime+THREAD_TIMEOUT<System.currentTimeMillis()).forEach(i -> {
 			threads[i].timeout();
 		});
 	}
