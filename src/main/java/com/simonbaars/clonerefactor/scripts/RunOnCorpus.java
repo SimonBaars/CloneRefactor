@@ -1,14 +1,9 @@
 package com.simonbaars.clonerefactor.scripts;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Arrays;
 
-import com.simonbaars.clonerefactor.metrics.Metrics;
-import com.simonbaars.clonerefactor.model.DetectionResults;
-import com.simonbaars.clonerefactor.thread.CorpusThread;
 import com.simonbaars.clonerefactor.thread.ThreadPool;
-import com.simonbaars.clonerefactor.util.FileUtils;
 import com.simonbaars.clonerefactor.util.SavePaths;
 
 import me.tongfei.progressbar.ProgressBar;
