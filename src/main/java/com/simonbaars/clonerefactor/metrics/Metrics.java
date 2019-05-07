@@ -33,8 +33,6 @@ public class Metrics {
 	
 	public final CountMap<Integer> amountPerEffectiveLines = new CountMap<>();
 	public final CountMap<Integer> amountPerTotalEffectiveLineVolume = new CountMap<>();
-	
-	public int skipped = 0;
 
 
 
@@ -51,7 +49,7 @@ public class Metrics {
 				+ amountPerContents + ", amountPerExtract=" + amountPerExtract + ", amountPerCloneClassSize="
 				+ amountPerCloneClassSize + ", amountPerNodes=" + amountPerNodes + ", amountPerTotalNodeVolume="
 				+ amountPerTotalNodeVolume + ", amountPerEffectiveLines=" + amountPerEffectiveLines
-				+ ", amountPerTotalEffectiveLineVolume=" + amountPerTotalEffectiveLineVolume + ", skipped=" + skipped + "]";
+				+ ", amountPerTotalEffectiveLineVolume=" + amountPerTotalEffectiveLineVolume + "]";
 	}
 
 
@@ -83,8 +81,6 @@ public class Metrics {
 		
 		amountPerEffectiveLines.addAll(metrics.amountPerEffectiveLines);
 		amountPerTotalEffectiveLineVolume.addAll(metrics.amountPerTotalEffectiveLineVolume);
-		
-		skipped+=metrics.skipped;
 	}
 
 	

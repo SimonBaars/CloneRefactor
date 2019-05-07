@@ -21,7 +21,7 @@ public class ThreadPool {
 	private final int NUMBER_OF_THREADS = 4;
 	private final int THREAD_TIMEOUT = 100000;
 	private final Metrics fullMetrics = new Metrics();
-	private final Vector<CorpusThreadException> errorLog = new Vector<>();
+	private final List<CorpusThreadException> errorLog = new ArrayList<>();
 	private final List<String> includedProjects = new ArrayList<>();
 	
 	private final CorpusThread[] threads;
@@ -91,7 +91,7 @@ public class ThreadPool {
 
 	private void enableNewThread(File file, int i) {
 		writePreviousThreadResults(file, i);
-		threads[i] = new CorpusThread(file, errorLog);
+		threads[i] = new CorpusThread(file);
 	}
 
 	private void writePreviousThreadResults(File file, int i) {
@@ -99,7 +99,7 @@ public class ThreadPool {
 			if(threads[i].res != null) {
 				writeResults(file, threads[i].res);
 				includedProjects.add(threads[i].getFile().getName());
-			} else fullMetrics.skipped++;
+			} else errorLog.add(threads[i].error);
 			threads[i]=null;
 		}
 	}
