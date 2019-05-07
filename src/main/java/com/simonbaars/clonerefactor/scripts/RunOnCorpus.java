@@ -16,7 +16,7 @@ import me.tongfei.progressbar.ProgressBar;
 public class RunOnCorpus {
 
 	public static void main(String[] args) {
-		ThreadPool threadPool = new ThreadPool(NUMBER_OF_THREADS);
+		ThreadPool threadPool = new ThreadPool();
 		
 		File[] corpusFiles = new File(SavePaths.getApplicationDataFolder()+"git").listFiles();
 		analyzeAllProjects(threadPool, corpusFiles);

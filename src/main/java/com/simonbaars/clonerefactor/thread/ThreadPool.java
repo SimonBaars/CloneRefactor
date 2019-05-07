@@ -2,8 +2,13 @@ package com.simonbaars.clonerefactor.thread;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import java.util.Vector;
 import java.util.stream.IntStream;
+
+import org.apache.commons.lang.exception.ExceptionUtils;
 
 import com.simonbaars.clonerefactor.metrics.Metrics;
 import com.simonbaars.clonerefactor.model.DetectionResults;
@@ -11,16 +16,18 @@ import com.simonbaars.clonerefactor.util.FileUtils;
 import com.simonbaars.clonerefactor.util.SavePaths;
 
 public class ThreadPool {
-	private static File OUTPUT_FOLDER = new File(SavePaths.getFullOutputFolder());
-	private static File FULL_METRICS = new File(OUTPUT_FOLDER.getParent()+"/full_metrics.txt");
-	private static int NUMBER_OF_THREADS = 4;
-	private static int THREAD_TIMEOUT = 100000;
-	private static final Metrics fullMetrics = new Metrics();
+	private final File OUTPUT_FOLDER = new File(SavePaths.getFullOutputFolder());
+	private final File FULL_METRICS = new File(OUTPUT_FOLDER.getParent()+"/full_metrics.txt");
+	private final int NUMBER_OF_THREADS = 4;
+	private final int THREAD_TIMEOUT = 100000;
+	private final Metrics fullMetrics = new Metrics();
+	private final Vector<CorpusThreadException> errorLog = new Vector<>();
+	private final List<String> includedProjects = new ArrayList<>();
 	
 	private final CorpusThread[] threads;
 	
-	public ThreadPool (int nThreads) {
-		threads = new Thread[nThreads];
+	public ThreadPool () {
+		threads = new CorpusThread[NUMBER_OF_THREADS];
 		OUTPUT_FOLDER.mkdirs();
 	}
 
@@ -28,13 +35,17 @@ public class ThreadPool {
 		while(Arrays.stream(threads).allMatch(e -> e!=null && e.isAlive())) {
 			try {
 				Thread.sleep(100);
-				IntStream.range(0,size()).filter(i -> threads[i].creationTime+THREAD_TIMEOUT<System.currentTimeMillis()).forEach(i -> {
-					threads[i].interrupt(); threads[i] = null;
-				});
+				nullifyThreadIfStarved();
 			} catch (InterruptedException e1) {
 				Thread.currentThread().interrupt();
 			}
 		}
+	}
+
+	private void nullifyThreadIfStarved() {
+		IntStream.range(0,size()).filter(i -> threads[i].creationTime+THREAD_TIMEOUT<System.currentTimeMillis()).forEach(i -> {
+			threads[i].timeout();
+		});
 	}
 
 	private int size() {
@@ -50,32 +61,50 @@ public class ThreadPool {
 		}
 	}
 	
-	public void finishFinalThreads(CorpusThread[] threadPool) {
-		while(Arrays.stream(threadPool).anyMatch(e -> e!=null)) {
+	public void finishFinalThreads() {
+		while(Arrays.stream(threads).anyMatch(e -> e!=null)) {
 			waitForThreadToFinish();
-			for(int i = 0; i<threadPool.length; i++) {
-				if(threadPool[i] != null && !threadPool[i].isAlive()) {
-					threadPool[i] = null;
+			for(int i = 0; i<threads.length; i++) {
+				if(threads[i] != null && !threads[i].isAlive()) {
+					threads[i] = null;
 				}
 			}
+		}
+		finishUp();
+	}
+
+	private void finishUp() {
+		File path = new File(SavePaths.createDirectoryIfNotExists(SavePaths.getOutputFolder()+"errors"));
+		for(CorpusThreadException e : errorLog) {
+			try {
+				FileUtils.writeStringToFile(new File(path.getAbsolutePath()+File.separator+e.file.getName()+".txt"), ExceptionUtils.getFullStackTrace(e));
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
+		}
+		try {
+			FileUtils.writeStringToFile(new File(SavePaths.getOutputFolder()+"included_projects.txt"), Arrays.toString(includedProjects.toArray()));
+		} catch (IOException e1) {
+			e1.printStackTrace();
 		}
 	}
 
 	private void enableNewThread(File file, int i) {
-		writePreviousThreadResults(threads, file, i);
-		threads[i] = new CorpusThread(file);
+		writePreviousThreadResults(file, i);
+		threads[i] = new CorpusThread(file, errorLog);
 	}
 
 	private void writePreviousThreadResults(File file, int i) {
 		if(threads[i]!=null && !threads[i].isAlive()) {
-			if(threads[i].res != null)
+			if(threads[i].res != null) {
 				writeResults(file, threads[i].res);
-			else fullMetrics.skipped++;
+				includedProjects.add(threads[i].getFile().getName());
+			} else fullMetrics.skipped++;
 			threads[i]=null;
 		}
 	}
 
-	private void writeResults(Metrics fullMetrics, File file, DetectionResults res) {
+	private void writeResults(File file, DetectionResults res) {
 		fullMetrics.add(res.getMetrics());
 		try {
 			FileUtils.writeStringToFile(new File(OUTPUT_FOLDER.getAbsolutePath()+"/"+file.getName()+"-"+res.getClones().size()+".txt"), res.toString());
