@@ -8,7 +8,7 @@ import com.github.javaparser.ast.expr.SimpleName;
 import com.github.javaparser.ast.type.ReferenceType;
 
 public abstract class Compare {
-	protected final CloneType cloneType;
+	protected CloneType cloneType;
 	
 	protected Compare(CloneType cloneType) {
 		this.cloneType=cloneType;
@@ -40,4 +40,6 @@ public abstract class Compare {
 			return false;
 		else return this.equals(c);
 	}
+	
+	public void setCloneType(CloneType type);
 }

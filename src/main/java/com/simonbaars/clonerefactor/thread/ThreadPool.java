@@ -2,9 +2,7 @@ package com.simonbaars.clonerefactor.thread;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.stream.IntStream;
 
 import org.apache.commons.lang.exception.ExceptionUtils;

@@ -22,6 +22,7 @@ public class CorpusThread extends Thread {
 	public void run() {
 		try {
 			res = Main.cloneDetection(file.toPath(), Paths.get(file.getAbsolutePath()+"/src/main/java"));
+			res.sorted();
 		} catch(Exception e) {
 			error = e;
 		}

@@ -19,6 +19,9 @@ import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.expr.NameExpr;
 import com.github.javaparser.ast.nodeTypes.NodeWithImplements;
 import com.simonbaars.clonerefactor.compare.Compare;
+import com.simonbaars.clonerefactor.compare.CompareLiteral;
+import com.simonbaars.clonerefactor.compare.CompareMethodCall;
+import com.simonbaars.clonerefactor.compare.CompareName;
 import com.simonbaars.clonerefactor.compare.CompareToken;
 import com.simonbaars.clonerefactor.detection.CloneDetection;
 import com.simonbaars.clonerefactor.exception.NoTokensException;
@@ -197,6 +200,22 @@ public class LocationContents implements FiltersTokens {
 	
 	public void setMetrics(CloneContents c) {
 		this.contentsType = c.get(this);
-		
+	}
+	
+	@SuppressWarnings("unchecked")
+	public<T> List<T> getType2Variable(Class<T> of) {
+		return compare.stream().filter(e -> of.isAssignableFrom(e.getClass())).map(e -> (T)e).collect(Collectors.toList());
+	}
+
+	public List<CompareLiteral> getLiterals() {
+		return getType2Variable(CompareLiteral.class);
+	}
+	
+	public List<CompareName> getNames() {
+		return getType2Variable(CompareName.class);
+	}
+	
+	public List<CompareMethodCall> getMethodCalls() {
+		return getType2Variable(CompareMethodCall.class);
 	}
 }
