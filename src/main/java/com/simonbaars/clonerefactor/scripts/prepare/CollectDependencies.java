@@ -62,7 +62,7 @@ public class CollectDependencies {
 			try {
 				Thread.sleep(100);
 			} catch (InterruptedException e) {
-				e.printStackTrace();
+				Thread.currentThread().interrupt();
 			}
 			if(duration+MAVEN_PROCESS_TIMEOUT<System.currentTimeMillis()) {
 				proc.destroy();

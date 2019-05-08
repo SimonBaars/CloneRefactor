@@ -21,7 +21,6 @@ public class ThreadPool {
 	private final int NUMBER_OF_THREADS = 4;
 	private final int THREAD_TIMEOUT = 100000;
 	private final Metrics fullMetrics = new Metrics();
-	private final List<String> includedProjects = new ArrayList<>();
 	
 	private final CorpusThread[] threads;
 	
@@ -31,7 +30,9 @@ public class ThreadPool {
 	}
 
 	public void waitForThreadToFinish() {
-		while(Arrays.stream(threads).allMatch(e -> e!=null && e.isAlive())) {
+		if(Arrays.stream(threads).allMatch(e -> e==null))
+			return;
+		while(Arrays.stream(threads).filter(e -> e!=null).allMatch(e -> e.isAlive())) {
 			try {
 				Thread.sleep(100);
 				nullifyThreadIfStarved();
@@ -61,22 +62,14 @@ public class ThreadPool {
 	}
 	
 	public void finishFinalThreads() {
+		System.out.println("Finishing up!");
 		while(Arrays.stream(threads).anyMatch(e -> e!=null)) {
+			System.out.println(Arrays.stream(threads).filter(e -> e!=null).count()+" to go!");
 			waitForThreadToFinish();
 			for(int i = 0; i<threads.length; i++) {
-				if(threads[i] != null && !threads[i].isAlive()) {
+				if(threads[i] != null && !threads[i].isAlive())
 					threads[i] = null;
-				}
 			}
-		}
-		finishUp();
-	}
-
-	private void finishUp() {
-		try {
-			FileUtils.writeStringToFile(new File(SavePaths.getMyOutputFolder()+"included_projects.txt"), Arrays.toString(includedProjects.toArray()));
-		} catch (IOException e1) {
-			e1.printStackTrace();
 		}
 	}
 
@@ -87,10 +80,9 @@ public class ThreadPool {
 
 	private void writePreviousThreadResults(File file, int i) {
 		if(threads[i]!=null && !threads[i].isAlive()) {
-			if(threads[i].res != null) {
+			if(threads[i].res != null)
 				writeResults(file, threads[i].res);
-				includedProjects.add(threads[i].getFile().getName());
-			} else writeError(i);
+			else writeError(i);
 			JavaParserFacade.clearInstances();
 			threads[i]=null;
 		}
