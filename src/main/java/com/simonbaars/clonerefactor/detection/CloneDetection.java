@@ -19,8 +19,6 @@ public class CloneDetection {
 	private static final int MIN_AMOUNT_OF_TOKENS = 12;
 	private static final int MIN_AMOUNT_OF_NODES = 6;
 	public static final CloneType type = CloneType.TYPE1;
-	//public static final int MAX_LITERAL_VARIABILITY = 2;
-	//public static final int MAX_METHOD_CALL_VARIABILITY = 2;
 	
 	final List<Sequence> clones = new ArrayList<>();
 
@@ -40,7 +38,7 @@ public class CloneDetection {
 
 	private Sequence makeValid(Location lastLoc, Sequence oldClones, Sequence newClones) {
 		Map<Location /*oldClones*/, Location /*newClones*/> validChains = oldClones.getSequence().stream().distinct().filter(oldClone -> 
-			newClones.getSequence().stream().anyMatch(newClone -> newClone.getFile() == oldClone.getFile() && newClone.getContents().getRange().equals(oldClone.getPrevLine().getContents().getRange()))).collect(Collectors.toMap(e -> e, e -> e.getPrevLine()));
+			newClones.getSequence().stream().anyMatch(newClone -> newClone.getFile() == oldClone.getFile() && oldClone.getFile() == oldClone.getPrevLine().getFile() && newClone.getContents().getRange().equals(oldClone.getPrevLine().getContents().getRange()))).collect(Collectors.toMap(e -> e, e -> e.getPrevLine()));
 		
 		if(validChains.size()!=oldClones.size() && !oldClones.getSequence().isEmpty()) {
 			checkValidClones(oldClones, oldClones.getSequence().stream().filter(e -> !newClones.getSequence().contains(e.getPrevLine())).collect(Collectors.toList()));
