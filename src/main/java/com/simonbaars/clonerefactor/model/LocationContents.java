@@ -201,19 +201,11 @@ public class LocationContents implements FiltersTokens {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public<T extends Compare> List<T> getType2Variable(Class<T> of) {
-		return compare.stream().filter(e -> of.isAssignableFrom(e.getClass())).map(e -> (T)e).collect(Collectors.toList());
+	public List<Compare> getType2Variable(Class<? extends Compare>...of) {
+		return compare.stream().filter(e -> Arrays.stream(of).anyMatch(f -> f.isAssignableFrom(e.getClass()))).map(e -> (Compare)e).collect(Collectors.toList());
 	}
 
-	public List<CompareLiteral> getLiterals() {
-		return getType2Variable(CompareLiteral.class);
-	}
-	
-	public List<CompareName> getNames() {
-		return getType2Variable(CompareName.class);
-	}
-	
-	public List<CompareMethodCall> getMethodCalls() {
-		return getType2Variable(CompareMethodCall.class);
+	public List<Compare> getType2Threshold() {
+		return getType2Variable(CompareLiteral.class, CompareName.class, CompareMethodCall.class);
 	}
 }
