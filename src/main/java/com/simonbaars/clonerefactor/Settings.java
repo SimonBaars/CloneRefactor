@@ -80,6 +80,14 @@ public class Settings {
 	public int getType3DifferentBlocks() {
 		return type3DifferentBlocks;
 	}
+
+	@Override
+	public String toString() {
+		return "Settings [cloneType=" + cloneType + ", minAmountOfLines=" + minAmountOfLines + ", minAmountOfTokens="
+				+ minAmountOfTokens + ", minAmountOfNodes=" + minAmountOfNodes + ", compareByTokens=" + compareByTokens
+				+ ", type2VariabilityPercentage=" + type2VariabilityPercentage + ", type3DifferentBlocks="
+				+ type3DifferentBlocks + "]";
+	}
 	
 	
 }
