@@ -13,19 +13,15 @@ import com.github.javaparser.TokenRange;
 public interface FiltersTokens {
 	public static final Category[] NO_TOKEN = {Category.COMMENT, Category.EOL, Category.WHITESPACE_NO_EOL};
 	
-	public default Stream<JavaToken> getEffectiveTokens(List<JavaToken> tokens) {
-		return tokens.stream().filter(e -> Arrays.stream(NO_TOKEN).noneMatch(c -> c.equals(e.getCategory())));
-	}
-	
 	public default Stream<JavaToken> getEffectiveTokens(TokenRange tokens) {
-		return StreamSupport.stream(tokens.spliterator(), false).filter(e -> Arrays.stream(NO_TOKEN).noneMatch(c -> c.equals(e.getCategory())));
+		return StreamSupport.stream(tokens.spliterator(), false).filter(e -> isComparableToken(e));
 	}
 	
 	public default List<JavaToken> getEffectiveTokenList(TokenRange tokens){
 		return getEffectiveTokens(tokens).collect(Collectors.toList());
 	}
 	
-	public default List<JavaToken> getEffectiveTokenList(List<JavaToken> tokens){
-		return getEffectiveTokens(tokens).collect(Collectors.toList());
+	public default boolean isComparableToken(JavaToken t) {
+		return Arrays.stream(NO_TOKEN).noneMatch(c -> c.equals(t.getCategory()));
 	}
 }

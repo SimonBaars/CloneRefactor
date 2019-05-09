@@ -5,7 +5,8 @@ import java.util.ArrayList;
 // an undirected graph  
 import java.util.LinkedList;
 import java.util.List; 
-class Graph { 
+
+public class Graph { 
     // A user define class to represent a graph. 
     // A graph is an array of adjacency lists. 
     // Size of array will be V (number of vertices 

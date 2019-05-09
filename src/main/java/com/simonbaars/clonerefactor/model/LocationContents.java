@@ -9,7 +9,6 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import com.github.javaparser.JavaToken;
 import com.github.javaparser.Range;
@@ -69,8 +68,7 @@ public class LocationContents implements FiltersTokens {
 		LocationContents other = (LocationContents)o;
 		//if(other.tokens.equals(tokens) && !IntStream.range(0, compare.size()).allMatch(i -> compare.get(i).compare(other.compare.get(i))))
 		//	System.out.println(Arrays.toString(other.compare.toArray())+System.lineSeparator()+Arrays.toString(compare.toArray())+System.lineSeparator()+IntStream.range(0, compare.size()).peek(i -> System.out.println(compare.get(i)+", "+other.compare.get(i)+", "+compare.get(i).compare(other.compare.get(i)))).allMatch(i -> compare.get(i).compare(other.compare.get(i))));
-		if(tokenCompare)
-			return getEffectiveTokenList(tokens).equals(getEffectiveTokenList(other.tokens));
+		if(tokenCompare) return tokens.equals(other.tokens);
 		return compare.equals(other.compare);
 	}
 	
@@ -96,15 +94,11 @@ public class LocationContents implements FiltersTokens {
 	}
 	
 	public String getEffectiveTokenTypes() {
-		return getEffectiveTokens().map(e -> "["+e.asString()+", "+e.getCategory()+", "+e.getKind()+"]").collect(Collectors.joining(", "));
+		return getTokens().stream().map(e -> "["+e.asString()+", "+e.getCategory()+", "+e.getKind()+"]").collect(Collectors.joining(", "));
 	}
 
 	public int getAmountOfTokens() {
-		return new Long(getEffectiveTokens().count()).intValue();
-	}
-	
-	private Stream<JavaToken> getEffectiveTokens() {
-		return getEffectiveTokens(tokens);
+		return getTokens().size();
 	}
 
 	@Override
@@ -119,7 +113,7 @@ public class LocationContents implements FiltersTokens {
 
 	@Override
 	public String toString() {
-		return getEffectiveTokens().map(e -> e.asString()).collect(Collectors.joining());
+		return getTokens().stream().map(e -> e.asString()).collect(Collectors.joining());
 	}
 
 	public Range addTokens(Node n, TokenRange tokenRange, Range validRange) {
@@ -127,14 +121,13 @@ public class LocationContents implements FiltersTokens {
 		if(tokens.isEmpty())
 			throw new NoTokensException(n, tokenRange, validRange);
 		range = new Range(tokens.get(0).getRange().get().begin, tokens.get(tokens.size()-1).getRange().get().end);
-		if(!tokenCompare)
-			createCompareList(n);
+		if(!tokenCompare) createCompareList(n);
 		return range; 
 	}
 
 	private void createCompareList(Node n) {
 		Map<Range, Node> compareMap = getNodesForCompare(Arrays.asList(n));
-		getEffectiveTokens().forEach(token -> {
+		getTokens().forEach(token -> {
 			Optional<Entry<Range, Node>> thisNodeOptional = compareMap.entrySet().stream().filter(e -> e.getKey().contains(token.getRange().get())).findAny();
 			if(thisNodeOptional.isPresent()) {
 				Entry<Range, Node> thisNode = thisNodeOptional.get();
@@ -156,7 +149,7 @@ public class LocationContents implements FiltersTokens {
 			Optional<Range> r = token.getRange();
 			if(r.isPresent()) {
 				if(!validRange.contains(r.get())) break;
-				tokens.add(token);
+				if(isComparableToken(token)) tokens.add(token);
 				if(n instanceof NodeWithImplements && token.asString().equals("{")) break; // We cannot exclude the body of class files, this is a workaround.
 			}
 		}
@@ -180,7 +173,7 @@ public class LocationContents implements FiltersTokens {
 	}
 
 	public Set<Integer> getEffectiveLines() {
-		return getEffectiveTokens().map(e -> e.getRange().get().begin.line).collect(Collectors.toSet());
+		return getTokens().stream().map(e -> e.getRange().get().begin.line).collect(Collectors.toSet());
 	}
 
 	public List<Compare> getCompare() {
