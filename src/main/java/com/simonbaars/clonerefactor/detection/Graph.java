@@ -62,7 +62,6 @@ public class Graph {
                 // print all reachable vertices 
                 // from v 
                 DFSUtil(v,visited); 
-                System.out.println(); 
             } 
         } 
         return connected;

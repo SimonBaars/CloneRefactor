@@ -7,7 +7,7 @@ public class Clone2 {
 		System.out.println("I'm a clone3");
 		System.out.println("I'm a clone4");
 		System.out.println("I'm a clone5");
-		System.out.println("I like to differ!");
+		System.out.println("I like to differ");
 		System.out.println("I'm a clone7");
 		System.out.println("I'm a clone8");
 		System.out.println("I'm a clone9");

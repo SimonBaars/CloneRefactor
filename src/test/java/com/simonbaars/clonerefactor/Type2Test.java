@@ -40,13 +40,14 @@ public class Type2Test extends TestCase {
         return new TestSuite(Type2Test.class);
     }
     
-    /**
-     * Test for clones in import statements.
-     */
     public void testDifferentLiterals() {
     	System.out.println("testDifferentLiterals");
     	System.out.println(testProject("DifferentLiterals"));
-    	System.out.println(Type2Test.class.getClassLoader().getResource("Type2-DifferentLiterals").getFile());
+    }
+    
+    public void testDifferentMethods() {
+    	System.out.println("testDifferentMethods");
+    	System.out.println(testProject("DifferentMethods"));
     }
 
 	private DetectionResults testProject(String project) {
