@@ -79,7 +79,7 @@ public class ThreadPool {
 			if(threads[i].res != null)
 				writeResults(threads[i].getFile(), threads[i].res);
 			else writeError(i);
-			if(ramUsage()>85) JavaParserFacade.clearInstances();
+			if(freeMemoryPercentage()<15) JavaParserFacade.clearInstances();
 			threads[i]=null;
 		}
 	}
@@ -104,7 +104,7 @@ public class ThreadPool {
 		}
 	}
 	
-	public double ramUsage() {
+	public double freeMemoryPercentage() {
 		return (double)Runtime.getRuntime().freeMemory() / (double)Runtime.getRuntime().totalMemory() * 100D;
 	}
 }
