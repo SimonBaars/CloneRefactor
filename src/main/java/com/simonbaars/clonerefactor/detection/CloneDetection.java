@@ -8,18 +8,12 @@ import java.util.stream.Collectors;
 
 import com.github.javaparser.Position;
 import com.github.javaparser.Range;
-import com.simonbaars.clonerefactor.compare.CloneType;
+import com.simonbaars.clonerefactor.Settings;
 import com.simonbaars.clonerefactor.datatype.ListMap;
 import com.simonbaars.clonerefactor.model.Location;
 import com.simonbaars.clonerefactor.model.Sequence;
 
 public class CloneDetection {
-	/* Clone detection thresholds and settings. */
-	private static final int MIN_AMOUNT_OF_LINES = 1;
-	private static final int MIN_AMOUNT_OF_TOKENS = 12;
-	private static final int MIN_AMOUNT_OF_NODES = 6;
-	public static final CloneType type = CloneType.TYPE1;
-	
 	final List<Sequence> clones = new ArrayList<>();
 
 	public CloneDetection() {}
@@ -60,14 +54,14 @@ public class CloneDetection {
 
 	private void checkValidClones(Sequence oldClones, List<Location> endedClones) {
 		ListMap<Integer /*Sequence size*/, Location /* Clones */> cloneList = new ListMap<>();
-		endedClones.stream().filter(e -> e.getAmountOfNodes() >= MIN_AMOUNT_OF_NODES).forEach(e -> cloneList.addTo(e.getAmountOfNodes(), e));
+		endedClones.stream().filter(e -> e.getAmountOfNodes() >= Settings.get().getMinAmountOfNodes()).forEach(e -> cloneList.addTo(e.getAmountOfNodes(), e));
 		for(List<Location> l : cloneList.values()) {
 			for(Location l2 : oldClones.getSequence()) {
 				if(!l.contains(l2) && l2.getAmountOfNodes()>=l.get(0).getAmountOfNodes()) {
 					l.add(new Location(l2, getRange(l2, l.get(0))));
 				}
 			}
-			if(l.stream().collect(Collectors.summingInt(e -> e.getAmountOfTokens())) > MIN_AMOUNT_OF_TOKENS && l.stream().collect(Collectors.summingInt(e -> e.getAmountOfLines())) > MIN_AMOUNT_OF_LINES && l.size()>1) {
+			if(l.stream().collect(Collectors.summingInt(e -> e.getAmountOfTokens())) > Settings.get().getMinAmountOfTokens() && l.stream().collect(Collectors.summingInt(e -> e.getAmountOfLines())) > Settings.get().getMinAmountOfLines() && l.size()>1) {
 				Sequence newSequence = new Sequence(l);
 				if(removeDuplicatesOf(newSequence))
 					clones.add(newSequence);

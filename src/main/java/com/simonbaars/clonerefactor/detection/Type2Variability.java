@@ -3,14 +3,13 @@ package com.simonbaars.clonerefactor.detection;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.simonbaars.clonerefactor.Settings;
 import com.simonbaars.clonerefactor.compare.CloneType;
 import com.simonbaars.clonerefactor.compare.Compare;
 import com.simonbaars.clonerefactor.model.Location;
 import com.simonbaars.clonerefactor.model.Sequence;
 
 public class Type2Variability {
-	public static final int MAX_VARIABILITY = 20;
-	
 	public List<Sequence> determineVariability(Sequence s) {
 		List<List<Compare>> literals = createLiteralList(s);
 		int[][] equalityArray = createEqualityArray(literals);
@@ -36,7 +35,7 @@ public class Type2Variability {
 		Graph g = new Graph(equalityArray.length);
 		for(int i = 0; i<equalityArray.length; i++) {
 			for(int j = i+1; j<equalityArray.length; j++) {
-				if(diffPerc(equalityArray[i], equalityArray[j])<=MAX_VARIABILITY) {
+				if(diffPerc(equalityArray[i], equalityArray[j])<=Settings.get().getType2VariabilityPercentage()) {
 					g.addEdge(i, j);
 				}
 			}

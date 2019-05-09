@@ -8,6 +8,7 @@ import com.github.javaparser.ParseResult;
 import com.github.javaparser.ParserConfiguration;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.utils.SourceRoot;
+import com.simonbaars.clonerefactor.Settings;
 import com.simonbaars.clonerefactor.detection.CloneDetection;
 import com.simonbaars.clonerefactor.detection.Type2Variability;
 import com.simonbaars.clonerefactor.metrics.MetricCollector;
@@ -26,7 +27,7 @@ public class CloneParser implements Parser {
 		Location lastLoc = calculateLineReg(sourceRoot, config);
 		if(lastLoc!=null) {
 			List<Sequence> findChains = new CloneDetection().findChains(lastLoc);
-			if(CloneDetection.type.isNotTypeOne()) {
+			if(Settings.get().getCloneType().isNotTypeOne()) {
 				for(int i = 0; i<findChains.size(); i++) {
 					findChains.addAll(new Type2Variability().determineVariability(findChains.remove(0)));
 				}

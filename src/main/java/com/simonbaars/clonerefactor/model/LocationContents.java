@@ -16,19 +16,17 @@ import com.github.javaparser.TokenRange;
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.expr.NameExpr;
 import com.github.javaparser.ast.nodeTypes.NodeWithImplements;
+import com.simonbaars.clonerefactor.Settings;
 import com.simonbaars.clonerefactor.compare.Compare;
 import com.simonbaars.clonerefactor.compare.CompareLiteral;
 import com.simonbaars.clonerefactor.compare.CompareMethodCall;
 import com.simonbaars.clonerefactor.compare.CompareName;
 import com.simonbaars.clonerefactor.compare.CompareToken;
-import com.simonbaars.clonerefactor.detection.CloneDetection;
 import com.simonbaars.clonerefactor.exception.NoTokensException;
 import com.simonbaars.clonerefactor.metrics.enums.CloneContents;
 import com.simonbaars.clonerefactor.metrics.enums.CloneContents.ContentsType;
 
 public class LocationContents implements FiltersTokens {
-	private static boolean tokenCompare = true;
-	
 	private Range range;
 	private final List<Node> nodes;
 	private final List<JavaToken> tokens;
@@ -68,7 +66,7 @@ public class LocationContents implements FiltersTokens {
 		LocationContents other = (LocationContents)o;
 		//if(other.tokens.equals(tokens) && !IntStream.range(0, compare.size()).allMatch(i -> compare.get(i).compare(other.compare.get(i))))
 		//	System.out.println(Arrays.toString(other.compare.toArray())+System.lineSeparator()+Arrays.toString(compare.toArray())+System.lineSeparator()+IntStream.range(0, compare.size()).peek(i -> System.out.println(compare.get(i)+", "+other.compare.get(i)+", "+compare.get(i).compare(other.compare.get(i)))).allMatch(i -> compare.get(i).compare(other.compare.get(i))));
-		if(tokenCompare) return tokens.equals(other.tokens);
+		if(Settings.get().isCompareByTokens()) return tokens.equals(other.tokens);
 		return compare.equals(other.compare);
 	}
 	
@@ -103,7 +101,7 @@ public class LocationContents implements FiltersTokens {
 
 	@Override
 	public int hashCode() {
-		if(tokenCompare) return tokens.hashCode();
+		if(Settings.get().isCompareByTokens()) return tokens.hashCode();
 		int prime = 31;
 		int result = 1;
 		for(Compare node : compare) {
@@ -122,7 +120,7 @@ public class LocationContents implements FiltersTokens {
 		if(tokens.isEmpty())
 			throw new NoTokensException(n, tokenRange, validRange);
 		range = new Range(tokens.get(0).getRange().get().begin, tokens.get(tokens.size()-1).getRange().get().end);
-		if(!tokenCompare) createCompareList(n);
+		if(!Settings.get().isCompareByTokens()) createCompareList(n);
 		return range; 
 	}
 
@@ -133,12 +131,12 @@ public class LocationContents implements FiltersTokens {
 			if(thisNodeOptional.isPresent()) {
 				Entry<Range, Node> thisNode = thisNodeOptional.get();
 				if(thisNode != null){
-					getCompare().add(Compare.create(thisNode.getValue(), token, CloneDetection.type));
+					getCompare().add(Compare.create(thisNode.getValue(), token, Settings.get().getCloneType()));
 					if(getCompare().get(getCompare().size()-1) instanceof CompareToken)
 						compareMap.remove(thisNode.getKey()); 
 					else thisNode.setValue(null);
 				}
-			} else getCompare().add(Compare.create(token, token, CloneDetection.type));
+			} else getCompare().add(Compare.create(token, token, Settings.get().getCloneType()));
 		});
 		//getTokens().forEach(e -> getCompare().add(Compare.create(e.getRange().isPresent() && compareMap.containsKey(e.getRange().get()) ? compareMap.get(e.getRange().get()) : e, e, CloneDetection.type)));
 		//System.out.println(getCompare().stream().map(e -> e.toString()).collect(Collectors.joining(", ", "[", "]")));
