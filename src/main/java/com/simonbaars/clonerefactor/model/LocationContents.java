@@ -192,9 +192,9 @@ public class LocationContents implements FiltersTokens {
 		this.contentsType = c.get(this);
 	}
 	
-	@SafeVarargs
-	public final List<Compare> getType2Variable(Class<? extends Compare>...of) {
-		return compare.stream().filter(e -> Arrays.stream(of).anyMatch(f -> f.getClass().equals(e.getClass()))).map(e -> (Compare)e).collect(Collectors.toList());
+	@SuppressWarnings("rawtypes")
+	public final List<Compare> getType2Variable(Class...of) {
+		return compare.stream().filter(e -> Arrays.stream(of).anyMatch(f -> f.equals(e.getClass()))).map(e -> (Compare)e).collect(Collectors.toList());
 	}
 
 	public List<Compare> getType2Threshold() {
