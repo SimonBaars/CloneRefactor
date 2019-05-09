@@ -30,7 +30,7 @@ public class CloneExtractTest extends TestCase {
     }
     
     public void testFullMethod() {
-        test("NestedClone", Refactorability.CANNOTBEEXTRACTED);
+        test("NestedClone", Refactorability.PARTIALBLOCK);
     }
     
     public void testPartialMethod() {
