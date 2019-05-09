@@ -9,7 +9,6 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import com.github.javaparser.JavaToken;
@@ -200,8 +199,8 @@ public class LocationContents implements FiltersTokens {
 		this.contentsType = c.get(this);
 	}
 	
-	@SuppressWarnings("unchecked")
-	public List<Compare> getType2Variable(Class<? extends Compare>...of) {
+	@SafeVarargs
+	public final List<Compare> getType2Variable(Class<? extends Compare>...of) {
 		return compare.stream().filter(e -> Arrays.stream(of).anyMatch(f -> f.isAssignableFrom(e.getClass()))).map(e -> (Compare)e).collect(Collectors.toList());
 	}
 
