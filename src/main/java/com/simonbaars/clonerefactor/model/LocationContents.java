@@ -103,6 +103,7 @@ public class LocationContents implements FiltersTokens {
 
 	@Override
 	public int hashCode() {
+		if(tokenCompare) return tokens.hashCode();
 		int prime = 31;
 		int result = 1;
 		for(Compare node : compare) {
