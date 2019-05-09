@@ -17,6 +17,6 @@ public class CompareLiteral extends Compare {
 
 	@Override
 	public int getHashCode() {
-		return -1;
+		return cloneType.isNotTypeOne() ? -1 : t.hashCode();
 	}
 }

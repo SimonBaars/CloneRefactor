@@ -61,6 +61,8 @@ public class CompareMethodCall extends Compare implements FiltersTokens {
 
 	@Override
 	public int getHashCode() {
+		if(cloneType == CloneType.TYPE1)
+			return myTokens.hashCode();
 		if(type!=null)
 			return type.getTypeParameters().hashCode();
 		return estimatedTypes.hashCode();

@@ -79,8 +79,7 @@ public class ThreadPool {
 			if(threads[i].res != null)
 				writeResults(threads[i].getFile(), threads[i].res);
 			else writeError(i);
-			if(ramUsage()>85)
-			JavaParserFacade.clearInstances();
+			if(ramUsage()>85) JavaParserFacade.clearInstances();
 			threads[i]=null;
 		}
 	}
