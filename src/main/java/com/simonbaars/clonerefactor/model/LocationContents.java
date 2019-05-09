@@ -203,7 +203,7 @@ public class LocationContents implements FiltersTokens {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public<T> List<T> getType2Variable(Class<T> of) {
+	public<T extends Compare> List<T> getType2Variable(Class<T> of) {
 		return compare.stream().filter(e -> of.isAssignableFrom(e.getClass())).map(e -> (T)e).collect(Collectors.toList());
 	}
 

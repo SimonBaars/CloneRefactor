@@ -14,7 +14,9 @@ public abstract class Compare {
 		this.cloneType=cloneType;
 	}
 	
-	public abstract boolean isValid();
+	public boolean isValid() {
+		return true;
+	}
 	
 	public abstract int getHashCode();
 	
@@ -25,9 +27,9 @@ public abstract class Compare {
 		else if(tokenOrNode instanceof NameExpr)
 			c = new CompareVariable(cloneType, (NameExpr)tokenOrNode);
 		else if(tokenOrNode instanceof LiteralExpr)
-			c = new CompareLiteral(cloneType);
+			c = new CompareLiteral(cloneType, e);
 		else if(tokenOrNode instanceof SimpleName)
-			c = new CompareName(cloneType);
+			c = new CompareName(cloneType, e);
 		else if(tokenOrNode instanceof MethodCallExpr)
 			c = new CompareMethodCall(cloneType, (MethodCallExpr)tokenOrNode);
 		if(c!=null && c.isValid())
@@ -35,11 +37,13 @@ public abstract class Compare {
 		return new CompareToken(cloneType, e);
 	}
 
-	public boolean compare(Compare c) {
-		if(this.getClass() != c.getClass())
+	public boolean equals(Object o) {
+		if(this.getClass() != o.getClass())
 			return false;
-		else return this.equals(c);
+		return true;
 	}
 	
-	public void setCloneType(CloneType type);
+	public void setCloneType(CloneType type) {
+		this.cloneType = type;
+	}
 }

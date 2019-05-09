@@ -40,6 +40,8 @@ public class CompareMethodCall extends Compare implements FiltersTokens {
 	}
 	
 	public boolean equals(Object c) {
+		if(!super.equals(c))
+			return false;
 		CompareMethodCall other = (CompareMethodCall)c;
 		if(cloneType == CloneType.TYPE1 && !myTokens.equals(other.myTokens))
 			return false;
@@ -55,11 +57,6 @@ public class CompareMethodCall extends Compare implements FiltersTokens {
 	
 	private String getOnlyArguments(String methodSignature) {
 		return methodSignature.substring(methodSignature.indexOf('('));
-	}
-
-	@Override
-	public boolean isValid() {
-		return true;
 	}
 
 	@Override

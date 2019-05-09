@@ -16,7 +16,7 @@ public class CompareType extends Compare {
 	}
 	
 	public boolean equals(Object o) {
-		return type.equals(((CompareType)o).type);
+		return super.equals(o) && type.equals(((CompareType)o).type);
 	}
 
 	@Override

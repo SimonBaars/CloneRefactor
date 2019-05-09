@@ -22,6 +22,8 @@ public class CompareVariable extends Compare {
 	
 	@Override
 	public boolean equals(Object o) {
+		if(!super.equals(o))
+			return false;
 		CompareVariable compareDec = ((CompareVariable)o);
 		if(cloneType == CloneType.TYPE1 && !dec.getName().equals(compareDec.dec.getName())) {
 			return false;

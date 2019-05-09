@@ -13,12 +13,7 @@ public class CompareToken extends Compare {
 
 	@Override
 	public boolean equals(Object o) {
-		return token.equals(((CompareToken)o).token);
-	}
-
-	@Override
-	public boolean isValid() {
-		return true;
+		return super.equals(o) && token.equals(((CompareToken)o).token);
 	}
 
 	@Override
