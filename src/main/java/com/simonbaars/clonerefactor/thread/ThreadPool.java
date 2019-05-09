@@ -53,7 +53,8 @@ public class ThreadPool {
 	public void addToAvailableThread(File file) {
 		for(int i = 0; i<threads.length; i++) {
 			if(threads[i]==null || !threads[i].isAlive()) {
-				enableNewThread(file, i);
+				writePreviousThreadResults(i);
+				threads[i] = new CorpusThread(file);
 				break;
 			}
 		}
@@ -65,21 +66,18 @@ public class ThreadPool {
 			System.out.println(Arrays.stream(threads).filter(e -> e!=null).count()+" to go!");
 			waitForThreadToFinish();
 			for(int i = 0; i<threads.length; i++) {
-				if(threads[i] != null && !threads[i].isAlive())
+				if(threads[i] != null && !threads[i].isAlive()) {
+					writePreviousThreadResults(i);
 					threads[i] = null;
+				}
 			}
 		}
 	}
 
-	private void enableNewThread(File file, int i) {
-		writePreviousThreadResults(file, i);
-		threads[i] = new CorpusThread(file);
-	}
-
-	private void writePreviousThreadResults(File file, int i) {
+	private void writePreviousThreadResults(int i) {
 		if(threads[i]!=null && !threads[i].isAlive()) {
 			if(threads[i].res != null)
-				writeResults(file, threads[i].res);
+				writeResults(threads[i].getFile(), threads[i].res);
 			else writeError(i);
 			JavaParserFacade.clearInstances();
 			threads[i]=null;
