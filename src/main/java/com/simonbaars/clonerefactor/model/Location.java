@@ -1,5 +1,6 @@
 package com.simonbaars.clonerefactor.model;
 
+import java.io.File;
 import java.nio.file.Path;
 import java.util.Optional;
 
@@ -9,7 +10,7 @@ import com.github.javaparser.ast.Node;
 import com.simonbaars.clonerefactor.metrics.enums.CloneLocation;
 import com.simonbaars.clonerefactor.metrics.enums.CloneLocation.LocationType;
 
-public class Location {
+public class Location implements Comparable<Location> {
 	private final Path file;
 	private Range range;
 	
@@ -167,5 +168,13 @@ public class Location {
 	
 	public void setMetrics(CloneLocation l) {
 		this.locationType = l.get(this);
+	}
+
+	@Override
+	public int compareTo(Location o) {
+		int stringCompare = file.compareTo(o.file);
+		if(stringCompare == 0)
+			return range.begin.compareTo(o.range.begin);
+		return stringCompare;
 	}
 }

@@ -45,8 +45,8 @@ public class Settings {
 		return settings;
 	}
 
-	private double convertToType2VariabilityPercentage(String property) {
-		return Double.parseDouble(property.endsWith("%") ? property.substring(0, property.length()-1) : property);
+	private float convertToType2VariabilityPercentage(String property) {
+		return Float.parseFloat(property.endsWith("%") ? property.substring(0, property.length()-1) : property);
 	}
 
 	public static String getClonerefactorProperties() {
