@@ -1,6 +1,5 @@
 package com.simonbaars.clonerefactor.model;
 
-import java.io.File;
 import java.nio.file.Path;
 import java.util.Optional;
 

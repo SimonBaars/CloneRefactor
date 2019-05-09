@@ -61,7 +61,7 @@ public class Graph {
             if(!visited[v]) { 
                 // print all reachable vertices 
                 // from v 
-                DFSUtil(v,visited); 
+                connected.add(DFSUtil(v,visited)); 
             } 
         } 
         return connected;

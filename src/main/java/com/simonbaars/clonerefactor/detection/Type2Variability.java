@@ -1,7 +1,9 @@
 package com.simonbaars.clonerefactor.detection;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.simonbaars.clonerefactor.Settings;
 import com.simonbaars.clonerefactor.compare.CloneType;
@@ -11,9 +13,13 @@ import com.simonbaars.clonerefactor.model.Sequence;
 
 public class Type2Variability {
 	public List<Sequence> determineVariability(Sequence s) {
+		System.out.println("in 1 sequence with "+s.size()+" locs");
 		List<List<Compare>> literals = createLiteralList(s);
 		int[][] equalityArray = createEqualityArray(literals);
+		System.out.println(Arrays.deepToString(equalityArray));
 		List<List<Integer>> connections = findConnectedSequences(equalityArray);
+		System.out.println("== CONNECT "+connections.size()+" ==");
+		connections.forEach(e -> System.out.println(Arrays.toString(e.toArray())));
 		return determineOutput(s, connections);
 	}
 
@@ -28,6 +34,7 @@ public class Type2Variability {
 				output.add(seq);
 			}
 		}
+		System.out.println("out "+output.size()+" sequence with "+output.stream().map(e -> Integer.toString(e.size())).collect(Collectors.joining(", "))+" locs");
 		return output;
 	}
 
@@ -35,13 +42,13 @@ public class Type2Variability {
 		Graph g = new Graph(equalityArray.length);
 		for(int i = 0; i<equalityArray.length; i++) {
 			for(int j = i+1; j<equalityArray.length; j++) {
-				if(diffPerc(equalityArray[i], equalityArray[j])<=Settings.get().getType2VariabilityPercentage()) {
+				if((equalityArray[i].length == 0 &&  equalityArray[j].length == 0) || diffPerc(equalityArray[i], equalityArray[j])<=Settings.get().getType2VariabilityPercentage()) {
 					g.addEdge(i, j);
+					System.out.println("Added Edge "+i+", "+j);
 				}
 			}
 		}
-		List<List<Integer>> connections = g.connectedComponents();
-		return connections;
+		return g.connectedComponents();
 	}
 
 	private int[][] createEqualityArray(List<List<Compare>> literals) {
@@ -66,6 +73,8 @@ public class Type2Variability {
 		List<List<Compare>> literals = new ArrayList<>();
 		for(Location l : s.getSequence()) {
 			List<Compare> literals2 = l.getContents().getType2Threshold();
+			System.out.println(l.getContents().compareTypes());
+			System.out.println("Of "+l.getContents().getCompare().size()+" filter to "+literals2.size());
 			literals.add(literals2);
 			literals2.forEach(e -> e.setCloneType(CloneType.TYPE1));
 		}

@@ -22,6 +22,7 @@ import com.simonbaars.clonerefactor.compare.CompareLiteral;
 import com.simonbaars.clonerefactor.compare.CompareMethodCall;
 import com.simonbaars.clonerefactor.compare.CompareName;
 import com.simonbaars.clonerefactor.compare.CompareToken;
+import com.simonbaars.clonerefactor.compare.CompareVariable;
 import com.simonbaars.clonerefactor.exception.NoTokensException;
 import com.simonbaars.clonerefactor.metrics.enums.CloneContents;
 import com.simonbaars.clonerefactor.metrics.enums.CloneContents.ContentsType;
@@ -193,10 +194,14 @@ public class LocationContents implements FiltersTokens {
 	
 	@SafeVarargs
 	public final List<Compare> getType2Variable(Class<? extends Compare>...of) {
-		return compare.stream().filter(e -> Arrays.stream(of).anyMatch(f -> f.isAssignableFrom(e.getClass()))).map(e -> (Compare)e).collect(Collectors.toList());
+		return compare.stream().filter(e -> Arrays.stream(of).anyMatch(f -> f.getClass().equals(e.getClass()))).map(e -> (Compare)e).collect(Collectors.toList());
 	}
 
 	public List<Compare> getType2Threshold() {
-		return getType2Variable(CompareLiteral.class, CompareName.class, CompareMethodCall.class);
+		return getType2Variable(CompareLiteral.class, CompareName.class, CompareMethodCall.class, CompareVariable.class);
+	}
+
+	public String compareTypes() {
+		return getCompare().stream().map(e -> e.getClass().getName()).collect(Collectors.joining(","));
 	}
 }
