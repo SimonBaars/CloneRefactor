@@ -170,6 +170,7 @@ public class CloneRelation implements MetricEnum<RelationType> {
 		for(int i = 0; i<clone.getSequence().get(0).getContents().getNodes().size(); i++) {
 			for(int j = 0; j<clone.getSequence().size(); j++) {
 				for(int z = j+1; z<clone.getSequence().size(); z++) {
+					//System.out.println("sequenceSize = "+clone.getSequence().size()+", nodeSize = "+clone.getSequence().get(0).getContents().getNodes().size()+", i = "+i+", j = "+j+", z = "+z);
 					locations.add(getLocation(clone.getSequence().get(j).getContents().getNodes().get(i), clone.getSequence().get(z).getContents().getNodes().get(i)));
 				}
 			}

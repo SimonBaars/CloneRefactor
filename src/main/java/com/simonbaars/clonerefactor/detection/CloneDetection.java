@@ -55,10 +55,12 @@ public class CloneDetection {
 	private void checkValidClones(Sequence oldClones, List<Location> endedClones) {
 		ListMap<Integer /*Sequence size*/, Location /* Clones */> cloneList = new ListMap<>();
 		endedClones.stream().filter(e -> e.getAmountOfNodes() >= Settings.get().getMinAmountOfNodes()).forEach(e -> cloneList.addTo(e.getAmountOfNodes(), e));
-		for(List<Location> l : cloneList.values()) {
+		for(Entry<Integer, List<Location>> entry : cloneList.entrySet()) {
+			int amountOfNodes = entry.getKey();
+			List<Location> l = entry.getValue();
 			for(Location l2 : oldClones.getSequence()) {
-				if(!l.contains(l2) && l2.getAmountOfNodes()>=l.get(0).getAmountOfNodes()) {
-					l.add(new Location(l2, getRange(l2, l.get(0))));
+				if(!l.contains(l2) && l2.getAmountOfNodes()>=amountOfNodes) {
+					l.add(new Location(l2, getRange(l2, l.get(0)), amountOfNodes, l.get(0).getContents().getCompare().size()));
 				}
 			}
 			if(l.stream().collect(Collectors.summingInt(e -> e.getAmountOfTokens())) > Settings.get().getMinAmountOfTokens() && l.stream().collect(Collectors.summingInt(e -> e.getAmountOfLines())) > Settings.get().getMinAmountOfLines() && l.size()>1) {

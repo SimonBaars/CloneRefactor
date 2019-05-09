@@ -49,6 +49,14 @@ public class Location implements Comparable<Location> {
 		this.range = r;
 	}
 
+	public Location(Location l2, Range range2, int amountOfNodes, int compareSize) {
+		this(l2, range2);
+		while(getContents().getNodes().size()>amountOfNodes)
+			getContents().getNodes().remove(getContents().size()-1);
+		while(getContents().getCompare().size()>compareSize)
+			getContents().getCompare().remove(getContents().size()-1);
+	}
+
 	public Path getFile() {
 		return file;
 	}
