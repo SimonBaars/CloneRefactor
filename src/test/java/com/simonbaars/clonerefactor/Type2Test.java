@@ -11,16 +11,7 @@ import junit.framework.TestSuite;
 /**
  * Unit test for the clone detector.
  */
-public class Type2Test extends TestCase {
-    private static final String SEVERAL_METHODS_PROJECT = "SeveralMethodsCloned";
-	private static final String UNEQUAL_SIZE_CLONES_PROJECT = "UnequalSizeClones";
-	private static final String SINGLE_FILE_PROJECT = "SingleFile";
-	private static final String PARTIAL_CLONES_LEFT = "PartialClonesLeft";
-	private static final String PARTIAL_CLONES_RIGHT = "PartialClonesRight";
-	private static final String SIMPLE_PROJECT = "SimpleClone";
-    private static final String EQUAL_LINES_PROJECT = "EqualLines";
-    private static final String ENUM_PROJECT = "EnumClone";
-    
+public class Type2Test extends TestCase {    
 
 	/**
      * Create the test case
@@ -55,6 +46,6 @@ public class Type2Test extends TestCase {
     }
 
 	private DetectionResults testProject(String project) {
-		return Main.cloneDetection(Type2Test.class.getClassLoader().getResource("Type2-"+project).getFile()).sorted();
+		return Main.cloneDetection(Type2Test.class.getClassLoader().getResource("Type2"+project).getFile()).sorted();
 	}
 }
