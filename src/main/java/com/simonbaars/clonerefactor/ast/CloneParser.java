@@ -9,8 +9,10 @@ import com.github.javaparser.ParserConfiguration;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.utils.SourceRoot;
 import com.simonbaars.clonerefactor.Settings;
+import com.simonbaars.clonerefactor.compare.CloneType;
 import com.simonbaars.clonerefactor.detection.CloneDetection;
 import com.simonbaars.clonerefactor.detection.Type2Variability;
+import com.simonbaars.clonerefactor.detection.Type3Opportunities;
 import com.simonbaars.clonerefactor.metrics.MetricCollector;
 import com.simonbaars.clonerefactor.model.DetectionResults;
 import com.simonbaars.clonerefactor.model.Sequence;
@@ -27,14 +29,25 @@ public class CloneParser implements Parser {
 		Location lastLoc = calculateLineReg(sourceRoot, config);
 		if(lastLoc!=null) {
 			List<Sequence> findChains = new CloneDetection().findChains(lastLoc);
-			if(Settings.get().getCloneType().isNotTypeOne()) {
-				for(int i = 0; i<findChains.size(); i++) {
-					findChains.addAll(new Type2Variability().determineVariability(findChains.remove(0)));
-				}
-			}
+			doTypeSpecificTransformations(findChains);
 			return new DetectionResults(metricCollector.reportClones(findChains), findChains);
 		}
 		return new DetectionResults();
+	}
+
+	private void doTypeSpecificTransformations(List<Sequence> findChains) {
+		doType2Transformations(findChains); 
+		if (Settings.get().getCloneType() == CloneType.TYPE3) {
+			new Type3Opportunities().determineType3Opportunities(findChains);
+		}
+	}
+
+	private void doType2Transformations(List<Sequence> findChains) {
+		if(Settings.get().getCloneType().isNotTypeOne()) {
+			for(int i = 0; i<findChains.size(); i++) {
+				findChains.addAll(new Type2Variability().determineVariability(findChains.remove(0)));
+			}
+		}
 	}
 
 	private final Location calculateLineReg(SourceRoot sourceRoot, ParserConfiguration config) {
