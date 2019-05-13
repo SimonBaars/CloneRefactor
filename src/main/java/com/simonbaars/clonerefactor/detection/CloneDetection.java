@@ -54,22 +54,42 @@ public class CloneDetection {
 
 	private void checkValidClones(Sequence oldClones, List<Location> endedClones) {
 		ListMap<Integer /*Sequence size*/, Location /* Clones */> cloneList = new ListMap<>();
-		endedClones.stream().filter(e -> e.getAmountOfNodes() >= Settings.get().getMinAmountOfNodes()).forEach(e -> cloneList.addTo(e.getAmountOfNodes(), e));
+		endedClones.stream().filter(this::checkNodesThreshold).forEach(e -> cloneList.addTo(e.getAmountOfNodes(), e));
 		for(Entry<Integer, List<Location>> entry : cloneList.entrySet()) {
 			int amountOfNodes = entry.getKey();
 			List<Location> l = entry.getValue();
-			for(Location l2 : oldClones.getSequence()) {
-				if(!l.contains(l2) && l2.getAmountOfNodes()>=amountOfNodes) {
-					l.add(new Location(l2, getRange(l2, l.get(0)), amountOfNodes, l.get(0).getContents().getCompare().size()));
-				}
-			}
-			if(l.stream().collect(Collectors.summingInt(e -> e.getAmountOfTokens())) > Settings.get().getMinAmountOfTokens() && l.stream().collect(Collectors.summingInt(e -> e.getAmountOfLines())) > Settings.get().getMinAmountOfLines() && l.size()>1) {
-				Sequence newSequence = new Sequence(l);
-				if(removeDuplicatesOf(newSequence))
-					clones.add(newSequence);
-			}
+			addAllNonEndedLocations(oldClones, amountOfNodes, l);
+			createClone(l);
 			continue;
 		}
+	}
+
+	private boolean checkNodesThreshold(Location e) {
+		return e.getAmountOfNodes() >= Settings.get().getMinAmountOfNodes();
+	}
+
+	private void createClone(List<Location> l) {
+		if(checkTokenThreshold(l) && checkLinesThreshold(l) && l.size()>1) {
+			Sequence newSequence = new Sequence(l);
+			if(removeDuplicatesOf(newSequence))
+				clones.add(newSequence);
+		}
+	}
+
+	private void addAllNonEndedLocations(Sequence oldClones, int amountOfNodes, List<Location> l) {
+		for(Location l2 : oldClones.getSequence()) {
+			if(!l.contains(l2) && l2.getAmountOfNodes()>=amountOfNodes) {
+				l.add(new Location(l2, getRange(l2, l.get(0)), amountOfNodes, l.get(0).getContents().getCompare().size()));
+			}
+		}
+	}
+
+	private boolean checkLinesThreshold(List<Location> l) {
+		return l.stream().collect(Collectors.summingInt(e -> e.getAmountOfLines())) > Settings.get().getMinAmountOfLines();
+	}
+
+	private boolean checkTokenThreshold(List<Location> l) {
+		return l.stream().collect(Collectors.summingInt(e -> e.getAmountOfTokens())) > Settings.get().getMinAmountOfTokens();
 	}
 	
 	private Range getRange(Location l2, Location location) {
