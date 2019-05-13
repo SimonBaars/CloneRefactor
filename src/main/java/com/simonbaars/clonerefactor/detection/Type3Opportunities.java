@@ -10,7 +10,6 @@ import com.simonbaars.clonerefactor.model.location.Type3Location;
 public class Type3Opportunities {
 	private ListMap<Integer, FileLocations> opportunities = new ListMap<>();
 	
-	
 	public void determineType3Opportunities(List<Sequence> clones) {
 		for(Sequence seq : clones) {
 			FileLocations fl = new FileLocations(seq);
@@ -36,9 +35,18 @@ public class Type3Opportunities {
 		return seq;
 	}
 
-	//TODO
 	public boolean isType3(FileLocations fl1, FileLocations fl2) {
-		
+		for(int i = 0; i<fl1.getLocs().size(); i++) {
+			Location l1 = fl1.getLocs().get(i);
+			Location l2 = fl2.getLocs().get(i);
+			if(l1.getRange().isBefore(l2.getRange().begin)) {
+				mergeLocations(l1, l2);
+			} else mergeLocations(l2, l1);
+		}
 		return false;
+	}
+
+	private void mergeLocations(Location l1, Location l2) {
+		// TODO
 	}
 }
