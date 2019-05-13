@@ -1,5 +1,6 @@
 package com.simonbaars.clonerefactor.ast;
 
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.ListIterator;
 import java.util.Map;
@@ -42,6 +43,8 @@ public class NodeParser implements Parser, RequiresNodeOperations {
 		if(range!=null) {
 			thisLocation = new Location(cu.getStorage().get().getPath(), prevLocation);
 			thisLocation.calculateTokens(n, range);
+			if(thisLocation.getFile().equals(Paths.get("/Users/sbaars/clone/git/SolrMQ/src/main/java/org/apache/solr/handler/ext/SolrMessageQueue.java")))
+				System.out.println(thisLocation.getRange().begin.line+": "+thisLocation.getContents().compareTypes());
 			if(prevLocation!=null) prevLocation.setNextLine(thisLocation);
 			//System.out.println("Parsing "+n.getClass().getName()+" as "+thisLocation.getContents().toNodeClasses()+" at location "+thisLocation);
 			addLineTokensToReg(thisLocation);
