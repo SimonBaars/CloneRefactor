@@ -15,8 +15,8 @@ import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.ConstructorDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.simonbaars.clonerefactor.metrics.enums.CloneLocation.LocationType;
-import com.simonbaars.clonerefactor.model.Location;
 import com.simonbaars.clonerefactor.model.Sequence;
+import com.simonbaars.clonerefactor.model.location.Location;
 
 public class CloneLocation implements MetricEnum<LocationType> {
 	public enum LocationType{

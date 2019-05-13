@@ -6,8 +6,8 @@ import java.util.List;
 import com.simonbaars.clonerefactor.Settings;
 import com.simonbaars.clonerefactor.compare.CloneType;
 import com.simonbaars.clonerefactor.compare.Compare;
-import com.simonbaars.clonerefactor.model.Location;
 import com.simonbaars.clonerefactor.model.Sequence;
+import com.simonbaars.clonerefactor.model.location.Location;
 
 public class Type2Variability {
 	public List<Sequence> determineVariability(Sequence s) {

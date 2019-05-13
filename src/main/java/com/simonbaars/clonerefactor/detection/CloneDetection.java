@@ -10,8 +10,8 @@ import com.github.javaparser.Position;
 import com.github.javaparser.Range;
 import com.simonbaars.clonerefactor.Settings;
 import com.simonbaars.clonerefactor.datatype.ListMap;
-import com.simonbaars.clonerefactor.model.Location;
 import com.simonbaars.clonerefactor.model.Sequence;
+import com.simonbaars.clonerefactor.model.location.Location;
 
 public class CloneDetection {
 	final List<Sequence> clones = new ArrayList<>();

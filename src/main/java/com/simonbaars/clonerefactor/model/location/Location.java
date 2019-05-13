@@ -1,4 +1,4 @@
-package com.simonbaars.clonerefactor.model;
+package com.simonbaars.clonerefactor.model.location;
 
 import java.nio.file.Path;
 import java.util.Optional;

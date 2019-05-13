@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import com.simonbaars.clonerefactor.model.Location;
+import com.simonbaars.clonerefactor.model.location.Location;
 
 public class AbstractCloneInstance {
 	final List<AbstractClonedStatement> acs = new ArrayList<>();

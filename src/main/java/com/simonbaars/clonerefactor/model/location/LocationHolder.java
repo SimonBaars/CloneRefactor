@@ -1,4 +1,4 @@
-package com.simonbaars.clonerefactor.model;
+package com.simonbaars.clonerefactor.model.location;
 
 public class LocationHolder {
 	private Location location;

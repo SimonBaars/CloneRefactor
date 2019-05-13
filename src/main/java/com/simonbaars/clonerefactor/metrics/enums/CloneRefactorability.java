@@ -8,8 +8,8 @@ import com.github.javaparser.ast.stmt.ContinueStmt;
 import com.github.javaparser.ast.stmt.ReturnStmt;
 import com.simonbaars.clonerefactor.ast.RequiresNodeOperations;
 import com.simonbaars.clonerefactor.metrics.enums.CloneRefactorability.Refactorability;
-import com.simonbaars.clonerefactor.model.Location;
 import com.simonbaars.clonerefactor.model.Sequence;
+import com.simonbaars.clonerefactor.model.location.Location;
 
 public class CloneRefactorability implements MetricEnum<Refactorability>, RequiresNodeOperations {
 	public enum Refactorability{

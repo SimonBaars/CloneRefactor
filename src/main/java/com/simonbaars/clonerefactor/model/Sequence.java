@@ -9,6 +9,7 @@ import com.simonbaars.clonerefactor.metrics.enums.CloneRefactorability;
 import com.simonbaars.clonerefactor.metrics.enums.CloneRefactorability.Refactorability;
 import com.simonbaars.clonerefactor.metrics.enums.CloneRelation;
 import com.simonbaars.clonerefactor.metrics.enums.CloneRelation.RelationType;
+import com.simonbaars.clonerefactor.model.location.Location;
 
 public class Sequence implements Comparable<Sequence> {
 	final List<Location> sequence;

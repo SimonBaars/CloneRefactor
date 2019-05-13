@@ -29,8 +29,8 @@ import com.github.javaparser.ast.body.FieldDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.simonbaars.clonerefactor.ast.RequiresNodeOperations;
 import com.simonbaars.clonerefactor.metrics.enums.CloneContents.ContentsType;
-import com.simonbaars.clonerefactor.model.LocationContents;
 import com.simonbaars.clonerefactor.model.Sequence;
+import com.simonbaars.clonerefactor.model.location.LocationContents;
 
 public class CloneContents implements MetricEnum<ContentsType>, RequiresNodeOperations {
 	public enum ContentsType{

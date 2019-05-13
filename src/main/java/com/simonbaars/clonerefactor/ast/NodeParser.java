@@ -13,8 +13,8 @@ import com.github.javaparser.ast.PackageDeclaration;
 import com.github.javaparser.ast.stmt.BlockStmt;
 import com.github.javaparser.ast.stmt.LocalClassDeclarationStmt;
 import com.simonbaars.clonerefactor.metrics.MetricCollector;
-import com.simonbaars.clonerefactor.model.Location;
-import com.simonbaars.clonerefactor.model.LocationContents;
+import com.simonbaars.clonerefactor.model.location.Location;
+import com.simonbaars.clonerefactor.model.location.LocationContents;
 
 public class NodeParser implements Parser, RequiresNodeOperations {
 	final Map<LocationContents, Location> lineReg = new HashMap<>();

@@ -4,7 +4,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.IntStream;
 
-import com.simonbaars.clonerefactor.model.Location;
+import com.simonbaars.clonerefactor.model.location.Location;
 
 public class FileLocations {
 	private final List<Location> locs;

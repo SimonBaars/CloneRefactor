@@ -13,9 +13,9 @@ import com.simonbaars.clonerefactor.detection.CloneDetection;
 import com.simonbaars.clonerefactor.detection.Type2Variability;
 import com.simonbaars.clonerefactor.metrics.MetricCollector;
 import com.simonbaars.clonerefactor.model.DetectionResults;
-import com.simonbaars.clonerefactor.model.Location;
-import com.simonbaars.clonerefactor.model.LocationHolder;
 import com.simonbaars.clonerefactor.model.Sequence;
+import com.simonbaars.clonerefactor.model.location.Location;
+import com.simonbaars.clonerefactor.model.location.LocationHolder;
 
 public class CloneParser implements Parser {
 

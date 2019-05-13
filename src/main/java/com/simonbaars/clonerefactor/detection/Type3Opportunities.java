@@ -3,8 +3,8 @@ package com.simonbaars.clonerefactor.detection;
 import java.util.List;
 
 import com.simonbaars.clonerefactor.datatype.ListMap;
-import com.simonbaars.clonerefactor.model.Location;
 import com.simonbaars.clonerefactor.model.Sequence;
+import com.simonbaars.clonerefactor.model.location.Location;
 
 public class Type3Opportunities {
 	private ListMap<Integer, FileLocations> opportunities = new ListMap<>();
