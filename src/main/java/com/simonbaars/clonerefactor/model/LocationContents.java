@@ -14,7 +14,7 @@ import com.github.javaparser.JavaToken;
 import com.github.javaparser.Range;
 import com.github.javaparser.TokenRange;
 import com.github.javaparser.ast.Node;
-import com.github.javaparser.ast.expr.NameExpr;
+import com.github.javaparser.ast.expr.SimpleName;
 import com.github.javaparser.ast.nodeTypes.NodeWithImplements;
 import com.simonbaars.clonerefactor.Settings;
 import com.simonbaars.clonerefactor.compare.Compare;
@@ -81,13 +81,12 @@ public class LocationContents implements FiltersTokens {
 			Optional<Range> rangeOptional = node.getRange();
 			if(rangeOptional.isPresent()) {
 				Range r = rangeOptional.get();
-				if(range.contains(r)) {
+				if(range.contains(r) && (!(node instanceof SimpleName) || !nodes.containsKey(r))) {
 					nodes.put(r, node);
 				} else if (r.begin.isAfter(range.end))
 					return nodes;
 			}
-			if(!(node instanceof NameExpr))
-				nodes.putAll(getNodesForCompare(node.getChildNodes()));
+			nodes.putAll(getNodesForCompare(node.getChildNodes()));
 		}
 		return nodes;
 	}
@@ -132,8 +131,9 @@ public class LocationContents implements FiltersTokens {
 			if(thisNodeOptional.isPresent()) {
 				Entry<Range, Node> thisNode = thisNodeOptional.get();
 				if(thisNode != null){
-					getCompare().add(Compare.create(thisNode.getValue(), token, Settings.get().getCloneType()));
-					if(getCompare().get(getCompare().size()-1) instanceof CompareToken)
+					Compare createdNode = Compare.create(thisNode.getValue(), token, Settings.get().getCloneType());
+					getCompare().add(createdNode);
+					if(createdNode instanceof CompareToken)
 						compareMap.remove(thisNode.getKey()); 
 					else thisNode.setValue(null);
 				}

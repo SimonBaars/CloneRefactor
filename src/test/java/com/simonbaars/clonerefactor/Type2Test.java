@@ -1,10 +1,8 @@
 package com.simonbaars.clonerefactor;
 
-import java.io.File;
 import java.nio.file.Paths;
 
 import com.simonbaars.clonerefactor.model.DetectionResults;
-import com.simonbaars.clonerefactor.thread.CorpusThread;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -38,6 +36,12 @@ public class Type2Test extends TestCase {
      */
     public static Test suite() {
         return new TestSuite(Type2Test.class);
+    }
+    
+    public void testCustom() {
+    	System.out.println("custom");
+        String path = "/Users/sbaars/clone/git/SolrMQ/";
+		System.out.println(Main.cloneDetection(Paths.get(path), Paths.get(path+"src/main/java/")).sorted());
     }
     
     public void testDifferentLiterals() {
