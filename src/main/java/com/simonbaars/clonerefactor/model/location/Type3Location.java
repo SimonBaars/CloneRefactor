@@ -33,7 +33,35 @@ public class Type3Location extends Location {
 
 	public Type3Location(Location location, Location location2) {
 		super(location.getFile());
-		//TODO
+		if(location.getRange().isBefore(location2.getRange().begin)) {
+			mergeLocations(location, location2);
+		} else mergeLocations(location2, location);
+	}
+
+	private void mergeLocations(Location before, Location after) {
+		Range r = before.getRange().withEnd(after.getRange().end);
+		populateContents(getContents(), before);
+		populateContents(getContents(), after);
+		getContents().setRange(r);
+		setRange(r);
+		calculateDiffContents(before, after);
+	}
+
+	private void calculateDiffContents(Location before, Location after) {
+		Location line;
+		while((line = before.getNextLine()) != null) {
+			if(line.getRange().isBefore(after.getRange().begin)) {
+				if(line.getRange().isAfter(before.getRange().end)){
+					populateContents(diffContents, line);
+				}
+			} else break;
+		}
+	}
+
+	private void populateContents(LocationContents contents, Location l) {
+		getContents().getNodes().addAll(l.getContents().getNodes());
+		getContents().getTokens().addAll(l.getContents().getTokens());
+		getContents().getCompare().addAll(l.getContents().getCompare());
 	}
 
 	public LocationContents getDiffContents() {
