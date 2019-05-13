@@ -4,7 +4,7 @@ import java.nio.file.Path;
 
 import com.github.javaparser.Range;
 
-public class Type3Location extends Location {
+public class Type3Location extends Location implements Type3Calculation{
 	private final LocationContents diffContents = new LocationContents();
 
 	public Type3Location(Location l2, Range range2, int amountOfNodes, int compareSize) {
@@ -40,28 +40,11 @@ public class Type3Location extends Location {
 
 	private void mergeLocations(Location before, Location after) {
 		Range r = before.getRange().withEnd(after.getRange().end);
-		populateContents(getContents(), before);
-		populateContents(getContents(), after);
+		populateContents(getContents(), before.getContents());
+		populateContents(getContents(), after.getContents());
 		getContents().setRange(r);
 		setRange(r);
 		calculateDiffContents(before, after);
-	}
-
-	private void calculateDiffContents(Location before, Location after) {
-		Location line;
-		while((line = before.getNextLine()) != null) {
-			if(line.getRange().isBefore(after.getRange().begin)) {
-				if(line.getRange().isAfter(before.getRange().end)){
-					populateContents(diffContents, line);
-				}
-			} else break;
-		}
-	}
-
-	private void populateContents(LocationContents contents, Location l) {
-		getContents().getNodes().addAll(l.getContents().getNodes());
-		getContents().getTokens().addAll(l.getContents().getTokens());
-		getContents().getCompare().addAll(l.getContents().getCompare());
 	}
 
 	public LocationContents getDiffContents() {

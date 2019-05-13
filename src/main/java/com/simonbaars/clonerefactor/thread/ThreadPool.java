@@ -17,7 +17,7 @@ public class ThreadPool {
 	private final File OUTPUT_FOLDER = new File(SavePaths.getFullOutputFolder());
 	private final File FULL_METRICS = new File(OUTPUT_FOLDER.getParent()+"/metrics.txt");
 	private final int NUMBER_OF_THREADS = 4;
-	private final int THREAD_TIMEOUT = 360000;
+	private final int THREAD_TIMEOUT = 600000;
 	private final Metrics fullMetrics = new Metrics();
 	
 	private final CorpusThread[] threads;
