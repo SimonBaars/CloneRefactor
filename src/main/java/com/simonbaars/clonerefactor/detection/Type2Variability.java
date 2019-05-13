@@ -9,7 +9,7 @@ import com.simonbaars.clonerefactor.compare.Compare;
 import com.simonbaars.clonerefactor.model.Sequence;
 import com.simonbaars.clonerefactor.model.location.Location;
 
-public class Type2Variability {
+public class Type2Variability implements CalculatesPercentages {
 	public List<Sequence> determineVariability(Sequence s) {
 		List<List<Compare>> literals = createLiteralList(s);
 		int[][] equalityArray = createEqualityArray(literals);
@@ -71,16 +71,12 @@ public class Type2Variability {
 		return literals;
 	}
 	
-	public int diffPerc(int[] arr1, int[] arr2) {
+	public double diffPerc(int[] arr1, int[] arr2) {
 		int same = 0, diff = 0;
 		for(int i = 0; i<arr1.length; i++){
 			if(arr1[i] == arr2[i]) same++; 
 			else diff++;
 		}
 		return calcPercentage(diff, same+diff);
-	}
-	
-	public int calcPercentage(int part, int whole) {
-		return Math.round((float)part/(float)whole*100F);
 	}
 }

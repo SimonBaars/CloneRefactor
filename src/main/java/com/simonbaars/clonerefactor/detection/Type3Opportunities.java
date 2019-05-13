@@ -1,13 +1,17 @@
 package com.simonbaars.clonerefactor.detection;
 
 import java.util.List;
+import java.util.stream.IntStream;
 
+import com.simonbaars.clonerefactor.Settings;
 import com.simonbaars.clonerefactor.datatype.ListMap;
 import com.simonbaars.clonerefactor.model.Sequence;
 import com.simonbaars.clonerefactor.model.location.Location;
+import com.simonbaars.clonerefactor.model.location.LocationContents;
+import com.simonbaars.clonerefactor.model.location.Type3Calculation;
 import com.simonbaars.clonerefactor.model.location.Type3Location;
 
-public class Type3Opportunities {
+public class Type3Opportunities implements Type3Calculation, CalculatesPercentages {
 	private ListMap<Integer, FileLocations> opportunities = new ListMap<>();
 	
 	public void determineType3Opportunities(List<Sequence> clones) {
@@ -36,17 +40,19 @@ public class Type3Opportunities {
 	}
 
 	public boolean isType3(FileLocations fl1, FileLocations fl2) {
-		for(int i = 0; i<fl1.getLocs().size(); i++) {
+		return IntStream.range(0, fl1.getLocs().size()).allMatch(i -> {
 			Location l1 = fl1.getLocs().get(i);
 			Location l2 = fl2.getLocs().get(i);
 			if(l1.getRange().isBefore(l2.getRange().begin)) {
-				mergeLocations(l1, l2);
-			} else mergeLocations(l2, l1);
-		}
-		return false;
+				return checkType3Threshold(l1, l2);
+			} else return checkType3Threshold(l2, l1);
+		});
 	}
 
-	private void mergeLocations(Location l1, Location l2) {
-		// TODO
+	private boolean checkType3Threshold(Location l1, Location l2) {
+		int combinedSize = l1.getAmountOfNodes() + l2.getAmountOfNodes();
+		LocationContents diff = calculateDiffContents(l1, l2);
+		int size = diff.getNodes().size();
+		return calcPercentage(size, combinedSize) <= Settings.get().getType3GapSize();
 	}
 }

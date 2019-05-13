@@ -24,8 +24,7 @@ public class Settings {
 	
 	// Type-specific settings
 	private final double type2VariabilityPercentage;
-	private final int type3DifferentBlocks;
-	private final int type3GapSize;
+	private final double type3GapSize;
 	
 	private Settings() {
 		try (InputStream input = Settings.class.getClassLoader().getResourceAsStream(CLONEREFACTOR_PROPERTIES)) {
@@ -37,9 +36,8 @@ public class Settings {
             minAmountOfTokens = Integer.parseInt(prop.getProperty("min_tokens"));
             minAmountOfNodes = Integer.parseInt(prop.getProperty("min_statements"));
             compareByTokens = prop.getProperty("token_comparison").equals("true");
-            type2VariabilityPercentage = convertToType2VariabilityPercentage(prop.getProperty("max_type2_variability_percentage"));
-            type3DifferentBlocks = Integer.parseInt(prop.getProperty("max_type3_different_paths"));
-            type3GapSize = Integer.parseInt(prop.getProperty("max_type3_gap_size"));
+            type2VariabilityPercentage = percentageStringToDouble(prop.getProperty("max_type2_variability_percentage"));
+            type3GapSize = percentageStringToDouble(prop.getProperty("max_type3_gap_size"));
         } catch (IOException ex) {
             throw new RuntimeException("Could not get settings! Please check for the existence of the properties file!");
         }
@@ -49,7 +47,7 @@ public class Settings {
 		return settings;
 	}
 
-	private float convertToType2VariabilityPercentage(String property) {
+	private float percentageStringToDouble(String property) {
 		return Float.parseFloat(property.endsWith("%") ? property.substring(0, property.length()-1) : property);
 	}
 
@@ -80,12 +78,8 @@ public class Settings {
 	public double getType2VariabilityPercentage() {
 		return type2VariabilityPercentage;
 	}
-
-	public int getType3DifferentBlocks() {
-		return type3DifferentBlocks;
-	}
-
-	public int getType3GapSize() {
+	
+	public double getType3GapSize() {
 		return type3GapSize;
 	}
 
@@ -93,9 +87,6 @@ public class Settings {
 	public String toString() {
 		return "Settings [cloneType=" + cloneType + ", minAmountOfLines=" + minAmountOfLines + ", minAmountOfTokens="
 				+ minAmountOfTokens + ", minAmountOfNodes=" + minAmountOfNodes + ", compareByTokens=" + compareByTokens
-				+ ", type2VariabilityPercentage=" + type2VariabilityPercentage + ", type3DifferentBlocks="
-				+ type3DifferentBlocks + "]";
+				+ ", type2VariabilityPercentage=" + type2VariabilityPercentage + ", type3GapSize=" + type3GapSize + "]";
 	}
-	
-	
 }
