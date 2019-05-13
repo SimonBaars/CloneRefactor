@@ -1,6 +1,7 @@
 package com.simonbaars.clonerefactor.compare;
 
 import com.github.javaparser.JavaToken;
+import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.expr.LiteralExpr;
 import com.github.javaparser.ast.expr.MethodCallExpr;
 import com.github.javaparser.ast.expr.NameExpr;
@@ -35,6 +36,14 @@ public abstract class Compare {
 		if(c!=null && c.isValid())
 			return c;
 		return new CompareToken(cloneType, e);
+	}
+	
+	/**
+	 * These nodes are compared by node rather than token.
+	 * @return
+	 */
+	public static boolean comparingNode(Node node) {
+		return node instanceof ReferenceType || node instanceof NameExpr || node instanceof LiteralExpr || node instanceof SimpleName || node instanceof MethodCallExpr;
 	}
 
 	public boolean equals(Object o) {
