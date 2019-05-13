@@ -24,6 +24,7 @@ public class Type3Opportunities implements Type3Calculation, CalculatesPercentag
 						 clones.remove(fl.getSeq());
 						 clones.remove(loc.getSeq());
 						 clones.add(merge(fl.getLocs(), loc.getLocs()));
+						 System.out.println("TYPE 3 CLONE WAS SUCCESSFULLY MERGED!!!!");
 					 }
 				 }
 			} 
@@ -43,6 +44,8 @@ public class Type3Opportunities implements Type3Calculation, CalculatesPercentag
 		return IntStream.range(0, fl1.getLocs().size()).allMatch(i -> {
 			Location l1 = fl1.getLocs().get(i);
 			Location l2 = fl2.getLocs().get(i);
+			if(l1.getContents().getNodes().get(l1.getContents().getNodes().size()-1).getParentNode() != l2.getContents().getNodes().get(0).getParentNode())
+				return false;
 			if(l1.getRange().isBefore(l2.getRange().begin)) {
 				return checkType3Threshold(l1, l2);
 			} else return checkType3Threshold(l2, l1);
@@ -53,6 +56,8 @@ public class Type3Opportunities implements Type3Calculation, CalculatesPercentag
 		int combinedSize = l1.getAmountOfNodes() + l2.getAmountOfNodes();
 		LocationContents diff = calculateDiffContents(l1, l2);
 		int size = diff.getNodes().size();
+		if(size == 0)
+			return false;
 		return calcPercentage(size, combinedSize) <= Settings.get().getType3GapSize();
 	}
 }
