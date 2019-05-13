@@ -1,6 +1,5 @@
 package com.simonbaars.clonerefactor.ast;
 
-import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.ListIterator;
 import java.util.Map;

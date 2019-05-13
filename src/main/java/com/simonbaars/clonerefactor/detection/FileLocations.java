@@ -36,7 +36,8 @@ public class FileLocations {
 			return false;
 		return locs.size() == other.locs.size() && IntStream.range(0,locs.size()).allMatch(i -> locs.get(i).getFile().equals(other.locs.get(i).getFile()));
 	}
-	
-	
-	
+
+	public List<Location> getLocs() {
+		return locs;
+	}
 }
