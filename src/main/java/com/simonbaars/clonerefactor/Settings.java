@@ -19,10 +19,13 @@ public class Settings {
 	private final int minAmountOfTokens;
 	private final int minAmountOfNodes;
 	
+	// Comparing by tokens only
 	private final boolean compareByTokens;
 	
+	// Type-specific settings
 	private final double type2VariabilityPercentage;
 	private final int type3DifferentBlocks;
+	private final int type3GapSize;
 	
 	private Settings() {
 		try (InputStream input = Settings.class.getClassLoader().getResourceAsStream(CLONEREFACTOR_PROPERTIES)) {
@@ -36,6 +39,7 @@ public class Settings {
             compareByTokens = prop.getProperty("token_comparison").equals("true");
             type2VariabilityPercentage = convertToType2VariabilityPercentage(prop.getProperty("max_type2_variability_percentage"));
             type3DifferentBlocks = Integer.parseInt(prop.getProperty("max_type3_different_paths"));
+            type3GapSize = Integer.parseInt(prop.getProperty("max_type3_gap_size"));
         } catch (IOException ex) {
             throw new RuntimeException("Could not get settings! Please check for the existence of the properties file!");
         }
@@ -79,6 +83,10 @@ public class Settings {
 
 	public int getType3DifferentBlocks() {
 		return type3DifferentBlocks;
+	}
+
+	public int getType3GapSize() {
+		return type3GapSize;
 	}
 
 	@Override
