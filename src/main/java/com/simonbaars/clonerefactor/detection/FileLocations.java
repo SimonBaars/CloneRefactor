@@ -4,21 +4,22 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.IntStream;
 
+import com.simonbaars.clonerefactor.model.Sequence;
 import com.simonbaars.clonerefactor.model.location.Location;
 
 public class FileLocations {
-	private final List<Location> locs;
+	private final Sequence seq;
 	
-	public FileLocations (List<Location> locs) {
-		Collections.sort(locs);
-		this.locs = locs;
+	public FileLocations (Sequence seq) {
+		Collections.sort(seq.getSequence());
+		this.seq = seq;
 	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-        for (Location e : locs) 
+        for (Location e : seq.getSequence()) 
         	result = prime*result + (e==null ? 0 : e.getFile().hashCode());
 		return result;
 	}
@@ -32,12 +33,16 @@ public class FileLocations {
 		if (getClass() != obj.getClass())
 			return false;
 		FileLocations other = (FileLocations) obj;
-		if (locs == null || other.locs == null)
-			return false;
-		return locs.size() == other.locs.size() && IntStream.range(0,locs.size()).allMatch(i -> locs.get(i).getFile().equals(other.locs.get(i).getFile()));
+		return seq.getSequence().size() == seq.getSequence().size() && IntStream.range(0, seq.getSequence().size()).allMatch(i -> seq.getSequence().get(i).getFile().equals(other.seq.getSequence().get(i).getFile()));
 	}
 
 	public List<Location> getLocs() {
-		return locs;
+		return seq.getSequence();
 	}
+
+	public Sequence getSeq() {
+		return seq;
+	}
+	
+	
 }
