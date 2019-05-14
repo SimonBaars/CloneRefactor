@@ -1,5 +1,8 @@
 package com.simonbaars.clonerefactor.compare;
 
+import java.util.Collections;
+import java.util.List;
+
 import com.github.javaparser.JavaToken;
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.expr.LiteralExpr;
@@ -7,6 +10,7 @@ import com.github.javaparser.ast.expr.MethodCallExpr;
 import com.github.javaparser.ast.expr.NameExpr;
 import com.github.javaparser.ast.expr.SimpleName;
 import com.github.javaparser.ast.type.ReferenceType;
+import com.simonbaars.clonerefactor.model.location.LocationContents;
 
 public abstract class Compare {
 	protected CloneType cloneType;
@@ -15,26 +19,19 @@ public abstract class Compare {
 		this.cloneType=cloneType;
 	}
 	
-	public boolean isValid() {
-		return true;
-	}
-	
 	public abstract int getHashCode();
 	
 	public static Compare create(Object tokenOrNode, JavaToken e, CloneType cloneType) {
-		Compare c = null;
 		if(tokenOrNode instanceof ReferenceType)
-			c = new CompareType(cloneType, (ReferenceType)tokenOrNode);
+			return new CompareType(cloneType, (ReferenceType)tokenOrNode);
 		else if(tokenOrNode instanceof NameExpr)
-			c = new CompareVariable(cloneType, (NameExpr)tokenOrNode);
+			return new CompareVariable(cloneType, (NameExpr)tokenOrNode);
 		else if(tokenOrNode instanceof LiteralExpr)
-			c = new CompareLiteral(cloneType, e);
+			return new CompareLiteral(cloneType, e);
 		else if(tokenOrNode instanceof SimpleName)
-			c = new CompareName(cloneType, e);
+			return new CompareName(cloneType, e);
 		else if(tokenOrNode instanceof MethodCallExpr)
-			c = new CompareMethodCall(cloneType, (MethodCallExpr)tokenOrNode);
-		if(c!=null && c.isValid())
-			return c;
+			return new CompareMethodCall(cloneType, (MethodCallExpr)tokenOrNode);
 		return new CompareToken(cloneType, e);
 	}
 	
@@ -54,5 +51,9 @@ public abstract class Compare {
 	
 	public void setCloneType(CloneType type) {
 		this.cloneType = type;
+	}
+	
+	public List<Compare> relevantChildren(LocationContents locationContents){
+		return Collections.emptyList();
 	}
 }
