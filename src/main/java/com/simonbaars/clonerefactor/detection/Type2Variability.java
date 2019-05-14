@@ -16,8 +16,33 @@ public class Type2Variability implements CalculatesPercentages {
 		int[][] equalityArray = createEqualityArray(literals);
 		if(globalThresholdsMet(equalityArray, s.getSequence().stream().mapToInt(e -> e.getContents().getTokens().size()).sum())) // We first check the thresholds for the entire sequence. If those are not met, we will try to create smaller sequences
 			return Collections.singletonList(s);
+		List<List<Integer>> statements = findConnectedStatements(equalityArray);
 		List<List<Integer>> connections = findConnectedSequences(equalityArray);
 		return determineOutput(s, connections);
+	}
+	
+	private List<Sequence> groupSequencesOnBasisOfConnectedStatements(List<List<Integer>> statements){
+		for(List<Integer> statement : statements) {
+			if(statement.size()>1) {
+				
+			}
+		}
+		return null;
+	}
+	
+	private List<List<Integer>> findConnectedStatements(int[][] arr) {
+		Graph g = new Graph(arr[0].length);
+		for(int i = 0; i<arr.length-1; i++) {
+			//for(int j = i+1; j<arr.length; j++) {
+				for(int k = 0; k<arr[i].length; k++){
+					if(arr[i][k] == arr[i+1][k]) {
+						g.addEdge(k, i);
+						//g.addEdge(k, j);
+					}
+				}
+			//}
+		}
+		return g.connectedComponents();
 	}
 
 	private boolean globalThresholdsMet(int[][] equalityArray, int total) {
@@ -42,7 +67,7 @@ public class Type2Variability implements CalculatesPercentages {
 		Graph g = new Graph(equalityArray.length);
 		for(int i = 0; i<equalityArray.length; i++) {
 			for(int j = i+1; j<equalityArray.length; j++) {
-				if((equalityArray[i].length == 0 &&  equalityArray[j].length == 0) || diffPerc(equalityArray[i], equalityArray[j])<=Settings.get().getType2VariabilityPercentage()) {
+				if((equalityArray[i].length == 0 && equalityArray[j].length == 0) || diffPerc(equalityArray[i], equalityArray[j])<=Settings.get().getType2VariabilityPercentage()) {
 					g.addEdge(i, j);
 				}
 			}

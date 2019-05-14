@@ -1,7 +1,5 @@
 package com.simonbaars.clonerefactor;
 
-import java.nio.file.Paths;
-
 import com.simonbaars.clonerefactor.model.DetectionResults;
 
 import junit.framework.Test;
