@@ -1,6 +1,7 @@
 package com.simonbaars.clonerefactor.detection;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import com.simonbaars.clonerefactor.Settings;
@@ -13,8 +14,14 @@ public class Type2Variability implements CalculatesPercentages {
 	public List<Sequence> determineVariability(Sequence s) {
 		List<List<Compare>> literals = createLiteralList(s);
 		int[][] equalityArray = createEqualityArray(literals);
+		if(globalThresholdsMet(equalityArray, s.getSequence().stream().mapToInt(e -> e.getContents().getTokens().size()).sum())) // We first check the thresholds for the entire sequence. If those are not met, we will try to create smaller sequences
+			return Collections.singletonList(s);
 		List<List<Integer>> connections = findConnectedSequences(equalityArray);
 		return determineOutput(s, connections);
+	}
+
+	private boolean globalThresholdsMet(int[][] equalityArray, int total) {
+		return diffPerc(equalityArray)<=Settings.get().getType2VariabilityPercentage();
 	}
 
 	private List<Sequence> determineOutput(Sequence s, List<List<Integer>> connections) {
@@ -69,14 +76,5 @@ public class Type2Variability implements CalculatesPercentages {
 			literals2.forEach(e -> e.setCloneType(CloneType.TYPE1));
 		}
 		return literals;
-	}
-	
-	public double diffPerc(int[] arr1, int[] arr2) {
-		int same = 0, diff = 0;
-		for(int i = 0; i<arr1.length; i++){
-			if(arr1[i] == arr2[i]) same++; 
-			else diff++;
-		}
-		return calcPercentage(diff, same+diff);
 	}
 }
