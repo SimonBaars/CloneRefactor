@@ -64,11 +64,12 @@ public class CompareMethodCall extends Compare implements FiltersTokens {
 
 	@Override
 	public int getHashCode() {
+		int hashCode = 0;
 		if(cloneType == CloneType.TYPE1)
-			return myTokens.hashCode();
+			hashCode += myTokens.hashCode();
 		if(type!=null)
-			return type.getTypeParameters().hashCode();
-		return estimatedTypes.hashCode();
+			return hashCode + type.getTypeParameters().hashCode();
+		return hashCode + estimatedTypes.hashCode();
 	}
 
 	@Override
