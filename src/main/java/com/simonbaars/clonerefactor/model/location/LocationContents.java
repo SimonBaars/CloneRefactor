@@ -65,7 +65,7 @@ public class LocationContents implements FiltersTokens {
 		if(!(o instanceof LocationContents))
 			return false;
 		LocationContents other = (LocationContents)o;
-		if(Settings.get().isCompareByTokens()) return tokens.equals(other.tokens);
+		if(Settings.get().useLiteratureTypeDefinitions()) return tokens.equals(other.tokens);
 		return compare.equals(other.compare);
 	}
 	
@@ -100,7 +100,7 @@ public class LocationContents implements FiltersTokens {
 
 	@Override
 	public int hashCode() {
-		if(Settings.get().isCompareByTokens()) return tokens.hashCode();
+		if(Settings.get().useLiteratureTypeDefinitions()) return tokens.hashCode();
 		int prime = 31;
 		int result = 1;
 		for(Compare node : compare) {
@@ -119,7 +119,7 @@ public class LocationContents implements FiltersTokens {
 		if(tokens.isEmpty())
 			throw new NoTokensException(statement, tokenRange, validRange);
 		range = new Range(tokens.get(0).getRange().get().begin, tokens.get(tokens.size()-1).getRange().get().end);
-		if(!Settings.get().isCompareByTokens()) createCompareList(statement);
+		if(!Settings.get().useLiteratureTypeDefinitions()) createCompareList(statement);
 		return range; 
 	}
 

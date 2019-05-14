@@ -20,7 +20,7 @@ public class Settings {
 	private final int minAmountOfNodes;
 	
 	// Comparing by tokens only
-	private final boolean compareByTokens;
+	private final boolean useLiteratureTypeDefinitions;
 	
 	// Type-specific settings
 	private final double type2VariabilityPercentage;
@@ -35,7 +35,7 @@ public class Settings {
             minAmountOfLines = Integer.parseInt(prop.getProperty("min_lines"));
             minAmountOfTokens = Integer.parseInt(prop.getProperty("min_tokens"));
             minAmountOfNodes = Integer.parseInt(prop.getProperty("min_statements"));
-            compareByTokens = prop.getProperty("use_literature_type_definitions").equals("true");
+            useLiteratureTypeDefinitions = prop.getProperty("use_literature_type_definitions").equals("true");
             type2VariabilityPercentage = percentageStringToDouble(prop.getProperty("max_type2_variability_percentage"));
             type3GapSize = percentageStringToDouble(prop.getProperty("max_type3_gap_size"));
         } catch (IOException ex) {
@@ -71,8 +71,8 @@ public class Settings {
 		return minAmountOfNodes;
 	}
 
-	public boolean isCompareByTokens() {
-		return compareByTokens;
+	public boolean useLiteratureTypeDefinitions() {
+		return useLiteratureTypeDefinitions;
 	}
 
 	public double getType2VariabilityPercentage() {
@@ -86,7 +86,7 @@ public class Settings {
 	@Override
 	public String toString() {
 		return "Settings [cloneType=" + cloneType + ", minAmountOfLines=" + minAmountOfLines + ", minAmountOfTokens="
-				+ minAmountOfTokens + ", minAmountOfNodes=" + minAmountOfNodes + ", compareByTokens=" + compareByTokens
+				+ minAmountOfTokens + ", minAmountOfNodes=" + minAmountOfNodes + ", useLiteratureTypeDefinitions=" + useLiteratureTypeDefinitions
 				+ ", type2VariabilityPercentage=" + type2VariabilityPercentage + ", type3GapSize=" + type3GapSize + "]";
 	}
 }
