@@ -129,11 +129,10 @@ public class LocationContents implements FiltersTokens {
 	private void createCompareList(Node statement) {
 		Map<Range, Node> compareMap = getNodesForCompare(Collections.singletonList(statement));
 		getTokens().forEach(token -> {
-			Optional<Entry<Position, Node>> n = compareMap.entrySet().stream().filter(e -> e.getValue().getRange().get().contains(token.getRange().get())).findFirst();
-			if(n.isPresent()) {
-				Entry<Position, Node> entry = n.get();
-				if(entry.getValue() != null)
-					createCompareFromNode(compareMap, token, entry);
+			Optional<Entry<Range, Node>> thisNodeOptional = compareMap.entrySet().stream().filter(e -> e.getKey().contains(token.getRange().get())).findAny();
+			if(thisNodeOptional.isPresent()) {
+				if(thisNodeOptional.get().getValue()!=null)
+					createCompareFromNode(compareMap, token, thisNodeOptional.get());
 			} else getCompare().add(Compare.create(token, token, Settings.get().getCloneType()));
 		});
 	}
@@ -144,7 +143,7 @@ public class LocationContents implements FiltersTokens {
 		getCompare().add(createdNode);
 		getCompare().addAll(createdNode.relevantChildren(this));
 		if(createdNode instanceof CompareToken) compareMap.remove(thisNode.getKey()); 
-		else {thisNode.setValue(null);System.out.println("SET NULL");}
+		else thisNode.setValue(null);
 	}
 
 	private void addTokensInRange(Node n, TokenRange tokenRange, Range validRange) {
