@@ -8,10 +8,12 @@ import java.util.stream.StreamSupport;
 
 import com.github.javaparser.JavaToken;
 import com.github.javaparser.JavaToken.Category;
+import com.simonbaars.clonerefactor.Settings;
 import com.github.javaparser.TokenRange;
 
 public interface FiltersTokens {
 	public static final Category[] NO_TOKEN = {Category.COMMENT, Category.EOL, Category.WHITESPACE_NO_EOL};
+	public static final Category[] LITERATURE_TYPE2_NO_TOKEN = {Category.COMMENT, Category.EOL, Category.WHITESPACE_NO_EOL, Category.IDENTIFIER, Category.LITERAL};
 	
 	public default Stream<JavaToken> getEffectiveTokens(TokenRange tokens) {
 		return StreamSupport.stream(tokens.spliterator(), false).filter(e -> isComparableToken(e));
@@ -22,6 +24,6 @@ public interface FiltersTokens {
 	}
 	
 	public default boolean isComparableToken(JavaToken t) {
-		return Arrays.stream(NO_TOKEN).noneMatch(c -> c.equals(t.getCategory()));
+		return Arrays.stream(Settings.get().getCloneType().isNotTypeOne() && Settings.get().isCompareByTokens() ? LITERATURE_TYPE2_NO_TOKEN : NO_TOKEN).noneMatch(c -> c.equals(t.getCategory()));
 	}
 }
