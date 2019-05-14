@@ -35,7 +35,7 @@ public class Settings {
             minAmountOfLines = Integer.parseInt(prop.getProperty("min_lines"));
             minAmountOfTokens = Integer.parseInt(prop.getProperty("min_tokens"));
             minAmountOfNodes = Integer.parseInt(prop.getProperty("min_statements"));
-            compareByTokens = prop.getProperty("token_comparison").equals("true");
+            compareByTokens = prop.getProperty("use_literature_type_definitions").equals("true");
             type2VariabilityPercentage = percentageStringToDouble(prop.getProperty("max_type2_variability_percentage"));
             type3GapSize = percentageStringToDouble(prop.getProperty("max_type3_gap_size"));
         } catch (IOException ex) {
