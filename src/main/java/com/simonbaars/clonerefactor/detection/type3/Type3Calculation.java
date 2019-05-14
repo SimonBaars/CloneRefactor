@@ -1,4 +1,7 @@
-package com.simonbaars.clonerefactor.model.location;
+package com.simonbaars.clonerefactor.detection.type3;
+
+import com.simonbaars.clonerefactor.model.location.Location;
+import com.simonbaars.clonerefactor.model.location.LocationContents;
 
 public interface Type3Calculation {
 	public default LocationContents calculateDiffContents(Location before, Location after) {

@@ -12,17 +12,14 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.github.javaparser.JavaToken;
-import com.github.javaparser.Position;
 import com.github.javaparser.Range;
 import com.github.javaparser.TokenRange;
 import com.github.javaparser.ast.Node;
-import com.github.javaparser.ast.expr.SimpleName;
 import com.github.javaparser.ast.nodeTypes.NodeWithImplements;
 import com.simonbaars.clonerefactor.Settings;
 import com.simonbaars.clonerefactor.compare.Compare;
 import com.simonbaars.clonerefactor.compare.CompareLiteral;
 import com.simonbaars.clonerefactor.compare.CompareMethodCall;
-import com.simonbaars.clonerefactor.compare.CompareName;
 import com.simonbaars.clonerefactor.compare.CompareToken;
 import com.simonbaars.clonerefactor.compare.CompareVariable;
 import com.simonbaars.clonerefactor.exception.NoTokensException;

@@ -13,7 +13,7 @@ import com.simonbaars.clonerefactor.Settings;
 import com.simonbaars.clonerefactor.compare.CloneType;
 import com.simonbaars.clonerefactor.detection.CloneDetection;
 import com.simonbaars.clonerefactor.detection.Type2Variability;
-import com.simonbaars.clonerefactor.detection.Type3Opportunities;
+import com.simonbaars.clonerefactor.detection.type3.Type3Opportunities;
 import com.simonbaars.clonerefactor.metrics.MetricCollector;
 import com.simonbaars.clonerefactor.model.DetectionResults;
 import com.simonbaars.clonerefactor.model.Sequence;
