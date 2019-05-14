@@ -12,6 +12,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.github.javaparser.JavaToken;
+import com.github.javaparser.Position;
 import com.github.javaparser.Range;
 import com.github.javaparser.TokenRange;
 import com.github.javaparser.ast.Node;
@@ -72,7 +73,7 @@ public class LocationContents implements FiltersTokens {
 	}
 	
 	public Map<Range, Node> getNodesForCompare(){
-		return getNodesForCompare(getNodes(), new HashMap<>());
+		return getNodesForCompare(getNodes());
 	}
 	
 	public Map<Range, Node> getNodesForCompare(List<? extends Node> parents){
@@ -81,15 +82,13 @@ public class LocationContents implements FiltersTokens {
 	
 	public Map<Range, Node> getNodesForCompare(List<? extends Node> parents, Map<Range, Node> nodes){
 		for(Node node : parents) {
-			Optional<Range> rangeOptional = node.getRange();
-			if(rangeOptional.isPresent()) {
-				Range r = rangeOptional.get();
-				if(range.contains(r) && Compare.comparingNode(node) && (!(node instanceof SimpleName) || !nodes.containsKey(r))) {
-					nodes.put(r, node);
-				} else if (r.begin.isAfter(range.end))
-					return nodes;
-			}
-			getNodesForCompare(node.getChildNodes(), nodes);
+			Range r = node.getRange().get();
+			if(range.contains(r) && Compare.comparingNode(node))
+				nodes.put(r, node);
+			else if (r.begin.isAfter(range.end))
+				return nodes;
+			if(!nodes.containsKey(r))
+				getNodesForCompare(node.getChildNodes(), nodes);
 		}
 		return nodes;
 	}
@@ -130,20 +129,22 @@ public class LocationContents implements FiltersTokens {
 	private void createCompareList(Node statement) {
 		Map<Range, Node> compareMap = getNodesForCompare(Collections.singletonList(statement));
 		getTokens().forEach(token -> {
-			Optional<Entry<Range, Node>> thisNodeOptional = compareMap.entrySet().stream().filter(e -> e.getKey().contains(token.getRange().get())).findAny();
-			if(thisNodeOptional.isPresent()) {
-				if(thisNodeOptional.get().getValue()!=null)
-					createCompareFromNode(compareMap, token, thisNodeOptional.get());
+			Optional<Entry<Position, Node>> n = compareMap.entrySet().stream().filter(e -> e.getValue().getRange().get().contains(token.getRange().get())).findFirst();
+			if(n.isPresent()) {
+				Entry<Position, Node> entry = n.get();
+				if(entry.getValue() != null)
+					createCompareFromNode(compareMap, token, entry);
 			} else getCompare().add(Compare.create(token, token, Settings.get().getCloneType()));
 		});
 	}
 
 	private void createCompareFromNode(Map<Range, Node> compareMap, JavaToken token, Entry<Range, Node> thisNode) {
 		Compare createdNode = Compare.create(thisNode.getValue(), token, Settings.get().getCloneType());
+		System.out.println("Created from node "+createdNode+" in range "+thisNode.getKey());
 		getCompare().add(createdNode);
 		getCompare().addAll(createdNode.relevantChildren(this));
 		if(createdNode instanceof CompareToken) compareMap.remove(thisNode.getKey()); 
-		else thisNode.setValue(null);
+		else {thisNode.setValue(null);System.out.println("SET NULL");}
 	}
 
 	private void addTokensInRange(Node n, TokenRange tokenRange, Range validRange) {
