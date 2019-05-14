@@ -201,7 +201,7 @@ public class LocationContents implements FiltersTokens {
 	}
 
 	public List<Compare> getType2Comparables() {
-		return getType2Variable(CompareLiteral.class, CompareName.class, CompareMethodCall.class, CompareVariable.class);
+		return getType2Variable(CompareLiteral.class, CompareMethodCall.class, CompareVariable.class);
 	}
 
 	public String compareTypes() {
