@@ -9,14 +9,17 @@ import com.github.javaparser.ast.expr.MethodCallExpr;
 import com.github.javaparser.ast.expr.NameExpr;
 import com.github.javaparser.resolution.declarations.ResolvedMethodDeclaration;
 import com.simonbaars.clonerefactor.model.FiltersTokens;
+import com.simonbaars.clonerefactor.model.location.LocationContents;
 
 public class CompareMethodCall extends Compare implements FiltersTokens {
+	private final MethodCallExpr methodCall;
 	private final ResolvedMethodDeclaration type;
 	private final List<JavaToken> myTokens;
 	private final List<Object> estimatedTypes = new ArrayList<>();
 	
 	public CompareMethodCall(CloneType cloneType, MethodCallExpr t) {
 		super(cloneType);
+		methodCall = t;
 		ResolvedMethodDeclaration refType = null;
 		try {
 			refType = t.resolve();
@@ -71,5 +74,10 @@ public class CompareMethodCall extends Compare implements FiltersTokens {
 	@Override
 	public String toString() {
 		return "CompareMethodCall [type=" + type + "]";
+	}
+	
+	@Override
+	public List<Compare> relevantChildren(LocationContents c){
+		return c.getNodesForCompare(methodCall.getArguments()).values().stream().map(e -> Compare.create(e, e.getTokenRange().get().getBegin(), cloneType)).collect(Collectors.toList());
 	}
 }
