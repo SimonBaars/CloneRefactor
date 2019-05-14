@@ -139,7 +139,6 @@ public class LocationContents implements FiltersTokens {
 
 	private void createCompareFromNode(Map<Range, Node> compareMap, JavaToken token, Entry<Range, Node> thisNode) {
 		Compare createdNode = Compare.create(thisNode.getValue(), token, Settings.get().getCloneType());
-		System.out.println("Created from node "+createdNode+" in range "+thisNode.getKey());
 		getCompare().add(createdNode);
 		getCompare().addAll(createdNode.relevantChildren(this));
 		if(createdNode instanceof CompareToken) compareMap.remove(thisNode.getKey()); 
