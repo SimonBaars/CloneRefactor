@@ -168,6 +168,7 @@ public class LocationContents implements FiltersTokens {
 	public void merge(LocationContents contents) {
 		nodes.addAll(contents.getNodes());
 		tokens.addAll(contents.getTokens());
+		compare.addAll(contents.getCompare());
 	}
 
 	public Range getRange() {
@@ -203,7 +204,7 @@ public class LocationContents implements FiltersTokens {
 		return compare.stream().filter(e -> Arrays.stream(of).anyMatch(f -> f.equals(e.getClass()))).map(e -> (Compare)e).collect(Collectors.toList());
 	}
 
-	public List<Compare> getType2Threshold() {
+	public List<Compare> getType2Comparables() {
 		return getType2Variable(CompareLiteral.class, CompareName.class, CompareMethodCall.class, CompareVariable.class);
 	}
 

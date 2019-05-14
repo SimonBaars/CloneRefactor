@@ -71,7 +71,7 @@ public class Type2Variability implements CalculatesPercentages {
 	private List<List<Compare>> createLiteralList(Sequence s) {
 		List<List<Compare>> literals = new ArrayList<>();
 		for(Location l : s.getSequence()) {
-			List<Compare> literals2 = l.getContents().getType2Threshold();
+			List<Compare> literals2 = l.getContents().getType2Comparables();
 			literals.add(literals2);
 			literals2.forEach(e -> e.setCloneType(CloneType.TYPE1));
 		}
