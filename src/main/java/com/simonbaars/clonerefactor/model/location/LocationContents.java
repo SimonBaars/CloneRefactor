@@ -2,6 +2,7 @@ package com.simonbaars.clonerefactor.model.location;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -66,8 +67,6 @@ public class LocationContents implements FiltersTokens {
 		if(!(o instanceof LocationContents))
 			return false;
 		LocationContents other = (LocationContents)o;
-		//if(other.tokens.equals(tokens) && !IntStream.range(0, compare.size()).allMatch(i -> compare.get(i).compare(other.compare.get(i))))
-		//	System.out.println(Arrays.toString(other.compare.toArray())+System.lineSeparator()+Arrays.toString(compare.toArray())+System.lineSeparator()+IntStream.range(0, compare.size()).peek(i -> System.out.println(compare.get(i)+", "+other.compare.get(i)+", "+compare.get(i).compare(other.compare.get(i)))).allMatch(i -> compare.get(i).compare(other.compare.get(i))));
 		if(Settings.get().isCompareByTokens()) return tokens.equals(other.tokens);
 		return compare.equals(other.compare);
 	}
@@ -76,11 +75,11 @@ public class LocationContents implements FiltersTokens {
 		return getNodesForCompare(getNodes(), new HashMap<>());
 	}
 	
-	public Map<Range, Node> getNodesForCompare(List<Node> parents){
+	public Map<Range, Node> getNodesForCompare(List<? extends Node> parents){
 		return getNodesForCompare(parents, new HashMap<>());
 	}
 	
-	public Map<Range, Node> getNodesForCompare(List<Node> parents, Map<Range, Node> nodes){
+	public Map<Range, Node> getNodesForCompare(List<? extends Node> parents, Map<Range, Node> nodes){
 		for(Node node : parents) {
 			Optional<Range> rangeOptional = node.getRange();
 			if(rangeOptional.isPresent()) {
@@ -119,17 +118,17 @@ public class LocationContents implements FiltersTokens {
 		return getTokens().stream().map(e -> e.asString()).collect(Collectors.joining());
 	}
 
-	public Range addTokens(Node n, TokenRange tokenRange, Range validRange) {
-		addTokensInRange(n, tokenRange, validRange);
+	public Range addTokens(Node statement, TokenRange tokenRange, Range validRange) {
+		addTokensInRange(statement, tokenRange, validRange);
 		if(tokens.isEmpty())
-			throw new NoTokensException(n, tokenRange, validRange);
+			throw new NoTokensException(statement, tokenRange, validRange);
 		range = new Range(tokens.get(0).getRange().get().begin, tokens.get(tokens.size()-1).getRange().get().end);
-		if(!Settings.get().isCompareByTokens()) createCompareList(n);
+		if(!Settings.get().isCompareByTokens()) createCompareList(statement);
 		return range; 
 	}
 
-	private void createCompareList(Node n) {
-		Map<Range, Node> compareMap = getNodesForCompare(Arrays.asList(n));
+	private void createCompareList(Node statement) {
+		Map<Range, Node> compareMap = getNodesForCompare(Collections.singletonList(statement));
 		getTokens().forEach(token -> {
 			Optional<Entry<Range, Node>> thisNodeOptional = compareMap.entrySet().stream().filter(e -> e.getKey().contains(token.getRange().get())).findAny();
 			if(thisNodeOptional.isPresent()) {
@@ -137,14 +136,12 @@ public class LocationContents implements FiltersTokens {
 					createCompareFromNode(compareMap, token, thisNodeOptional.get());
 			} else getCompare().add(Compare.create(token, token, Settings.get().getCloneType()));
 		});
-		//getTokens().forEach(e -> getCompare().add(Compare.create(e.getRange().isPresent() && compareMap.containsKey(e.getRange().get()) ? compareMap.get(e.getRange().get()) : e, e, CloneDetection.type)));
-		//System.out.println(getCompare().stream().map(e -> e.toString()).collect(Collectors.joining(", ", "[", "]")));
-		//System.out.println(compareMap.values().stream().map(e -> e.toString()+" "+e.getClass().getSimpleName()).collect(Collectors.joining(", ")));
 	}
 
 	private void createCompareFromNode(Map<Range, Node> compareMap, JavaToken token, Entry<Range, Node> thisNode) {
 		Compare createdNode = Compare.create(thisNode.getValue(), token, Settings.get().getCloneType());
 		getCompare().add(createdNode);
+		getCompare().addAll(createdNode.relevantChildren(this));
 		if(createdNode instanceof CompareToken) compareMap.remove(thisNode.getKey()); 
 		else thisNode.setValue(null);
 	}
