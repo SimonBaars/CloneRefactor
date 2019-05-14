@@ -44,6 +44,11 @@ public class Type2Test extends TestCase {
     	System.out.println("testDifferentMethods");
     	System.out.println(testProject("DifferentMethods"));
     }
+    
+    public void testHighVariability() {
+    	System.out.println("testHighVariability");
+    	System.out.println(testProject("HighVariability"));
+    }
 
 	private DetectionResults testProject(String project) {
 		return Main.cloneDetection(Type2Test.class.getClassLoader().getResource("Type2"+project).getFile()).sorted();
