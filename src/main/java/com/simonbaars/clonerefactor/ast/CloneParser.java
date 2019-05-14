@@ -3,6 +3,7 @@ package com.simonbaars.clonerefactor.ast;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.stream.IntStream;
 
 import com.github.javaparser.ParseResult;
 import com.github.javaparser.ParserConfiguration;
@@ -44,9 +45,9 @@ public class CloneParser implements Parser {
 
 	private void doType2Transformations(List<Sequence> findChains) {
 		if(Settings.get().getCloneType().isNotTypeOne()) {
-			for(int i = 0; i<findChains.size(); i++) {
+			IntStream.range(0, findChains.size()).forEach(i -> {
 				findChains.addAll(new Type2Variability().determineVariability(findChains.remove(0)));
-			}
+			});
 		}
 	}
 
