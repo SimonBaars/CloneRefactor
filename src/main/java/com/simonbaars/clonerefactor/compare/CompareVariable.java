@@ -27,17 +27,14 @@ public class CompareVariable extends Compare {
 		if(!super.equals(o))
 			return false;
 		CompareVariable compareDec = ((CompareVariable)o);
-		if(cloneType == CloneType.TYPE1 && !dec.getName().equals(compareDec.dec.getName()))
+		if(cloneType == CloneType.TYPE1 && !variableName.equals(compareDec.variableName))
 			return false;
-		if(type == null) 
-			return variableName.equals(compareDec.variableName);
-		return type.equals(compareDec.type);
+		return type == null || type.equals(compareDec.type);
 	}
 
 	@Override
 	public int getHashCode() {
-		if(type!=null) return cloneType.isNotTypeOne() ? type.hashCode() : type.hashCode() + dec.getName().hashCode();
-		return cloneType.isNotTypeOne() ? -3 : dec.getName().hashCode();
+		return (cloneType == CloneType.TYPE1 ? variableName.hashCode() : 0) + (type == null ? -3 : type.hashCode());
 	}
 
 	@Override

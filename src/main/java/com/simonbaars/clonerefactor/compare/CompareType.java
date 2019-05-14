@@ -28,6 +28,8 @@ public class CompareType extends Compare {
 	
 	@Override
 	public int getHashCode() {
+		if(type==null)
+			return referenceType.hashCode();
 		return type.hashCode();
 	}
 
