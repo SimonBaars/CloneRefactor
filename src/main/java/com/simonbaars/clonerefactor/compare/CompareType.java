@@ -4,10 +4,12 @@ import com.github.javaparser.ast.type.ReferenceType;
 import com.github.javaparser.resolution.types.ResolvedReferenceType;
 
 public class CompareType extends Compare {
+	private final ReferenceType referenceType;
 	private final ResolvedReferenceType type;
 	
 	public CompareType(CloneType cloneType, ReferenceType t) {
 		super(cloneType);
+		this.referenceType = t;
 		ResolvedReferenceType refType = null;
 		try {
 			refType = (ResolvedReferenceType)t.resolve();
@@ -16,14 +18,14 @@ public class CompareType extends Compare {
 	}
 	
 	public boolean equals(Object o) {
-		return super.equals(o) && type.equals(((CompareType)o).type);
+		if(!super.equals(o))
+			return false;
+		CompareType other = ((CompareType)o);
+		if(type!=null)
+			return type.equals(other.type);
+		return referenceType.equals(other.referenceType);
 	}
-
-	@Override
-	public boolean isValid() {
-		return type!=null;
-	}
-
+	
 	@Override
 	public int getHashCode() {
 		return type.hashCode();

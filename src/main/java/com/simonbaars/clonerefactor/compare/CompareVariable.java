@@ -5,11 +5,13 @@ import com.github.javaparser.resolution.declarations.ResolvedValueDeclaration;
 import com.github.javaparser.resolution.types.ResolvedType;
 
 public class CompareVariable extends Compare {
+	private final NameExpr variableName;
 	private final ResolvedValueDeclaration dec;
 	private final ResolvedType type;
 	
 	public CompareVariable(CloneType cloneType, NameExpr t) {
 		super(cloneType);
+		variableName = t;
 		ResolvedValueDeclaration refType = null;
 		ResolvedType resolvedType = null;
 		try {
@@ -25,15 +27,11 @@ public class CompareVariable extends Compare {
 		if(!super.equals(o))
 			return false;
 		CompareVariable compareDec = ((CompareVariable)o);
-		if(cloneType == CloneType.TYPE1 && !dec.getName().equals(compareDec.dec.getName())) {
+		if(cloneType == CloneType.TYPE1 && !dec.getName().equals(compareDec.dec.getName()))
 			return false;
-		}
-		return (type == null && compareDec.type == null) || (type!=null && type.equals(compareDec.type));
-	}
-
-	@Override
-	public boolean isValid() {
-		return dec!=null;
+		if(type == null) 
+			return variableName.equals(compareDec.variableName);
+		return type.equals(compareDec.type);
 	}
 
 	@Override
