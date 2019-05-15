@@ -75,7 +75,7 @@ public class Type2Variability implements CalculatesPercentages, ChecksThresholds
 	private Location findNodeLocation(Location l, Node n) {
 		if(l.getContents().getNodes().get(0) == n)
 			return l;
-		return findNodeLocation(l, n);
+		return findNodeLocation(l.getNextLine(), n);
 	}
 
 	private List<WeightedPercentage> getWeightedPercentages(Sequence s, Map<Integer, int[][]> statementEqualityArrays) {
