@@ -20,7 +20,8 @@ public class Type2Variability implements CalculatesPercentages {
 		if(globalThresholdsMet(equalityArray, s.getSequence().stream().mapToInt(e -> e.getContents().getTokens().size()).sum())) // We first check the thresholds for the entire sequence. If those are not met, we will try to create smaller sequences
 			return Collections.singletonList(s);
 		List<List<Integer>> connections = findConnectedSequences(equalityArray);
-		Map<Integer, int[][]> statementEqualityArrays = findConnectedStatements(s, equalityArray);
+		Map<Integer, int[][]> statementEqualityArrays = findConnectedStatements(s, literals, equalityArray);
+		
 		return determineOutput(s, connections);
 	}
 	
@@ -30,16 +31,16 @@ public class Type2Variability implements CalculatesPercentages {
 	 * @param equalityArray
 	 * @return
 	 */
-	private Map<Integer, int[][]> findConnectedStatements(Sequence s, int[][] equalityArray) {
+	private Map<Integer, int[][]> findConnectedStatements(Sequence s, List<List<Compare>> literals, int[][] equalityArray) {
 		Map<Integer, int[][]> statementEqualityArrays = new HashMap<>();
 		int startCompareIndex = 0, currCompareIndex = 0;
 		for(int currNodeIndex = 0; currNodeIndex<s.getAny().getContents().getNodes().size(); currNodeIndex++) {
-			for(;currCompareIndex<s.getAny().getContents().getCompare().size() && getLocationForNode(s, currNodeIndex).getRange().contains(s.getAny().getContents().getCompare().get(currCompareIndex).getRange()); currCompareIndex++) System.out.println(s.getAny().getContents().getCompare().get(currCompareIndex));
+			for(;currCompareIndex<literals.get(0).size() && getLocationForNode(s.getAny(), currNodeIndex).getRange().contains(literals.get(0).get(currCompareIndex).getRange()); currCompareIndex++) System.out.println(s.getAny().getContents().getCompare().get(currCompareIndex));
 			statementEqualityArrays.put(currNodeIndex, new int[s.size()][currCompareIndex-startCompareIndex]);
 			for(int locationIndex = 0; locationIndex<s.size(); locationIndex++) {
 				for(int compareIndex = startCompareIndex; compareIndex<currCompareIndex; compareIndex++) {
-					System.out.println(locationIndex+", "+compareIndex+", "+startCompareIndex+", "+currCompareIndex);
-					statementEqualityArrays.get(currNodeIndex)[locationIndex][compareIndex-startCompareIndex] = equalityArray[locationIndex][compareIndex-startCompareIndex];
+					System.out.println(locationIndex+" ("+equalityArray.length+"), "+(compareIndex)+" ("+equalityArray[0].length+"), "+currNodeIndex+" ("+statementEqualityArrays.size()+")");
+					statementEqualityArrays.get(currNodeIndex)[locationIndex][compareIndex-startCompareIndex] = equalityArray[locationIndex][compareIndex];
 				}
 			}
 			startCompareIndex = currCompareIndex;
@@ -47,8 +48,8 @@ public class Type2Variability implements CalculatesPercentages {
 		return statementEqualityArrays;
 	}
 	
-	public Location getLocationForNode(Sequence s, int node) {
-		return getLocation(s.getSequence().get(node).getNextLine().getPrevLine() /*magic trick*/, node);
+	public Location getLocationForNode(Location l, int node) {
+		return getLocation(l.getNextLine().getPrevLine() /*magic trick*/, node);
 	}
 
 	private Location getLocation(Location l, int node) {
