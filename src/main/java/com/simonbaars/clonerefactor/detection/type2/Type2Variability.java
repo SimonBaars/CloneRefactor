@@ -35,7 +35,7 @@ public class Type2Variability implements CalculatesPercentages, ChecksThresholds
 		List<WeightedPercentage> percentagesList = new ArrayList<>();
 		for(int i = 0; i<calcPercentages.size(); i++) {
 			percentagesList.add(calcPercentages.get(i));
-			if(calcAvg(percentagesList) > Settings.get().getType2VariabilityPercentage() && !canFixIt(calcPercentages, percentagesList, i)) {
+			if(calcAvg(percentagesList) > Settings.get().getType2VariabilityPercentage() && !canFixIt(calcPercentages, percentagesList, i) || i+1 == calcPercentages.size()) {
 				if(percentagesList.size()>1) {
 					percentagesList.remove(percentagesList.size()-1);
 					Sequence newSeq = createSequence(s, calcPercentages.indexOf(percentagesList.get(0)), calcPercentages.indexOf(percentagesList.get(percentagesList.size()-1)));
@@ -54,8 +54,8 @@ public class Type2Variability implements CalculatesPercentages, ChecksThresholds
 			Location l2 = new Location(l);
 			newSeq.add(l2);
 			List<Node> myNodes = l2.getContents().getNodes();
-			for(int i = 0; i<myNodes.size(); i++)
-				if(i<from || i>=to)
+			for(int i = myNodes.size()-1; i>=0; i--)
+				if(i<from || i>to)
 					myNodes.remove(i);
 			Range r = new Range(myNodes.get(0).getRange().get().begin, findNodeLocation(getStatementLoc(l2), myNodes.get(myNodes.size()-1)).getRange().end);
 			l2.setRange(r);
@@ -89,6 +89,7 @@ public class Type2Variability implements CalculatesPercentages, ChecksThresholds
 
 	private boolean canFixIt(List<WeightedPercentage> calcPercentages, List<WeightedPercentage> percentagesList,
 			int i) {
+		percentagesList = new ArrayList<>(percentagesList);
 		for(i++; i<calcPercentages.size(); i++) {
 			percentagesList.add(calcPercentages.get(i));
 			if(calcAvg(percentagesList) <= Settings.get().getType2VariabilityPercentage()){
