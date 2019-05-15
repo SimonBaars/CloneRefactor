@@ -1,4 +1,4 @@
-package com.simonbaars.clonerefactor.detection;
+package com.simonbaars.clonerefactor.detection.type2;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -9,6 +9,7 @@ import java.util.Map;
 import com.simonbaars.clonerefactor.Settings;
 import com.simonbaars.clonerefactor.compare.CloneType;
 import com.simonbaars.clonerefactor.compare.Compare;
+import com.simonbaars.clonerefactor.detection.CalculatesPercentages;
 import com.simonbaars.clonerefactor.model.Sequence;
 import com.simonbaars.clonerefactor.model.location.Location;
 

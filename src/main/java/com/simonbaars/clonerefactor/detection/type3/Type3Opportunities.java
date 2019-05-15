@@ -6,7 +6,6 @@ import java.util.stream.IntStream;
 import com.simonbaars.clonerefactor.Settings;
 import com.simonbaars.clonerefactor.datatype.ListMap;
 import com.simonbaars.clonerefactor.detection.CalculatesPercentages;
-import com.simonbaars.clonerefactor.detection.FileLocations;
 import com.simonbaars.clonerefactor.model.Sequence;
 import com.simonbaars.clonerefactor.model.location.Location;
 

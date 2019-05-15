@@ -2,6 +2,8 @@ package com.simonbaars.clonerefactor.detection;
 
 import java.util.List;
 
+import com.simonbaars.clonerefactor.detection.type2.WeightedPercentage;
+
 public interface CalculatesPercentages {
 	public default double calcPercentage(int part, int whole) {
 		return (double)part/(double)whole*100D;

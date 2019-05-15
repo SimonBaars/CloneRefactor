@@ -1,4 +1,4 @@
-package com.simonbaars.clonerefactor.detection;
+package com.simonbaars.clonerefactor.detection.type3;
 
 import java.util.Collections;
 import java.util.List;

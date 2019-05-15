@@ -1,4 +1,4 @@
-package com.simonbaars.clonerefactor.detection;
+package com.simonbaars.clonerefactor.detection.type2;
 
 public class WeightedPercentage {
 	private final double percentage;

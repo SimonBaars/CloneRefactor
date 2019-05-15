@@ -1,4 +1,4 @@
-package com.simonbaars.clonerefactor.detection;
+package com.simonbaars.clonerefactor.detection.type2;
 
 import java.util.ArrayList;
 // Java program to print connected components in  
