@@ -8,12 +8,11 @@ import java.util.stream.Collectors;
 
 import com.github.javaparser.Position;
 import com.github.javaparser.Range;
-import com.simonbaars.clonerefactor.Settings;
 import com.simonbaars.clonerefactor.datatype.ListMap;
 import com.simonbaars.clonerefactor.model.Sequence;
 import com.simonbaars.clonerefactor.model.location.Location;
 
-public class CloneDetection {
+public class CloneDetection implements ChecksThresholds {
 	final List<Sequence> clones = new ArrayList<>();
 
 	public CloneDetection() {}
@@ -54,7 +53,7 @@ public class CloneDetection {
 
 	private void checkValidClones(Sequence oldClones, List<Location> endedClones) {
 		ListMap<Integer /*Sequence size*/, Location /* Clones */> cloneList = new ListMap<>();
-		endedClones.stream().filter(this::checkNodesThreshold).forEach(e -> cloneList.addTo(e.getAmountOfNodes(), e));
+		endedClones.stream().forEach(e -> cloneList.addTo(e.getAmountOfNodes(), e));
 		for(Entry<Integer, List<Location>> entry : cloneList.entrySet()) {
 			int amountOfNodes = entry.getKey();
 			List<Location> l = entry.getValue();
@@ -64,13 +63,9 @@ public class CloneDetection {
 		}
 	}
 
-	private boolean checkNodesThreshold(Location e) {
-		return e.getAmountOfNodes() >= Settings.get().getMinAmountOfNodes();
-	}
-
 	private void createClone(List<Location> l) {
-		if(checkTokenThreshold(l) && checkLinesThreshold(l) && l.size()>1) {
-			Sequence newSequence = new Sequence(l);
+		Sequence newSequence = new Sequence(l);
+		if(l.size()>1 && checkThresholds(newSequence)) {
 			if(removeDuplicatesOf(newSequence))
 				clones.add(newSequence);
 		}
@@ -82,14 +77,6 @@ public class CloneDetection {
 				l.add(new Location(l2, getRange(l2, l.get(0)), amountOfNodes, l.get(0).getContents().getCompare().size()));
 			}
 		}
-	}
-
-	private boolean checkLinesThreshold(List<Location> l) {
-		return l.stream().collect(Collectors.summingInt(e -> e.getAmountOfLines())) > Settings.get().getMinAmountOfLines();
-	}
-
-	private boolean checkTokenThreshold(List<Location> l) {
-		return l.stream().collect(Collectors.summingInt(e -> e.getAmountOfTokens())) > Settings.get().getMinAmountOfTokens();
 	}
 	
 	private Range getRange(Location l2, Location location) {
