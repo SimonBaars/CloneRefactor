@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.github.javaparser.ast.Node;
 import com.simonbaars.clonerefactor.Settings;
 import com.simonbaars.clonerefactor.compare.CloneType;
 import com.simonbaars.clonerefactor.compare.Compare;
@@ -19,12 +18,23 @@ public class Type2Variability implements CalculatesPercentages {
 		int[][] equalityArray = createEqualityArray(literals);
 		if(globalThresholdsMet(equalityArray, s.getSequence().stream().mapToInt(e -> e.getContents().getTokens().size()).sum())) // We first check the thresholds for the entire sequence. If those are not met, we will try to create smaller sequences
 			return Collections.singletonList(s);
-		List<List<Integer>> connections = findConnectedSequences(equalityArray);
 		Map<Integer, int[][]> statementEqualityArrays = findConnectedStatements(s, literals, equalityArray);
-		
+		List<Sequence> outputSequences = sliceSequence(s, statementEqualityArrays);
+		List<List<Integer>> connections = findConnectedSequences(equalityArray);
 		return determineOutput(s, connections);
 	}
 	
+	private List<Sequence> sliceSequence(Sequence s, Map<Integer, int[][]> statementEqualityArrays) {
+		List<WeightedPercentage> calcPercentages = new ArrayList<>();
+		for(int currNodeIndex = 0; currNodeIndex<s.getAny().getContents().getNodes().size(); currNodeIndex++) {
+			int[][] equality = statementEqualityArrays.get(currNodeIndex);
+			calcPercentages.add(new WeightedPercentage(diffPerc(equality), equality[0].length));
+		}
+		List<Sequence> sequences = new ArrayList<>();
+		
+		return null;
+	}
+
 	/**
 	 * Creates a per statement equality array.
 	 * @param s
@@ -33,13 +43,11 @@ public class Type2Variability implements CalculatesPercentages {
 	 */
 	private Map<Integer, int[][]> findConnectedStatements(Sequence s, List<List<Compare>> literals, int[][] equalityArray) {
 		Map<Integer, int[][]> statementEqualityArrays = new HashMap<>();
-		int startCompareIndex = 0, currCompareIndex = 0;
-		for(int currNodeIndex = 0; currNodeIndex<s.getAny().getContents().getNodes().size(); currNodeIndex++) {
-			for(;currCompareIndex<literals.get(0).size() && getLocationForNode(s.getAny(), currNodeIndex).getRange().contains(literals.get(0).get(currCompareIndex).getRange()); currCompareIndex++) System.out.println(s.getAny().getContents().getCompare().get(currCompareIndex));
+		for(int currNodeIndex = 0, startCompareIndex = 0, currCompareIndex = 0; currNodeIndex<s.getAny().getContents().getNodes().size(); currNodeIndex++) {
+			for(;currCompareIndex<literals.get(0).size() && getLocationForNode(s.getAny(), currNodeIndex).getRange().contains(literals.get(0).get(currCompareIndex).getRange()); currCompareIndex++);
 			statementEqualityArrays.put(currNodeIndex, new int[s.size()][currCompareIndex-startCompareIndex]);
 			for(int locationIndex = 0; locationIndex<s.size(); locationIndex++) {
 				for(int compareIndex = startCompareIndex; compareIndex<currCompareIndex; compareIndex++) {
-					System.out.println(locationIndex+" ("+equalityArray.length+"), "+(compareIndex)+" ("+equalityArray[0].length+"), "+currNodeIndex+" ("+statementEqualityArrays.size()+")");
 					statementEqualityArrays.get(currNodeIndex)[locationIndex][compareIndex-startCompareIndex] = equalityArray[locationIndex][compareIndex];
 				}
 			}
