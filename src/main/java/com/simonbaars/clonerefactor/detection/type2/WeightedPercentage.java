@@ -1,6 +1,8 @@
 package com.simonbaars.clonerefactor.detection.type2;
 
-public class WeightedPercentage {
+import com.simonbaars.clonerefactor.detection.CalculatesPercentages;
+
+public class WeightedPercentage implements CalculatesPercentages {
 	private final double percentage;
 	private final int weight;
 	
@@ -25,6 +27,11 @@ public class WeightedPercentage {
 	}
 
 	private double unweighted(int total) {
-		return percentage/total*weight;
+		return total == 0 ? 0D : percentage/total*weight;
+	}
+
+	@Override
+	public String toString() {
+		return "WeightedPercentage [percentage=" + percentage + ", weight=" + weight + "]";
 	}
 }

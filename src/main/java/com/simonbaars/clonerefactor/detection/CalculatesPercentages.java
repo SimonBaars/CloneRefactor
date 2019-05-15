@@ -7,7 +7,7 @@ import com.simonbaars.clonerefactor.detection.type2.WeightedPercentage;
 
 public interface CalculatesPercentages {
 	public default double calcPercentage(int part, int whole) {
-		return (double)part/(double)whole*100D;
+		return whole == 0 ? 0D : (double)part/(double)whole*100D;
 	}
 	
 	public default double diffPerc(int[] arr1, int[] arr2) {

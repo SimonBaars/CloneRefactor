@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.github.javaparser.Range;
+import com.github.javaparser.ast.Node;
 import com.simonbaars.clonerefactor.Settings;
 import com.simonbaars.clonerefactor.compare.CloneType;
 import com.simonbaars.clonerefactor.compare.Compare;
@@ -23,7 +25,8 @@ public class Type2Variability implements CalculatesPercentages, ChecksThresholds
 		Map<Integer, int[][]> statementEqualityArrays = findConnectedStatements(s, literals, equalityArray);
 		List<Sequence> outputSequences = sliceSequence(s, statementEqualityArrays);
 		List<List<Integer>> connections = findConnectedSequences(equalityArray);
-		return determineOutput(s, connections);
+		List<Sequence> connectionOutput = determineOutput(s, connections);
+		return outputSequences;
 	}
 	
 	private List<Sequence> sliceSequence(Sequence s, Map<Integer, int[][]> statementEqualityArrays) {
@@ -35,7 +38,7 @@ public class Type2Variability implements CalculatesPercentages, ChecksThresholds
 			if(calcAvg(percentagesList) > Settings.get().getType2VariabilityPercentage() && !canFixIt(calcPercentages, percentagesList, i)) {
 				if(percentagesList.size()>1) {
 					percentagesList.remove(percentagesList.size()-1);
-					Sequence newSeq = createSequenceForNodeRange(s, calcPercentages.indexOf(percentagesList.get(0)), calcPercentages.indexOf(percentagesList.get(percentagesList.size()-1)));
+					Sequence newSeq = createSequence(s, calcPercentages.indexOf(percentagesList.get(0)), calcPercentages.indexOf(percentagesList.get(percentagesList.size()-1)));
 					if(checkThresholds(newSeq))
 						sequences.add(newSeq);
 				}
@@ -45,6 +48,36 @@ public class Type2Variability implements CalculatesPercentages, ChecksThresholds
 		return sequences;
 	}
 
+	private Sequence createSequence(Sequence s, int from, int to) {
+		Sequence newSeq = new Sequence();
+		for(Location l : s.getSequence()) {
+			Location l2 = new Location(l);
+			newSeq.add(l2);
+			List<Node> myNodes = l2.getContents().getNodes();
+			for(int i = 0; i<myNodes.size(); i++)
+				if(i<from || i>=to)
+					myNodes.remove(i);
+			Range r = new Range(myNodes.get(0).getRange().get().begin, findNodeLocation(getStatementLoc(l2), myNodes.get(myNodes.size()-1)).getRange().end);
+			l2.setRange(r);
+			l2.getContents().setRange(r);
+			l2.getContents().getCompare().removeIf(e -> e.getRange().isBefore(r.begin) || e.getRange().isAfter(r.end));
+			l2.getContents().getTokens().removeIf(e -> e.getRange().get().isBefore(r.begin) || e.getRange().get().isAfter(r.end));
+		}
+		return newSeq;
+	}
+	
+	public Location getStatementLoc(Location l) {
+		if(l.getNextLine() != null)
+			return l.getNextLine().getPrevLine();
+		return l.getPrevLine().getNextLine();
+	}
+	
+	private Location findNodeLocation(Location l, Node n) {
+		if(l.getContents().getNodes().get(0) == n)
+			return l;
+		return findNodeLocation(l, n);
+	}
+
 	private List<WeightedPercentage> getWeightedPercentages(Sequence s, Map<Integer, int[][]> statementEqualityArrays) {
 		List<WeightedPercentage> calcPercentages = new ArrayList<>();
 		for(int currNodeIndex = 0; currNodeIndex<s.getAny().getContents().getNodes().size(); currNodeIndex++) {
@@ -52,10 +85,6 @@ public class Type2Variability implements CalculatesPercentages, ChecksThresholds
 			calcPercentages.add(new WeightedPercentage(diffPerc(equality), equality[0].length));
 		}
 		return calcPercentages;
-	}
-
-	private Sequence createSequenceForNodeRange(Sequence s, int indexOf, int indexOf2) {
-		return new Sequence(s, indexOf, indexOf2);
 	}
 
 	private boolean canFixIt(List<WeightedPercentage> calcPercentages, List<WeightedPercentage> percentagesList,
@@ -91,7 +120,7 @@ public class Type2Variability implements CalculatesPercentages, ChecksThresholds
 	}
 	
 	public Location getLocationForNode(Location l, int node) {
-		return getLocation(l.getNextLine().getPrevLine() /*magic trick*/, node);
+		return getLocation(getStatementLoc(l), node);
 	}
 
 	private Location getLocation(Location l, int node) {

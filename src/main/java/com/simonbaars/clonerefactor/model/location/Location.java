@@ -6,10 +6,11 @@ import java.util.Optional;
 import com.github.javaparser.Range;
 import com.github.javaparser.TokenRange;
 import com.github.javaparser.ast.Node;
+import com.simonbaars.clonerefactor.compare.HasRange;
 import com.simonbaars.clonerefactor.metrics.enums.CloneLocation;
 import com.simonbaars.clonerefactor.metrics.enums.CloneLocation.LocationType;
 
-public class Location implements Comparable<Location> {
+public class Location implements Comparable<Location>, HasRange {
 	private final Path file;
 	private Range range;
 	

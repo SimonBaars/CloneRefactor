@@ -22,12 +22,13 @@ import com.simonbaars.clonerefactor.compare.CompareLiteral;
 import com.simonbaars.clonerefactor.compare.CompareMethodCall;
 import com.simonbaars.clonerefactor.compare.CompareToken;
 import com.simonbaars.clonerefactor.compare.CompareVariable;
+import com.simonbaars.clonerefactor.compare.HasRange;
 import com.simonbaars.clonerefactor.exception.NoTokensException;
 import com.simonbaars.clonerefactor.metrics.enums.CloneContents;
 import com.simonbaars.clonerefactor.metrics.enums.CloneContents.ContentsType;
 import com.simonbaars.clonerefactor.model.FiltersTokens;
 
-public class LocationContents implements FiltersTokens {
+public class LocationContents implements FiltersTokens, HasRange {
 	private Range range;
 	private final List<Node> nodes;
 	private final List<JavaToken> tokens;
@@ -202,5 +203,10 @@ public class LocationContents implements FiltersTokens {
 
 	public String compareTypes() {
 		return getCompare().stream().map(e -> e.getClass().getName() +" ("+e.toString()+")").collect(Collectors.joining(","));
+	}
+
+	public void calculateRangeBasedOnNodes() {
+		// TODO Auto-generated method stub
+		
 	}
 }
