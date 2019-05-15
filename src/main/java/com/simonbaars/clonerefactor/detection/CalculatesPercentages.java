@@ -1,5 +1,7 @@
 package com.simonbaars.clonerefactor.detection;
 
+import java.util.List;
+
 public interface CalculatesPercentages {
 	public default double calcPercentage(int part, int whole) {
 		return (double)part/(double)whole*100D;
@@ -25,5 +27,13 @@ public interface CalculatesPercentages {
 			}
 		}
 		return calcPercentage(diff, same+diff);
+	}
+	
+	public default double calcAvg(List<WeightedPercentage> percentages) {
+		while(percentages.size()>1) {
+			percentages.set(0, percentages.get(0).mergeWith(percentages.get(1)));
+			percentages.remove(1);
+		}
+		return percentages.get(0).getPercentage();
 	}
 }
