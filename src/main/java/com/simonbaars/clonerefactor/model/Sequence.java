@@ -31,6 +31,10 @@ public class Sequence implements Comparable<Sequence> {
 		this(new ArrayList<>(values));
 	}
 
+	public Sequence(Sequence copy, int begin, int end) {
+		this.sequence = copy.sequence.subList(begin, end);
+	}
+
 	public List<Location> getSequence() {
 		return sequence;
 	}

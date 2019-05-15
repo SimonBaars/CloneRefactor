@@ -10,10 +10,11 @@ import com.simonbaars.clonerefactor.Settings;
 import com.simonbaars.clonerefactor.compare.CloneType;
 import com.simonbaars.clonerefactor.compare.Compare;
 import com.simonbaars.clonerefactor.detection.CalculatesPercentages;
+import com.simonbaars.clonerefactor.detection.ChecksThresholds;
 import com.simonbaars.clonerefactor.model.Sequence;
 import com.simonbaars.clonerefactor.model.location.Location;
 
-public class Type2Variability implements CalculatesPercentages {
+public class Type2Variability implements CalculatesPercentages, ChecksThresholds {
 	public List<Sequence> determineVariability(Sequence s) {
 		List<List<Compare>> literals = createLiteralList(s);
 		int[][] equalityArray = createEqualityArray(literals);
@@ -26,14 +27,46 @@ public class Type2Variability implements CalculatesPercentages {
 	}
 	
 	private List<Sequence> sliceSequence(Sequence s, Map<Integer, int[][]> statementEqualityArrays) {
+		List<WeightedPercentage> calcPercentages = getWeightedPercentages(s, statementEqualityArrays);
+		List<Sequence> sequences = new ArrayList<>();
+		List<WeightedPercentage> percentagesList = new ArrayList<>();
+		for(int i = 0; i<calcPercentages.size(); i++) {
+			percentagesList.add(calcPercentages.get(i));
+			if(calcAvg(percentagesList) > Settings.get().getType2VariabilityPercentage() && !canFixIt(calcPercentages, percentagesList, i)) {
+				if(percentagesList.size()>1) {
+					percentagesList.remove(percentagesList.size()-1);
+					Sequence newSeq = createSequenceForNodeRange(s, calcPercentages.indexOf(percentagesList.get(0)), calcPercentages.indexOf(percentagesList.get(percentagesList.size()-1)));
+					if(checkThresholds(newSeq))
+						sequences.add(newSeq);
+				}
+				percentagesList.clear();
+			}
+		}
+		return sequences;
+	}
+
+	private List<WeightedPercentage> getWeightedPercentages(Sequence s, Map<Integer, int[][]> statementEqualityArrays) {
 		List<WeightedPercentage> calcPercentages = new ArrayList<>();
 		for(int currNodeIndex = 0; currNodeIndex<s.getAny().getContents().getNodes().size(); currNodeIndex++) {
 			int[][] equality = statementEqualityArrays.get(currNodeIndex);
 			calcPercentages.add(new WeightedPercentage(diffPerc(equality), equality[0].length));
 		}
-		List<Sequence> sequences = new ArrayList<>();
-		
-		return null;
+		return calcPercentages;
+	}
+
+	private Sequence createSequenceForNodeRange(Sequence s, int indexOf, int indexOf2) {
+		return new Sequence(s, indexOf, indexOf2);
+	}
+
+	private boolean canFixIt(List<WeightedPercentage> calcPercentages, List<WeightedPercentage> percentagesList,
+			int i) {
+		for(i++; i<calcPercentages.size(); i++) {
+			percentagesList.add(calcPercentages.get(i));
+			if(calcAvg(percentagesList) <= Settings.get().getType2VariabilityPercentage()){
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/**

@@ -1,5 +1,6 @@
 package com.simonbaars.clonerefactor.detection;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.simonbaars.clonerefactor.detection.type2.WeightedPercentage;
@@ -32,6 +33,7 @@ public interface CalculatesPercentages {
 	}
 	
 	public default double calcAvg(List<WeightedPercentage> percentages) {
+		percentages = new ArrayList<>(percentages);
 		while(percentages.size()>1) {
 			percentages.set(0, percentages.get(0).mergeWith(percentages.get(1)));
 			percentages.remove(1);
