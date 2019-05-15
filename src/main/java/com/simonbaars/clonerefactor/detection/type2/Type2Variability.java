@@ -3,8 +3,10 @@ package com.simonbaars.clonerefactor.detection.type2;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.github.javaparser.Range;
 import com.github.javaparser.ast.Node;
@@ -22,11 +24,35 @@ public class Type2Variability implements CalculatesPercentages, ChecksThresholds
 		int[][] equalityArray = createEqualityArray(literals);
 		if(globalThresholdsMet(equalityArray, s.getSequence().stream().mapToInt(e -> e.getContents().getTokens().size()).sum())) // We first check the thresholds for the entire sequence. If those are not met, we will try to create smaller sequences
 			return Collections.singletonList(s);
+		return findAllValidSubSequences(s, literals, equalityArray);
+	}
+
+	private List<Sequence> findAllValidSubSequences(Sequence s, List<List<Compare>> literals, int[][] equalityArray) {
 		Map<Integer, int[][]> statementEqualityArrays = findConnectedStatements(s, literals, equalityArray);
 		List<Sequence> outputSequences = sliceSequence(s, statementEqualityArrays);
 		List<List<Integer>> connections = findConnectedSequences(equalityArray);
 		List<Sequence> connectionOutput = determineOutput(s, connections);
 		return outputSequences;
+	}
+	
+	// From: https://stackoverflow.com/questions/1670862/obtaining-a-powerset-of-a-set-in-java
+	public static <T> Set<Set<T>> powerSet(Set<T> originalSet) {
+	    Set<Set<T>> sets = new HashSet<Set<T>>();
+	    if (originalSet.isEmpty()) {
+	        sets.add(new HashSet<T>());
+	        return sets;
+	    }
+	    List<T> list = new ArrayList<T>(originalSet);
+	    T head = list.get(0);
+	    Set<T> rest = new HashSet<T>(list.subList(1, list.size())); 
+	    for (Set<T> set : powerSet(rest)) {
+	        Set<T> newSet = new HashSet<T>();
+	        newSet.add(head);
+	        newSet.addAll(set);
+	        sets.add(newSet);
+	        sets.add(set);
+	    }       
+	    return sets;
 	}
 	
 	private List<Sequence> sliceSequence(Sequence s, Map<Integer, int[][]> statementEqualityArrays) {

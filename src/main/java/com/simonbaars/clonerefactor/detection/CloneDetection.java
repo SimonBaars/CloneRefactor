@@ -12,7 +12,7 @@ import com.simonbaars.clonerefactor.datatype.ListMap;
 import com.simonbaars.clonerefactor.model.Sequence;
 import com.simonbaars.clonerefactor.model.location.Location;
 
-public class CloneDetection implements ChecksThresholds {
+public class CloneDetection implements ChecksThresholds, RemovesDuplicates {
 	final List<Sequence> clones = new ArrayList<>();
 
 	public CloneDetection() {}
@@ -66,7 +66,7 @@ public class CloneDetection implements ChecksThresholds {
 	private void createClone(List<Location> l) {
 		Sequence newSequence = new Sequence(l);
 		if(l.size()>1 && checkThresholds(newSequence)) {
-			if(removeDuplicatesOf(newSequence))
+			if(removeDuplicatesOf(clones, newSequence))
 				clones.add(newSequence);
 		}
 	}
@@ -87,16 +87,6 @@ public class CloneDetection implements ChecksThresholds {
 		for(int i = 1; i<amountOfNodes; i++)
 			l2 = l2.getNextLine();
 		return l2.getContents().getRange().end;
-	}
-
-	public boolean removeDuplicatesOf(Sequence l) {
-		clones.removeIf(e -> isSubset(e, l));
-		l.getSequence().removeIf(e -> l.getSequence().stream().anyMatch(f -> f!=e && f.getFile() == e.getFile() && f.getRange().contains(e.getRange())));
-		return !clones.stream().anyMatch(e -> isSubset(l, e));
-	}
-	
-	private boolean isSubset(Sequence existentClone, Sequence newClone) {
-		return existentClone.getSequence().stream().allMatch(oldLoc -> newClone.getSequence().stream().anyMatch(newLoc -> oldLoc.getFile() == newLoc.getFile() && newLoc.getRange().contains(oldLoc.getRange())));
 	}
 
 	private Sequence collectClones(Location lastLoc) {
