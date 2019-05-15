@@ -18,7 +18,7 @@ public class CompareMethodCall extends Compare implements FiltersTokens {
 	private final List<Object> estimatedTypes = new ArrayList<>();
 	
 	public CompareMethodCall(CloneType cloneType, MethodCallExpr t) {
-		super(cloneType);
+		super(cloneType, t.getRange().get());
 		methodCall = t;
 		ResolvedMethodDeclaration refType = null;
 		try {

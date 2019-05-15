@@ -10,7 +10,7 @@ public class CompareVariable extends Compare {
 	private final ResolvedType type;
 	
 	public CompareVariable(CloneType cloneType, NameExpr t) {
-		super(cloneType);
+		super(cloneType, t.getRange().get());
 		variableName = t;
 		ResolvedValueDeclaration refType = null;
 		ResolvedType resolvedType = null;

@@ -7,7 +7,7 @@ public class CompareToken extends Compare {
 	private final JavaToken token;
 	
 	public CompareToken(CloneType cloneType, JavaToken token) {
-		super(cloneType);
+		super(cloneType, token.getRange().get());
 		this.token = token;
 	}
 

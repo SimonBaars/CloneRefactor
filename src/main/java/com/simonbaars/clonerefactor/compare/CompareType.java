@@ -8,7 +8,7 @@ public class CompareType extends Compare {
 	private final ResolvedReferenceType type;
 	
 	public CompareType(CloneType cloneType, ReferenceType t) {
-		super(cloneType);
+		super(cloneType, t.getRange().get());
 		this.referenceType = t;
 		ResolvedReferenceType refType = null;
 		try {

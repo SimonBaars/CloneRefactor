@@ -6,7 +6,7 @@ public class CompareName extends Compare {
 	JavaToken t;
 	
 	public CompareName(CloneType type, JavaToken t) {
-		super(type);
+		super(type, t.getRange().get());
 		this.t = t;  
 	}
 

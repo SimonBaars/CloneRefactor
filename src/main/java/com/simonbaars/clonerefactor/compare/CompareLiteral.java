@@ -6,7 +6,7 @@ public class CompareLiteral extends Compare {
 	final JavaToken t;
 	
 	public CompareLiteral(CloneType cloneType, JavaToken t) {
-		super(cloneType);
+		super(cloneType, t.getRange().get());
 		this.t=t;
 	}
 	

@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.List;
 
 import com.github.javaparser.JavaToken;
+import com.github.javaparser.Range;
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.expr.LiteralExpr;
 import com.github.javaparser.ast.expr.MethodCallExpr;
@@ -14,9 +15,11 @@ import com.simonbaars.clonerefactor.model.location.LocationContents;
 
 public abstract class Compare {
 	protected CloneType cloneType;
+	private final Range range;
 	
-	protected Compare(CloneType cloneType) {
+	protected Compare(CloneType cloneType, Range range) {
 		this.cloneType=cloneType;
+		this.range = range;
 	}
 	
 	public abstract int getHashCode();
@@ -55,5 +58,9 @@ public abstract class Compare {
 	
 	public List<Compare> relevantChildren(LocationContents locationContents){
 		return Collections.emptyList();
+	}
+
+	public Range getRange() {
+		return range;
 	}
 }
