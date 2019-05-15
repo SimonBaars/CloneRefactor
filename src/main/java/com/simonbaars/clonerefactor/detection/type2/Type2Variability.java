@@ -35,24 +35,18 @@ public class Type2Variability implements CalculatesPercentages, ChecksThresholds
 		return outputSequences;
 	}
 	
-	// From: https://stackoverflow.com/questions/1670862/obtaining-a-powerset-of-a-set-in-java
-	public static <T> Set<Set<T>> powerSet(Set<T> originalSet) {
-	    Set<Set<T>> sets = new HashSet<Set<T>>();
-	    if (originalSet.isEmpty()) {
-	        sets.add(new HashSet<T>());
-	        return sets;
-	    }
-	    List<T> list = new ArrayList<T>(originalSet);
-	    T head = list.get(0);
-	    Set<T> rest = new HashSet<T>(list.subList(1, list.size())); 
-	    for (Set<T> set : powerSet(rest)) {
-	        Set<T> newSet = new HashSet<T>();
-	        newSet.add(head);
-	        newSet.addAll(set);
-	        sets.add(newSet);
-	        sets.add(set);
-	    }       
-	    return sets;
+	// https://stackoverflow.com/questions/40201309/best-way-to-get-a-power-set-of-an-array
+	public int[][] powerset(int[] input){
+		int[] a = {1, 2};
+		int max = 1 << a.length;
+		int[][] result = new int[max][];
+		for (int i = 0; i < max; ++i) {
+		    result[i] = new int[Integer.bitCount(i)];
+		    for (int j = 0, b = i, k = 0; j < a.length; ++j, b >>= 1)
+		        if ((b & 1) != 0)
+		            result[i][k++] = a[j];
+		}
+		return result;
 	}
 	
 	private List<Sequence> sliceSequence(Sequence s, Map<Integer, int[][]> statementEqualityArrays) {
