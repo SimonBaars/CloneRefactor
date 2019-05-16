@@ -10,8 +10,8 @@ import java.util.stream.Collectors;
 import com.github.javaparser.JavaToken;
 import com.github.javaparser.Range;
 import com.github.javaparser.ast.Node;
-import com.simonbaars.clonerefactor.ast.DeterminesNodeTokens;
-import com.simonbaars.clonerefactor.ast.HasCompareList;
+import com.simonbaars.clonerefactor.ast.interfaces.DeterminesNodeRange;
+import com.simonbaars.clonerefactor.ast.interfaces.HasCompareList;
 import com.simonbaars.clonerefactor.compare.Compare;
 import com.simonbaars.clonerefactor.compare.CompareLiteral;
 import com.simonbaars.clonerefactor.compare.CompareMethodCall;
@@ -22,7 +22,7 @@ import com.simonbaars.clonerefactor.metrics.enums.CloneContents.ContentsType;
 import com.simonbaars.clonerefactor.model.FiltersTokens;
 import com.simonbaars.clonerefactor.settings.Settings;
 
-public class LocationContents implements FiltersTokens, HasRange, DeterminesNodeTokens, HasCompareList {
+public class LocationContents implements FiltersTokens, HasRange, DeterminesNodeRange, HasCompareList {
 	private Range range;
 	private final List<Node> nodes;
 	private final List<JavaToken> tokens;
@@ -37,10 +37,7 @@ public class LocationContents implements FiltersTokens, HasRange, DeterminesNode
 	}
 
 	public LocationContents(LocationContents contents) {
-		this.range = contents.range;
-		this.nodes = new ArrayList<>(contents.getNodes());
-		this.tokens = new ArrayList<>(contents.getTokens());
-		this.compare = new ArrayList<>(contents.getCompare());
+		this(contents, contents.range);
 	}
 
 	public LocationContents(Node n) {
@@ -54,6 +51,13 @@ public class LocationContents implements FiltersTokens, HasRange, DeterminesNode
 		}
 		this.range = getRange(tokens);
 		
+	}
+
+	public LocationContents(LocationContents contents, Range r) {
+		this.range = r;
+		this.nodes = new ArrayList<>(contents.getNodes());
+		this.tokens = new ArrayList<>(contents.getTokens());
+		this.compare = new ArrayList<>(contents.getCompare());
 	}
 
 	public List<Node> getNodes() {
@@ -149,7 +153,14 @@ public class LocationContents implements FiltersTokens, HasRange, DeterminesNode
 	}
 
 	public void stripToRange() {
+		getNodes().removeIf(e -> {Range r = getValidRange(e); return r.isBefore(getRange().begin) || r.isAfter(getRange().end);});
 		getCompare().removeIf(e -> e.getRange().isBefore(getRange().begin) || e.getRange().isAfter(getRange().end));
 		getTokens().removeIf(e -> e.getRange().get().isBefore(getRange().begin) || e.getRange().get().isAfter(getRange().end));
+	}
+	
+	public void isValid() {
+		if(tokens.stream().anyMatch(e -> !range.contains(e.getRange().get()))) {
+			throw new RuntimeException("INVALID CONTENTS "+this);
+		}
 	}
 }

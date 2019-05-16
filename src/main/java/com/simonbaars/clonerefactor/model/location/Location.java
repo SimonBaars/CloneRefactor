@@ -37,7 +37,7 @@ public class Location implements Comparable<Location>, HasRange {
 
 	public Location(Location clonedLocation, Range r) {
 		this.file = clonedLocation.file;
-		this.contents = new LocationContents(clonedLocation.contents);
+		this.contents = new LocationContents(clonedLocation.contents, r);
 		this.range = r;
 		this.prevLocation = clonedLocation.prevLocation;
 		this.clone = clonedLocation.clone;
