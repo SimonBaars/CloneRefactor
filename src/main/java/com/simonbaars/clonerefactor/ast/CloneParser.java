@@ -12,6 +12,7 @@ import com.github.javaparser.utils.SourceRoot;
 import com.simonbaars.clonerefactor.Settings;
 import com.simonbaars.clonerefactor.compare.CloneType;
 import com.simonbaars.clonerefactor.detection.CloneDetection;
+import com.simonbaars.clonerefactor.detection.interfaces.RemovesDuplicates;
 import com.simonbaars.clonerefactor.detection.type2.Type2Variability;
 import com.simonbaars.clonerefactor.detection.type3.Type3Opportunities;
 import com.simonbaars.clonerefactor.metrics.MetricCollector;
@@ -20,7 +21,7 @@ import com.simonbaars.clonerefactor.model.Sequence;
 import com.simonbaars.clonerefactor.model.location.Location;
 import com.simonbaars.clonerefactor.model.location.LocationHolder;
 
-public class CloneParser implements Parser {
+public class CloneParser implements Parser, RemovesDuplicates {
 
 	private NodeParser astParser;
 	public final MetricCollector metricCollector = new MetricCollector();
@@ -46,7 +47,11 @@ public class CloneParser implements Parser {
 	private void doType2Transformations(List<Sequence> findChains) {
 		if(Settings.get().getCloneType().isNotTypeOne()) {
 			IntStream.range(0, findChains.size()).forEach(i -> {
-				findChains.addAll(new Type2Variability().determineVariability(findChains.remove(0)));
+				List<Sequence> determineVariability = new Type2Variability().determineVariability(findChains.remove(0));
+				for(Sequence s : determineVariability) {
+					if(removeDuplicatesOf(findChains, s))
+						findChains.add(s);
+				}
 			});
 		}
 	}

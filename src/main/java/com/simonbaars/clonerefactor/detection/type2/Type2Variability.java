@@ -59,7 +59,7 @@ public class Type2Variability implements CalculatesPercentages, ChecksThresholds
 				if(percentagesList.size()>1) {
 					percentagesList.remove(percentagesList.size()-1);
 					Sequence newSeq = createSequence(s, calcPercentages.indexOf(percentagesList.get(0)), calcPercentages.indexOf(percentagesList.get(percentagesList.size()-1)));
-					if(checkThresholds(newSeq))
+					if(checkThresholds(newSeq) && removeDuplicatesOf(sequences, newSeq))
 						sequences.add(newSeq);
 				}
 				percentagesList.clear();
