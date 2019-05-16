@@ -148,59 +148,9 @@ public class Type2Variability implements CalculatesPercentages, ChecksThresholds
 			return l;
 		return getLocation(l.getNextLocation(), node-1);
 	}
-	
-	private List<Sequence> groupSequencesOnBasisOfConnectedStatements(List<List<Integer>> statements){
-		for(List<Integer> statement : statements) {
-			if(statement.size()>1) {
-				
-			}
-		}
-		return null;
-	}
-	
-	private List<List<Integer>> findConnectedStatements(int[][] arr) {
-		Graph g = new Graph(arr[0].length);
-		for(int i = 0; i<arr.length-1; i++) {
-			//for(int j = i+1; j<arr.length; j++) {
-				for(int k = 0; k<arr[i].length; k++){
-					if(arr[i][k] == arr[i+1][k]) {
-						g.addEdge(k, i);
-						//g.addEdge(k, j);
-					}
-				}
-			//}
-		}
-		return g.connectedComponents();
-	}
 
 	private boolean globalThresholdsMet(int[][] equalityArray, int total) {
 		return diffPerc(equalityArray)<=Settings.get().getType2VariabilityPercentage();
-	}
-
-	private List<Sequence> determineOutput(Sequence s, List<List<Integer>> connections) {
-		List<Sequence> output = new ArrayList<>();
-		for(List<Integer> connection : connections) {
-			if(connection.size()>1) {
-				Sequence seq = new Sequence();
-				for(Integer i : connection) {
-					seq.add(s.getSequence().get(i));
-				}
-				output.add(seq);
-			}
-		}
-		return output;
-	}
-
-	private List<List<Integer>> findConnectedSequences(int[][] equalityArray) {
-		Graph g = new Graph(equalityArray.length);
-		for(int i = 0; i<equalityArray.length; i++) {
-			for(int j = i+1; j<equalityArray.length; j++) {
-				if((equalityArray[i].length == 0 && equalityArray[j].length == 0) || diffPerc(equalityArray[i], equalityArray[j])<=Settings.get().getType2VariabilityPercentage()) {
-					g.addEdge(i, j);
-				}
-			}
-		}
-		return g.connectedComponents();
 	}
 
 	private int[][] createEqualityArray(List<List<Compare>> literals) {
