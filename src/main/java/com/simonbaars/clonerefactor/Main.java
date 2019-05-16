@@ -16,8 +16,8 @@ import com.github.javaparser.symbolsolver.resolution.typesolvers.JavaParserTypeS
 import com.github.javaparser.symbolsolver.resolution.typesolvers.ReflectionTypeSolver;
 import com.github.javaparser.utils.SourceRoot;
 import com.simonbaars.clonerefactor.ast.CloneParser;
-import com.simonbaars.clonerefactor.exception.NoJavaFilesFoundException;
 import com.simonbaars.clonerefactor.model.DetectionResults;
+import com.simonbaars.clonerefactor.util.NoJavaFilesFoundException;
 
 public class Main {
 
