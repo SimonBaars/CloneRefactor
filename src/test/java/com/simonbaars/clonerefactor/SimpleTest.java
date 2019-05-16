@@ -140,6 +140,11 @@ public class SimpleTest extends TestCase {
     	System.out.println("testImportStatements");
     	System.out.println(testProject("EqualImportStatements"));
     }
+    
+    public void testEqualLinesDifferentLength() {
+    	System.out.println("testEqualLinesDifferentLength");
+    	System.out.println(testProject("EqualLinesDifferentLength"));
+    }
 
 	private DetectionResults testProject(String project) {
 		return Main.cloneDetection(SimpleTest.class.getClassLoader().getResource(project).getFile()).sorted();

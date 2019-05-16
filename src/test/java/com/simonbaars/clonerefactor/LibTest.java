@@ -33,4 +33,16 @@ public class LibTest extends TestCase {
         String path = "/Users/sbaars/clone/git/json-collection/";
 		System.out.println(Main.cloneDetection(Paths.get(path), Paths.get(path+"src/main/java/")).sorted());
     }
+    
+    public void testSMSLib() {
+    	System.out.println("smslib");
+        String path = "/Users/sbaars/clone/git/smslib/";
+		System.out.println(Main.cloneDetection(Paths.get(path), Paths.get(path+"src/main/java/")).sorted());
+    }
+    
+    public void testSpark() {
+    	System.out.println("spark");
+        String path = "/Users/sbaars/clone/git/spark/";
+		System.out.println(Main.cloneDetection(Paths.get(path), Paths.get(path+"src/main/java/")).sorted());
+    }
 }
