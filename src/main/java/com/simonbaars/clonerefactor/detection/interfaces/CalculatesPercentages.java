@@ -27,13 +27,11 @@ public interface CalculatesPercentages {
 	
 	public default double diffPerc(int[][] arr, int[] relevantIndices) {
 		int same = 0, diff = 0;
-		for(int i : relevantIndices) {
-			for(int j = Arrays.binarySearch(relevantIndices, i); j<relevantIndices.length; j++) {
-				if(isRelevant(relevantIndices, i, relevantIndices[j])) {
-					for(int k = 0; k<arr[i].length; k++){
-						if(arr[i][k] == arr[relevantIndices[j]][k]) same++; 
-						else diff++;
-					}
+		for(int i = 0; i<relevantIndices.length; i++) {
+			for(int j = i+1; j<relevantIndices.length; j++) {
+				for(int k = 0; k<arr[relevantIndices[i]].length; k++){
+					if(arr[relevantIndices[i]][k] == arr[relevantIndices[j]][k]) same++; 
+					else diff++;
 				}
 			}
 		}
