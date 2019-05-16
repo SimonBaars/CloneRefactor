@@ -3,10 +3,9 @@ package com.simonbaars.clonerefactor.detection.type2;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
+import java.util.stream.IntStream;
 
 import com.github.javaparser.Range;
 import com.github.javaparser.ast.Node;
@@ -15,10 +14,11 @@ import com.simonbaars.clonerefactor.compare.CloneType;
 import com.simonbaars.clonerefactor.compare.Compare;
 import com.simonbaars.clonerefactor.detection.CalculatesPercentages;
 import com.simonbaars.clonerefactor.detection.ChecksThresholds;
+import com.simonbaars.clonerefactor.detection.RemovesDuplicates;
 import com.simonbaars.clonerefactor.model.Sequence;
 import com.simonbaars.clonerefactor.model.location.Location;
 
-public class Type2Variability implements CalculatesPercentages, ChecksThresholds {
+public class Type2Variability implements CalculatesPercentages, ChecksThresholds, RemovesDuplicates {
 	public List<Sequence> determineVariability(Sequence s) {
 		List<List<Compare>> literals = createLiteralList(s);
 		int[][] equalityArray = createEqualityArray(literals);
@@ -28,11 +28,14 @@ public class Type2Variability implements CalculatesPercentages, ChecksThresholds
 	}
 
 	private List<Sequence> findAllValidSubSequences(Sequence s, List<List<Compare>> literals, int[][] equalityArray) {
-		Map<Integer, int[][]> statementEqualityArrays = findConnectedStatements(s, literals, equalityArray);
-		List<Sequence> outputSequences = sliceSequence(s, statementEqualityArrays);
-		List<List<Integer>> connections = findConnectedSequences(equalityArray);
-		List<Sequence> connectionOutput = determineOutput(s, connections);
-		return outputSequences;
+		List<Sequence> sequences = new ArrayList<>();
+		for(int[] relevantIndices : powerset(IntStream.range(0, equalityArray[0].length).toArray())){
+			if(relevantIndices.length>1) {
+				Map<Integer, int[][]> statementEqualityArrays = findConnectedStatements(s, literals, equalityArray);
+				sliceSequence(sequences, s, statementEqualityArrays);
+			}
+		}
+		return sequences;
 	}
 	
 	// https://stackoverflow.com/questions/40201309/best-way-to-get-a-power-set-of-an-array
@@ -49,9 +52,8 @@ public class Type2Variability implements CalculatesPercentages, ChecksThresholds
 		return result;
 	}
 	
-	private List<Sequence> sliceSequence(Sequence s, Map<Integer, int[][]> statementEqualityArrays) {
+	private void sliceSequence(List<Sequence> sequences, Sequence s, Map<Integer, int[][]> statementEqualityArrays) {
 		List<WeightedPercentage> calcPercentages = getWeightedPercentages(s, statementEqualityArrays);
-		List<Sequence> sequences = new ArrayList<>();
 		List<WeightedPercentage> percentagesList = new ArrayList<>();
 		for(int i = 0; i<calcPercentages.size(); i++) {
 			percentagesList.add(calcPercentages.get(i));
@@ -65,7 +67,6 @@ public class Type2Variability implements CalculatesPercentages, ChecksThresholds
 				percentagesList.clear();
 			}
 		}
-		return sequences;
 	}
 
 	private Sequence createSequence(Sequence s, int from, int to) {
