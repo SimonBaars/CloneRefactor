@@ -55,9 +55,11 @@ public class Type2Variability implements CalculatesPercentages, ChecksThresholds
 		List<WeightedPercentage> percentagesList = new ArrayList<>();
 		for(int i = 0; i<calcPercentages.size(); i++) {
 			percentagesList.add(calcPercentages.get(i));
-			if(calcAvg(percentagesList) > Settings.get().getType2VariabilityPercentage() && !canFixIt(calcPercentages, percentagesList, i) || i+1 == calcPercentages.size()) {
+			boolean notValidRegardingVariability = calcAvg(percentagesList) > Settings.get().getType2VariabilityPercentage();
+			if((notValidRegardingVariability && !canFixIt(calcPercentages, percentagesList, i)) || i+1 == calcPercentages.size()) {
 				if(percentagesList.size()>1) {
-					percentagesList.remove(percentagesList.size()-1);
+					if(notValidRegardingVariability)
+						percentagesList.remove(percentagesList.size()-1);
 					Sequence newSeq = createSequence(s, calcPercentages.indexOf(percentagesList.get(0)), calcPercentages.indexOf(percentagesList.get(percentagesList.size()-1)), relevantLocationIndices);
 					if(checkThresholds(newSeq) && removeDuplicatesOf(sequences, newSeq))
 						sequences.add(newSeq);
