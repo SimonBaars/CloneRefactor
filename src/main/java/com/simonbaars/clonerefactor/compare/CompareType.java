@@ -2,6 +2,7 @@ package com.simonbaars.clonerefactor.compare;
 
 import com.github.javaparser.ast.type.ReferenceType;
 import com.github.javaparser.resolution.types.ResolvedReferenceType;
+import com.simonbaars.clonerefactor.settings.CloneType;
 
 public class CompareType extends Compare {
 	private final ReferenceType referenceType;

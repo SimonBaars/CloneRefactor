@@ -8,7 +8,7 @@ import java.util.stream.StreamSupport;
 
 import com.github.javaparser.JavaToken;
 import com.github.javaparser.JavaToken.Category;
-import com.simonbaars.clonerefactor.Settings;
+import com.simonbaars.clonerefactor.settings.Settings;
 import com.github.javaparser.TokenRange;
 
 public interface FiltersTokens {

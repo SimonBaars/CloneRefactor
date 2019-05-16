@@ -3,11 +3,11 @@ package com.simonbaars.clonerefactor.detection.type3;
 import java.util.List;
 import java.util.stream.IntStream;
 
-import com.simonbaars.clonerefactor.Settings;
 import com.simonbaars.clonerefactor.datatype.ListMap;
 import com.simonbaars.clonerefactor.detection.interfaces.CalculatesPercentages;
 import com.simonbaars.clonerefactor.model.Sequence;
 import com.simonbaars.clonerefactor.model.location.Location;
+import com.simonbaars.clonerefactor.settings.Settings;
 
 public class Type3Opportunities implements Type3Calculation, CalculatesPercentages {
 	private ListMap<Integer, FileLocations> opportunities = new ListMap<>();

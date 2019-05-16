@@ -16,7 +16,6 @@ import com.github.javaparser.Range;
 import com.github.javaparser.TokenRange;
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.nodeTypes.NodeWithImplements;
-import com.simonbaars.clonerefactor.Settings;
 import com.simonbaars.clonerefactor.compare.Compare;
 import com.simonbaars.clonerefactor.compare.CompareLiteral;
 import com.simonbaars.clonerefactor.compare.CompareMethodCall;
@@ -27,6 +26,7 @@ import com.simonbaars.clonerefactor.exception.NoTokensException;
 import com.simonbaars.clonerefactor.metrics.enums.CloneContents;
 import com.simonbaars.clonerefactor.metrics.enums.CloneContents.ContentsType;
 import com.simonbaars.clonerefactor.model.FiltersTokens;
+import com.simonbaars.clonerefactor.settings.Settings;
 
 public class LocationContents implements FiltersTokens, HasRange {
 	private Range range;

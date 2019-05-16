@@ -1,4 +1,4 @@
-package com.simonbaars.clonerefactor.compare;
+package com.simonbaars.clonerefactor.settings;
 
 public enum CloneType {
 	TYPE1,TYPE2,TYPE3;

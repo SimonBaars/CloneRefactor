@@ -3,6 +3,7 @@ package com.simonbaars.clonerefactor.compare;
 import com.github.javaparser.ast.expr.NameExpr;
 import com.github.javaparser.resolution.declarations.ResolvedValueDeclaration;
 import com.github.javaparser.resolution.types.ResolvedType;
+import com.simonbaars.clonerefactor.settings.CloneType;
 
 public class CompareVariable extends Compare {
 	private final NameExpr variableName;

@@ -1,6 +1,7 @@
 package com.simonbaars.clonerefactor.compare;
 
 import com.github.javaparser.JavaToken;
+import com.simonbaars.clonerefactor.settings.CloneType;
 
 public class CompareToken extends Compare {
 	

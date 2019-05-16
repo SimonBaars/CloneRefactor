@@ -10,6 +10,7 @@ import com.github.javaparser.ast.expr.NameExpr;
 import com.github.javaparser.resolution.declarations.ResolvedMethodDeclaration;
 import com.simonbaars.clonerefactor.model.FiltersTokens;
 import com.simonbaars.clonerefactor.model.location.LocationContents;
+import com.simonbaars.clonerefactor.settings.CloneType;
 
 public class CompareMethodCall extends Compare implements FiltersTokens {
 	private final MethodCallExpr methodCall;

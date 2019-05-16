@@ -1,10 +1,8 @@
-package com.simonbaars.clonerefactor;
+package com.simonbaars.clonerefactor.settings;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
-
-import com.simonbaars.clonerefactor.compare.CloneType;
 
 public class Settings {
 	

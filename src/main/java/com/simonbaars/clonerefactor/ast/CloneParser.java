@@ -9,8 +9,6 @@ import com.github.javaparser.ParseResult;
 import com.github.javaparser.ParserConfiguration;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.utils.SourceRoot;
-import com.simonbaars.clonerefactor.Settings;
-import com.simonbaars.clonerefactor.compare.CloneType;
 import com.simonbaars.clonerefactor.detection.CloneDetection;
 import com.simonbaars.clonerefactor.detection.interfaces.RemovesDuplicates;
 import com.simonbaars.clonerefactor.detection.type2.Type2Variability;
@@ -20,6 +18,8 @@ import com.simonbaars.clonerefactor.model.DetectionResults;
 import com.simonbaars.clonerefactor.model.Sequence;
 import com.simonbaars.clonerefactor.model.location.Location;
 import com.simonbaars.clonerefactor.model.location.LocationHolder;
+import com.simonbaars.clonerefactor.settings.CloneType;
+import com.simonbaars.clonerefactor.settings.Settings;
 
 public class CloneParser implements Parser, RemovesDuplicates {
 

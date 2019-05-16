@@ -4,7 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 
-import com.simonbaars.clonerefactor.Settings;
+import com.simonbaars.clonerefactor.settings.Settings;
 import com.simonbaars.clonerefactor.thread.ThreadPool;
 import com.simonbaars.clonerefactor.util.FileUtils;
 import com.simonbaars.clonerefactor.util.SavePaths;

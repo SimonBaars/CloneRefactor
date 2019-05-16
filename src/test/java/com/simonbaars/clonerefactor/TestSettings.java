@@ -1,5 +1,7 @@
 package com.simonbaars.clonerefactor;
 
+import com.simonbaars.clonerefactor.settings.Settings;
+
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
