@@ -27,21 +27,17 @@ public interface CalculatesPercentages {
 	
 	public default double diffPerc(int[][] arr, int[] relevantIndices) {
 		int same = 0, diff = 0;
-		for(int i = 0; i<arr.length; i++) {
-			for(int j = i+1; j<arr.length; j++) {
-				if(isRelevant(relevantIndices, i, j)) {
+		for(int i : relevantIndices) {
+			for(int j = Arrays.binarySearch(relevantIndices, i); j<relevantIndices.length; j++) {
+				if(isRelevant(relevantIndices, i, relevantIndices[j])) {
 					for(int k = 0; k<arr[i].length; k++){
-						if(arr[i][k] == arr[j][k]) same++; 
+						if(arr[i][k] == arr[relevantIndices[j]][k]) same++; 
 						else diff++;
 					}
 				}
 			}
 		}
 		return calcPercentage(diff, same+diff);
-	}
-	
-	public default boolean isRelevant(int[] relevantIndices, int...numbers) {
-		return Arrays.stream(numbers).allMatch(i -> Arrays.stream(relevantIndices).anyMatch(j -> i == j));
 	}
 
 	public default double calcAvg(List<WeightedPercentage> percentages) {
