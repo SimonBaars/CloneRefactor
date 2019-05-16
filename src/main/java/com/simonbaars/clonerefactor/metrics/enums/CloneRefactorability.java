@@ -6,7 +6,7 @@ import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.stmt.BreakStmt;
 import com.github.javaparser.ast.stmt.ContinueStmt;
 import com.github.javaparser.ast.stmt.ReturnStmt;
-import com.simonbaars.clonerefactor.ast.RequiresNodeOperations;
+import com.simonbaars.clonerefactor.ast.interfaces.RequiresNodeOperations;
 import com.simonbaars.clonerefactor.metrics.enums.CloneRefactorability.Refactorability;
 import com.simonbaars.clonerefactor.model.Sequence;
 import com.simonbaars.clonerefactor.model.location.Location;

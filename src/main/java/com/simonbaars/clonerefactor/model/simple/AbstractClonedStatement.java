@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.github.javaparser.ast.Node;
-import com.simonbaars.clonerefactor.ast.RequiresNodeOperations;
+import com.simonbaars.clonerefactor.ast.interfaces.RequiresNodeOperations;
 
 public class AbstractClonedStatement implements RequiresNodeOperations {
 	private final Class<? extends Node> statementClass;

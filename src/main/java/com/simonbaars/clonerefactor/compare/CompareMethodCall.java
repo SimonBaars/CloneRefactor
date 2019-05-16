@@ -8,7 +8,7 @@ import com.github.javaparser.JavaToken;
 import com.github.javaparser.ast.expr.MethodCallExpr;
 import com.github.javaparser.ast.expr.NameExpr;
 import com.github.javaparser.resolution.declarations.ResolvedMethodDeclaration;
-import com.simonbaars.clonerefactor.ast.HasCompareList;
+import com.simonbaars.clonerefactor.ast.interfaces.HasCompareList;
 import com.simonbaars.clonerefactor.model.FiltersTokens;
 import com.simonbaars.clonerefactor.settings.CloneType;
 

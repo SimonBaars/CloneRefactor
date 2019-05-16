@@ -1,4 +1,4 @@
-package com.simonbaars.clonerefactor.ast;
+package com.simonbaars.clonerefactor.ast.interfaces;
 
 import java.util.Collections;
 import java.util.HashMap;
