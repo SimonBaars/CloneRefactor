@@ -8,13 +8,14 @@ import java.util.stream.Collectors;
 
 import com.github.javaparser.Position;
 import com.github.javaparser.Range;
+import com.simonbaars.clonerefactor.ast.interfaces.DeterminesNodeRange;
 import com.simonbaars.clonerefactor.datatype.ListMap;
 import com.simonbaars.clonerefactor.detection.interfaces.ChecksThresholds;
 import com.simonbaars.clonerefactor.detection.interfaces.RemovesDuplicates;
 import com.simonbaars.clonerefactor.model.Sequence;
 import com.simonbaars.clonerefactor.model.location.Location;
 
-public class CloneDetection implements ChecksThresholds, RemovesDuplicates {
+public class CloneDetection implements ChecksThresholds, RemovesDuplicates, DeterminesNodeRange {
 	final List<Sequence> clones = new ArrayList<>();
 
 	public CloneDetection() {}
@@ -76,19 +77,13 @@ public class CloneDetection implements ChecksThresholds, RemovesDuplicates {
 	private void addAllNonEndedLocations(Sequence oldClones, int amountOfNodes, List<Location> l) {
 		for(Location l2 : oldClones.getSequence()) {
 			if(!l.contains(l2) && l2.getAmountOfNodes()>=amountOfNodes) {
-				l.add(new Location(l2, getRange(l2, l.get(0))));
+				l.add(new Location(l2, getRange(l2, amountOfNodes)));
 			}
 		}
 	}
 	
-	private Range getRange(Location l2, Location location) {
-		return l2.getRange().withEnd(backtrace(l2, location.getAmountOfNodes()));
-	}
-
-	private Position backtrace(Location l2, int amountOfNodes) {
-		for(int i = 1; i<amountOfNodes; i++)
-			l2 = l2.getNextLine();
-		return l2.getContents().getRange().end;
+	private Range getRange(Location l, int amountOfNodes) {
+		return l.getRange().withEnd(getValidRange(l.getContents().getNodes().get(amountOfNodes-1)).end);
 	}
 
 	private Sequence collectClones(Location lastLoc) {
