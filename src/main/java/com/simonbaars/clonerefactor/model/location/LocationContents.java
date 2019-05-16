@@ -153,7 +153,7 @@ public class LocationContents implements FiltersTokens, HasRange, DeterminesNode
 	}
 
 	public void stripToRange() {
-		getNodes().removeIf(e -> {Range r = getValidRange(e); return r.isBefore(getRange().begin) || r.isAfter(getRange().end);});
+		getNodes().removeIf(e -> {Range r = getRange(e); return r.isBefore(getRange().begin) || r.isAfter(getRange().end);});
 		getCompare().removeIf(e -> e.getRange().isBefore(getRange().begin) || e.getRange().isAfter(getRange().end));
 		getTokens().removeIf(e -> e.getRange().get().isBefore(getRange().begin) || e.getRange().get().isAfter(getRange().end));
 	}

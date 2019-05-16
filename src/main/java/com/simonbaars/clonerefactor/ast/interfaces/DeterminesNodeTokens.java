@@ -28,4 +28,8 @@ public interface DeterminesNodeTokens extends FiltersTokens, DeterminesNodeRange
 	public default Range getRange(List<JavaToken> tokens) {
 		return new Range(tokens.get(0).getRange().get().begin, tokens.get(tokens.size()-1).getRange().get().end);
 	}
+	
+	public default Range getRange(Node n) {
+		return getRange(calculateTokensFromNode(n));
+	}
 }
