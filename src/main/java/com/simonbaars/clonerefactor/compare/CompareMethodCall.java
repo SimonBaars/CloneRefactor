@@ -8,8 +8,8 @@ import com.github.javaparser.JavaToken;
 import com.github.javaparser.ast.expr.MethodCallExpr;
 import com.github.javaparser.ast.expr.NameExpr;
 import com.github.javaparser.resolution.declarations.ResolvedMethodDeclaration;
+import com.simonbaars.clonerefactor.ast.HasCompareList;
 import com.simonbaars.clonerefactor.model.FiltersTokens;
-import com.simonbaars.clonerefactor.model.location.LocationContents;
 import com.simonbaars.clonerefactor.settings.CloneType;
 
 public class CompareMethodCall extends Compare implements FiltersTokens {
@@ -79,7 +79,7 @@ public class CompareMethodCall extends Compare implements FiltersTokens {
 	}
 	
 	@Override
-	public List<Compare> relevantChildren(LocationContents c){
-		return c.getNodesForCompare(methodCall.getArguments()).values().stream().map(e -> Compare.create(e, e.getTokenRange().get().getBegin(), cloneType)).collect(Collectors.toList());
+	public List<Compare> relevantChildren(HasCompareList c){
+		return c.getNodesForCompare(methodCall.getArguments(), methodCall.getRange().get()).values().stream().map(e -> Compare.create(e, e.getTokenRange().get().getBegin(), cloneType)).collect(Collectors.toList());
 	}
 }

@@ -86,8 +86,7 @@ public class Type2Variability implements CalculatesPercentages, ChecksThresholds
 			Range r = new Range(myNodes.get(0).getRange().get().begin, findNodeLocation(getStatementLoc(l2), myNodes.get(myNodes.size()-1)).getRange().end);
 			l2.setRange(r);
 			l2.getContents().setRange(r);
-			l2.getContents().getCompare().removeIf(e -> e.getRange().isBefore(r.begin) || e.getRange().isAfter(r.end));
-			l2.getContents().getTokens().removeIf(e -> e.getRange().get().isBefore(r.begin) || e.getRange().get().isAfter(r.end));
+			l2.getContents().stripToRange();
 		}
 		return newSeq;
 	}

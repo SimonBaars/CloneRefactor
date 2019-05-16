@@ -76,7 +76,7 @@ public class CloneDetection implements ChecksThresholds, RemovesDuplicates {
 	private void addAllNonEndedLocations(Sequence oldClones, int amountOfNodes, List<Location> l) {
 		for(Location l2 : oldClones.getSequence()) {
 			if(!l.contains(l2) && l2.getAmountOfNodes()>=amountOfNodes) {
-				l.add(new Location(l2, getRange(l2, l.get(0)), amountOfNodes, l.get(0).getContents().getCompare().size()));
+				l.add(new Location(l2, getRange(l2, l.get(0))));
 			}
 		}
 	}
