@@ -29,11 +29,10 @@ public class Type2Variability implements CalculatesPercentages, ChecksThresholds
 
 	private List<Sequence> findAllValidSubSequences(Sequence s, List<List<Compare>> literals, int[][] equalityArray) {
 		List<Sequence> sequences = new ArrayList<>();
-		for(int[] relevantIndices : powerset(IntStream.range(0, equalityArray[0].length).toArray())){
-			if(relevantIndices.length>1) {
-				Map<Integer, int[][]> statementEqualityArrays = findConnectedStatements(s, literals, equalityArray);
-				sliceSequence(sequences, s, statementEqualityArrays);
-			}
+		Map<Integer, int[][]> statementEqualityArrays = findConnectedStatements(s, literals, equalityArray);
+		for(int[] relevantLocationIndices : powerset(IntStream.range(0, s.size()).toArray())){
+			if(relevantLocationIndices.length>1)
+				sliceSequence(sequences, s, statementEqualityArrays, relevantLocationIndices);
 		}
 		return sequences;
 	}
@@ -52,8 +51,8 @@ public class Type2Variability implements CalculatesPercentages, ChecksThresholds
 		return result;
 	}
 	
-	private void sliceSequence(List<Sequence> sequences, Sequence s, Map<Integer, int[][]> statementEqualityArrays) {
-		List<WeightedPercentage> calcPercentages = getWeightedPercentages(s, statementEqualityArrays);
+	private void sliceSequence(List<Sequence> sequences, Sequence s, Map<Integer, int[][]> statementEqualityArrays, int[] relevantLocationIndices) {
+		List<WeightedPercentage> calcPercentages = getWeightedPercentages(s, statementEqualityArrays, relevantLocationIndices);
 		List<WeightedPercentage> percentagesList = new ArrayList<>();
 		for(int i = 0; i<calcPercentages.size(); i++) {
 			percentagesList.add(calcPercentages.get(i));
@@ -99,17 +98,16 @@ public class Type2Variability implements CalculatesPercentages, ChecksThresholds
 		return findNodeLocation(l.getNextLine(), n);
 	}
 
-	private List<WeightedPercentage> getWeightedPercentages(Sequence s, Map<Integer, int[][]> statementEqualityArrays) {
+	private List<WeightedPercentage> getWeightedPercentages(Sequence s, Map<Integer, int[][]> statementEqualityArrays, int[] relevantLocationIndices) {
 		List<WeightedPercentage> calcPercentages = new ArrayList<>();
 		for(int currNodeIndex = 0; currNodeIndex<s.getAny().getContents().getNodes().size(); currNodeIndex++) {
 			int[][] equality = statementEqualityArrays.get(currNodeIndex);
-			calcPercentages.add(new WeightedPercentage(diffPerc(equality), equality[0].length));
+			calcPercentages.add(new WeightedPercentage(diffPerc(equality, relevantLocationIndices), equality[0].length-(equality.length-relevantLocationIndices.length)));
 		}
 		return calcPercentages;
 	}
 
-	private boolean canFixIt(List<WeightedPercentage> calcPercentages, List<WeightedPercentage> percentagesList,
-			int i) {
+	private boolean canFixIt(List<WeightedPercentage> calcPercentages, List<WeightedPercentage> percentagesList, int i) {
 		percentagesList = new ArrayList<>(percentagesList);
 		for(i++; i<calcPercentages.size(); i++) {
 			percentagesList.add(calcPercentages.get(i));
@@ -124,6 +122,7 @@ public class Type2Variability implements CalculatesPercentages, ChecksThresholds
 	 * Creates a per statement equality array.
 	 * @param s
 	 * @param equalityArray
+	 * @param relevantIndices 
 	 * @return
 	 */
 	private Map<Integer, int[][]> findConnectedStatements(Sequence s, List<List<Compare>> literals, int[][] equalityArray) {
