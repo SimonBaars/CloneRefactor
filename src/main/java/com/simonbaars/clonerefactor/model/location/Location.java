@@ -14,7 +14,7 @@ public class Location implements Comparable<Location>, HasRange {
 	private final Path file;
 	private Range range;
 	
-	private LocationContents contents = new LocationContents();
+	private final LocationContents contents;
 	
 	private Location prevLocation;
 	private Location clone;
@@ -24,6 +24,7 @@ public class Location implements Comparable<Location>, HasRange {
 
 	public Location(Path file) {
 		this.file=file;
+		this.contents = new LocationContents();
 	}
 
 	public Location(Path file, Location prevLocation) {
@@ -41,7 +42,7 @@ public class Location implements Comparable<Location>, HasRange {
 	}
 
 	public Location(Path file, Range range) {
-		this.file = file;
+		this(file);
 		this.range = range;
 	}
 
@@ -117,10 +118,6 @@ public class Location implements Comparable<Location>, HasRange {
 		return contents;
 	}
 
-	public void setTokens(LocationContents tokens) {
-		this.contents = tokens;
-	}
-
 	public void calculateTokens(Node n, Range maxRange) {
 		Optional<TokenRange> t = n.getTokenRange();
 		if(t.isPresent())
@@ -151,10 +148,6 @@ public class Location implements Comparable<Location>, HasRange {
 
 	public void setNextLocation(Location nextLocation) {
 		this.nextLocation = nextLocation;
-	}
-
-	public void setContents(LocationContents contents) {
-		this.contents = contents;
 	}
 
 	public Location mergeWith(Location oldClone) {
