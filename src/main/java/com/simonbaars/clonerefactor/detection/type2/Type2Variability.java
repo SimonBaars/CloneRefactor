@@ -38,8 +38,7 @@ public class Type2Variability implements CalculatesPercentages, ChecksThresholds
 	}
 	
 	// https://stackoverflow.com/questions/40201309/best-way-to-get-a-power-set-of-an-array
-	public int[][] powerset(int[] input){
-		int[] a = {1, 2};
+	public int[][] powerset(int[] a){
 		int max = 1 << a.length;
 		int[][] result = new int[max][];
 		for (int i = 0; i < max; ++i) {
