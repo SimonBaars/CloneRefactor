@@ -55,17 +55,21 @@ public class Type2Variability implements CalculatesPercentages, ChecksThresholds
 		List<WeightedPercentage> percentagesList = new ArrayList<>();
 		for(int i = 0; i<calcPercentages.size(); i++) {
 			percentagesList.add(calcPercentages.get(i));
-			boolean notValidRegardingVariability = calcAvg(percentagesList) > Settings.get().getType2VariabilityPercentage();
-			if((notValidRegardingVariability && !canFixIt(calcPercentages, percentagesList, i)) || i+1 == calcPercentages.size()) {
-				if(percentagesList.size()>1) {
-					if(notValidRegardingVariability)
-						percentagesList.remove(percentagesList.size()-1);
-					Sequence newSeq = createSequence(s, calcPercentages.indexOf(percentagesList.get(0)), calcPercentages.indexOf(percentagesList.get(percentagesList.size()-1)), relevantLocationIndices);
-					if(checkThresholds(newSeq) && removeDuplicatesOf(sequences, newSeq))
-						sequences.add(newSeq);
-				}
-				percentagesList.clear();
+			checkCloneValidity(sequences, s, relevantLocationIndices, calcPercentages, percentagesList, i);
+		}
+	}
+
+	private void checkCloneValidity(List<Sequence> sequences, Sequence s, int[] relevantLocationIndices,
+			List<WeightedPercentage> calcPercentages, List<WeightedPercentage> percentagesList, int i) {
+		boolean notValidRegardingVariability = calcAvg(percentagesList) > Settings.get().getType2VariabilityPercentage();
+		if((notValidRegardingVariability && !canFixIt(calcPercentages, percentagesList, i)) || i+1 == calcPercentages.size()) {
+			if(percentagesList.size()>1) {
+				if(notValidRegardingVariability) percentagesList.remove(percentagesList.size()-1);
+				Sequence newSeq = createSequence(s, calcPercentages.indexOf(percentagesList.get(0)), calcPercentages.indexOf(percentagesList.get(percentagesList.size()-1)), relevantLocationIndices);
+				if(checkThresholds(newSeq) && removeDuplicatesOf(sequences, newSeq)) 
+					sequences.add(newSeq);
 			}
+			percentagesList.clear();
 		}
 	}
 
@@ -104,7 +108,7 @@ public class Type2Variability implements CalculatesPercentages, ChecksThresholds
 		List<WeightedPercentage> calcPercentages = new ArrayList<>();
 		for(int currNodeIndex = 0; currNodeIndex<s.getAny().getContents().getNodes().size(); currNodeIndex++) {
 			int[][] equality = statementEqualityArrays.get(currNodeIndex);
-			calcPercentages.add(new WeightedPercentage(diffPerc(equality, relevantLocationIndices), equality[0].length-(equality.length-relevantLocationIndices.length)));
+			calcPercentages.add(new WeightedPercentage(diffPerc(equality, relevantLocationIndices), equality[0].length));
 		}
 		return calcPercentages;
 	}
