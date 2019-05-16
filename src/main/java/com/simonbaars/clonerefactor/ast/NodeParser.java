@@ -1,11 +1,8 @@
 package com.simonbaars.clonerefactor.ast;
 
 import java.util.HashMap;
-import java.util.ListIterator;
 import java.util.Map;
-import java.util.Optional;
 
-import com.github.javaparser.Range;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.ImportDeclaration;
 import com.github.javaparser.ast.Node;
@@ -37,14 +34,9 @@ public class NodeParser implements Parser, RequiresNodeOperations {
 	
 	
 	public Location parseToken(Location prevLocation, CompilationUnit cu, Node n) {
-		Range range = getActualRange(n);
-		Location thisLocation = prevLocation;
-		if(range!=null) {
-			thisLocation = new Location(cu.getStorage().get().getPath(), prevLocation);
-			thisLocation.calculateTokens(n, range);
-			if(prevLocation!=null) prevLocation.setNextLine(thisLocation);
-			addLineTokensToReg(thisLocation);
-		}
+		Location thisLocation = new Location(cu.getStorage().get().getPath(), prevLocation, n);
+		if(prevLocation!=null) prevLocation.setNextLine(thisLocation);
+		addLineTokensToReg(thisLocation);
 		return thisLocation;
 	}
 
@@ -57,20 +49,5 @@ public class NodeParser implements Parser, RequiresNodeOperations {
 		}
 		metricCollector.reportFoundNode(location);
 		return location;
-	}
-	
-	public Range getActualRange(Node n) {
-		Optional<Range> nodeRangeOpt = n.getRange();
-		if(nodeRangeOpt.isPresent()) {
-			Range nodeRange = nodeRangeOpt.get();
-			for(ListIterator<Node> it = n.getChildNodes().listIterator(n.getChildNodes().size()); it.hasPrevious(); ) {
-				Node node = it.previous();
-				if(!isExcluded(node) && node.getRange().isPresent()) {
-					nodeRange = nodeRange.withEnd(node.getRange().get().begin);
-				} else break;
-			}
-			return nodeRange;
-		}
-		return null;
 	}
 }
