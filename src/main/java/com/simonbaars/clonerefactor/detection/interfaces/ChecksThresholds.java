@@ -1,4 +1,4 @@
-package com.simonbaars.clonerefactor.detection;
+package com.simonbaars.clonerefactor.detection.interfaces;
 
 import com.simonbaars.clonerefactor.Settings;
 import com.simonbaars.clonerefactor.model.Sequence;

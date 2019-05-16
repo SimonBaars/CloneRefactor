@@ -1,6 +1,6 @@
 package com.simonbaars.clonerefactor.detection.type2;
 
-import com.simonbaars.clonerefactor.detection.CalculatesPercentages;
+import com.simonbaars.clonerefactor.detection.interfaces.CalculatesPercentages;
 
 public class WeightedPercentage implements CalculatesPercentages {
 	private final double percentage;

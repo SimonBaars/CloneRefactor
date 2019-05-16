@@ -1,4 +1,4 @@
-package com.simonbaars.clonerefactor.detection;
+package com.simonbaars.clonerefactor.detection.interfaces;
 
 import java.util.List;
 

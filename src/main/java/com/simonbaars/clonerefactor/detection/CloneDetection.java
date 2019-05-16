@@ -9,6 +9,8 @@ import java.util.stream.Collectors;
 import com.github.javaparser.Position;
 import com.github.javaparser.Range;
 import com.simonbaars.clonerefactor.datatype.ListMap;
+import com.simonbaars.clonerefactor.detection.interfaces.ChecksThresholds;
+import com.simonbaars.clonerefactor.detection.interfaces.RemovesDuplicates;
 import com.simonbaars.clonerefactor.model.Sequence;
 import com.simonbaars.clonerefactor.model.location.Location;
 

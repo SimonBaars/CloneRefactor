@@ -12,9 +12,9 @@ import com.github.javaparser.ast.Node;
 import com.simonbaars.clonerefactor.Settings;
 import com.simonbaars.clonerefactor.compare.CloneType;
 import com.simonbaars.clonerefactor.compare.Compare;
-import com.simonbaars.clonerefactor.detection.CalculatesPercentages;
-import com.simonbaars.clonerefactor.detection.ChecksThresholds;
-import com.simonbaars.clonerefactor.detection.RemovesDuplicates;
+import com.simonbaars.clonerefactor.detection.interfaces.CalculatesPercentages;
+import com.simonbaars.clonerefactor.detection.interfaces.ChecksThresholds;
+import com.simonbaars.clonerefactor.detection.interfaces.RemovesDuplicates;
 import com.simonbaars.clonerefactor.model.Sequence;
 import com.simonbaars.clonerefactor.model.location.Location;
 
