@@ -42,13 +42,15 @@ public interface HasCompareList extends DeterminesNodeTokens {
 	
 	public default Map<Range, Node> getNodesForCompare(List<? extends Node> parents, Map<Range, Node> nodes, Range range){
 		for(Node node : parents) {
-			Range r = node.getRange().get();
-			if(range.contains(r) && Compare.comparingNode(node))
-				nodes.put(r, node);
-			else if (r.begin.isAfter(range.end))
-				return nodes;
-			if(!nodes.containsKey(r))
-				getNodesForCompare(node.getChildNodes(), nodes, range);
+			if(node.getRange().isPresent()) {
+				Range r = node.getRange().get();
+				if(range.contains(r) && Compare.comparingNode(node))
+					nodes.put(r, node);
+				else if (r.begin.isAfter(range.end))
+					return nodes;
+				if(!nodes.containsKey(r))
+					getNodesForCompare(node.getChildNodes(), nodes, range);
+			}
 		}
 		return nodes;
 	}
