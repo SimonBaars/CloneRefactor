@@ -90,6 +90,10 @@ public class Sequence implements Comparable<Sequence> {
 		return sequence.stream().mapToInt(e -> e.getAmountOfNodes()).sum();
 	}
 	
+	public int getTotalTokenVolume() {
+		return sequence.stream().mapToInt(e -> e.getAmountOfTokens()).sum();
+	}
+	
 	public int getTotalEffectiveLineVolume() {
 		return sequence.stream().mapToInt(e -> e.getEffectiveLines()).sum();
 	}
@@ -100,9 +104,9 @@ public class Sequence implements Comparable<Sequence> {
 
 	@Override
 	public int compareTo(Sequence o) {
-		if(getNodeSize() == o.getNodeSize())
-			return Integer.compare(o.size(), size());
-		return Integer.compare(o.getNodeSize(), getNodeSize());
+		if(getTotalNodeVolume() == o.getTotalNodeVolume())
+			return Integer.compare(o.getTotalTokenVolume(), getTotalTokenVolume());
+		return Integer.compare(o.getTotalNodeVolume(), getTotalNodeVolume());
 	}
 	
 	public void setMetrics(CloneRelation relation, CloneRefactorability r) {
