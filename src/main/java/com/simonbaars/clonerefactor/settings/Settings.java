@@ -10,19 +10,19 @@ public class Settings {
 	
 	private static final Settings settings = new Settings();
 
-	private final CloneType cloneType;
+	private CloneType cloneType;
 	
 	// Clone detection thresholds
-	private final int minAmountOfLines;
-	private final int minAmountOfTokens;
-	private final int minAmountOfNodes;
+	private int minAmountOfLines;
+	private int minAmountOfTokens;
+	private int minAmountOfNodes;
 	
 	// Comparing by tokens only
-	private final boolean useLiteratureTypeDefinitions;
+	private boolean useLiteratureTypeDefinitions;
 	
 	// Type-specific settings
-	private final double type2VariabilityPercentage;
-	private final double type3GapSize;
+	private double type2VariabilityPercentage;
+	private double type3GapSize;
 	
 	private Settings() {
 		try (InputStream input = Settings.class.getClassLoader().getResourceAsStream(CLONEREFACTOR_PROPERTIES)) {
@@ -79,6 +79,38 @@ public class Settings {
 	
 	public double getType3GapSize() {
 		return type3GapSize;
+	}
+
+	public boolean isUseLiteratureTypeDefinitions() {
+		return useLiteratureTypeDefinitions;
+	}
+
+	public void setUseLiteratureTypeDefinitions(boolean useLiteratureTypeDefinitions) {
+		this.useLiteratureTypeDefinitions = useLiteratureTypeDefinitions;
+	}
+
+	public void setCloneType(CloneType cloneType) {
+		this.cloneType = cloneType;
+	}
+
+	public void setMinAmountOfLines(int minAmountOfLines) {
+		this.minAmountOfLines = minAmountOfLines;
+	}
+
+	public void setMinAmountOfTokens(int minAmountOfTokens) {
+		this.minAmountOfTokens = minAmountOfTokens;
+	}
+
+	public void setMinAmountOfNodes(int minAmountOfNodes) {
+		this.minAmountOfNodes = minAmountOfNodes;
+	}
+
+	public void setType2VariabilityPercentage(double type2VariabilityPercentage) {
+		this.type2VariabilityPercentage = type2VariabilityPercentage;
+	}
+
+	public void setType3GapSize(double type3GapSize) {
+		this.type3GapSize = type3GapSize;
 	}
 
 	@Override
