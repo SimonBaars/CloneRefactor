@@ -58,7 +58,7 @@ public class Type2Variability implements CalculatesPercentages, ChecksThresholds
 			if(calcAvg(percentagesList) > Settings.get().getType2VariabilityPercentage() && !canFixIt(calcPercentages, percentagesList, i) || i+1 == calcPercentages.size()) {
 				if(percentagesList.size()>1) {
 					percentagesList.remove(percentagesList.size()-1);
-					Sequence newSeq = createSequence(s, calcPercentages.indexOf(percentagesList.get(0)), calcPercentages.indexOf(percentagesList.get(percentagesList.size()-1)));
+					Sequence newSeq = createSequence(s, calcPercentages.indexOf(percentagesList.get(0)), calcPercentages.indexOf(percentagesList.get(percentagesList.size()-1)), relevantLocationIndices);
 					if(checkThresholds(newSeq) && removeDuplicatesOf(sequences, newSeq))
 						sequences.add(newSeq);
 				}
@@ -67,15 +67,16 @@ public class Type2Variability implements CalculatesPercentages, ChecksThresholds
 		}
 	}
 
-	private Sequence createSequence(Sequence s, int from, int to) {
+	private Sequence createSequence(Sequence s, int from, int to, int[] relevantIndices) {
 		Sequence newSeq = new Sequence();
-		for(Location l : s.getSequence()) {
+		for(int locationIndex : relevantIndices) {
+			Location l = s.getSequence().get(locationIndex);
 			Location l2 = new Location(l);
 			newSeq.add(l2);
 			List<Node> myNodes = l2.getContents().getNodes();
-			for(int i = myNodes.size()-1; i>=0; i--)
-				if(i<from || i>to)
-					myNodes.remove(i);
+			for(int nodeIndex = myNodes.size()-1; nodeIndex>=0; nodeIndex--)
+				if(nodeIndex<from || nodeIndex>to)
+					myNodes.remove(nodeIndex);
 			Range r = new Range(myNodes.get(0).getRange().get().begin, findNodeLocation(getStatementLoc(l2), myNodes.get(myNodes.size()-1)).getRange().end);
 			l2.setRange(r);
 			l2.getContents().setRange(r);
