@@ -6,16 +6,15 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
-import com.github.javaparser.Position;
 import com.github.javaparser.Range;
-import com.simonbaars.clonerefactor.ast.interfaces.DeterminesNodeRange;
+import com.simonbaars.clonerefactor.ast.interfaces.DeterminesNodeTokens;
 import com.simonbaars.clonerefactor.datatype.ListMap;
 import com.simonbaars.clonerefactor.detection.interfaces.ChecksThresholds;
 import com.simonbaars.clonerefactor.detection.interfaces.RemovesDuplicates;
 import com.simonbaars.clonerefactor.model.Sequence;
 import com.simonbaars.clonerefactor.model.location.Location;
 
-public class CloneDetection implements ChecksThresholds, RemovesDuplicates, DeterminesNodeRange {
+public class CloneDetection implements ChecksThresholds, RemovesDuplicates, DeterminesNodeTokens {
 	final List<Sequence> clones = new ArrayList<>();
 
 	public CloneDetection() {}
@@ -83,7 +82,7 @@ public class CloneDetection implements ChecksThresholds, RemovesDuplicates, Dete
 	}
 	
 	private Range getRange(Location l, int amountOfNodes) {
-		return l.getRange().withEnd(getValidRange(l.getContents().getNodes().get(amountOfNodes-1)).end);
+		return l.getRange().withEnd(getRange(l.getContents().getNodes().get(amountOfNodes-1)).end);
 	}
 
 	private Sequence collectClones(Location lastLoc) {
