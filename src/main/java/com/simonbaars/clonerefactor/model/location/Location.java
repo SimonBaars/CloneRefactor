@@ -1,10 +1,8 @@
 package com.simonbaars.clonerefactor.model.location;
 
 import java.nio.file.Path;
-import java.util.Optional;
 
 import com.github.javaparser.Range;
-import com.github.javaparser.TokenRange;
 import com.github.javaparser.ast.Node;
 import com.simonbaars.clonerefactor.compare.HasRange;
 import com.simonbaars.clonerefactor.metrics.enums.CloneLocation;
@@ -22,41 +20,37 @@ public class Location implements Comparable<Location>, HasRange {
 
 	private LocationType locationType;
 
-	public Location(Path file) {
-		this.file=file;
-		this.contents = new LocationContents();
-	}
-
-	public Location(Path file, Location prevLocation) {
-		this(file);
+	public Location(Path file, Range r, Location prevLocation) {
+		this(file, r);
 		this.prevLocation = prevLocation;
 	}
 
 	public Location(Location clonedLocation) {
-		this.file = clonedLocation.file;
-		this.contents = new LocationContents(clonedLocation.contents);
-		this.range = new Range(clonedLocation.range.begin, clonedLocation.range.end);
-		this.prevLocation = clonedLocation.prevLocation;
-		this.clone = clonedLocation.clone;
-		this.nextLocation = clonedLocation.nextLocation;
+		this(clonedLocation, clonedLocation.range);
 	}
 
 	public Location(Path file, Range range) {
-		this(file);
+		this.file = file;
 		this.range = range;
+		this.contents = new LocationContents();
 	}
 
 	public Location(Location clonedLocation, Range r) {
-		this(clonedLocation);
+		this.file = clonedLocation.file;
+		this.contents = new LocationContents(clonedLocation.contents);
 		this.range = r;
+		this.prevLocation = clonedLocation.prevLocation;
+		this.clone = clonedLocation.clone;
+		this.nextLocation = clonedLocation.nextLocation;
+		if(range!=clonedLocation.range)
+			getContents().stripToRange();
 	}
 
-	public Location(Location l2, Range range2, int amountOfNodes, int compareSize) {
-		this(l2, range2);
-		while(getContents().getNodes().size()>amountOfNodes)
-			getContents().getNodes().remove(getContents().size()-1);
-		while(getContents().getCompare().size()>compareSize)
-			getContents().getCompare().remove(getContents().size()-1);
+	public Location(Path path, Location prevLocation, Node n) {
+		this.file = path;
+		this.prevLocation = prevLocation;
+		this.contents = new LocationContents(n);
+		this.range = contents.getRange();
 	}
 
 	public Path getFile() {
@@ -118,20 +112,8 @@ public class Location implements Comparable<Location>, HasRange {
 		return contents;
 	}
 
-	public void calculateTokens(Node n, Range maxRange) {
-		Optional<TokenRange> t = n.getTokenRange();
-		if(t.isPresent())
-			setRange(getContents().addTokens(n, t.get(), maxRange));
-		else setRange(maxRange);
-		getContents().add(n);
-	}
-
 	public Range getRange() {
 		return range;
-	}
-
-	public void setRange(Range range) {
-		this.range = range;
 	}
 
 	public Location getPrevLocation() {
@@ -145,6 +127,10 @@ public class Location implements Comparable<Location>, HasRange {
 	public Location getNextLocation() {
 		return nextLocation;
 	}
+	
+	public void setRange(Range r) {
+		this.range = r;
+	}
 
 	public void setNextLocation(Location nextLocation) {
 		this.nextLocation = nextLocation;
@@ -153,9 +139,8 @@ public class Location implements Comparable<Location>, HasRange {
 	public Location mergeWith(Location oldClone) {
 		if(file != oldClone.getFile())
 			throw new IllegalStateException("Files of merging locations do not match! "+file+" != "+oldClone.getFile());
-		Location copy = new Location(this);
+		Location copy = new Location(this, getRange().withEnd(oldClone.getRange().end));
 		copy.contents.merge(oldClone.getContents());
-		copy.range = getRange().withEnd(oldClone.getRange().end);
 		return copy;
 	}
 
