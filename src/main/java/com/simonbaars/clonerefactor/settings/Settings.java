@@ -10,7 +10,9 @@ public class Settings {
 	
 	private static final Settings settings = new Settings();
 
+	// General
 	private CloneType cloneType;
+	private Scope scope;
 	
 	// Clone detection thresholds
 	private int minAmountOfLines;
@@ -30,6 +32,7 @@ public class Settings {
             prop.load(input);
 
             cloneType = CloneType.valueOf(prop.getProperty("clone_type"));
+            scope = Scope.valueOf(prop.getProperty("scope"));
             minAmountOfLines = Integer.parseInt(prop.getProperty("min_lines"));
             minAmountOfTokens = Integer.parseInt(prop.getProperty("min_tokens"));
             minAmountOfNodes = Integer.parseInt(prop.getProperty("min_statements"));
@@ -118,5 +121,13 @@ public class Settings {
 		return "Settings [cloneType=" + cloneType + ", minAmountOfLines=" + minAmountOfLines + ", minAmountOfTokens="
 				+ minAmountOfTokens + ", minAmountOfNodes=" + minAmountOfNodes + ", useLiteratureTypeDefinitions=" + useLiteratureTypeDefinitions
 				+ ", type2VariabilityPercentage=" + type2VariabilityPercentage + ", type3GapSize=" + type3GapSize + "]";
+	}
+
+	public Scope getScope() {
+		return scope;
+	}
+
+	public void setScope(Scope scope) {
+		this.scope = scope;
 	}
 }

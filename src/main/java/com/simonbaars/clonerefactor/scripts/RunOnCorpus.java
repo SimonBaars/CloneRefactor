@@ -16,13 +16,17 @@ public class RunOnCorpus {
 	public static void main(String[] args) {
 		ThreadPool threadPool = new ThreadPool();
 		File[] corpusFiles = new File(SavePaths.getApplicationDataFolder()+"git").listFiles();
+		writeSettings();
+		analyzeAllProjects(threadPool, corpusFiles);
+		threadPool.finishFinalThreads();
+	}
+
+	private static void writeSettings() {
 		try {
 			FileUtils.writeStringToFile(new File(SavePaths.getMyOutputFolder()+"settings.txt"), Settings.get().toString());
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		analyzeAllProjects(threadPool, corpusFiles);
-		threadPool.finishFinalThreads();
 	}
 
 	private static void analyzeAllProjects(ThreadPool threadPool, File[] corpusFiles) {
