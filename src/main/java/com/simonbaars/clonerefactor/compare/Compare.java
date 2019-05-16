@@ -11,7 +11,7 @@ import com.github.javaparser.ast.expr.MethodCallExpr;
 import com.github.javaparser.ast.expr.NameExpr;
 import com.github.javaparser.ast.expr.SimpleName;
 import com.github.javaparser.ast.type.ReferenceType;
-import com.simonbaars.clonerefactor.model.location.LocationContents;
+import com.simonbaars.clonerefactor.ast.HasCompareList;
 import com.simonbaars.clonerefactor.settings.CloneType;
 
 public abstract class Compare implements HasRange {
@@ -57,7 +57,7 @@ public abstract class Compare implements HasRange {
 		this.cloneType = type;
 	}
 	
-	public List<Compare> relevantChildren(LocationContents locationContents){
+	public List<Compare> relevantChildren(HasCompareList locationContents){
 		return Collections.emptyList();
 	}
 
