@@ -3,32 +3,26 @@ package com.simonbaars.clonerefactor.model.location;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.github.javaparser.JavaToken;
 import com.github.javaparser.Range;
-import com.github.javaparser.TokenRange;
 import com.github.javaparser.ast.Node;
-import com.github.javaparser.ast.nodeTypes.NodeWithImplements;
+import com.simonbaars.clonerefactor.ast.DeterminesNodeTokens;
+import com.simonbaars.clonerefactor.ast.HasCompareList;
 import com.simonbaars.clonerefactor.compare.Compare;
 import com.simonbaars.clonerefactor.compare.CompareLiteral;
 import com.simonbaars.clonerefactor.compare.CompareMethodCall;
-import com.simonbaars.clonerefactor.compare.CompareToken;
 import com.simonbaars.clonerefactor.compare.CompareVariable;
 import com.simonbaars.clonerefactor.compare.HasRange;
-import com.simonbaars.clonerefactor.exception.NoTokensException;
 import com.simonbaars.clonerefactor.metrics.enums.CloneContents;
 import com.simonbaars.clonerefactor.metrics.enums.CloneContents.ContentsType;
 import com.simonbaars.clonerefactor.model.FiltersTokens;
 import com.simonbaars.clonerefactor.settings.Settings;
 
-public class LocationContents implements FiltersTokens, HasRange {
+public class LocationContents implements FiltersTokens, HasRange, DeterminesNodeTokens, HasCompareList {
 	private Range range;
 	private final List<Node> nodes;
 	private final List<JavaToken> tokens;
@@ -47,6 +41,19 @@ public class LocationContents implements FiltersTokens, HasRange {
 		this.nodes = new ArrayList<>(contents.getNodes());
 		this.tokens = new ArrayList<>(contents.getTokens());
 		this.compare = new ArrayList<>(contents.getCompare());
+	}
+
+	public LocationContents(Node n) {
+		this.tokens = calculateTokensFromNode(n);
+		this.nodes = Collections.singletonList(n);
+		if(Settings.get().useLiteratureTypeDefinitions())
+			this.compare = Collections.emptyList();
+		else {
+			this.compare = new ArrayList<>();
+			createComparablesByNode(tokens, n);
+		}
+		this.range = getRange(tokens);
+		
 	}
 
 	public List<Node> getNodes() {
@@ -68,27 +75,6 @@ public class LocationContents implements FiltersTokens, HasRange {
 		LocationContents other = (LocationContents)o;
 		if(Settings.get().useLiteratureTypeDefinitions()) return tokens.equals(other.tokens);
 		return compare.equals(other.compare);
-	}
-	
-	public Map<Range, Node> getNodesForCompare(){
-		return getNodesForCompare(getNodes());
-	}
-	
-	public Map<Range, Node> getNodesForCompare(List<? extends Node> parents){
-		return getNodesForCompare(parents, new HashMap<>());
-	}
-	
-	public Map<Range, Node> getNodesForCompare(List<? extends Node> parents, Map<Range, Node> nodes){
-		for(Node node : parents) {
-			Range r = node.getRange().get();
-			if(range.contains(r) && Compare.comparingNode(node))
-				nodes.put(r, node);
-			else if (r.begin.isAfter(range.end))
-				return nodes;
-			if(!nodes.containsKey(r))
-				getNodesForCompare(node.getChildNodes(), nodes);
-		}
-		return nodes;
 	}
 	
 	public String getEffectiveTokenTypes() {
@@ -113,45 +99,6 @@ public class LocationContents implements FiltersTokens, HasRange {
 	@Override
 	public String toString() {
 		return getTokens().stream().map(e -> e.asString()).collect(Collectors.joining());
-	}
-
-	public Range addTokens(Node statement, TokenRange tokenRange, Range validRange) {
-		addTokensInRange(statement, tokenRange, validRange);
-		if(tokens.isEmpty())
-			throw new NoTokensException(statement, tokenRange, validRange);
-		range = new Range(tokens.get(0).getRange().get().begin, tokens.get(tokens.size()-1).getRange().get().end);
-		if(!Settings.get().useLiteratureTypeDefinitions()) createCompareList(statement);
-		return range; 
-	}
-
-	private void createCompareList(Node statement) {
-		Map<Range, Node> compareMap = getNodesForCompare(Collections.singletonList(statement));
-		getTokens().forEach(token -> {
-			Optional<Entry<Range, Node>> thisNodeOptional = compareMap.entrySet().stream().filter(e -> e.getKey().contains(token.getRange().get())).findAny();
-			if(thisNodeOptional.isPresent()) {
-				if(thisNodeOptional.get().getValue()!=null)
-					createCompareFromNode(compareMap, token, thisNodeOptional.get());
-			} else getCompare().add(Compare.create(token, token, Settings.get().getCloneType()));
-		});
-	}
-
-	private void createCompareFromNode(Map<Range, Node> compareMap, JavaToken token, Entry<Range, Node> thisNode) {
-		Compare createdNode = Compare.create(thisNode.getValue(), token, Settings.get().getCloneType());
-		getCompare().add(createdNode);
-		getCompare().addAll(createdNode.relevantChildren(this));
-		if(createdNode instanceof CompareToken) compareMap.remove(thisNode.getKey()); 
-		else thisNode.setValue(null);
-	}
-
-	private void addTokensInRange(Node n, TokenRange tokenRange, Range validRange) {
-		for(JavaToken token : tokenRange) {
-			Optional<Range> r = token.getRange();
-			if(r.isPresent()) {
-				if(!validRange.contains(r.get())) break;
-				if(isComparableToken(token)) tokens.add(token);
-				if(n instanceof NodeWithImplements && token.asString().equals("{")) break; // We cannot exclude the body of class files, this is a workaround.
-			}
-		}
 	}
 
 	public List<JavaToken> getTokens() {
@@ -180,10 +127,6 @@ public class LocationContents implements FiltersTokens, HasRange {
 		return compare;
 	}
 
-	public String toNodeClasses() {
-		return getNodesForCompare().values().stream().map(e -> e.toString()+ " => " +e.getClass().getName()).collect(Collectors.joining(", ", "[", "]"));
-	}
-	
 	public ContentsType getContentsType() {
 		return contentsType;
 	}
@@ -205,8 +148,8 @@ public class LocationContents implements FiltersTokens, HasRange {
 		return getCompare().stream().map(e -> e.getClass().getName() +" ("+e.toString()+")").collect(Collectors.joining(","));
 	}
 
-	public void calculateRangeBasedOnNodes() {
-		// TODO Auto-generated method stub
-		
+	public void stripToRange() {
+		getCompare().removeIf(e -> e.getRange().isBefore(getRange().begin) || e.getRange().isAfter(getRange().end));
+		getTokens().removeIf(e -> e.getRange().get().isBefore(getRange().begin) || e.getRange().get().isAfter(getRange().end));
 	}
 }
