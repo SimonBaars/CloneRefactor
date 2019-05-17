@@ -40,7 +40,7 @@ public class RunOnCorpus implements WritesErrors {
 
 	private void analyzeAllProjects(ThreadPool threadPool, File[] corpusFiles) {
 		for(int i = 0; i<corpusFiles.length; i++) {
-			System.out.println(threadPool.showContents()+"("+(i+1)+"/"+corpusFiles.length+")");
+			System.out.println(threadPool.showContents()+" ("+(i+1)+"/"+corpusFiles.length+")");
 			if(!threadPool.anyNull()) threadPool.waitForThreadToFinish();
 			threadPool.addToAvailableThread(corpusFiles[i]);
 		}
