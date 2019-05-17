@@ -10,8 +10,6 @@ import com.simonbaars.clonerefactor.thread.WritesErrors;
 import com.simonbaars.clonerefactor.util.FileUtils;
 import com.simonbaars.clonerefactor.util.SavePaths;
 
-import me.tongfei.progressbar.ProgressBar;
-
 public class RunOnCorpus implements WritesErrors {
 
 	public static void main(String[] args) {
@@ -20,15 +18,15 @@ public class RunOnCorpus implements WritesErrors {
 
 	private void startCorpusCloneDetection() {
 		try {
+			System.out.println(Settings.get().getMinAmountOfTokens());
 			SavePaths.genTimestamp();
 			ThreadPool threadPool = new ThreadPool();
 			File[] corpusFiles = new File(SavePaths.getApplicationDataFolder()+"git").listFiles();
 			corpusFiles = Arrays.copyOf(corpusFiles, 10);
 			writeSettings();
 			analyzeAllProjects(threadPool, corpusFiles);
-			System.out.println("Finish");
 			threadPool.finishFinalThreads();
-			System.out.println("Done");
+			System.out.println("== Done ==");
 		} catch (Exception e) {
 			writeError(SavePaths.getMyOutputFolder()+"terminate", e);
 		}
@@ -43,15 +41,10 @@ public class RunOnCorpus implements WritesErrors {
 	}
 
 	private void analyzeAllProjects(ThreadPool threadPool, File[] corpusFiles) {
-		//try (ProgressBar pb = new ProgressBar("Running Clone Detection", corpusFiles.length)) {
-			for(File file : corpusFiles) {
-				System.out.println(file.getName());
-				//pb.setExtraMessage(threadPool.showContents());
-				if(!threadPool.anyNull()) threadPool.waitForThreadToFinish();
-				threadPool.addToAvailableThread(file);
-				//pb.step();
-				
-			}
-		//}
+		for(File file : corpusFiles) {
+			System.out.println(threadPool.showContents());
+			if(!threadPool.anyNull()) threadPool.waitForThreadToFinish();
+			threadPool.addToAvailableThread(file);
+		}
 	}
 }
