@@ -6,6 +6,7 @@ import java.util.ListIterator;
 import java.util.Optional;
 
 import com.github.javaparser.JavaToken;
+import com.github.javaparser.Position;
 import com.github.javaparser.Range;
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.nodeTypes.NodeWithImplements;
@@ -31,10 +32,14 @@ public interface DeterminesNodeTokens extends FiltersTokens, RequiresNodeOperati
 		for(ListIterator<Node> it = n.getChildNodes().listIterator(n.getChildNodes().size()); it.hasPrevious(); ) {
 			Node node = it.previous();
 			if(!isExcluded(node) && node.getRange().isPresent()) {
-				nodeRange = nodeRange.withEnd(node.getRange().get().begin);
+				nodeRange = new Range(nodeRange.begin, getPosition(node.getRange().get().begin));
 			} else break;
 		}
 		return nodeRange;
+	}
+	
+	public default Position getPosition(Position pos) {
+		return new Position(pos.line, pos.column-1);
 	}
 	
 	public default Range getRange(List<JavaToken> tokens) {
