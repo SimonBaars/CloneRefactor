@@ -32,13 +32,15 @@ public interface DeterminesNodeTokens extends FiltersTokens, RequiresNodeOperati
 		for(ListIterator<Node> it = n.getChildNodes().listIterator(n.getChildNodes().size()); it.hasPrevious(); ) {
 			Node node = it.previous();
 			if(!isExcluded(node) && node.getRange().isPresent()) {
-				nodeRange = new Range(nodeRange.begin, getPosition(node.getRange().get().begin));
+				nodeRange = new Range(nodeRange.begin, getPosition(node.getRange().get().begin, nodeRange.begin));
 			} else break;
 		}
 		return nodeRange;
 	}
 	
-	public default Position getPosition(Position pos) {
+	public default Position getPosition(Position pos, Position begin) {
+		if(pos.equals(begin))
+			return pos;
 		return new Position(pos.line, pos.column-1);
 	}
 	
