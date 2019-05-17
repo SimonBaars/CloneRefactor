@@ -2,14 +2,20 @@ package com.simonbaars.clonerefactor.detection.type2;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Optional;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import com.github.javaparser.Range;
 import com.github.javaparser.ast.Node;
 import com.simonbaars.clonerefactor.compare.Compare;
+import com.simonbaars.clonerefactor.datatype.CountMap;
+import com.simonbaars.clonerefactor.datatype.ListMap;
 import com.simonbaars.clonerefactor.detection.interfaces.CalculatesPercentages;
 import com.simonbaars.clonerefactor.detection.interfaces.ChecksThresholds;
 import com.simonbaars.clonerefactor.detection.interfaces.RemovesDuplicates;
@@ -33,10 +39,73 @@ public class Type2Variability implements CalculatesPercentages, ChecksThresholds
 		for(int[] relevantLocationIndices : powerset(IntStream.range(0, s.size()).toArray())){
 			if(relevantLocationIndices.length>1)
 				sliceSequence(sequences, s, statementEqualityArrays, relevantLocationIndices);
+			else if (relevantLocationIndices.length == 1) {
+				findInnerClones(sequences, s, equalityArray, relevantLocationIndices[0]);
+			}
 		}
 		return sequences;
 	}
 	
+	private void findInnerClones(List<Sequence> sequences, Sequence s, int[][] equalityArray, int index) {
+		final ListMap<Integer, Integer> stuffOnLine = new ListMap<>();
+		IntStream.range(0, equalityArray[index].length).forEach(e -> stuffOnLine.addTo(equalityArray[index][e], e));
+		final CountMap<Integer> chainList = new CountMap<>();
+		
+		for(int i = 0; i<equalityArray[index].length; i++) {
+			Entry<Integer, List<Integer>> clones = stuffOnLine.getEntryForValue(i);
+			ListMap<Integer, Integer> endingChains = new ListMap<>();
+			
+			final int j = i;
+			chainList.entrySet().stream().forEach(curChain -> {
+				Optional<Integer> chain = clones.getValue().stream().filter(newClone -> newClone == equalityArray[index][curChain.getKey() + curChain.getValue()]).findAny();
+				if(chain.isPresent()) {
+					curChain.setValue(curChain.getValue()+1);
+					clones.getValue().remove(chain.get());
+				} 
+				if(!chain.isPresent() || j == equalityArray[index].length-1){
+					endingChains.addTo(curChain.getValue(), curChain.getKey());
+				}
+			});
+			
+			createSequencesOf(sequences, s, endingChains, index);
+			
+			clones.getValue().forEach(e -> chainList.increment(e));
+		}
+	}
+
+	private void createSequencesOf(List<Sequence> sequences, Sequence s, ListMap<Integer, Integer> endingChains, int index) {
+		for(Integer i : endingChains.keySet().stream().sorted(Comparator.reverseOrder()).collect(Collectors.toList())) {
+			List<Integer> e = endingChains.get(i);
+			e.addAll(endingChains.entrySet().stream().filter(f -> f.getKey()<i).flatMap(f -> f.getValue().stream()).collect(Collectors.toList()));
+			if(e.size()>1) {
+				Sequence newSeq = createSequence(s, e, i, index);
+				if(checkThresholds(newSeq) && removeDuplicatesOf(sequences, newSeq)) 
+					sequences.add(newSeq);
+			}
+		}
+	}
+
+	private Sequence createSequence(Sequence s, List<Integer> startIndices, int size, int index) {
+		
+		Location l = s.getSequence().get(index);
+		
+		Sequence newSeq = new Sequence();
+		for(Integer i : startIndices) {
+			Location l2 = new Location(l);
+			newSeq.add(l2);
+			List<Node> myNodes = l2.getContents().getNodes();
+			for(int nodeIndex = myNodes.size()-1; nodeIndex>=0; nodeIndex--)
+				if(nodeIndex<i || nodeIndex>i+size)
+					myNodes.remove(nodeIndex);
+			Range r = new Range(myNodes.get(0).getRange().get().begin, findNodeLocation(getStatementLoc(l2), myNodes.get(myNodes.size()-1)).getRange().end);
+			l2.setRange(r);
+			l2.getContents().setRange(r);
+			l2.getContents().stripToRange();
+			
+		}
+		return newSeq;
+	}
+
 	// https://stackoverflow.com/questions/40201309/best-way-to-get-a-power-set-of-an-array
 	public int[][] powerset(int[] a){
 		int max = 1 << a.length;
@@ -161,9 +230,9 @@ public class Type2Variability implements CalculatesPercentages, ChecksThresholds
 
 	private int[][] createEqualityArray(List<List<Compare>> literals) {
 		int[][] equalityArray = new int[literals.size()][literals.get(0).size()];
+		final List<Compare> differentCompareLiterals = new ArrayList<>();
+		int curr = 0;
 		for(int j = 0; j<literals.get(0).size(); j++) {
-			final List<Compare> differentCompareLiterals = new ArrayList<>();
-			int curr = 0;
 			for(int i = 0; i<literals.size(); i++) {
 				int index = differentCompareLiterals.indexOf(literals.get(i).get(j));
 				if(index == -1) {

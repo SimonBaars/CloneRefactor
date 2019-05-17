@@ -16,6 +16,7 @@ public class RunAllConfigurations {
 		Settings.get().setUseLiteratureTypeDefinitions(false);
 		
 		for(int i = 1; i<40; i++) {
+			System.out.println(Settings.get());
 			Settings.get().setMinAmountOfTokens(i);
 			RunOnCorpus.main(args);
 			rotate(cloneTypes, scopes);
