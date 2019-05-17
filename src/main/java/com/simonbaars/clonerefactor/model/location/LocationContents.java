@@ -11,7 +11,6 @@ import com.github.javaparser.JavaToken;
 import com.github.javaparser.Range;
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.MethodDeclaration;
-import com.simonbaars.clonerefactor.ast.interfaces.DeterminesNodeRange;
 import com.simonbaars.clonerefactor.ast.interfaces.HasCompareList;
 import com.simonbaars.clonerefactor.compare.Compare;
 import com.simonbaars.clonerefactor.compare.CompareFalse;
@@ -26,7 +25,7 @@ import com.simonbaars.clonerefactor.model.FiltersTokens;
 import com.simonbaars.clonerefactor.settings.Scope;
 import com.simonbaars.clonerefactor.settings.Settings;
 
-public class LocationContents implements FiltersTokens, HasRange, DeterminesNodeRange, HasCompareList, RequiresNodeContext {
+public class LocationContents implements FiltersTokens, HasRange, HasCompareList, RequiresNodeContext {
 	private Range range;
 	private final List<Node> nodes;
 	private final List<JavaToken> tokens;

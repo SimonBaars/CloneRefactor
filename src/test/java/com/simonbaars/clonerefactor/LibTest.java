@@ -51,4 +51,10 @@ public class LibTest extends TestCase {
         String path = "/Users/sbaars/clone/git/pa/";
 		System.out.println(Main.cloneDetection(Paths.get(path), Paths.get(path+"src/main/java/")).sorted());
     }
+    
+    public void testAtan() {
+    	System.out.println("atan");
+        String path = "/Users/sbaars/clone/git/atan/";
+		System.out.println(Main.cloneDetection(Paths.get(path), Paths.get(path+"src/main/java/")).sorted());
+    }
 }

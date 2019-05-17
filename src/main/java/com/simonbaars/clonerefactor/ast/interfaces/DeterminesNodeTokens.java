@@ -2,6 +2,7 @@ package com.simonbaars.clonerefactor.ast.interfaces;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Optional;
 
 import com.github.javaparser.JavaToken;
@@ -10,7 +11,7 @@ import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.nodeTypes.NodeWithImplements;
 import com.simonbaars.clonerefactor.model.FiltersTokens;
 
-public interface DeterminesNodeTokens extends FiltersTokens, DeterminesNodeRange {
+public interface DeterminesNodeTokens extends FiltersTokens, RequiresNodeOperations {
 	public default List<JavaToken> calculateTokensFromNode(Node n) {
 		Range validRange = getValidRange(n);
 		List<JavaToken> tokens = new ArrayList<>();
@@ -23,6 +24,17 @@ public interface DeterminesNodeTokens extends FiltersTokens, DeterminesNodeRange
 			}
 		}
 		return tokens;
+	}
+	
+	public default Range getValidRange(Node n) {
+		Range nodeRange = n.getRange().get();
+		for(ListIterator<Node> it = n.getChildNodes().listIterator(n.getChildNodes().size()); it.hasPrevious(); ) {
+			Node node = it.previous();
+			if(!isExcluded(node) && node.getRange().isPresent()) {
+				nodeRange = nodeRange.withEnd(node.getRange().get().begin);
+			} else break;
+		}
+		return nodeRange;
 	}
 	
 	public default Range getRange(List<JavaToken> tokens) {
