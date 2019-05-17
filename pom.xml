@@ -69,7 +69,6 @@
 					<target>${jdk.version}</target>
 				</configuration>
 			</plugin>
-
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>exec-maven-plugin</artifactId>
@@ -84,6 +83,11 @@
 				<configuration>
 					<mainClass>com.simonbaars.clonerefactor.scripts.TryThresholds</mainClass>
 				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>versions-maven-plugin</artifactId>
+				<version>2.1</version>
 			</plugin>
 		</plugins>
 	</build>

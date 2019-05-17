@@ -3,6 +3,7 @@ package com.simonbaars.clonerefactor.thread;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import com.github.javaparser.symbolsolver.javaparsermodel.JavaParserFacade;
@@ -26,9 +27,9 @@ public class ThreadPool implements WritesErrors {
 	}
 
 	public void waitForThreadToFinish() {
-		if(Arrays.stream(threads).allMatch(e -> e==null))
+		if(allNull())
 			return;
-		while(Arrays.stream(threads).filter(e -> e!=null).allMatch(e -> e.isAlive())) {
+		while(Arrays.stream(threads).filter(e -> e!=null).noneMatch(e -> !e.isAlive())) {
 			try {
 				Thread.sleep(100);
 				nullifyThreadIfStarved();
@@ -98,5 +99,17 @@ public class ThreadPool implements WritesErrors {
 	
 	public double freeMemoryPercentage() {
 		return (double)Runtime.getRuntime().freeMemory() / (double)Runtime.getRuntime().totalMemory() * 100D;
+	}
+
+	public String showContents() {
+		return Arrays.stream(threads).filter(e -> e!=null).map(e -> e.getFile().getName()).collect(Collectors.joining(", "));
+	}
+	
+	public boolean noneNull() {
+		return Arrays.stream(threads).noneMatch(e -> e==null);
+	}
+	
+	public boolean allNull() {
+		return Arrays.stream(threads).noneMatch(e -> e==null);
 	}
 }

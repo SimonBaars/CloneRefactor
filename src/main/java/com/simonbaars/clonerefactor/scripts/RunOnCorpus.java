@@ -2,7 +2,6 @@ package com.simonbaars.clonerefactor.scripts;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
 
 import com.simonbaars.clonerefactor.settings.Settings;
 import com.simonbaars.clonerefactor.thread.ThreadPool;
@@ -40,9 +39,13 @@ public class RunOnCorpus implements WritesErrors {
 	}
 
 	private void analyzeAllProjects(ThreadPool threadPool, File[] corpusFiles) {
-		for(File file : ProgressBar.wrap(Arrays.asList(corpusFiles), "Running Clone Detection")) {
-			threadPool.waitForThreadToFinish();
-			threadPool.addToAvailableThread(file);
+		try (ProgressBar pb = new ProgressBar("Running Clone Detection", corpusFiles.length)) {
+			for(File file : corpusFiles) {
+				pb.setExtraMessage(threadPool.showContents());
+				if(threadPool.noneNull()) threadPool.waitForThreadToFinish();
+				threadPool.addToAvailableThread(file);
+				pb.step();
+			}
 		}
 	}
 }
