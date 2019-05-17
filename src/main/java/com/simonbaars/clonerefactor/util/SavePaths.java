@@ -7,9 +7,13 @@ import java.util.Date;
 public class SavePaths {
 	
 	private static String dataFolder = "clone";
-	private static final String format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
+	private static String timestamp = null;
 
 	private SavePaths() {}
+	
+	public static void genTimestamp() {
+		timestamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
+	}
 	
 	public static void setAlternativeDataFolder(String folder) {
 		dataFolder = folder;
@@ -40,7 +44,9 @@ public class SavePaths {
 	}
 	
 	public static String getMyOutputFolder() {
-		return SavePaths.createDirectoryIfNotExists(SavePaths.getOutputFolder())+format+File.separator;
+		if(timestamp == null)
+			genTimestamp();
+		return SavePaths.createDirectoryIfNotExists(SavePaths.getOutputFolder())+timestamp+File.separator;
 	}
 
 	public static String getJavaProjectFolder() {

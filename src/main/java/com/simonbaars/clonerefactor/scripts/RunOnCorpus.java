@@ -14,6 +14,7 @@ import me.tongfei.progressbar.ProgressBar;
 public class RunOnCorpus {
 
 	public static void main(String[] args) {
+		SavePaths.genTimestamp();
 		ThreadPool threadPool = new ThreadPool();
 		File[] corpusFiles = new File(SavePaths.getApplicationDataFolder()+"git").listFiles();
 		writeSettings();
