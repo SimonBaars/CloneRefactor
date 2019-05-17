@@ -43,7 +43,7 @@ public class CountMap<K> extends HashMap<K, Integer> {
 	
 	@Override
 	public String toString() {
-		return entrySet().stream().map(e -> e.getKey()+" => "+e.getValue()).collect(Collectors.joining(", ", "[", "]"));
+		return keySet().stream().sorted().map(e -> e+"\t"+get(e)).collect(Collectors.joining(System.lineSeparator()));
 	}
 
 	public void addAll(CountMap<K> amountPerCloneClassSize) {
