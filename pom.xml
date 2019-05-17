@@ -14,39 +14,45 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<jdk.version>1.8</jdk.version>
+		<junit.version>3.8.1</junit.version>
+		<javaparser.version>3.14.1</javaparser.version>
+		<progressbar.version>0.7.3</progressbar.version>
+		<vcs4j.version>1.6.0</vcs4j.version>
+		<jgit.version>5.3.1.201904271842-r</jgit.version>
+		<jfreechart.version>1.5.0</jfreechart.version>
 	</properties>
 
 	<dependencies>
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>3.8.1</version>
+			<version>${junit.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.github.javaparser</groupId>
 			<artifactId>javaparser-symbol-solver-core</artifactId>
-			<version>3.14.1</version>
+			<version>${javaparser.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>me.tongfei</groupId>
 			<artifactId>progressbar</artifactId>
-			<version>0.7.3</version>
+			<version>${progressbar.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>de.uni-bremen.informatik.st</groupId>
 			<artifactId>libvcs4j</artifactId>
-			<version>1.6.0</version>
+			<version>${vcs4j.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.jfree</groupId>
 			<artifactId>jfreechart</artifactId>
-			<version>1.5.0</version>
+			<version>${jfreechart.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.eclipse.jgit</groupId>
 			<artifactId>org.eclipse.jgit-parent</artifactId>
-			<version>5.3.1.201904271842-r</version>
+			<version>${jgit.version}</version>
 			<type>pom</type>
 		</dependency>
 	</dependencies>
