@@ -45,7 +45,7 @@ public class Location implements Comparable<Location>, HasRange {
 		if(range!=clonedLocation.range)
 			getContents().stripToRange();
 	}
-
+	
 	public Location(Path path, Location prevLocation, Node n) {
 		this.file = path;
 		this.prevLocation = prevLocation;

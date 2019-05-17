@@ -10,19 +10,23 @@ import java.util.stream.Collectors;
 import com.github.javaparser.JavaToken;
 import com.github.javaparser.Range;
 import com.github.javaparser.ast.Node;
+import com.github.javaparser.ast.body.MethodDeclaration;
 import com.simonbaars.clonerefactor.ast.interfaces.DeterminesNodeRange;
 import com.simonbaars.clonerefactor.ast.interfaces.HasCompareList;
 import com.simonbaars.clonerefactor.compare.Compare;
+import com.simonbaars.clonerefactor.compare.CompareFalse;
 import com.simonbaars.clonerefactor.compare.CompareLiteral;
 import com.simonbaars.clonerefactor.compare.CompareMethodCall;
 import com.simonbaars.clonerefactor.compare.CompareVariable;
 import com.simonbaars.clonerefactor.compare.HasRange;
 import com.simonbaars.clonerefactor.metrics.enums.CloneContents;
 import com.simonbaars.clonerefactor.metrics.enums.CloneContents.ContentsType;
+import com.simonbaars.clonerefactor.metrics.enums.RequiresNodeContext;
 import com.simonbaars.clonerefactor.model.FiltersTokens;
+import com.simonbaars.clonerefactor.settings.Scope;
 import com.simonbaars.clonerefactor.settings.Settings;
 
-public class LocationContents implements FiltersTokens, HasRange, DeterminesNodeRange, HasCompareList {
+public class LocationContents implements FiltersTokens, HasRange, DeterminesNodeRange, HasCompareList, RequiresNodeContext {
 	private Range range;
 	private final List<Node> nodes;
 	private final List<JavaToken> tokens;
@@ -46,8 +50,12 @@ public class LocationContents implements FiltersTokens, HasRange, DeterminesNode
 		if(Settings.get().useLiteratureTypeDefinitions())
 			this.compare = Collections.emptyList();
 		else {
-			this.compare = new ArrayList<>();
-			createComparablesByNode(tokens, n);
+			if(Settings.get().getScope()!=Scope.ALL && (getMethod(n)==null || (Settings.get().getScope() == Scope.METHODBODYONLY && n instanceof MethodDeclaration))) {
+				this.compare = Collections.singletonList(new CompareFalse());
+			} else {
+				this.compare = new ArrayList<>();
+				createComparablesByNode(tokens, n);
+			}
 		}
 		this.range = getRange(tokens);
 		
@@ -160,7 +168,7 @@ public class LocationContents implements FiltersTokens, HasRange, DeterminesNode
 	
 	public void isValid() {
 		if(tokens.stream().anyMatch(e -> !range.contains(e.getRange().get()))) {
-			throw new RuntimeException("INVALID CONTENTS "+this);
+			throw new IllegalStateException("Invalid Contents "+this);
 		}
 	}
 }
