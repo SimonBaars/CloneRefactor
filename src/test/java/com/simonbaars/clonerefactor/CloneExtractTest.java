@@ -2,6 +2,8 @@ package com.simonbaars.clonerefactor;
 
 import com.simonbaars.clonerefactor.metrics.enums.CloneRefactorability.Refactorability;
 import com.simonbaars.clonerefactor.model.DetectionResults;
+import com.simonbaars.clonerefactor.settings.CloneType;
+import com.simonbaars.clonerefactor.settings.Settings;
 
 import junit.framework.Assert;
 import junit.framework.Test;
@@ -27,6 +29,11 @@ public class CloneExtractTest extends TestCase {
      */
     public static Test suite() {
         return new TestSuite( CloneExtractTest.class );
+    }
+    
+    @Override
+    public void setUp() {
+    	Settings.get().setCloneType(CloneType.TYPE1);
     }
     
     public void testFullMethod() {

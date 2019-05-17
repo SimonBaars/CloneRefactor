@@ -4,6 +4,8 @@ import java.io.File;
 import java.nio.file.Paths;
 
 import com.simonbaars.clonerefactor.model.DetectionResults;
+import com.simonbaars.clonerefactor.settings.CloneType;
+import com.simonbaars.clonerefactor.settings.Settings;
 import com.simonbaars.clonerefactor.thread.CorpusThread;
 
 import junit.framework.Test;
@@ -38,6 +40,11 @@ public class SimpleTest extends TestCase {
      */
     public static Test suite() {
         return new TestSuite( SimpleTest.class );
+    }
+    
+    @Override
+    public void setUp() {
+    	Settings.get().setCloneType(CloneType.TYPE1);
     }
     
     public void testCustom() {

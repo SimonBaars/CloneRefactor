@@ -3,6 +3,8 @@ package com.simonbaars.clonerefactor;
 import java.nio.file.Paths;
 
 import com.simonbaars.clonerefactor.model.DetectionResults;
+import com.simonbaars.clonerefactor.settings.CloneType;
+import com.simonbaars.clonerefactor.settings.Settings;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -27,6 +29,11 @@ public class Type2Test extends TestCase {
      */
     public static Test suite() {
         return new TestSuite(Type2Test.class);
+    }
+    
+    @Override
+    public void setUp() {
+    	Settings.get().setCloneType(CloneType.TYPE2);
     }
     
     public void testCustom() {

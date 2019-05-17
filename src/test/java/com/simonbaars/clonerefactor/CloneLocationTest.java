@@ -2,6 +2,8 @@ package com.simonbaars.clonerefactor;
 
 import com.simonbaars.clonerefactor.metrics.enums.CloneLocation.LocationType;
 import com.simonbaars.clonerefactor.model.DetectionResults;
+import com.simonbaars.clonerefactor.settings.CloneType;
+import com.simonbaars.clonerefactor.settings.Settings;
 
 import junit.framework.Assert;
 import junit.framework.Test;
@@ -20,6 +22,11 @@ public class CloneLocationTest extends TestCase {
      */
     public CloneLocationTest( String testName ) {
         super( testName );
+    }
+    
+    @Override
+    public void setUp() {
+    	Settings.get().setCloneType(CloneType.TYPE1);
     }
 
     /**

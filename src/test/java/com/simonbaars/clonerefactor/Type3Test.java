@@ -1,6 +1,8 @@
 package com.simonbaars.clonerefactor;
 
 import com.simonbaars.clonerefactor.model.DetectionResults;
+import com.simonbaars.clonerefactor.settings.CloneType;
+import com.simonbaars.clonerefactor.settings.Settings;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -18,6 +20,11 @@ public class Type3Test extends TestCase {
      */
     public Type3Test( String testName ) {
         super( testName );
+    }
+    
+    @Override
+    public void setUp() {
+    	Settings.get().setCloneType(CloneType.TYPE3);
     }
 
     /**
