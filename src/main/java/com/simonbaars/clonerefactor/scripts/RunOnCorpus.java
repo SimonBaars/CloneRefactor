@@ -26,7 +26,9 @@ public class RunOnCorpus implements WritesErrors {
 			corpusFiles = Arrays.copyOf(corpusFiles, 10);
 			writeSettings();
 			analyzeAllProjects(threadPool, corpusFiles);
+			System.out.println("Finish");
 			threadPool.finishFinalThreads();
+			System.out.println("Done");
 		} catch (Exception e) {
 			writeError(SavePaths.getMyOutputFolder()+"terminate", e);
 		}
@@ -41,13 +43,15 @@ public class RunOnCorpus implements WritesErrors {
 	}
 
 	private void analyzeAllProjects(ThreadPool threadPool, File[] corpusFiles) {
-		try (ProgressBar pb = new ProgressBar("Running Clone Detection", corpusFiles.length)) {
+		//try (ProgressBar pb = new ProgressBar("Running Clone Detection", corpusFiles.length)) {
 			for(File file : corpusFiles) {
-				pb.setExtraMessage(threadPool.showContents());
+				System.out.println(file.getName());
+				//pb.setExtraMessage(threadPool.showContents());
 				if(!threadPool.anyNull()) threadPool.waitForThreadToFinish();
 				threadPool.addToAvailableThread(file);
-				pb.step();
+				//pb.step();
+				
 			}
-		}
+		//}
 	}
 }
