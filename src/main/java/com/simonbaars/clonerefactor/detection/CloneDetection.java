@@ -82,7 +82,7 @@ public class CloneDetection implements ChecksThresholds, RemovesDuplicates, Dete
 	}
 	
 	private Range getRange(Location l, int amountOfNodes) {
-		return l.getRange().withEnd(getRange(l.getContents().getNodes().get(amountOfNodes-1)).end);
+		return getRange(l.getContents().getNodes().get(0)).withEnd(getRange(l.getContents().getNodes().get(amountOfNodes-1)).end);
 	}
 
 	private Sequence collectClones(Location lastLoc) {
