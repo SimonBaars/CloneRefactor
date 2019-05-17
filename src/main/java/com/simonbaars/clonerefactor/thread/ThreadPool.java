@@ -5,15 +5,13 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.stream.IntStream;
 
-import org.apache.commons.lang.exception.ExceptionUtils;
-
 import com.github.javaparser.symbolsolver.javaparsermodel.JavaParserFacade;
 import com.simonbaars.clonerefactor.metrics.Metrics;
 import com.simonbaars.clonerefactor.model.DetectionResults;
 import com.simonbaars.clonerefactor.util.FileUtils;
 import com.simonbaars.clonerefactor.util.SavePaths;
 
-public class ThreadPool {
+public class ThreadPool implements WritesErrors {
 	private final File OUTPUT_FOLDER = new File(SavePaths.getFullOutputFolder());
 	private final File FULL_METRICS = new File(OUTPUT_FOLDER.getParent()+"/metrics.txt");
 	private final int NUMBER_OF_THREADS = 4;
@@ -85,13 +83,7 @@ public class ThreadPool {
 	}
 
 	private void writeError(int i) {
-		try {
-			FileUtils.writeStringToFile(new File(SavePaths.createDirectoryIfNotExists(SavePaths.getErrorFolder())+threads[i].getFile().getName()+".txt"), ExceptionUtils.getFullStackTrace(threads[i].error));
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (NullPointerException e) {
-			e.printStackTrace();
-		}
+		writeError(SavePaths.createDirectoryIfNotExists(SavePaths.getErrorFolder())+threads[i].getFile().getName(), threads[i].error);
 	}
 
 	private void writeResults(File file, DetectionResults res) {

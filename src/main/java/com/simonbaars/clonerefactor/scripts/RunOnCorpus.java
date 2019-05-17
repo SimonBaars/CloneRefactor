@@ -6,23 +6,32 @@ import java.util.Arrays;
 
 import com.simonbaars.clonerefactor.settings.Settings;
 import com.simonbaars.clonerefactor.thread.ThreadPool;
+import com.simonbaars.clonerefactor.thread.WritesErrors;
 import com.simonbaars.clonerefactor.util.FileUtils;
 import com.simonbaars.clonerefactor.util.SavePaths;
 
 import me.tongfei.progressbar.ProgressBar;
 
-public class RunOnCorpus {
+public class RunOnCorpus implements WritesErrors {
 
 	public static void main(String[] args) {
-		SavePaths.genTimestamp();
-		ThreadPool threadPool = new ThreadPool();
-		File[] corpusFiles = new File(SavePaths.getApplicationDataFolder()+"git").listFiles();
-		writeSettings();
-		analyzeAllProjects(threadPool, corpusFiles);
-		threadPool.finishFinalThreads();
+		new RunOnCorpus().startCorpusCloneDetection();
 	}
 
-	private static void writeSettings() {
+	private void startCorpusCloneDetection() {
+		try {
+			SavePaths.genTimestamp();
+			ThreadPool threadPool = new ThreadPool();
+			File[] corpusFiles = new File(SavePaths.getApplicationDataFolder()+"git").listFiles();
+			writeSettings();
+			analyzeAllProjects(threadPool, corpusFiles);
+			threadPool.finishFinalThreads();
+		} catch (Exception e) {
+			writeError(SavePaths.getMyOutputFolder()+"terminate", e);
+		}
+	}
+
+	private void writeSettings() {
 		try {
 			FileUtils.writeStringToFile(new File(SavePaths.getMyOutputFolder()+"settings.txt"), Settings.get().toString());
 		} catch (IOException e) {
@@ -30,7 +39,7 @@ public class RunOnCorpus {
 		}
 	}
 
-	private static void analyzeAllProjects(ThreadPool threadPool, File[] corpusFiles) {
+	private void analyzeAllProjects(ThreadPool threadPool, File[] corpusFiles) {
 		for(File file : ProgressBar.wrap(Arrays.asList(corpusFiles), "Running Clone Detection")) {
 			threadPool.waitForThreadToFinish();
 			threadPool.addToAvailableThread(file);
