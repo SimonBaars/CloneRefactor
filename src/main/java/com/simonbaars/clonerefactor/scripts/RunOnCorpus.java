@@ -42,7 +42,7 @@ public class RunOnCorpus implements WritesErrors {
 		try (ProgressBar pb = new ProgressBar("Running Clone Detection", corpusFiles.length)) {
 			for(File file : corpusFiles) {
 				pb.setExtraMessage(threadPool.showContents());
-				if(threadPool.noneNull()) threadPool.waitForThreadToFinish();
+				if(!threadPool.anyNull()) threadPool.waitForThreadToFinish();
 				threadPool.addToAvailableThread(file);
 				pb.step();
 			}

@@ -105,11 +105,11 @@ public class ThreadPool implements WritesErrors {
 		return Arrays.stream(threads).filter(e -> e!=null).map(e -> e.getFile().getName()).collect(Collectors.joining(", "));
 	}
 	
-	public boolean noneNull() {
-		return Arrays.stream(threads).noneMatch(e -> e==null);
+	public boolean anyNull() {
+		return Arrays.stream(threads).anyMatch(e -> e==null);
 	}
 	
 	public boolean allNull() {
-		return Arrays.stream(threads).noneMatch(e -> e==null);
+		return Arrays.stream(threads).allMatch(e -> e==null);
 	}
 }
