@@ -2,6 +2,7 @@ package com.simonbaars.clonerefactor.scripts;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 
 import com.simonbaars.clonerefactor.settings.Settings;
 import com.simonbaars.clonerefactor.thread.ThreadPool;
@@ -22,6 +23,7 @@ public class RunOnCorpus implements WritesErrors {
 			SavePaths.genTimestamp();
 			ThreadPool threadPool = new ThreadPool();
 			File[] corpusFiles = new File(SavePaths.getApplicationDataFolder()+"git").listFiles();
+			corpusFiles = Arrays.copyOf(corpusFiles, 10);
 			writeSettings();
 			analyzeAllProjects(threadPool, corpusFiles);
 			threadPool.finishFinalThreads();

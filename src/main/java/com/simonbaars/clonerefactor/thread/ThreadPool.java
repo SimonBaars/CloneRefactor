@@ -60,9 +60,7 @@ public class ThreadPool implements WritesErrors {
 	}
 	
 	public void finishFinalThreads() {
-		System.out.println("Finishing up!");
 		while(Arrays.stream(threads).anyMatch(e -> e!=null)) {
-			System.out.println(Arrays.stream(threads).filter(e -> e!=null).count()+" to go!");
 			waitForThreadToFinish();
 			for(int i = 0; i<threads.length; i++) {
 				if(threads[i] != null && !threads[i].isAlive()) {
