@@ -20,7 +20,7 @@ public class CloneDetection implements ChecksThresholds, RemovesDuplicates, Dete
 	public CloneDetection() {}
 
 	public List<Sequence> findChains(Location lastLoc) {
-		for(Sequence buildingChains = new Sequence();lastLoc!=null;lastLoc = lastLoc.getPrevLine()) {
+		for(Sequence buildingChains = new Sequence(); lastLoc!=null; lastLoc = lastLoc.getPrevLine()) {
 			Sequence newClones = collectClones(lastLoc);
 			if(!buildingChains.getSequence().isEmpty() || newClones.size()>1)
 				buildingChains = makeValid(lastLoc, buildingChains, newClones); //Because of the recent additions the current sequence may be invalidated
@@ -36,21 +36,28 @@ public class CloneDetection implements ChecksThresholds, RemovesDuplicates, Dete
 			newClones.getSequence().stream().anyMatch(newClone -> newClone.getFile() == oldClone.getFile() && oldClone.getPrevLine()!=null && oldClone.getFile() == oldClone.getPrevLine().getFile()
 		    && newClone.getContents().getRange()!= null && newClone.getContents().getRange().equals(oldClone.getPrevLine().getContents().getRange()))).collect(Collectors.toMap(e -> e, e -> e.getPrevLine()));
 		
-		if(validChains.size()!=oldClones.size() && !oldClones.getSequence().isEmpty()) {
-			checkValidClones(oldClones, oldClones.getSequence().stream().filter(e -> !newClones.getSequence().contains(e.getPrevLine())).collect(Collectors.toList()));
-		}
-
-		for(Entry<Location, Location> validChain : validChains.entrySet()) {
-			Location l = validChain.getValue().mergeWith(validChain.getKey());
-			newClones.getSequence().set(newClones.getSequence().indexOf(validChain.getValue()), l);
-			validChain.setValue(l);
-		}
+		collectFinishedClones(oldClones, newClones, validChains);
+		mergeLocationsOnBasisOfChains(newClones, validChains);
 		
 		if(lastLoc.getPrevLine()==null || lastLoc.getPrevLine().getFile()!=lastLoc.getFile()) {
 			checkValidClones(newClones, newClones.getSequence());
 		}
 		
 		return newClones;
+	}
+
+	private void collectFinishedClones(Sequence oldClones, Sequence newClones, Map<Location, Location> validChains) {
+		if(validChains.size()!=oldClones.size() && !oldClones.getSequence().isEmpty()) {
+			checkValidClones(oldClones, oldClones.getSequence().stream().filter(e -> !newClones.getSequence().contains(e.getPrevLine())).collect(Collectors.toList()));
+		}
+	}
+
+	private void mergeLocationsOnBasisOfChains(Sequence newClones, Map<Location, Location> validChains) {
+		for(Entry<Location, Location> validChain : validChains.entrySet()) {
+			Location l = validChain.getValue().mergeWith(validChain.getKey());
+			newClones.getSequence().set(newClones.getSequence().indexOf(validChain.getValue()), l);
+			validChain.setValue(l);
+		}
 	}
 
 	private void checkValidClones(Sequence oldClones, List<Location> endedClones) {
