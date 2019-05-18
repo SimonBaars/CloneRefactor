@@ -66,6 +66,11 @@ public class Type2Test extends TestCase {
     	System.out.println("testThreeDifferent");
     	System.out.println(testProject("ThreeDifferent"));
     }
+    
+    public void testSingle() {
+    	System.out.println("testSingle");
+    	System.out.println(testProject("Single"));
+    }
 
 	private DetectionResults testProject(String project) {
 		return Main.cloneDetection(Type2Test.class.getClassLoader().getResource("Type2"+project).getFile()).sorted();
