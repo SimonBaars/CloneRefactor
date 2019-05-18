@@ -22,7 +22,6 @@ import com.simonbaars.clonerefactor.detection.interfaces.RemovesDuplicates;
 import com.simonbaars.clonerefactor.model.Sequence;
 import com.simonbaars.clonerefactor.model.location.Location;
 import com.simonbaars.clonerefactor.settings.CloneType;
-import com.simonbaars.clonerefactor.settings.Settings;
 
 public class Type2Variability implements CalculatesPercentages, ChecksThresholds, RemovesDuplicates {
 	public List<Sequence> determineVariability(Sequence s) {
@@ -86,9 +85,7 @@ public class Type2Variability implements CalculatesPercentages, ChecksThresholds
 	}
 
 	private Sequence createSequence(Sequence s, List<Integer> startIndices, int size, int index) {
-		
 		Location l = s.getSequence().get(index);
-		
 		Sequence newSeq = new Sequence();
 		for(Integer i : startIndices) {
 			Location l2 = new Location(l);
@@ -130,7 +127,7 @@ public class Type2Variability implements CalculatesPercentages, ChecksThresholds
 
 	private void checkCloneValidity(List<Sequence> sequences, Sequence s, int[] relevantLocationIndices,
 			List<WeightedPercentage> calcPercentages, List<WeightedPercentage> percentagesList, int i) {
-		boolean notValidRegardingVariability = calcAvg(percentagesList) > Settings.get().getType2VariabilityPercentage();
+		boolean notValidRegardingVariability = !checkType2VariabilityThreshold(calcAvg(percentagesList));
 		if((notValidRegardingVariability && !canFixIt(calcPercentages, percentagesList, i)) || i+1 == calcPercentages.size()) {
 			if(percentagesList.size()>1) {
 				if(notValidRegardingVariability) percentagesList.remove(percentagesList.size()-1);
@@ -185,7 +182,7 @@ public class Type2Variability implements CalculatesPercentages, ChecksThresholds
 		percentagesList = new ArrayList<>(percentagesList);
 		for(i++; i<calcPercentages.size(); i++) {
 			percentagesList.add(calcPercentages.get(i));
-			if(calcAvg(percentagesList) <= Settings.get().getType2VariabilityPercentage()){
+			if(checkType2VariabilityThreshold(calcAvg(percentagesList))){
 				return true;
 			}
 		}
@@ -225,7 +222,7 @@ public class Type2Variability implements CalculatesPercentages, ChecksThresholds
 	}
 
 	private boolean globalThresholdsMet(int[][] equalityArray, int total) {
-		return diffPerc(equalityArray)<=Settings.get().getType2VariabilityPercentage();
+		return checkType2VariabilityThreshold(diffPerc(equalityArray));
 	}
 
 	private int[][] createEqualityArray(List<List<Compare>> literals) {
