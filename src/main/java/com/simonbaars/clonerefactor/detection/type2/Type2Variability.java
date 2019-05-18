@@ -38,9 +38,8 @@ public class Type2Variability implements CalculatesPercentages, ChecksThresholds
 		for(int[] relevantLocationIndices : powerset(IntStream.range(0, s.size()).toArray())){
 			if(relevantLocationIndices.length>1)
 				sliceSequence(sequences, s, statementEqualityArrays, relevantLocationIndices);
-			else if (relevantLocationIndices.length == 1) {
-				findInnerClones(sequences, s, equalityArray, relevantLocationIndices[0]);
-			}
+			//else if (relevantLocationIndices.length == 1) 
+			//	sliceSequence(sequences, s, statementEqualityArrays, new int[] {relevantLocationIndices[0], relevantLocationIndices[0]});
 		}
 		return sequences;
 	}
