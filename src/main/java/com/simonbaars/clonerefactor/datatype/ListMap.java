@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 public class ListMap<K, V> extends HashMap<K, List<V>> {
 	/**
@@ -42,12 +41,5 @@ public class ListMap<K, V> extends HashMap<K, List<V>> {
 		if(!super.containsKey(key))
 			super.put((K) key, new ArrayList<>());
 		return super.get(key);
-	}
-
-	public Entry<K, List<V>> getEntryForValue(V i) {
-		Optional<Entry<K, List<V>>> findAny = entrySet().stream().filter(e -> e.getValue().contains(i)).findAny();
-		if(!findAny.isPresent())
-			throw new IllegalAccessError("Value "+i+" does not exist in this map!");
-		return findAny.get();
 	}
 }

@@ -20,7 +20,7 @@ public interface ChecksThresholds {
 		return s.getAny().getAmountOfTokens() >= Settings.get().getMinAmountOfTokens();
 	}
 	
-	public default boolean checkType2VariabilityThreshold(double perc) {
-		return perc <= Settings.get().getType2VariabilityPercentage();
+	public default boolean compareThresholds(int i, int j) {
+		return i<=j;
 	}
 }
