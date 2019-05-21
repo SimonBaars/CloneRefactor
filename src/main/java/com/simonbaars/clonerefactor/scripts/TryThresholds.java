@@ -41,7 +41,6 @@ public class TryThresholds {
 	}
 
 	private void writeTables() {
-		new File(SavePaths.getTableFolder()).mkdirs();
 		StringBuilder tableContents = new StringBuilder();
 		tableContents.append(amountPerRelation.toString());
 		tableContents.append(System.lineSeparator()+System.lineSeparator());
