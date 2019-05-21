@@ -20,6 +20,7 @@
 		<vcs4j.version>1.6.0</vcs4j.version>
 		<jgit.version>5.3.1.201904271842-r</jgit.version>
 		<jfreechart.version>1.5.0</jfreechart.version>
+		<apachelang3.version>3.8.1</apachelang3.version>
 	</properties>
 
 	<dependencies>
@@ -54,6 +55,11 @@
 			<artifactId>org.eclipse.jgit-parent</artifactId>
 			<version>${jgit.version}</version>
 			<type>pom</type>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>${apachelang3.version}</version>
 		</dependency>
 	</dependencies>
 
