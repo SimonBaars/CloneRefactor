@@ -1,6 +1,7 @@
 package com.simonbaars.clonerefactor.datatype;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -45,6 +46,7 @@ public class ListMap<K, V> extends HashMap<K, List<V>> {
 	}
 	
 	public Entry<K, List<V>> getEntryForValue(V i) {
+		System.out.println(Arrays.toString(values().toArray()));
 		Optional<Entry<K, List<V>>> findAny = entrySet().stream().filter(e -> e.getValue().contains(i)).findAny();
 		if(!findAny.isPresent())
 			throw new IllegalAccessError("Value "+i+" does not exist in this map!");

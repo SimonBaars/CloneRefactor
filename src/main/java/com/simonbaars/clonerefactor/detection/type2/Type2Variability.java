@@ -1,6 +1,7 @@
 package com.simonbaars.clonerefactor.detection.type2;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -38,36 +39,41 @@ public class Type2Variability implements CalculatesPercentages, ChecksThresholds
 		for(int[] relevantLocationIndices : powerset(IntStream.range(0, s.size()).toArray())){
 			if(relevantLocationIndices.length>1)
 				sliceSequence(sequences, s, statementEqualityArrays, relevantLocationIndices);
-			//else if (relevantLocationIndices.length == 1) 
-			//	sliceSequence(sequences, s, statementEqualityArrays, new int[] {relevantLocationIndices[0], relevantLocationIndices[0]});
+			else if (relevantLocationIndices.length == 1) 
+				//sliceSequence(sequences, s, statementEqualityArrays, new int[] {relevantLocationIndices[0], relevantLocationIndices[0]});
+				findInnerClones(sequences, s, statementEqualityArrays, relevantLocationIndices[0]);
 		}
 		return sequences;
 	}
 	
-	private void findInnerClones(List<Sequence> sequences, Sequence s, int[][] equalityArray, int index) {
-		final ListMap<Integer, Integer> stuffOnLine = new ListMap<>();
-		IntStream.range(0, equalityArray[index].length).forEach(e -> stuffOnLine.addTo(equalityArray[index][e], e));
+	private void findInnerClones(List<Sequence> sequences, Sequence s, Map<Integer, int[][]> statementEqualityArrays, int index) {
+		final ListMap<EqualityArray, Integer> stuffOnLine = new ListMap<>();
+		statementEqualityArrays.keySet().stream().forEach(i -> stuffOnLine.addTo(new EqualityArray(statementEqualityArrays.get(i)[index]), i));
+		System.out.println(stuffOnLine);
 		final CountMap<Integer> chainList = new CountMap<>();
 		
-		for(int i = 0; i<equalityArray[index].length; i++) {
-			Entry<Integer, List<Integer>> clones = stuffOnLine.getEntryForValue(i);
+		for(Integer i : statementEqualityArrays.keySet()) {
+			Entry<EqualityArray, List<Integer>> clones = stuffOnLine.getEntryForValue(i);
 			ListMap<Integer, Integer> endingChains = new ListMap<>();
-			
-			final int j = i;
+
+			List<Integer> removeChain = new ArrayList<>();
 			chainList.entrySet().stream().forEach(curChain -> {
-				Optional<Integer> chain = clones.getValue().stream().filter(newClone -> newClone == equalityArray[index][curChain.getKey() + curChain.getValue()]).findAny();
+				Optional<Integer> chain = clones.getValue().stream().filter(newClone -> newClone == curChain.getKey()+curChain.getValue()).findAny();
 				if(chain.isPresent()) {
 					curChain.setValue(curChain.getValue()+1);
-					clones.getValue().remove(chain.get());
+					//clones.getValue().remove(chain.get());
 				} 
-				if(!chain.isPresent() || j == equalityArray[index].length-1){
+				if(!chain.isPresent() || i == statementEqualityArrays.size()-1){
 					endingChains.addTo(curChain.getValue(), curChain.getKey());
+					removeChain.add(curChain.getKey());
 				}
 			});
+			removeChain.forEach(e -> chainList.remove(e));
 			
 			createSequencesOf(sequences, s, endingChains, index);
 			
 			clones.getValue().forEach(e -> chainList.increment(e));
+			clones.getValue().remove(i);
 		}
 	}
 
@@ -86,6 +92,7 @@ public class Type2Variability implements CalculatesPercentages, ChecksThresholds
 	private Sequence createSequence(Sequence s, List<Integer> startIndices, int size, int index) {
 		Location l = s.getSequence().get(index);
 		Sequence newSeq = new Sequence();
+		System.out.println("Clone at "+Arrays.toString(startIndices.toArray()));
 		for(Integer i : startIndices) {
 			Location l2 = new Location(l);
 			newSeq.add(l2);
@@ -131,7 +138,8 @@ public class Type2Variability implements CalculatesPercentages, ChecksThresholds
 			if(percentagesList.size()>1) {
 				if(notValidRegardingVariability) percentagesList.remove(percentagesList.size()-1);
 				Sequence newSeq = createSequence(s, calcPercentages.indexOf(percentagesList.get(0)), calcPercentages.indexOf(percentagesList.get(percentagesList.size()-1)), relevantLocationIndices);
-				if(checkThresholds(newSeq) && removeDuplicatesOf(sequences, newSeq)) 
+				System.out.println("Variability = "+calcAvg(percentagesList)+" for seq "+newSeq);
+				if(checkThresholds(newSeq) && removeDuplicatesOf(sequences, newSeq))
 					sequences.add(newSeq);
 			}
 			percentagesList.clear();
