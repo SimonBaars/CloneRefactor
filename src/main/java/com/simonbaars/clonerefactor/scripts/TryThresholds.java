@@ -3,7 +3,6 @@ package com.simonbaars.clonerefactor.scripts;
 import java.io.File;
 import java.io.IOException;
 
-import com.simonbaars.clonerefactor.datatype.CountMap;
 import com.simonbaars.clonerefactor.datatype.CountTable;
 import com.simonbaars.clonerefactor.metrics.Metrics;
 import com.simonbaars.clonerefactor.metrics.enums.CloneContents.ContentsType;
@@ -32,7 +31,7 @@ public class TryThresholds {
 	}
 
 	private void run() {
-		for(int i = 1; i<40; i++) {
+		for(int i = 1; i<150; i++) {
 			Settings.get().setMinAmountOfTokens(i);
 			Metrics metrics = new RunOnCorpus().startCorpusCloneDetection();
 			if(metrics != null)
