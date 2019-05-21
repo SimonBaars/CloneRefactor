@@ -3,6 +3,7 @@ package com.simonbaars.clonerefactor.scripts;
 import java.io.File;
 import java.io.IOException;
 
+import com.simonbaars.clonerefactor.metrics.Metrics;
 import com.simonbaars.clonerefactor.settings.Settings;
 import com.simonbaars.clonerefactor.thread.ThreadPool;
 import com.simonbaars.clonerefactor.thread.WritesErrors;
@@ -15,7 +16,7 @@ public class RunOnCorpus implements WritesErrors {
 		new RunOnCorpus().startCorpusCloneDetection();
 	}
 
-	private void startCorpusCloneDetection() {
+	public Metrics startCorpusCloneDetection() {
 		try {
 			System.out.println(Settings.get().getMinAmountOfTokens());
 			SavePaths.genTimestamp();
@@ -24,10 +25,11 @@ public class RunOnCorpus implements WritesErrors {
 			writeSettings();
 			analyzeAllProjects(threadPool, corpusFiles);
 			threadPool.finishFinalThreads();
-			System.out.println("== Done ==");
+			return threadPool.getFullMetrics();
 		} catch (Exception e) {
 			writeError(SavePaths.getMyOutputFolder()+"terminate", e);
 		}
+		return null;
 	}
 
 	private void writeSettings() {

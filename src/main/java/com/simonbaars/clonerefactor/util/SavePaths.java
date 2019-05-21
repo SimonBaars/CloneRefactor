@@ -64,4 +64,8 @@ public class SavePaths {
 	public static String getErrorFolder() {
 		return getMyOutputFolder()+"errors"+File.separator;
 	}
+
+	public static String getTableFolder() {
+		return getMyOutputFolder()+"tables"+File.separator;
+	}
 }

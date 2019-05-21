@@ -110,4 +110,8 @@ public class ThreadPool implements WritesErrors {
 	public boolean allNull() {
 		return Arrays.stream(threads).allMatch(e -> e==null);
 	}
+	
+	public Metrics getFullMetrics() {
+		return fullMetrics;
+	}
 }
