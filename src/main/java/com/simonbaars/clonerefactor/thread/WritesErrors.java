@@ -3,7 +3,7 @@ package com.simonbaars.clonerefactor.thread;
 import java.io.File;
 import java.io.IOException;
 
-import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.apache.commons.lang.exception.ExceptionUtils;
 
 import com.simonbaars.clonerefactor.util.FileUtils;
 
