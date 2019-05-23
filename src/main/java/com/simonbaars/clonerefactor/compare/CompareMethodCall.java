@@ -15,7 +15,6 @@ import com.simonbaars.clonerefactor.settings.CloneType;
 public class CompareMethodCall extends Compare implements FiltersTokens {
 	private final MethodCallExpr methodCall;
 	private final ResolvedMethodDeclaration type;
-	private final List<JavaToken> myTokens;
 	private final List<Object> estimatedTypes = new ArrayList<>();
 	
 	public CompareMethodCall(CloneType cloneType, MethodCallExpr t) {
@@ -27,7 +26,6 @@ public class CompareMethodCall extends Compare implements FiltersTokens {
 		} catch (Exception e) {}
 		type = refType;
 		estimateTypes(t);
-		myTokens = getEffectiveTokenList(t.getTokenRange().get());
 	}
 
 	/*
@@ -47,8 +45,6 @@ public class CompareMethodCall extends Compare implements FiltersTokens {
 		if(!super.equals(c))
 			return false;
 		CompareMethodCall other = (CompareMethodCall)c;
-		if(cloneType == CloneType.TYPE1 && !myTokens.equals(other.myTokens))
-			return false;
 		if(type!=null && other.type !=null) {
 			String methodSignature = type.getQualifiedSignature();
 			String compareMethodSignature = other.type.getQualifiedSignature();
@@ -65,12 +61,9 @@ public class CompareMethodCall extends Compare implements FiltersTokens {
 
 	@Override
 	public int getHashCode() {
-		int hashCode = 0;
-		if(cloneType == CloneType.TYPE1)
-			hashCode += myTokens.hashCode();
 		if(type!=null)
-			return hashCode + type.getTypeParameters().hashCode();
-		return hashCode + estimatedTypes.hashCode();
+			return type.getTypeParameters().hashCode();
+		return estimatedTypes.hashCode();
 	}
 
 	@Override
