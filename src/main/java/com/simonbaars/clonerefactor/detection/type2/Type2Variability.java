@@ -1,7 +1,6 @@
 package com.simonbaars.clonerefactor.detection.type2;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -33,6 +32,45 @@ public class Type2Variability implements CalculatesPercentages, ChecksThresholds
 		return findAllValidSubSequences(s, literals, equalityArray);
 	}
 
+	private List<Sequence> findDisplacedClones(List<Sequence> sequences, List<List<Compare>> literals, Map<Integer, int[][]> statementEqualityArrays) {
+		List<Type2Location> type2Location = generateType2Locations(statementEqualityArrays);
+		return null;
+	}
+	
+	private List<Type2Location> generateType2Locations(Map<Integer, int[][]> statementEqualityArrays) {
+		final List<Type2Location> contentsList = new ArrayList<>();
+		Type2Statement prevStatement = null;
+		for(Entry<Integer, int[][]> statementEqualityEntry : statementEqualityArrays.entrySet()) {
+			int statementIndex = statementEqualityEntry.getKey();
+			int[][] equalityArray = statementEqualityEntry.getValue();
+			for(int locationIndex = 0; locationIndex<equalityArray.length; locationIndex++) {				
+				int[] locationContents = equalityArray[locationIndex];
+				Type2Location contents = new Type2Location(locationContents);
+				if(contentsList.contains(contents)) {
+					contents = contentsList.get(contentsList.indexOf(contents));
+				} else {
+					contentsList.add(contents);
+				}
+				final Type2Statement statement = new Type2Statement(locationIndex, statementIndex, contents);
+				contents.getStatementsWithinThreshold().add(statement);
+				if(prevStatement!=null)
+					prevStatement.setNext(statement);
+				prevStatement = statement;
+			}
+		}
+		return generateWeightedPercentages(contentsList);
+	}
+
+	private List<Type2Location> generateWeightedPercentages(List<Type2Location> contentsList) {
+		for(int i = 0; i<contentsList.size(); i++) {
+			for(int j = i; j<contentsList.size(); j++) {
+				
+				WeightedPercentage p = new WeightedPercentage(percentage, weight);
+			}
+		}
+		return contentsList;
+	}
+
 	private List<Sequence> findAllValidSubSequences(Sequence s, List<List<Compare>> literals, int[][] equalityArray) {
 		List<Sequence> sequences = new ArrayList<>();
 		Map<Integer, int[][]> statementEqualityArrays = findConnectedStatements(s, literals, equalityArray);
@@ -43,7 +81,7 @@ public class Type2Variability implements CalculatesPercentages, ChecksThresholds
 				//sliceSequence(sequences, s, statementEqualityArrays, new int[] {relevantLocationIndices[0], relevantLocationIndices[0]});
 				findInnerClones(sequences, s, statementEqualityArrays, relevantLocationIndices[0]);
 		}
-		return sequences;
+		return findDisplacedClones(sequences, literals, statementEqualityArrays);
 	}
 	
 	private void findInnerClones(List<Sequence> sequences, Sequence s, Map<Integer, int[][]> statementEqualityArrays, int index) {
@@ -193,13 +231,7 @@ public class Type2Variability implements CalculatesPercentages, ChecksThresholds
 		return false;
 	}
 
-	/**
-	 * Creates a per statement equality array.
-	 * @param s
-	 * @param equalityArray
-	 * @param relevantIndices 
-	 * @return
-	 */
+	//Creates a per statement equality array.
 	private Map<Integer, int[][]> findConnectedStatements(Sequence s, List<List<Compare>> literals, int[][] equalityArray) {
 		Map<Integer, int[][]> statementEqualityArrays = new HashMap<>();
 		for(int currNodeIndex = 0, startCompareIndex = 0, currCompareIndex = 0; currNodeIndex<s.getAny().getContents().getNodes().size(); currNodeIndex++) {
