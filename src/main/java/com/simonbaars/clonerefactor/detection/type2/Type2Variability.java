@@ -49,7 +49,6 @@ public class Type2Variability implements CalculatesPercentages, ChecksThresholds
 	private void findInnerClones(List<Sequence> sequences, Sequence s, Map<Integer, int[][]> statementEqualityArrays, int index) {
 		final ListMap<EqualityArray, Integer> stuffOnLine = new ListMap<>();
 		statementEqualityArrays.keySet().stream().forEach(i -> stuffOnLine.addTo(new EqualityArray(statementEqualityArrays.get(i)[index]), i));
-		System.out.println(stuffOnLine);
 		final CountMap<Integer> chainList = new CountMap<>();
 		
 		for(Integer i : statementEqualityArrays.keySet()) {
@@ -92,7 +91,6 @@ public class Type2Variability implements CalculatesPercentages, ChecksThresholds
 	private Sequence createSequence(Sequence s, List<Integer> startIndices, int size, int index) {
 		Location l = s.getSequence().get(index);
 		Sequence newSeq = new Sequence();
-		System.out.println("Clone at "+Arrays.toString(startIndices.toArray()));
 		for(Integer i : startIndices) {
 			Location l2 = new Location(l);
 			newSeq.add(l2);
@@ -138,7 +136,6 @@ public class Type2Variability implements CalculatesPercentages, ChecksThresholds
 			if(percentagesList.size()>1) {
 				if(notValidRegardingVariability) percentagesList.remove(percentagesList.size()-1);
 				Sequence newSeq = createSequence(s, calcPercentages.indexOf(percentagesList.get(0)), calcPercentages.indexOf(percentagesList.get(percentagesList.size()-1)), relevantLocationIndices);
-				System.out.println("Variability = "+calcAvg(percentagesList)+" for seq "+newSeq);
 				if(checkThresholds(newSeq) && removeDuplicatesOf(sequences, newSeq))
 					sequences.add(newSeq);
 			}
