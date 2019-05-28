@@ -1,5 +1,8 @@
 package com.simonbaars.clonerefactor.detection.type2;
 
+import com.simonbaars.clonerefactor.model.Sequence;
+import com.simonbaars.clonerefactor.model.location.Location;
+
 public class Type2Statement {
 	private final int locationIndex;
 	private final int statementIndex;
@@ -87,5 +90,13 @@ public class Type2Statement {
 		if(mergedWith == null)
 			return 1;
 		return mergedWith.getAmountOfNodes() + 1;
+	}
+	
+	public Location convertToLocation(Sequence sequence) {
+		return convertToLocation(sequence.getSequence().get(locationIndex));
+	}
+
+	private Location convertToLocation(Location location) {
+		Node thisNode = location.getContents().getNodes().get(statementIndex);
 	}
 }

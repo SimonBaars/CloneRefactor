@@ -6,12 +6,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
-import com.simonbaars.clonerefactor.ast.interfaces.DeterminesNodeTokens;
 import com.simonbaars.clonerefactor.datatype.ListMap;
-import com.simonbaars.clonerefactor.detection.interfaces.ChecksThresholds;
-import com.simonbaars.clonerefactor.detection.interfaces.RemovesDuplicates;
 
-public class Type2CloneDetection implements ChecksThresholds, RemovesDuplicates, DeterminesNodeTokens {
+public class Type2CloneDetection {
 	final List<Type2Sequence> clones = new ArrayList<>();
 
 	public Type2CloneDetection() {}
