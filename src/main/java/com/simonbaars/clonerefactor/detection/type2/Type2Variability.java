@@ -35,20 +35,20 @@ public class Type2Variability implements CalculatesPercentages, ChecksThresholds
 	}
 
 	private List<Sequence> findDisplacedClones(List<Sequence> sequences, List<List<Compare>> literals, Map<Integer, int[][]> statementEqualityArrays) {
-		Type2Statement lastLoc = generateType2Locations(statementEqualityArrays);
+		Type2Location lastLoc = generateType2Locations(statementEqualityArrays);
 		for(Sequence buildingChains = new Sequence(); lastLoc!=null; lastLoc = lastLoc.getPrev()) {
 			
 		}
 		return sequences;
 	}
 	
-	private Sequence createSequence(List<List<Type2Statement>> buildingSequence) {
+	private Sequence createSequence(List<List<Type2Location>> buildingSequence) {
 		return null;
 	}
 
-	private Type2Statement generateType2Locations(Map<Integer, int[][]> statementEqualityArrays) {
+	private Type2Location generateType2Locations(Map<Integer, int[][]> statementEqualityArrays) {
 		final List<Type2Location> contentsList = new ArrayList<>();
-		Type2Statement prevStatement = null;
+		Type2Location prevStatement = null;
 		for(Entry<Integer, int[][]> statementEqualityEntry : statementEqualityArrays.entrySet()) {
 			int statementIndex = statementEqualityEntry.getKey();
 			int[][] equalityArray = statementEqualityEntry.getValue();
@@ -58,7 +58,7 @@ public class Type2Variability implements CalculatesPercentages, ChecksThresholds
 				if(contentsList.contains(contents))
 					contents = contentsList.get(contentsList.indexOf(contents));
 				else contentsList.add(contents);
-				final Type2Statement statement = new Type2Statement(locationIndex, statementIndex, contents, prevStatement);
+				final Type2Location statement = new Type2Location(locationIndex, statementIndex, contents, prevStatement);
 				contents.getStatements().add(statement);
 				if(prevStatement!=null) prevStatement.setNext(statement);
 				prevStatement = statement;

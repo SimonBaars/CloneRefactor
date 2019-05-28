@@ -4,15 +4,15 @@ import com.simonbaars.clonerefactor.ast.interfaces.DeterminesNodeTokens;
 import com.simonbaars.clonerefactor.model.Sequence;
 import com.simonbaars.clonerefactor.model.location.Location;
 
-public class Type2Statement implements DeterminesNodeTokens {
+public class Type2Location implements DeterminesNodeTokens {
 	private final int locationIndex;
 	private final int statementIndex;
 	private final Type2Contents contents;
-	private Type2Statement next;
-	private final Type2Statement prev;
-	private final Type2Statement mergedWith;
+	private Type2Location next;
+	private final Type2Location prev;
+	private final Type2Location mergedWith;
 	
-	public Type2Statement(int locationIndex, int statementIndex, Type2Contents contents, Type2Statement prev) {
+	public Type2Location(int locationIndex, int statementIndex, Type2Contents contents, Type2Location prev) {
 		super();
 		this.locationIndex = locationIndex;
 		this.statementIndex = statementIndex;
@@ -21,7 +21,7 @@ public class Type2Statement implements DeterminesNodeTokens {
 		this.mergedWith = null;
 	}
 	
-	public Type2Statement(Type2Statement type2Statement, Type2Statement key) {
+	public Type2Location(Type2Location type2Statement, Type2Location key) {
 		this.locationIndex = type2Statement.locationIndex;
 		this.statementIndex = type2Statement.statementIndex;
 		this.contents = type2Statement.contents;
@@ -42,11 +42,11 @@ public class Type2Statement implements DeterminesNodeTokens {
 		return contents;
 	}
 	
-	public Type2Statement getNext() {
+	public Type2Location getNext() {
 		return next;
 	}
 	
-	public void setNext(Type2Statement next) {
+	public void setNext(Type2Location next) {
 		this.next = next;
 	}
 	
@@ -67,7 +67,7 @@ public class Type2Statement implements DeterminesNodeTokens {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		Type2Statement other = (Type2Statement) obj;
+		Type2Location other = (Type2Location) obj;
 		if (locationIndex != other.locationIndex)
 			return false;
 		return statementIndex == other.statementIndex;
@@ -79,12 +79,12 @@ public class Type2Statement implements DeterminesNodeTokens {
 				+ contents + "]";
 	}
 
-	public Type2Statement getPrev() {
+	public Type2Location getPrev() {
 		return prev;
 	}
 
-	public Type2Statement mergeWith(Type2Statement key) {
-		return new Type2Statement(this, key);
+	public Type2Location mergeWith(Type2Location key) {
+		return new Type2Location(this, key);
 	}
 
 	public int getAmountOfNodes() {
@@ -101,7 +101,7 @@ public class Type2Statement implements DeterminesNodeTokens {
 		return new Location(location.getFile(), location.getContents().getNodes().get(statementIndex));
 	}
 	
-	public Type2Statement getLast() {
+	public Type2Location getLast() {
 		if(mergedWith == null)
 			return this;
 		return mergedWith.getLast();

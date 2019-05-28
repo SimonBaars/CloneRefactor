@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 public class Type2Contents {
 	private final int[] contents;
 	private final Map<Type2Contents, WeightedPercentage> equalityMap = new HashMap<>();
-	private final List<Type2Statement> statements = new ArrayList<>();
+	private final List<Type2Location> statements = new ArrayList<>();
 	
 	public Type2Contents(int[] contents) {
 		super();
@@ -25,12 +25,12 @@ public class Type2Contents {
 		return equalityMap;
 	}
 
-	public List<Type2Statement> getStatements() {
+	public List<Type2Location> getStatements() {
 		return statements;
 	}
 	
-	public List<Type2Statement> getStatementsWithinThreshold() {
-		List<Type2Statement> statementsWithinThreshold = equalityMap.entrySet().stream().filter(e -> e.getValue().check()).flatMap(e -> e.getKey().getStatements().stream()).collect(Collectors.toList());
+	public List<Type2Location> getStatementsWithinThreshold() {
+		List<Type2Location> statementsWithinThreshold = equalityMap.entrySet().stream().filter(e -> e.getValue().check()).flatMap(e -> e.getKey().getStatements().stream()).collect(Collectors.toList());
 		statementsWithinThreshold.addAll(statements);
 		return statementsWithinThreshold;
 	}
