@@ -35,26 +35,9 @@ public class Type2Variability implements CalculatesPercentages, ChecksThresholds
 	}
 
 	private List<Sequence> findDisplacedClones(List<Sequence> sequences, List<List<Compare>> literals, Map<Integer, int[][]> statementEqualityArrays) {
-		Type2Statement currentStatement = generateType2Locations(statementEqualityArrays);
-		for(Sequence buildingChains = new Sequence(); lastLoc!=null; lastLoc = lastLoc.getPrevLine()) {
+		Type2Statement lastLoc = generateType2Locations(statementEqualityArrays);
+		for(Sequence buildingChains = new Sequence(); lastLoc!=null; lastLoc = lastLoc.getPrev()) {
 			
-		}
-		
-		for(Type2Location loc : type2Location) {
-			final List<List<Type2Statement>> buildingSequence = new ArrayList<>();
-			while (loc!=null) {
-				List<Type2Statement> relevantStatements = loc.getStatementsWithinThreshold();
-				List<Type2Statement> nextStatements = relevantStatements.stream().map(Type2Statement::getNext).collect(Collectors.toList());
-				Set<Type2Location> nextLocations = nextStatements.stream().filter(Objects::nonNull).map(Type2Statement::getContents).collect(Collectors.toSet());
-				if(nextLocations.stream().allMatch(e -> e.getStatementsWithinThreshold().contains(nextStatements.get(0)))) {
-					buildingSequence.add(nextStatements);
-				} else {
-					sequences.add(createSequence(buildingSequence));
-					buildingSequence.removeAll(c)
-					if(buildingSequence.get(0).size()<=1) break;
-					else buildingSequence.add(nextStatements);
-				}
-			}
 		}
 		return sequences;
 	}
@@ -285,7 +268,7 @@ public class Type2Variability implements CalculatesPercentages, ChecksThresholds
 	private Location getLocation(Location l, int node) {
 		if(node <= 0)
 			return l;
-		return getLocation(l.getNextLocation(), node-1);
+		return getLocation(l.getNext(), node-1);
 	}
 
 	private boolean globalThresholdsMet(int[][] equalityArray, int total) {

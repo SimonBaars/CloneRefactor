@@ -13,15 +13,15 @@ public class Location implements Comparable<Location>, HasRange {
 	
 	private final LocationContents contents;
 	
-	private Location prevLocation;
+	private Location prev;
 	private Location clone;
-	private Location nextLocation;
+	private Location next;
 
 	private LocationType locationType;
 
 	public Location(Path file, Range r, Location prevLocation) {
 		this(file, r);
-		this.prevLocation = prevLocation;
+		this.prev = prevLocation;
 	}
 
 	public Location(Location clonedLocation) {
@@ -38,16 +38,16 @@ public class Location implements Comparable<Location>, HasRange {
 		this.file = clonedLocation.file;
 		this.contents = new LocationContents(clonedLocation.contents, r);
 		this.range = r;
-		this.prevLocation = clonedLocation.prevLocation;
+		this.prev = clonedLocation.prev;
 		this.clone = clonedLocation.clone;
-		this.nextLocation = clonedLocation.nextLocation;
+		this.next = clonedLocation.next;
 		if(range!=clonedLocation.range)
 			getContents().stripToRange();
 	}
 	
 	public Location(Path path, Location prevLocation, Node n) {
 		this.file = path;
-		this.prevLocation = prevLocation;
+		this.prev = prevLocation;
 		this.contents = new LocationContents(n);
 		this.range = contents.getRange();
 	}
@@ -57,11 +57,11 @@ public class Location implements Comparable<Location>, HasRange {
 	}
 	
 	public Location getPrevLine() {
-		return prevLocation;
+		return prev;
 	}
 
 	public void setPrevLine(Location nextLine) {
-		this.prevLocation = nextLine;
+		this.prev = nextLine;
 	}
 
 	public Location getClone() {
@@ -99,12 +99,8 @@ public class Location implements Comparable<Location>, HasRange {
 		return getContents().getAmountOfTokens();
 	}
 
-	public Location getNextLine() {
-		return nextLocation;
-	}
-
-	public void setNextLine(Location nextLine) {
-		this.nextLocation = nextLine;
+	public void setNext(Location nextLocation) {
+		this.next = nextLocation;
 	}
 
 	public LocationContents getContents() {
@@ -115,16 +111,16 @@ public class Location implements Comparable<Location>, HasRange {
 		return range;
 	}
 
-	public Location getPrevLocation() {
-		return prevLocation;
+	public Location getPrev() {
+		return prev;
 	}
 
-	public void setPrevLocation(Location prevLocation) {
-		this.prevLocation = prevLocation;
+	public void setPrev(Location prevLocation) {
+		this.prev = prevLocation;
 	}
 
-	public Location getNextLocation() {
-		return nextLocation;
+	public Location getNext() {
+		return next;
 	}
 	
 	public Location setRange(Range r) {
@@ -134,7 +130,7 @@ public class Location implements Comparable<Location>, HasRange {
 	}
 
 	public void setNextLocation(Location nextLocation) {
-		this.nextLocation = nextLocation;
+		this.next = nextLocation;
 	}
 
 	public Location mergeWith(Location oldClone) {

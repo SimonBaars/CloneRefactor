@@ -68,7 +68,7 @@ public class NodeParser implements Parser, DeterminesNodeTokens {
 
 	public Location parseToken(Location prevLocation, CompilationUnit cu, Node n) {
 		Location thisLocation = new Location(cu.getStorage().get().getPath(), prevLocation, n);
-		if(prevLocation!=null) prevLocation.setNextLine(thisLocation);
+		if(prevLocation!=null) prevLocation.setNext(thisLocation);
 		addLineTokensToReg(thisLocation);
 		return thisLocation;
 	}
