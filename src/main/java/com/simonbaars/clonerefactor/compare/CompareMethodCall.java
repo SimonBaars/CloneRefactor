@@ -60,7 +60,7 @@ public class CompareMethodCall extends Compare implements FiltersTokens {
 	}
 
 	@Override
-	public int getHashCode() {
+	public int hashCode() {
 		if(type!=null)
 			return type.getTypeParameters().hashCode();
 		return estimatedTypes.hashCode();
@@ -74,5 +74,10 @@ public class CompareMethodCall extends Compare implements FiltersTokens {
 	@Override
 	public List<Compare> relevantChildren(HasCompareList c){
 		return c.getNodesForCompare(methodCall.getArguments(), methodCall.getRange().get()).values().stream().map(e -> Compare.create(e, e.getTokenRange().get().getBegin(), cloneType)).collect(Collectors.toList());
+	}
+	
+	@Override
+	public boolean doesType2Compare() {
+		return true;
 	}
 }

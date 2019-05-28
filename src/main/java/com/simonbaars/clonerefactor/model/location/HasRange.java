@@ -1,4 +1,4 @@
-package com.simonbaars.clonerefactor.compare;
+package com.simonbaars.clonerefactor.model.location;
 
 import com.github.javaparser.Range;
 

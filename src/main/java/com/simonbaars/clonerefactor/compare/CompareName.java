@@ -17,7 +17,7 @@ public class CompareName extends Compare {
 	}
 
 	@Override
-	public int getHashCode() {
+	public int hashCode() {
 		return cloneType.isNotTypeOne() ? -2 : t.hashCode();
 	}
 

@@ -12,6 +12,7 @@ import com.github.javaparser.ast.expr.NameExpr;
 import com.github.javaparser.ast.expr.SimpleName;
 import com.github.javaparser.ast.type.ReferenceType;
 import com.simonbaars.clonerefactor.ast.interfaces.HasCompareList;
+import com.simonbaars.clonerefactor.model.location.HasRange;
 import com.simonbaars.clonerefactor.settings.CloneType;
 
 public abstract class Compare implements HasRange {
@@ -22,8 +23,6 @@ public abstract class Compare implements HasRange {
 		this.cloneType=cloneType;
 		this.range = range;
 	}
-	
-	public abstract int getHashCode();
 	
 	public static Compare create(Object tokenOrNode, JavaToken e, CloneType cloneType) {
 		if(tokenOrNode instanceof ReferenceType)
@@ -47,10 +46,14 @@ public abstract class Compare implements HasRange {
 		return node instanceof ReferenceType || node instanceof NameExpr || node instanceof LiteralExpr || node instanceof SimpleName || node instanceof MethodCallExpr;
 	}
 
+	@Override
 	public boolean equals(Object o) {
-		if(this.getClass() != o.getClass())
-			return false;
-		return true;
+		return this.getClass() == o.getClass();
+	}
+	
+	@Override
+	public int hashCode() {
+		return getClass().hashCode();
 	}
 	
 	public void setCloneType(CloneType type) {
@@ -63,5 +66,9 @@ public abstract class Compare implements HasRange {
 
 	public Range getRange() {
 		return range;
+	}
+	
+	public boolean doesType2Compare() {
+		return false;
 	}
 }

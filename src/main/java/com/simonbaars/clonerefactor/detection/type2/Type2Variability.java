@@ -46,15 +46,12 @@ public class Type2Variability implements CalculatesPercentages, ChecksThresholds
 			for(int locationIndex = 0; locationIndex<equalityArray.length; locationIndex++) {				
 				int[] locationContents = equalityArray[locationIndex];
 				Type2Location contents = new Type2Location(locationContents);
-				if(contentsList.contains(contents)) {
+				if(contentsList.contains(contents))
 					contents = contentsList.get(contentsList.indexOf(contents));
-				} else {
-					contentsList.add(contents);
-				}
+				else contentsList.add(contents);
 				final Type2Statement statement = new Type2Statement(locationIndex, statementIndex, contents);
 				contents.getStatementsWithinThreshold().add(statement);
-				if(prevStatement!=null)
-					prevStatement.setNext(statement);
+				if(prevStatement!=null) prevStatement.setNext(statement);
 				prevStatement = statement;
 			}
 		}
@@ -105,11 +102,11 @@ public class Type2Variability implements CalculatesPercentages, ChecksThresholds
 					removeChain.add(curChain.getKey());
 				}
 			});
-			removeChain.forEach(e -> chainList.remove(e));
+			removeChain.forEach(chainList::remove);
 			
 			createSequencesOf(sequences, s, endingChains, index);
 			
-			clones.getValue().forEach(e -> chainList.increment(e));
+			clones.getValue().forEach(chainList::increment);
 			clones.getValue().remove(i);
 		}
 	}
@@ -282,9 +279,9 @@ public class Type2Variability implements CalculatesPercentages, ChecksThresholds
 	private List<List<Compare>> createLiteralList(Sequence s) {
 		List<List<Compare>> literals = new ArrayList<>();
 		for(Location l : s.getSequence()) {
-			List<Compare> literals2 = l.getContents().getType2Comparables();
+			List<Compare> literals2 = l.getContents().getCompare();
 			literals.add(literals2);
-			literals2.forEach(e -> e.setCloneType(CloneType.TYPE1));
+			literals2.stream().filter(Compare::doesType2Compare).forEach(e -> e.setCloneType(CloneType.TYPE1));
 		}
 		return literals;
 	}

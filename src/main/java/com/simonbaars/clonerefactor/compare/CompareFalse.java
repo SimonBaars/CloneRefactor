@@ -16,7 +16,7 @@ public class CompareFalse extends Compare {
 	}
 	
 	@Override
-	public int getHashCode() {
+	public int hashCode() {
 		return x++;
 	}
 

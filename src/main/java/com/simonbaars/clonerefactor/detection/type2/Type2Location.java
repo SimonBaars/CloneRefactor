@@ -6,11 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.simonbaars.clonerefactor.compare.Compare;
-
 public class Type2Location {
 	private final int[] contents;
-	private List<Compare> statementCompare;
 	private final Map<Type2Location, WeightedPercentage> equalityMap = new HashMap<>();
 	private final List<Type2Statement> statementsWithinThreshold = new ArrayList<>();
 	

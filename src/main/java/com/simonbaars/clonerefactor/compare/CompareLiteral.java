@@ -17,12 +17,17 @@ public class CompareLiteral extends Compare {
 	}
 
 	@Override
-	public int getHashCode() {
+	public int hashCode() {
 		return cloneType.isNotTypeOne() ? -1 : t.hashCode();
 	}
 
 	@Override
 	public String toString() {
 		return "CompareLiteral [t=" + t + "]";
+	}
+	
+	@Override
+	public boolean doesType2Compare() {
+		return true;
 	}
 }

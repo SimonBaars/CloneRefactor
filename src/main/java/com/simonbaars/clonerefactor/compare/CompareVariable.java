@@ -34,12 +34,17 @@ public class CompareVariable extends Compare {
 	}
 
 	@Override
-	public int getHashCode() {
+	public int hashCode() {
 		return (cloneType == CloneType.TYPE1 ? variableName.hashCode() : 0) + (type == null ? -3 : type.hashCode());
 	}
 
 	@Override
 	public String toString() {
 		return "CompareVariable [dec=" + dec.getName() + ", type=" + type + "]";
+	}
+	
+	@Override
+	public boolean doesType2Compare() {
+		return true;
 	}
 }

@@ -26,8 +26,9 @@ import com.simonbaars.clonerefactor.model.location.Location;
 import com.simonbaars.clonerefactor.model.location.LocationHolder;
 import com.simonbaars.clonerefactor.settings.CloneType;
 import com.simonbaars.clonerefactor.settings.Settings;
+import com.simonbaars.clonerefactor.thread.WritesErrors;
 
-public class CloneParser implements Parser, RemovesDuplicates {
+public class CloneParser implements Parser, RemovesDuplicates, WritesErrors {
 
 	private NodeParser astParser;
 	public final MetricCollector metricCollector = new MetricCollector();
@@ -84,9 +85,8 @@ public class CloneParser implements Parser, RemovesDuplicates {
 				return Result.DONT_SAVE;
 			});
 		} catch (IOException e) {
-			e.printStackTrace();
+			throw new IllegalStateException(e);
 		}
-		
 		return lh.getLocation();
 	}
 	
@@ -101,7 +101,7 @@ public class CloneParser implements Parser, RemovesDuplicates {
 					l = setIfNotNull(l, astParser.extractLinesFromAST(l, cu, cu));
 				}
 			} catch (FileNotFoundException e) {
-				e.printStackTrace();
+				writeProjectError(file.getName(), e);
 			}
 		}
 		return l;

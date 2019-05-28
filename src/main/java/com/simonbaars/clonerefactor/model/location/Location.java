@@ -4,7 +4,6 @@ import java.nio.file.Path;
 
 import com.github.javaparser.Range;
 import com.github.javaparser.ast.Node;
-import com.simonbaars.clonerefactor.compare.HasRange;
 import com.simonbaars.clonerefactor.metrics.enums.CloneLocation;
 import com.simonbaars.clonerefactor.metrics.enums.CloneLocation.LocationType;
 

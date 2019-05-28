@@ -19,7 +19,6 @@ import com.simonbaars.clonerefactor.compare.CompareFalse;
 import com.simonbaars.clonerefactor.compare.CompareLiteral;
 import com.simonbaars.clonerefactor.compare.CompareMethodCall;
 import com.simonbaars.clonerefactor.compare.CompareVariable;
-import com.simonbaars.clonerefactor.compare.HasRange;
 import com.simonbaars.clonerefactor.metrics.enums.CloneContents;
 import com.simonbaars.clonerefactor.metrics.enums.CloneContents.ContentsType;
 import com.simonbaars.clonerefactor.metrics.enums.RequiresNodeContext;
@@ -111,7 +110,7 @@ public class LocationContents implements FiltersTokens, HasRange, HasCompareList
 		int prime = 31;
 		int result = 1;
 		for(Compare node : compare) {
-			result = prime*result*node.getHashCode();
+			result = prime*result*node.hashCode();
 		}
 		return result;
 	}

@@ -82,7 +82,7 @@ public class ThreadPool implements WritesErrors {
 	}
 
 	private void writeError(int i) {
-		writeError(SavePaths.createDirectoryIfNotExists(SavePaths.getErrorFolder())+threads[i].getFile().getName(), threads[i].error);
+		writeProjectError(threads[i].getFile().getName(), threads[i].error);
 	}
 
 	private void writeResults(File file, DetectionResults res) {

@@ -18,7 +18,7 @@ public class CompareToken extends Compare {
 	}
 
 	@Override
-	public int getHashCode() {
+	public int hashCode() {
 		return token.hashCode();
 	}
 
