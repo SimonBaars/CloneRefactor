@@ -7,7 +7,7 @@ public interface Type3Calculation {
 	public default LocationContents calculateDiffContents(Location before, Location after) {
 		LocationContents contents = new LocationContents();
 		Location line = before;
-		while((line = line.getNextLine()) != null) {
+		while((line = line.getNext()) != null) {
 			if(line.getRange().isBefore(after.getRange().begin)) {
 				if(line.getRange().isAfter(before.getRange().end)){
 					populateContents(contents, line.getContents());

@@ -88,11 +88,7 @@ public class Location implements Comparable<Location>, HasRange {
 	public boolean isSame(Location other) {
 		if (range != other.range)
 			return false;
-		if (file == null) {
-			if (other.file != null)
-				return false;
-		}
-		return file.equals(other.file);
+		return file == null ? other.file == null : file.equals(other.file);
 	}
 
 	public int getAmountOfTokens() {
@@ -127,10 +123,6 @@ public class Location implements Comparable<Location>, HasRange {
 		getContents().setRange(r);
 		this.range = r;
 		return this;
-	}
-
-	public void setNextLocation(Location nextLocation) {
-		this.next = nextLocation;
 	}
 
 	public Location mergeWith(Location oldClone) {
