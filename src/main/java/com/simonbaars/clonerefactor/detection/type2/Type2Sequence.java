@@ -14,7 +14,11 @@ public class Type2Sequence {
 		statements = statementsWithinThreshold;
 	}
 
-	public List<Type2Statement> getStatements() {
+	public List<Type2Statement> getSequence() {
 		return statements;
+	}
+	
+	public int size() {
+		return statements.size();
 	}
 }

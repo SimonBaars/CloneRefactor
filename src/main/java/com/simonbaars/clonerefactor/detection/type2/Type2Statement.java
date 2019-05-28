@@ -6,6 +6,7 @@ public class Type2Statement {
 	private final Type2Contents contents;
 	private Type2Statement next;
 	private final Type2Statement prev;
+	private final Type2Statement mergedWith;
 	
 	public Type2Statement(int locationIndex, int statementIndex, Type2Contents contents, Type2Statement prev) {
 		super();
@@ -13,8 +14,18 @@ public class Type2Statement {
 		this.statementIndex = statementIndex;
 		this.contents = contents;
 		this.prev = prev;
+		this.mergedWith = null;
 	}
 	
+	public Type2Statement(Type2Statement type2Statement, Type2Statement key) {
+		this.locationIndex = type2Statement.locationIndex;
+		this.statementIndex = type2Statement.statementIndex;
+		this.contents = type2Statement.contents;
+		this.prev = type2Statement.prev;
+		this.next = type2Statement.next;
+		this.mergedWith = key;
+	}
+
 	public int getLocationIndex() {
 		return locationIndex;
 	}
@@ -68,8 +79,7 @@ public class Type2Statement {
 		return prev;
 	}
 
-	public void getClonedStatements() {
-		// TODO Auto-generated method stub
-		
+	public Type2Statement mergeWith(Type2Statement key) {
+		return new Type2Statement(this, key);
 	}
 }

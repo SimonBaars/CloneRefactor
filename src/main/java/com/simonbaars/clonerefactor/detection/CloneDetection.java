@@ -36,7 +36,7 @@ public class CloneDetection implements ChecksThresholds, RemovesDuplicates, Dete
 	private Sequence makeValid(Location lastLoc, Sequence oldClones, Sequence newClones) {
 		Map<Location /*oldClones*/, Location /*newClones*/> validChains = oldClones.getSequence().stream().distinct().filter(oldClone -> 
 			newClones.getSequence().stream().anyMatch(newClone -> newClone.getFile() == oldClone.getFile() && oldClone.getPrev()!=null && oldClone.getFile() == oldClone.getPrev().getFile()
-		    && newClone.getContents().getRange()!= null && newClone.getContents().getRange().equals(oldClone.getPrev().getContents().getRange()))).collect(Collectors.toMap(e -> e, e -> e.getPrev()));
+		    && newClone.getContents().getRange()!= null && newClone.getContents().getRange().equals(oldClone.getPrev().getContents().getRange()))).collect(Collectors.toMap(e -> e, Location::getPrev));
 		
 		collectFinishedClones(oldClones, newClones, validChains);
 		mergeLocationsOnBasisOfChains(newClones, validChains);
