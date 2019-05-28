@@ -48,9 +48,7 @@ public class Type2Location {
 		if (getClass() != obj.getClass())
 			return false;
 		Type2Location other = (Type2Location) obj;
-		if (!Arrays.equals(contents, other.contents))
-			return false;
-		return true;
+		return Arrays.equals(contents, other.contents);
 	}
 
 	@Override
