@@ -5,11 +5,12 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class Type2Contents {
 	private final int[] contents;
 	private final Map<Type2Contents, WeightedPercentage> equalityMap = new HashMap<>();
-	private final List<Type2Statement> statementsWithinThreshold = new ArrayList<>();
+	private final List<Type2Statement> statements = new ArrayList<>();
 	
 	public Type2Contents(int[] contents) {
 		super();
@@ -24,7 +25,13 @@ public class Type2Contents {
 		return equalityMap;
 	}
 
+	public List<Type2Statement> getStatements() {
+		return statements;
+	}
+	
 	public List<Type2Statement> getStatementsWithinThreshold() {
+		List<Type2Statement> statementsWithinThreshold = equalityMap.entrySet().stream().filter(e -> e.getValue().check()).flatMap(e -> e.getKey().getStatements().stream()).collect(Collectors.toList());
+		statementsWithinThreshold.addAll(statements);
 		return statementsWithinThreshold;
 	}
 

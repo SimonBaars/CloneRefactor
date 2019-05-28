@@ -1,8 +1,9 @@
 package com.simonbaars.clonerefactor.detection.type2;
 
 import com.simonbaars.clonerefactor.detection.interfaces.CalculatesPercentages;
+import com.simonbaars.clonerefactor.detection.interfaces.ChecksThresholds;
 
-public class WeightedPercentage implements CalculatesPercentages {
+public class WeightedPercentage implements CalculatesPercentages, ChecksThresholds {
 	private final double percentage;
 	private final int weight;
 	
@@ -33,5 +34,9 @@ public class WeightedPercentage implements CalculatesPercentages {
 	@Override
 	public String toString() {
 		return "WeightedPercentage [percentage=" + percentage + ", weight=" + weight + "]";
+	}
+	
+	public boolean check() {
+		return checkType2VariabilityThreshold(percentage);
 	}
 }

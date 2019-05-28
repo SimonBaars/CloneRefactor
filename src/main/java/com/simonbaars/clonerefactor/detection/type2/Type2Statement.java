@@ -67,4 +67,9 @@ public class Type2Statement {
 	public Type2Statement getPrev() {
 		return prev;
 	}
+
+	public void getClonedStatements() {
+		// TODO Auto-generated method stub
+		
+	}
 }

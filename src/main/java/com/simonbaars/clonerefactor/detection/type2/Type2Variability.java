@@ -59,7 +59,7 @@ public class Type2Variability implements CalculatesPercentages, ChecksThresholds
 					contents = contentsList.get(contentsList.indexOf(contents));
 				else contentsList.add(contents);
 				final Type2Statement statement = new Type2Statement(locationIndex, statementIndex, contents, prevStatement);
-				contents.getStatementsWithinThreshold().add(statement);
+				contents.getStatements().add(statement);
 				if(prevStatement!=null) prevStatement.setNext(statement);
 				prevStatement = statement;
 			}
