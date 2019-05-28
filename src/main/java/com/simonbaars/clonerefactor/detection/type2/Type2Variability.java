@@ -61,8 +61,15 @@ public class Type2Variability implements CalculatesPercentages, ChecksThresholds
 	private List<Type2Location> generateWeightedPercentages(List<Type2Location> contentsList) {
 		for(int i = 0; i<contentsList.size(); i++) {
 			for(int j = i; j<contentsList.size(); j++) {
-				
-				WeightedPercentage p = new WeightedPercentage(percentage, weight);
+				Type2Location location1 = contentsList.get(i);
+				Type2Location location2 = contentsList.get(j);
+				int[] location1Contents = location1.getContents();
+				int[] location2Contents = location2.getContents();
+				if(location1Contents.length==location2Contents.length && IntStream.range(0, location1Contents.length).filter(k -> location1Contents[k] < 0 || location2Contents[k] < 0).noneMatch(k -> location1Contents[k]!=location2Contents[k])) {
+					WeightedPercentage p = new WeightedPercentage(diffPerc(location1Contents, location2Contents), location1Contents.length);
+					location1.getEqualityMap().put(location2, p);
+					location2.getEqualityMap().put(location1, p);
+				}
 			}
 		}
 		return contentsList;
@@ -261,12 +268,12 @@ public class Type2Variability implements CalculatesPercentages, ChecksThresholds
 	private int[][] createEqualityArray(List<List<Compare>> literals) {
 		int[][] equalityArray = new int[literals.size()][literals.get(0).size()];
 		final List<Compare> differentCompareLiterals = new ArrayList<>();
-		int curr = 0;
+		int curr = 2;
 		for(int j = 0; j<literals.get(0).size(); j++) {
 			for(int i = 0; i<literals.size(); i++) {
 				int index = differentCompareLiterals.indexOf(literals.get(i).get(j));
 				if(index == -1) {
-					equalityArray[i][j] = curr++;
+					equalityArray[i][j] = literals.get(i).get(j).doesType2Compare() ? curr++ : -curr++;
 					differentCompareLiterals.add(literals.get(i).get(j));
 				} else {
 					equalityArray[i][j] = index;
