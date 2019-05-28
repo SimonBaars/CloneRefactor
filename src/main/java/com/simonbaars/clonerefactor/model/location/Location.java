@@ -55,14 +55,6 @@ public class Location implements Comparable<Location>, HasRange {
 	public Path getFile() {
 		return file;
 	}
-	
-	public Location getPrevLine() {
-		return prev;
-	}
-
-	public void setPrevLine(Location nextLine) {
-		this.prev = nextLine;
-	}
 
 	public Location getClone() {
 		return clone;

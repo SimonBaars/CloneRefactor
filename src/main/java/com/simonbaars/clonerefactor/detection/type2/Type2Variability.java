@@ -215,8 +215,8 @@ public class Type2Variability implements CalculatesPercentages, ChecksThresholds
 	
 	public Location getStatementLoc(Location l) {
 		if(l.getNextLine() != null)
-			return l.getNextLine().getPrevLine();
-		return l.getPrevLine().getNextLine();
+			return l.getNextLine().getPrev();
+		return l.getPrev().getNextLine();
 	}
 	
 	private Location findNodeLocation(Location l, Node n) {

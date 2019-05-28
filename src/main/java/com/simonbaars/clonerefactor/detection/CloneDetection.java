@@ -22,11 +22,11 @@ public class CloneDetection implements ChecksThresholds, RemovesDuplicates, Dete
 	public CloneDetection() {}
 
 	public List<Sequence> findChains(Location lastLoc) {
-		for(Sequence buildingChains = new Sequence(); lastLoc!=null; lastLoc = lastLoc.getPrevLine()) {
+		for(Sequence buildingChains = new Sequence(); lastLoc!=null; lastLoc = lastLoc.getPrev()) {
 			Sequence newClones = collectClones(lastLoc);
 			if(!buildingChains.getSequence().isEmpty() || newClones.size()>1)
 				buildingChains = makeValid(lastLoc, buildingChains, newClones); //Because of the recent additions the current sequence may be invalidated
-			if(buildingChains.size() == 1 || (lastLoc.getPrevLine()!=null && lastLoc.getPrevLine().getFile()!=lastLoc.getFile()))
+			if(buildingChains.size() == 1 || (lastLoc.getPrev()!=null && lastLoc.getPrev().getFile()!=lastLoc.getFile()))
 				buildingChains.getSequence().clear();
 		}
 		return clones;
@@ -35,13 +35,13 @@ public class CloneDetection implements ChecksThresholds, RemovesDuplicates, Dete
 
 	private Sequence makeValid(Location lastLoc, Sequence oldClones, Sequence newClones) {
 		Map<Location /*oldClones*/, Location /*newClones*/> validChains = oldClones.getSequence().stream().distinct().filter(oldClone -> 
-			newClones.getSequence().stream().anyMatch(newClone -> newClone.getFile() == oldClone.getFile() && oldClone.getPrevLine()!=null && oldClone.getFile() == oldClone.getPrevLine().getFile()
-		    && newClone.getContents().getRange()!= null && newClone.getContents().getRange().equals(oldClone.getPrevLine().getContents().getRange()))).collect(Collectors.toMap(e -> e, e -> e.getPrevLine()));
+			newClones.getSequence().stream().anyMatch(newClone -> newClone.getFile() == oldClone.getFile() && oldClone.getPrev()!=null && oldClone.getFile() == oldClone.getPrev().getFile()
+		    && newClone.getContents().getRange()!= null && newClone.getContents().getRange().equals(oldClone.getPrev().getContents().getRange()))).collect(Collectors.toMap(e -> e, e -> e.getPrev()));
 		
 		collectFinishedClones(oldClones, newClones, validChains);
 		mergeLocationsOnBasisOfChains(newClones, validChains);
 		
-		if(lastLoc.getPrevLine()==null || lastLoc.getPrevLine().getFile()!=lastLoc.getFile()) {
+		if(lastLoc.getPrev()==null || lastLoc.getPrev().getFile()!=lastLoc.getFile()) {
 			checkValidClones(newClones, newClones.getSequence());
 		}
 		
@@ -50,7 +50,7 @@ public class CloneDetection implements ChecksThresholds, RemovesDuplicates, Dete
 
 	private void collectFinishedClones(Sequence oldClones, Sequence newClones, Map<Location, Location> validChains) {
 		if(validChains.size()!=oldClones.size() && !oldClones.getSequence().isEmpty()) {
-			checkValidClones(oldClones, oldClones.getSequence().stream().filter(e -> !newClones.getSequence().contains(e.getPrevLine())).collect(Collectors.toList()));
+			checkValidClones(oldClones, oldClones.getSequence().stream().filter(e -> !newClones.getSequence().contains(e.getPrev())).collect(Collectors.toList()));
 		}
 	}
 
