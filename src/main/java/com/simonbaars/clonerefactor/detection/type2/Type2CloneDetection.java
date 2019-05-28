@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 
 import com.simonbaars.clonerefactor.datatype.ListMap;
 
-public class Type2CloneDetection {
+public class Type2CloneDetection  {
 	final List<Type2Sequence> clones = new ArrayList<>();
 
 	public Type2CloneDetection() {}
@@ -21,9 +21,9 @@ public class Type2CloneDetection {
 			if(buildingChains.size() == 1 || (lastLoc.getPrev()!=null && lastLoc.getPrev().getLocationIndex()!=lastLoc.getLocationIndex()))
 				buildingChains.getSequence().clear();
 		}
+		clones.forEach(Type2Sequence::tryToExpand);
 		return clones;
 	}
-
 
 	private Type2Sequence makeValid(Type2Statement lastLoc, Type2Sequence buildingChains, Type2Sequence newClones) {
 		Map<Type2Statement /*oldClones*/, Type2Statement /*newClones*/> validChains = buildingChains.getSequence().stream().distinct().filter(oldClone -> 

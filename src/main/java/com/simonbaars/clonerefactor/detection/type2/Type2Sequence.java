@@ -21,4 +21,12 @@ public class Type2Sequence {
 	public int size() {
 		return statements.size();
 	}
+	
+	public void tryToExpand() {
+		tryToExpandLeft();
+	}
+
+	private void tryToExpandLeft() {
+		for(Type2Statement.)
+	}
 }

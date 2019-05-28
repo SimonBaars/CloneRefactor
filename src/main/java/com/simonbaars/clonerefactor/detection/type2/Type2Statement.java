@@ -1,9 +1,10 @@
 package com.simonbaars.clonerefactor.detection.type2;
 
+import com.simonbaars.clonerefactor.ast.interfaces.DeterminesNodeTokens;
 import com.simonbaars.clonerefactor.model.Sequence;
 import com.simonbaars.clonerefactor.model.location.Location;
 
-public class Type2Statement {
+public class Type2Statement implements DeterminesNodeTokens {
 	private final int locationIndex;
 	private final int statementIndex;
 	private final Type2Contents contents;
@@ -97,6 +98,12 @@ public class Type2Statement {
 	}
 
 	private Location convertToLocation(Location location) {
-		Node thisNode = location.getContents().getNodes().get(statementIndex);
+		return new Location(location.getFile(), location.getContents().getNodes().get(statementIndex));
+	}
+	
+	public Type2Statement getLast() {
+		if(mergedWith == null)
+			return this;
+		return mergedWith.getLast();
 	}
 }
