@@ -5,12 +5,14 @@ public class Type2Statement {
 	private final int statementIndex;
 	private final Type2Location contents;
 	private Type2Statement next;
+	private final Type2Statement prev;
 	
-	public Type2Statement(int locationIndex, int statementIndex, Type2Location contents) {
+	public Type2Statement(int locationIndex, int statementIndex, Type2Location contents, Type2Statement prev) {
 		super();
 		this.locationIndex = locationIndex;
 		this.statementIndex = statementIndex;
 		this.contents = contents;
+		this.prev = prev;
 	}
 	
 	public int getLocationIndex() {
@@ -53,14 +55,16 @@ public class Type2Statement {
 		Type2Statement other = (Type2Statement) obj;
 		if (locationIndex != other.locationIndex)
 			return false;
-		if (statementIndex != other.statementIndex)
-			return false;
-		return true;
+		return statementIndex == other.statementIndex;
 	}
 
 	@Override
 	public String toString() {
 		return "Type2Statement [locationIndex=" + locationIndex + ", statementIndex=" + statementIndex + ", contents="
 				+ contents + "]";
+	}
+
+	public Type2Statement getPrev() {
+		return prev;
 	}
 }
