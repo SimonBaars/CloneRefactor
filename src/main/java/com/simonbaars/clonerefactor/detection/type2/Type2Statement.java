@@ -3,11 +3,11 @@ package com.simonbaars.clonerefactor.detection.type2;
 public class Type2Statement {
 	private final int locationIndex;
 	private final int statementIndex;
-	private final Type2Location contents;
+	private final Type2Contents contents;
 	private Type2Statement next;
 	private final Type2Statement prev;
 	
-	public Type2Statement(int locationIndex, int statementIndex, Type2Location contents, Type2Statement prev) {
+	public Type2Statement(int locationIndex, int statementIndex, Type2Contents contents, Type2Statement prev) {
 		super();
 		this.locationIndex = locationIndex;
 		this.statementIndex = statementIndex;
@@ -23,7 +23,7 @@ public class Type2Statement {
 		return statementIndex;
 	}
 	
-	public Type2Location getContents() {
+	public Type2Contents getContents() {
 		return contents;
 	}
 	

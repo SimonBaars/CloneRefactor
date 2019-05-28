@@ -35,7 +35,11 @@ public class Type2Variability implements CalculatesPercentages, ChecksThresholds
 	}
 
 	private List<Sequence> findDisplacedClones(List<Sequence> sequences, List<List<Compare>> literals, Map<Integer, int[][]> statementEqualityArrays) {
-		Type2Statement type2Location = generateType2Locations(statementEqualityArrays);
+		Type2Statement currentStatement = generateType2Locations(statementEqualityArrays);
+		for(Sequence buildingChains = new Sequence(); lastLoc!=null; lastLoc = lastLoc.getPrevLine()) {
+			
+		}
+		
 		for(Type2Location loc : type2Location) {
 			final List<List<Type2Statement>> buildingSequence = new ArrayList<>();
 			while (loc!=null) {
@@ -59,7 +63,7 @@ public class Type2Variability implements CalculatesPercentages, ChecksThresholds
 		return null;
 	}
 
-	private List<Type2Location> generateType2Locations(Map<Integer, int[][]> statementEqualityArrays) {
+	private Type2Statement generateType2Locations(Map<Integer, int[][]> statementEqualityArrays) {
 		final List<Type2Location> contentsList = new ArrayList<>();
 		Type2Statement prevStatement = null;
 		for(Entry<Integer, int[][]> statementEqualityEntry : statementEqualityArrays.entrySet()) {
@@ -71,13 +75,14 @@ public class Type2Variability implements CalculatesPercentages, ChecksThresholds
 				if(contentsList.contains(contents))
 					contents = contentsList.get(contentsList.indexOf(contents));
 				else contentsList.add(contents);
-				final Type2Statement statement = new Type2Statement(locationIndex, statementIndex, contents);
+				final Type2Statement statement = new Type2Statement(locationIndex, statementIndex, contents, prevStatement);
 				contents.getStatementsWithinThreshold().add(statement);
 				if(prevStatement!=null) prevStatement.setNext(statement);
 				prevStatement = statement;
 			}
 		}
-		return generateWeightedPercentages(contentsList);
+		generateWeightedPercentages(contentsList);
+		return prevStatement;
 	}
 
 	private List<Type2Location> generateWeightedPercentages(List<Type2Location> contentsList) {

@@ -6,12 +6,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class Type2Location {
+public class Type2Contents {
 	private final int[] contents;
-	private final Map<Type2Location, WeightedPercentage> equalityMap = new HashMap<>();
+	private final Map<Type2Contents, WeightedPercentage> equalityMap = new HashMap<>();
 	private final List<Type2Statement> statementsWithinThreshold = new ArrayList<>();
 	
-	public Type2Location(int[] contents) {
+	public Type2Contents(int[] contents) {
 		super();
 		this.contents = contents;
 	}
@@ -20,7 +20,7 @@ public class Type2Location {
 		return contents;
 	}
 
-	public Map<Type2Location, WeightedPercentage> getEqualityMap() {
+	public Map<Type2Contents, WeightedPercentage> getEqualityMap() {
 		return equalityMap;
 	}
 
@@ -44,7 +44,7 @@ public class Type2Location {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		Type2Location other = (Type2Location) obj;
+		Type2Contents other = (Type2Contents) obj;
 		return Arrays.equals(contents, other.contents);
 	}
 
