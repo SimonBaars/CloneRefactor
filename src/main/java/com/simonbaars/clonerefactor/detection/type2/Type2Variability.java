@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -34,6 +35,22 @@ public class Type2Variability implements CalculatesPercentages, ChecksThresholds
 
 	private List<Sequence> findDisplacedClones(List<Sequence> sequences, List<List<Compare>> literals, Map<Integer, int[][]> statementEqualityArrays) {
 		List<Type2Location> type2Location = generateType2Locations(statementEqualityArrays);
+		for(Type2Location loc : type2Location) {
+			final List<List<Type2Statement>> buildingSequence = new ArrayList<>();
+			while (loc!=null) {
+				List<Type2Statement> relevantStatements = loc.getStatementsWithinThreshold();
+				List<Type2Statement> nextStatements = relevantStatements.stream().map(e -> e.getNext()).collect(Collectors.toList());
+				Set<Type2Location> nextLocations = nextStatements.stream().map(e -> e.getContents()).collect(Collectors.toSet());
+				if(nextLocations.stream().allMatch(e -> e.getStatementsWithinThreshold().contains(nextStatements.get(0)))) {
+					buildingSequence.add(nextStatements);
+				} else {
+					saveSequence(buildingSequence);
+					removeEndedLocationFromSequence();
+					if(buildingSequence.get(0).size()<=1) break;
+					else buildingSequence.add(nextStatements);
+				}
+			}
+		}
 		return null;
 	}
 	
