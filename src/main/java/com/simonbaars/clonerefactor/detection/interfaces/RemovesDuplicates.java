@@ -8,7 +8,7 @@ public interface RemovesDuplicates {
 	public default boolean removeDuplicatesOf(List<Sequence> clones, Sequence l) {
 		l.getSequence().removeIf(e -> l.getSequence().stream().anyMatch(f -> f!=e && f.getFile() == e.getFile() && f.getRange().contains(e.getRange())));
 		clones.removeIf(e -> isSubset(e, l));
-		return !clones.stream().anyMatch(e -> isSubset(l, e));
+		return clones.stream().noneMatch(e -> isSubset(l, e));
 	}
 	
 	public default boolean isSubset(Sequence existentClone, Sequence newClone) {
