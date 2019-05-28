@@ -23,7 +23,7 @@ public class Type3Location extends Location implements Type3Calculation{
 	}
 
 	public Type3Location(Location location, Location location2) {
-		super(location.getFile(), null);
+		super(location.getFile(), location.getRange());
 		if(location.getRange().isBefore(location2.getRange().begin))
 			mergeLocations(location, location2);
 		else mergeLocations(location2, location);
