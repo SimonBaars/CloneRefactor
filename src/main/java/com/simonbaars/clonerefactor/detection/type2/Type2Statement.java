@@ -82,4 +82,10 @@ public class Type2Statement {
 	public Type2Statement mergeWith(Type2Statement key) {
 		return new Type2Statement(this, key);
 	}
+
+	public int getAmountOfNodes() {
+		if(mergedWith == null)
+			return 1;
+		return mergedWith.getAmountOfNodes() + 1;
+	}
 }
