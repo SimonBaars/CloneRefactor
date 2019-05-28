@@ -39,8 +39,8 @@ public class Type2Variability implements CalculatesPercentages, ChecksThresholds
 			final List<List<Type2Statement>> buildingSequence = new ArrayList<>();
 			while (loc!=null) {
 				List<Type2Statement> relevantStatements = loc.getStatementsWithinThreshold();
-				List<Type2Statement> nextStatements = relevantStatements.stream().map(e -> e.getNext()).collect(Collectors.toList());
-				Set<Type2Location> nextLocations = nextStatements.stream().map(e -> e.getContents()).collect(Collectors.toSet());
+				List<Type2Statement> nextStatements = relevantStatements.stream().map(Type2Statement::getNext).collect(Collectors.toList());
+				Set<Type2Location> nextLocations = nextStatements.stream().map(Type2Statement::getContents).collect(Collectors.toSet());
 				if(nextLocations.stream().allMatch(e -> e.getStatementsWithinThreshold().contains(nextStatements.get(0)))) {
 					buildingSequence.add(nextStatements);
 				} else {
