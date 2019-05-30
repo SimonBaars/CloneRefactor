@@ -89,10 +89,10 @@ public class Type2Location implements DeterminesNodeTokens {
 		return new Type2Location(this, key);
 	}
 
-	public int getAmountOfNodes() {
+	public int size() {
 		if(mergedWith == null)
 			return 1;
-		return mergedWith.getAmountOfNodes() + 1;
+		return mergedWith.size() + 1;
 	}
 	
 	public Location convertToLocation(Sequence sequence) {
@@ -109,9 +109,11 @@ public class Type2Location implements DeterminesNodeTokens {
 		return mergedWith.getLast();
 	}
 
-	public int[] getFullContents() {
-		if(mergedWith!=null)
-			return ArrayUtils.addAll(contents.getContents(), mergedWith.getFullContents());
-		return contents.getContents();
+	public int[][] getFullContents() {
+		int[][] fullContents = new int[size()][];
+		int i = 0;
+		for(Type2Location loc = this;loc!=null; loc=loc.mergedWith)
+			fullContents[i++] = loc.contents.getContents();
+		return fullContents;
 	}
 }

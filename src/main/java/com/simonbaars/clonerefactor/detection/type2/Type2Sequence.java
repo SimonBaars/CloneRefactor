@@ -46,9 +46,18 @@ public class Type2Sequence {
 	}
 	
 	public double calculateVariability() {
+		statements.forEach(statement -> {
+			if(statement.getFullContents())
+		});
 		List<int[]> fullContents = statements.stream().map(e -> e.getFullContents()).collect(Collectors.toList());
+		fullContents.forEach(contents -> {
+			if(contents)
+		});
+		List<WeightedPercentage> percentages = new ArrayList<>();
 		for(int i = 0; i<fullContents.size(); i++) {
-			for(int j = i+1;)
+			for(int j = i+1; j<fullContents.size(); j++) {
+				percentages.add(new WeightedPercentage(Arra, weight))
+			}
 		}
 		return statements.stream().mapToDouble(e -> e.calculateVariability()).sum();
 	}
