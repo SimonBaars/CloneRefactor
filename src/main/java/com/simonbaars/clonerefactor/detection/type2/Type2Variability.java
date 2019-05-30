@@ -70,7 +70,7 @@ public class Type2Variability implements CalculatesPercentages, ChecksThresholds
 
 	private List<Type2Location> generateWeightedPercentages(List<Type2Location> contentsList) {
 		for(int i = 0; i<contentsList.size(); i++) {
-			for(int j = i; j<contentsList.size(); j++) {
+			for(int j = i+1; j<contentsList.size(); j++) {
 				Type2Location location1 = contentsList.get(i);
 				Type2Location location2 = contentsList.get(j);
 				int[] location1Contents = location1.getContents();

@@ -56,7 +56,7 @@ public class Type2CloneDetection  {
 
 	private void checkValidClones(Type2Sequence buildingChains, List<Type2Location> list) {
 		ListMap<Integer /*Sequence size*/, Type2Location /* Clones */> cloneList = new ListMap<>();
-		list.stream().forEach(e -> cloneList.addTo(e.getAmountOfNodes(), e));
+		list.stream().forEach(e -> cloneList.addTo(e.size(), e));
 		for(Entry<Integer, List<Type2Location>> entry : cloneList.entrySet()) {
 			int amountOfNodes = entry.getKey();
 			List<Type2Location> l = entry.getValue();
@@ -74,7 +74,7 @@ public class Type2CloneDetection  {
 
 	private void addAllNonEndedLocations(Type2Sequence buildingChains, int amountOfNodes, List<Type2Location> l) {
 		for(Type2Location l2 : buildingChains.getSequence()) {
-			if(!l.contains(l2) && l2.getAmountOfNodes()>=amountOfNodes) {
+			if(!l.contains(l2) && l2.size()>=amountOfNodes) {
 				l.add(l2);
 			}
 		}
