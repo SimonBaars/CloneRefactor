@@ -3,10 +3,12 @@ package com.simonbaars.clonerefactor.detection.type2;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import com.simonbaars.clonerefactor.detection.interfaces.CalculatesPercentages;
+import com.simonbaars.clonerefactor.detection.interfaces.ChecksThresholds;
 
-public class Type2Sequence implements CalculatesPercentages{
+public class Type2Sequence implements CalculatesPercentages, ChecksThresholds {
 	private final List<Type2Location> statements;
 
 	public Type2Sequence() {
@@ -29,6 +31,7 @@ public class Type2Sequence implements CalculatesPercentages{
 		while(tryToExpand(true) || tryToExpand(false));
 	}
 
+	//TODO: Right
 	private boolean tryToExpand(boolean left) {
 		List<Type2Location> prevs = new ArrayList<>();
 		for(Type2Location location : statements) {
@@ -39,16 +42,15 @@ public class Type2Sequence implements CalculatesPercentages{
 		Type2Location firstPrev = prevs.get(0);
 		for(int i = 1; i<prevs.size(); i++) {
 			final int j = i;
-			if(firstPrev.getContents().getEqualityMap().keySet().stream().anyMatch(e -> e.getStatements().contains(prevs.get(j)))) {
+			if(firstPrev.getContents().getEqualityMap().keySet().stream().anyMatch(e -> e.getStatements().contains(prevs.get(j))))
 				return false;
-			}
 		}
-		
-		return false;
+		List<Type2Location> locs = IntStream.range(0,prevs.size()).boxed().map(i -> new Type2Location(prevs.get(i), statements.get(i))).collect(Collectors.toList());
+		return checkType2VariabilityThreshold(calculateVariability(locs));
 	}
 	
-	public double calculateVariability() {
-		List<int[][]> fullContents = statements.stream().map(e -> e.getFullContents()).collect(Collectors.toList());
+	public double calculateVariability(List<Type2Location> statements) {
+		List<int[][]> fullContents = statements.stream().map(Type2Location::getFullContents).collect(Collectors.toList());
 		List<WeightedPercentage> percentages = new ArrayList<>();
 		for(int statementIndex = 0; statementIndex<fullContents.get(0).length; statementIndex++) {
 			for(int locationIndex1 = 0; locationIndex1<fullContents.size(); locationIndex1++) {
