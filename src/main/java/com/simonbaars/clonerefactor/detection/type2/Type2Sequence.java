@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class Type2Sequence {
+import com.simonbaars.clonerefactor.detection.interfaces.CalculatesPercentages;
+
+public class Type2Sequence implements CalculatesPercentages{
 	private final List<Type2Location> statements;
 
 	public Type2Sequence() {
@@ -46,19 +48,15 @@ public class Type2Sequence {
 	}
 	
 	public double calculateVariability() {
-		statements.forEach(statement -> {
-			if(statement.getFullContents())
-		});
-		List<int[]> fullContents = statements.stream().map(e -> e.getFullContents()).collect(Collectors.toList());
-		fullContents.forEach(contents -> {
-			if(contents)
-		});
+		List<int[][]> fullContents = statements.stream().map(e -> e.getFullContents()).collect(Collectors.toList());
 		List<WeightedPercentage> percentages = new ArrayList<>();
-		for(int i = 0; i<fullContents.size(); i++) {
-			for(int j = i+1; j<fullContents.size(); j++) {
-				percentages.add(new WeightedPercentage(Arra, weight))
+		for(int statementIndex = 0; statementIndex<fullContents.get(0).length; statementIndex++) {
+			for(int locationIndex1 = 0; locationIndex1<fullContents.size(); locationIndex1++) {
+				for(int locationIndex2 = locationIndex1+1; locationIndex2<fullContents.size(); locationIndex2++) {
+					percentages.add(new WeightedPercentage(diffPerc(fullContents.get(locationIndex1)[statementIndex], fullContents.get(locationIndex2)[statementIndex]), fullContents.get(0)[statementIndex].length));
+				}
 			}
 		}
-		return statements.stream().mapToDouble(e -> e.calculateVariability()).sum();
+		return calcAvg(percentages);
 	}
 }
