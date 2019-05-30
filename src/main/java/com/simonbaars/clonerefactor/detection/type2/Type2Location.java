@@ -1,5 +1,7 @@
 package com.simonbaars.clonerefactor.detection.type2;
 
+import org.apache.commons.lang.ArrayUtils;
+
 import com.simonbaars.clonerefactor.ast.interfaces.DeterminesNodeTokens;
 import com.simonbaars.clonerefactor.model.Sequence;
 import com.simonbaars.clonerefactor.model.location.Location;
@@ -105,5 +107,11 @@ public class Type2Location implements DeterminesNodeTokens {
 		if(mergedWith == null)
 			return this;
 		return mergedWith.getLast();
+	}
+
+	public int[] getFullContents() {
+		if(mergedWith!=null)
+			return ArrayUtils.addAll(contents.getContents(), mergedWith.getFullContents());
+		return contents.getContents();
 	}
 }
