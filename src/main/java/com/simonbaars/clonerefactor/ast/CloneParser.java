@@ -57,9 +57,8 @@ public class CloneParser implements Parser, RemovesDuplicates, WritesErrors {
 
 	private void doTypeSpecificTransformations(List<Sequence> findChains) {
 		doType2Transformations(findChains); 
-		if (Settings.get().getCloneType() == CloneType.TYPE3) {
+		if (Settings.get().getCloneType() == CloneType.TYPE3)
 			new Type3Opportunities().determineType3Opportunities(findChains);
-		}
 	}
 
 	private void doType2Transformations(List<Sequence> findChains) {
@@ -67,7 +66,7 @@ public class CloneParser implements Parser, RemovesDuplicates, WritesErrors {
 			IntStream.range(0, findChains.size()).forEach(i -> {
 				List<Sequence> determineVariability = new Type2Variability().determineVariability(findChains.remove(0));
 				for(Sequence s : determineVariability) {
-					if(removeDuplicatesOf(findChains, s))
+					if(removeDuplicatesOf(findChains, s) && s.size()>1)
 						findChains.add(s);
 				}
 			});
