@@ -34,11 +34,9 @@ public class Type2Variability implements CalculatesPercentages, ChecksThresholds
 		return findAllValidSubSequences(s, literals, equalityArray);
 	}
 
-	private List<Sequence> findDisplacedClones(List<Sequence> sequences, List<List<Compare>> literals, Map<Integer, int[][]> statementEqualityArrays) {
+	private List<Sequence> findDisplacedClones(Sequence s, List<List<Compare>> literals, Map<Integer, int[][]> statementEqualityArrays) {
 		Type2Location lastLoc = generateType2Locations(statementEqualityArrays);
-		for(Sequence buildingChains = new Sequence(); lastLoc!=null; lastLoc = lastLoc.getPrev()) {
-			
-		}
+		List<Type2Sequence> type2Sequences = new Type2CloneDetection().findChains(lastLoc);
 		return sequences;
 	}
 	
@@ -47,14 +45,14 @@ public class Type2Variability implements CalculatesPercentages, ChecksThresholds
 	}
 
 	private Type2Location generateType2Locations(Map<Integer, int[][]> statementEqualityArrays) {
-		final List<Type2Location> contentsList = new ArrayList<>();
+		final List<Type2Contents> contentsList = new ArrayList<>();
 		Type2Location prevStatement = null;
 		for(Entry<Integer, int[][]> statementEqualityEntry : statementEqualityArrays.entrySet()) {
 			int statementIndex = statementEqualityEntry.getKey();
 			int[][] equalityArray = statementEqualityEntry.getValue();
 			for(int locationIndex = 0; locationIndex<equalityArray.length; locationIndex++) {				
 				int[] locationContents = equalityArray[locationIndex];
-				Type2Location contents = new Type2Location(locationContents);
+				Type2Contents contents = new Type2Contents(locationContents);
 				if(contentsList.contains(contents))
 					contents = contentsList.get(contentsList.indexOf(contents));
 				else contentsList.add(contents);
@@ -68,34 +66,33 @@ public class Type2Variability implements CalculatesPercentages, ChecksThresholds
 		return prevStatement;
 	}
 
-	private List<Type2Location> generateWeightedPercentages(List<Type2Location> contentsList) {
+	private void generateWeightedPercentages(List<Type2Contents> contentsList) {
 		for(int i = 0; i<contentsList.size(); i++) {
 			for(int j = i+1; j<contentsList.size(); j++) {
-				Type2Location location1 = contentsList.get(i);
-				Type2Location location2 = contentsList.get(j);
-				int[] location1Contents = location1.getContents().getContents();
-				int[] location2Contents = location2.getContents().getContents();
+				Type2Contents location1 = contentsList.get(i);
+				Type2Contents location2 = contentsList.get(j);
+				int[] location1Contents = location1.getContents();
+				int[] location2Contents = location2.getContents();
 				if(location1Contents.length==location2Contents.length && IntStream.range(0, location1Contents.length).filter(k -> location1Contents[k] < 0 || location2Contents[k] < 0).noneMatch(k -> location1Contents[k]!=location2Contents[k])) {
 					WeightedPercentage p = new WeightedPercentage(diffPerc(location1Contents, location2Contents), location1Contents.length);
-					location1.getContents().getEqualityMap().put(location2.getContents(), p);
-					location2.getContents().getEqualityMap().put(location1.getContents(), p);
+					location1.getEqualityMap().put(location2, p);
+					location2.getEqualityMap().put(location1, p);
 				}
 			}
 		}
-		return contentsList;
 	}
 
 	private List<Sequence> findAllValidSubSequences(Sequence s, List<List<Compare>> literals, int[][] equalityArray) {
-		List<Sequence> sequences = new ArrayList<>();
+		//List<Sequence> sequences = new ArrayList<>();
 		Map<Integer, int[][]> statementEqualityArrays = findConnectedStatements(s, literals, equalityArray);
-		for(int[] relevantLocationIndices : powerset(IntStream.range(0, s.size()).toArray())){
+		/*for(int[] relevantLocationIndices : powerset(IntStream.range(0, s.size()).toArray())){
 			if(relevantLocationIndices.length>1)
 				sliceSequence(sequences, s, statementEqualityArrays, relevantLocationIndices);
 			else if (relevantLocationIndices.length == 1) 
 				//sliceSequence(sequences, s, statementEqualityArrays, new int[] {relevantLocationIndices[0], relevantLocationIndices[0]});
 				findInnerClones(sequences, s, statementEqualityArrays, relevantLocationIndices[0]);
-		}
-		return findDisplacedClones(sequences, literals, statementEqualityArrays);
+		}*/
+		return findDisplacedClones(s, literals, statementEqualityArrays);
 	}
 	
 	private void findInnerClones(List<Sequence> sequences, Sequence s, Map<Integer, int[][]> statementEqualityArrays, int index) {
