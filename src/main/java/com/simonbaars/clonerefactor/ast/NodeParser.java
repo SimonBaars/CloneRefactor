@@ -47,7 +47,7 @@ public class NodeParser implements Parser, DeterminesNodeTokens {
 	}
 	
 	
-	private void collectAlternateMetrics(MethodDeclaration n, CompilationUnit cu) {
+	private void collectAlternateMetrics(MethodDeclaration n, CompilationUnit cu) {	
 		final Location l = new Location(cu.getStorage().get().getPath(), n.getRange().get());
 		Sequence sequence = new Sequence(Collections.singletonList(l));
 		l.getContents().getNodes().add(n);
