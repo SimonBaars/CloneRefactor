@@ -7,6 +7,7 @@ import java.util.stream.IntStream;
 
 import com.simonbaars.clonerefactor.detection.interfaces.CalculatesPercentages;
 import com.simonbaars.clonerefactor.detection.interfaces.ChecksThresholds;
+import com.simonbaars.clonerefactor.model.Sequence;
 
 public class Type2Sequence implements CalculatesPercentages, ChecksThresholds {
 	private final List<Type2Location> statements;
@@ -82,5 +83,9 @@ public class Type2Sequence implements CalculatesPercentages, ChecksThresholds {
 			}
 		}
 		return calcAvg(percentages);
+	}
+	
+	public Sequence convertToSequence(Sequence s) {
+		return new Sequence(statements.stream().map(e -> e.convertToLocation(s)).collect(Collectors.toList()));
 	}
 }

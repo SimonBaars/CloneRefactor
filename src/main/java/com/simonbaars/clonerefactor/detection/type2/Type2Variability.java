@@ -37,11 +37,7 @@ public class Type2Variability implements CalculatesPercentages, ChecksThresholds
 	private List<Sequence> findDisplacedClones(Sequence s, List<List<Compare>> literals, Map<Integer, int[][]> statementEqualityArrays) {
 		Type2Location lastLoc = generateType2Locations(statementEqualityArrays);
 		List<Type2Sequence> type2Sequences = new Type2CloneDetection().findChains(lastLoc);
-		return sequences;
-	}
-	
-	private Sequence createSequence(List<List<Type2Location>> buildingSequence) {
-		return null;
+		return type2Sequences.stream().map(e -> e.convertToSequence(s)).collect(Collectors.toList());
 	}
 
 	private Type2Location generateType2Locations(Map<Integer, int[][]> statementEqualityArrays) {
