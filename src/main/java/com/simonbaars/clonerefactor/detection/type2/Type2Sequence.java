@@ -32,19 +32,8 @@ public class Type2Sequence implements CalculatesPercentages, ChecksThresholds {
 	}
 
 	private boolean tryToExpand(boolean left) {
-		List<Type2Location> expandedRow = new ArrayList<>();
-		for(Type2Location location : statements) {
-			if(!left) location = location.getLast();
-			if(left ? location.getPrev() == null : location.getNext() == null)
-				return false;
-			expandedRow.add(left ? location.getPrev() : location.getNext());
-		}
-		Type2Location firstPrev = expandedRow.get(0);
-		for(int i = 1; i<expandedRow.size(); i++) {
-			final int j = i;
-			if(firstPrev.getContents().getEqualityMap().keySet().stream().anyMatch(e -> e.getStatements().contains(expandedRow.get(j))))
-				return false;
-		}
+		List<Type2Location> expandedRow = determineExpandedRow(left);
+		if(expandedRow == null || !allRowsEqual(expandedRow)) return false;
 		List<Type2Location> locs = IntStream.range(0,expandedRow.size()).boxed().map(i -> new Type2Location(left ? expandedRow.get(i) : statements.get(i).getLast(), left ? statements.get(i) : expandedRow.get(i))).collect(Collectors.toList());
 		if(!left) {
 			IntStream.range(0,expandedRow.size()).forEach(i -> {
@@ -59,6 +48,27 @@ public class Type2Sequence implements CalculatesPercentages, ChecksThresholds {
 			statements.forEach(e -> e.getSecondToLast().setMergedWith(null));
 		}
 		return false;
+	}
+
+	private boolean allRowsEqual(List<Type2Location> expandedRow) {
+		Type2Location firstPrev = expandedRow.get(0);
+		for(int i = 1; i<expandedRow.size(); i++) {
+			final int j = i;
+			if(firstPrev.getContents().getEqualityMap().keySet().stream().anyMatch(e -> e.getStatements().contains(expandedRow.get(j))))
+				return false;
+		}
+		return true;
+	}
+
+	private List<Type2Location> determineExpandedRow(boolean left) {
+		List<Type2Location> expandedRow = new ArrayList<>();
+		for(Type2Location location : statements) {
+			if(!left) location = location.getLast();
+			if(left ? location.getPrev() == null : location.getNext() == null)
+				return null;
+			expandedRow.add(left ? location.getPrev() : location.getNext());
+		}
+		return expandedRow;
 	}
 	
 	public double calculateVariability(List<Type2Location> statements) {
