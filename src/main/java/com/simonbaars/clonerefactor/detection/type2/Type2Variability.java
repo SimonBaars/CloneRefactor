@@ -73,12 +73,12 @@ public class Type2Variability implements CalculatesPercentages, ChecksThresholds
 			for(int j = i+1; j<contentsList.size(); j++) {
 				Type2Location location1 = contentsList.get(i);
 				Type2Location location2 = contentsList.get(j);
-				int[] location1Contents = location1.getContents();
-				int[] location2Contents = location2.getContents();
+				int[] location1Contents = location1.getContents().getContents();
+				int[] location2Contents = location2.getContents().getContents();
 				if(location1Contents.length==location2Contents.length && IntStream.range(0, location1Contents.length).filter(k -> location1Contents[k] < 0 || location2Contents[k] < 0).noneMatch(k -> location1Contents[k]!=location2Contents[k])) {
 					WeightedPercentage p = new WeightedPercentage(diffPerc(location1Contents, location2Contents), location1Contents.length);
-					location1.getEqualityMap().put(location2, p);
-					location2.getEqualityMap().put(location1, p);
+					location1.getContents().getEqualityMap().put(location2.getContents(), p);
+					location2.getContents().getEqualityMap().put(location1.getContents(), p);
 				}
 			}
 		}
@@ -214,15 +214,15 @@ public class Type2Variability implements CalculatesPercentages, ChecksThresholds
 	}
 	
 	public Location getStatementLoc(Location l) {
-		if(l.getNextLine() != null)
-			return l.getNextLine().getPrev();
-		return l.getPrev().getNextLine();
+		if(l.getNext() != null)
+			return l.getNext().getPrev();
+		return l.getPrev().getNext();
 	}
 	
 	private Location findNodeLocation(Location l, Node n) {
 		if(l.getContents().getNodes().get(0) == n)
 			return l;
-		return findNodeLocation(l.getNextLine(), n);
+		return findNodeLocation(l.getNext(), n);
 	}
 
 	private List<WeightedPercentage> getWeightedPercentages(Sequence s, Map<Integer, int[][]> statementEqualityArrays, int[] relevantLocationIndices) {
