@@ -21,7 +21,7 @@ public class Type2CloneDetection  {
 			if(buildingChains.size() == 1 || (lastLoc.getPrev()!=null && lastLoc.getPrev().getLocationIndex()!=lastLoc.getLocationIndex()))
 				buildingChains.getSequence().clear();
 		}
-		clones.forEach(Type2Sequence::tryToExpand);
+		//clones.forEach(Type2Sequence::tryToExpand);
 		return clones;
 	}
 

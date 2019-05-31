@@ -123,7 +123,7 @@ public class Sequence implements Comparable<Sequence> {
 	}
 	
 	public void isValid() {
-		if(sequence.stream().map(e -> e.getContents().getNodes().size()).distinct().count()>1)
+		if(sequence.size()<2 || sequence.stream().map(e -> e.getContents().getNodes().size()).distinct().count()>1)
 			throw new IllegalStateException("Invalid Sequence "+this);
 	}
 }

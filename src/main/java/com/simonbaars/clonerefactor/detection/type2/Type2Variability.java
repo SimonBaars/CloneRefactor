@@ -7,9 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Objects;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -37,7 +35,7 @@ public class Type2Variability implements CalculatesPercentages, ChecksThresholds
 	private List<Sequence> findDisplacedClones(Sequence s, List<List<Compare>> literals, Map<Integer, int[][]> statementEqualityArrays) {
 		Type2Location lastLoc = generateType2Locations(statementEqualityArrays);
 		List<Type2Sequence> type2Sequences = new Type2CloneDetection().findChains(lastLoc);
-		return type2Sequences.stream().map(e -> e.convertToSequence(s)).collect(Collectors.toList());
+		return type2Sequences.stream().map(e -> e.convertToSequence(s)).peek(e -> e.isValid()).collect(Collectors.toList());
 	}
 
 	private Type2Location generateType2Locations(Map<Integer, int[][]> statementEqualityArrays) {
