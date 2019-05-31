@@ -1,7 +1,5 @@
 package com.simonbaars.clonerefactor.detection.type2;
 
-import org.apache.commons.lang.ArrayUtils;
-
 import com.simonbaars.clonerefactor.ast.interfaces.DeterminesNodeTokens;
 import com.simonbaars.clonerefactor.model.Sequence;
 import com.simonbaars.clonerefactor.model.location.Location;
@@ -12,7 +10,7 @@ public class Type2Location implements DeterminesNodeTokens {
 	private final Type2Contents contents;
 	private Type2Location next;
 	private final Type2Location prev;
-	private final Type2Location mergedWith;
+	private Type2Location mergedWith;
 	
 	public Type2Location(int locationIndex, int statementIndex, Type2Contents contents, Type2Location prev) {
 		super();
@@ -108,6 +106,13 @@ public class Type2Location implements DeterminesNodeTokens {
 			return this;
 		return mergedWith.getLast();
 	}
+	public Type2Location getSecondToLast() {
+		if(mergedWith == null)
+			throw new IllegalAccessError("This object has no second to last!");
+		if(mergedWith.mergedWith == null)
+			return this;
+		return mergedWith.getSecondToLast();
+	}
 
 	public int[][] getFullContents() {
 		int[][] fullContents = new int[size()][];
@@ -116,4 +121,14 @@ public class Type2Location implements DeterminesNodeTokens {
 			fullContents[i++] = loc.contents.getContents();
 		return fullContents;
 	}
+
+	public Type2Location getMergedWith() {
+		return mergedWith;
+	}
+
+	public void setMergedWith(Type2Location mergedWith) {
+		this.mergedWith = mergedWith;
+	}
+	
+	public void stop() {}
 }

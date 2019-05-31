@@ -31,22 +31,34 @@ public class Type2Sequence implements CalculatesPercentages, ChecksThresholds {
 		while(tryToExpand(true) || tryToExpand(false));
 	}
 
-	//TODO: Right
 	private boolean tryToExpand(boolean left) {
-		List<Type2Location> prevs = new ArrayList<>();
+		List<Type2Location> expandedRow = new ArrayList<>();
 		for(Type2Location location : statements) {
-			if(location.getPrev() == null)
+			if(!left) location = location.getLast();
+			if(left ? location.getPrev() == null : location.getNext() == null)
 				return false;
-			prevs.add(location.getPrev());
+			expandedRow.add(left ? location.getPrev() : location.getNext());
 		}
-		Type2Location firstPrev = prevs.get(0);
-		for(int i = 1; i<prevs.size(); i++) {
+		Type2Location firstPrev = expandedRow.get(0);
+		for(int i = 1; i<expandedRow.size(); i++) {
 			final int j = i;
-			if(firstPrev.getContents().getEqualityMap().keySet().stream().anyMatch(e -> e.getStatements().contains(prevs.get(j))))
+			if(firstPrev.getContents().getEqualityMap().keySet().stream().anyMatch(e -> e.getStatements().contains(expandedRow.get(j))))
 				return false;
 		}
-		List<Type2Location> locs = IntStream.range(0,prevs.size()).boxed().map(i -> new Type2Location(prevs.get(i), statements.get(i))).collect(Collectors.toList());
-		return checkType2VariabilityThreshold(calculateVariability(locs));
+		List<Type2Location> locs = IntStream.range(0,expandedRow.size()).boxed().map(i -> new Type2Location(left ? expandedRow.get(i) : statements.get(i).getLast(), left ? statements.get(i) : expandedRow.get(i))).collect(Collectors.toList());
+		if(!left) {
+			IntStream.range(0,expandedRow.size()).forEach(i -> {
+				if(statements.get(i).getMergedWith() == null) statements.set(i, locs.get(i)); 
+				else statements.get(i).getSecondToLast().setMergedWith(locs.get(i));
+			});
+		}
+		if(checkType2VariabilityThreshold(calculateVariability(locs))) {
+			if(left) IntStream.range(0,expandedRow.size()).forEach(i -> statements.set(i, locs.get(i)));
+			return true;
+		} else if (!left) {
+			statements.forEach(e -> e.getSecondToLast().setMergedWith(null));
+		}
+		return false;
 	}
 	
 	public double calculateVariability(List<Type2Location> statements) {
