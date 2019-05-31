@@ -86,6 +86,6 @@ public class Type2Sequence implements CalculatesPercentages, ChecksThresholds {
 	}
 	
 	public Sequence convertToSequence(Sequence s) {
-		return new Sequence(statements.stream().map(e -> e.convertToLocation(s)).collect(Collectors.toList()));
+		return new Sequence(statements.stream().map(e -> e.convertToLocation(s)).collect(Collectors.toList())).isValid();
 	}
 }

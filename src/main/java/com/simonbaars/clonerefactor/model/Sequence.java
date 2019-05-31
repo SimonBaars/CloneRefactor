@@ -2,7 +2,6 @@ package com.simonbaars.clonerefactor.model;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 
 import com.simonbaars.clonerefactor.metrics.enums.CloneRefactorability;
@@ -25,10 +24,6 @@ public class Sequence implements Comparable<Sequence> {
 	public Sequence() {
 		super();
 		this.sequence = new ArrayList<>();
-	}
-
-	public Sequence(Collection<Location> values) {
-		this(new ArrayList<>(values));
 	}
 
 	public Sequence(Sequence copy, int begin, int end) {
@@ -122,8 +117,9 @@ public class Sequence implements Comparable<Sequence> {
 		return refactorability;
 	}
 	
-	public void isValid() {
+	public Sequence isValid() {
 		if(sequence.size()<2 || sequence.stream().map(e -> e.getContents().getNodes().size()).distinct().count()>1)
 			throw new IllegalStateException("Invalid Sequence "+this);
+		return this;
 	}
 }
