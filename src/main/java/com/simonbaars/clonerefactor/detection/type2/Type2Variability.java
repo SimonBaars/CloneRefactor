@@ -33,11 +33,13 @@ public class Type2Variability implements CalculatesPercentages, ChecksThresholds
 
 	private Type2Location generateType2Locations(Map<Integer, int[][]> statementEqualityArrays) {
 		final List<Type2Contents> contentsList = new ArrayList<>();
+		int amountOfLocations = statementEqualityArrays.values().iterator().next().length;
 		Type2Location prevStatement = null;
-		for(Entry<Integer, int[][]> statementEqualityEntry : statementEqualityArrays.entrySet()) {
-			int statementIndex = statementEqualityEntry.getKey();
-			int[][] equalityArray = statementEqualityEntry.getValue();
-			for(int locationIndex = 0; locationIndex<equalityArray.length; locationIndex++) {				
+		for(int locationIndex = 0; locationIndex<amountOfLocations; locationIndex++) {	
+			for(Entry<Integer, int[][]> statementEqualityEntry : statementEqualityArrays.entrySet()) {
+				int statementIndex = statementEqualityEntry.getKey();
+				int[][] equalityArray = statementEqualityEntry.getValue();
+						
 				int[] locationContents = equalityArray[locationIndex];
 				Type2Contents contents = new Type2Contents(locationContents);
 				if(contentsList.contains(contents))
