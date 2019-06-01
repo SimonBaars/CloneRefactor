@@ -2,6 +2,7 @@ package com.simonbaars.clonerefactor.detection.type2;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -35,7 +36,7 @@ public class Type2Sequence implements CalculatesPercentages, ChecksThresholds {
 
 	private boolean tryToExpand(boolean left) {
 		List<Type2Location> expandedRow = determineExpandedRow(left);
-		if(expandedRow == null || !allRowsEqual(expandedRow)) return false;
+		if(expandedRow.isEmpty() || !allRowsEqual(expandedRow)) return false;
 		List<Type2Location> locs = IntStream.range(0,expandedRow.size()).boxed().map(i -> new Type2Location(left ? expandedRow.get(i) : statements.get(i).getLast(), left ? statements.get(i) : expandedRow.get(i))).collect(Collectors.toList());
 		if(!left) {
 			IntStream.range(0,expandedRow.size()).forEach(i -> {
@@ -67,7 +68,7 @@ public class Type2Sequence implements CalculatesPercentages, ChecksThresholds {
 		for(Type2Location location : statements) {
 			if(!left) location = location.getLast();
 			if(left ? location.getPrev() == null : location.getNext() == null)
-				return null;
+				return Collections.emptyList();
 			expandedRow.add(left ? location.getPrev() : location.getNext());
 		}
 		return expandedRow;
