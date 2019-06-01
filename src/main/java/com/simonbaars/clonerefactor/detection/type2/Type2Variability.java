@@ -126,17 +126,20 @@ public class Type2Variability implements CalculatesPercentages, ChecksThresholds
 	}
 
 	private int[][] createEqualityArray(List<List<Compare>> literals) {
+		final int START_NUMBER=1; //Basically any non negative number that's not zero.
 		int[][] equalityArray = new int[literals.size()][literals.get(0).size()];
 		final List<Compare> differentCompareLiterals = new ArrayList<>();
-		int curr = 2;
+		int curr = START_NUMBER;
 		for(int j = 0; j<literals.get(0).size(); j++) {
 			for(int i = 0; i<literals.size(); i++) {
 				int index = differentCompareLiterals.indexOf(literals.get(i).get(j));
 				if(index == -1) {
 					equalityArray[i][j] = literals.get(i).get(j).doesType2Compare() ? curr++ : -curr++;
 					differentCompareLiterals.add(literals.get(i).get(j));
+					System.out.println(literals.get(i).get(j)+" = "+equalityArray[i][j]);
 				} else {
-					equalityArray[i][j] = index;
+					index=index+START_NUMBER;
+					equalityArray[i][j] = literals.get(i).get(j).doesType2Compare() ? index : -index;
 				}
 			}
 		}
