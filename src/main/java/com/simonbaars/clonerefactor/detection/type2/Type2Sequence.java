@@ -1,6 +1,7 @@
 package com.simonbaars.clonerefactor.detection.type2;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -87,5 +88,10 @@ public class Type2Sequence implements CalculatesPercentages, ChecksThresholds {
 	
 	public Sequence convertToSequence(Sequence s) {
 		return new Sequence(statements.stream().map(e -> e.convertToLocation(s)).collect(Collectors.toList())).isValid();
+	}
+
+	@Override
+	public String toString() {
+		return "Type2Sequence [statements=" + Arrays.toString(statements.toArray()) + "]";
 	}
 }

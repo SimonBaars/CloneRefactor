@@ -76,7 +76,7 @@ public class Type2Location implements DeterminesNodeTokens {
 	@Override
 	public String toString() {
 		return "Type2Statement [locationIndex=" + locationIndex + ", statementIndex=" + statementIndex + ", contents="
-				+ contents + "]";
+				+ contents + ", mergedWith="+mergedWith+"]";
 	}
 
 	public Type2Location getPrev() {

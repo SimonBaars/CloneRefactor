@@ -28,7 +28,7 @@ public class Type2CloneDetection  {
 	private Type2Sequence makeValid(Type2Location lastLoc, Type2Sequence buildingChains, Type2Sequence newClones) {
 		Map<Type2Location /*oldClones*/, Type2Location /*newClones*/> validChains = buildingChains.getSequence().stream().distinct().filter(oldClone -> 
 			newClones.getSequence().stream().anyMatch(newClone -> newClone.getLocationIndex() == oldClone.getLocationIndex() && oldClone.getPrev()!=null && oldClone.getLocationIndex() == oldClone.getPrev().getLocationIndex()
-			&& newClone.getStatementIndex() == oldClone.getPrev().getLocationIndex())).collect(Collectors.toMap(e -> e, Type2Location::getPrev));
+			&& newClone.getStatementIndex() == oldClone.getPrev().getStatementIndex())).collect(Collectors.toMap(e -> e, Type2Location::getPrev));
 		
 		collectFinishedClones(buildingChains, newClones, validChains);
 		mergeLocationsOnBasisOfChains(newClones, validChains);
