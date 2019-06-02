@@ -23,9 +23,9 @@ public class CloneRefactorability implements MetricEnum<Refactorability>, Requir
 	public Refactorability get(Sequence sequence) {
 		if(new CloneContents().get(sequence)!=CloneContents.ContentsType.PARTIALMETHOD)
 			return Refactorability.NOEXTRACTIONBYCONTENTTYPE;
-		if(sequence.getSequence().stream().anyMatch(e -> e.getContents().getNodes().stream().anyMatch(f -> complexControlFlow(f))))
+		if(sequence.getLocations().stream().anyMatch(e -> e.getContents().getNodes().stream().anyMatch(f -> complexControlFlow(f))))
 			return Refactorability.COMPLEXCONTROLFLOW;
-		for(Location location : sequence.getSequence()) {
+		for(Location location : sequence.getLocations()) {
 			for(Node n : location.getContents().getNodes()) {
 				List<Node> children = childrenToParse(n);
 				if(children.stream().anyMatch(e -> !isExcluded(e) && !location.getContents().getNodes().contains(e))) {

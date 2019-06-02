@@ -11,7 +11,7 @@ public class FileLocations {
 	private final Sequence seq;
 	
 	public FileLocations (Sequence seq) {
-		Collections.sort(seq.getSequence());
+		Collections.sort(seq.getLocations());
 		this.seq = seq;
 	}
 
@@ -19,7 +19,7 @@ public class FileLocations {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-        for (Location e : seq.getSequence()) 
+        for (Location e : seq.getLocations()) 
         	result = prime*result + (e==null ? 0 : e.getFile().hashCode());
 		return result;
 	}
@@ -33,11 +33,11 @@ public class FileLocations {
 		if (getClass() != obj.getClass())
 			return false;
 		FileLocations other = (FileLocations) obj;
-		return seq.getSequence().size() == seq.getSequence().size() && IntStream.range(0, seq.getSequence().size()).allMatch(i -> seq.getSequence().get(i).getFile().equals(other.seq.getSequence().get(i).getFile()));
+		return seq.getLocations().size() == seq.getLocations().size() && IntStream.range(0, seq.getLocations().size()).allMatch(i -> seq.getLocations().get(i).getFile().equals(other.seq.getLocations().get(i).getFile()));
 	}
 
 	public List<Location> getLocs() {
-		return seq.getSequence();
+		return seq.getLocations();
 	}
 
 	public Sequence getSeq() {

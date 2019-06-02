@@ -167,11 +167,11 @@ public class CloneRelation implements MetricEnum<RelationType> {
 	@Override
 	public RelationType get(Sequence clone) {
 		List<RelationType> locations = new ArrayList<>();
-		for(int i = 0; i<clone.getSequence().get(0).getContents().getNodes().size(); i++) {
-			for(int j = 0; j<clone.getSequence().size(); j++) {
-				for(int z = j+1; z<clone.getSequence().size(); z++) {
+		for(int i = 0; i<clone.getLocations().get(0).getContents().getNodes().size(); i++) {
+			for(int j = 0; j<clone.getLocations().size(); j++) {
+				for(int z = j+1; z<clone.getLocations().size(); z++) {
 					//System.out.println("sequenceSize = "+clone.getSequence().size()+", nodeSize = "+clone.getSequence().get(0).getContents().getNodes().size()+", i = "+i+", j = "+j+", z = "+z);
-					locations.add(getLocation(clone.getSequence().get(j).getContents().getNodes().get(i), clone.getSequence().get(z).getContents().getNodes().get(i)));
+					locations.add(getLocation(clone.getLocations().get(j).getContents().getNodes().get(i), clone.getLocations().get(z).getContents().getNodes().get(i)));
 				}
 			}
 		}

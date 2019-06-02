@@ -3,6 +3,7 @@ package com.simonbaars.clonerefactor.model;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.ToIntFunction;
 
 import com.simonbaars.clonerefactor.metrics.enums.CloneRefactorability;
 import com.simonbaars.clonerefactor.metrics.enums.CloneRefactorability.Refactorability;
@@ -11,48 +12,48 @@ import com.simonbaars.clonerefactor.metrics.enums.CloneRelation.RelationType;
 import com.simonbaars.clonerefactor.model.location.Location;
 
 public class Sequence implements Comparable<Sequence> {
-	final List<Location> sequence;
+	private final List<Location> locations;
 	
 	private RelationType relationType;
 	private Refactorability refactorability;
 
 	public Sequence(List<Location> collection) {
 		super();
-		this.sequence = collection;
+		this.locations = collection;
 	}
 
 	public Sequence() {
 		super();
-		this.sequence = new ArrayList<>();
+		this.locations = new ArrayList<>();
 	}
 
 	public Sequence(Sequence copy, int begin, int end) {
-		this.sequence = copy.sequence.subList(begin, end);
+		this.locations = copy.locations.subList(begin, end);
 	}
 
-	public List<Location> getSequence() {
-		return sequence;
+	public List<Location> getLocations() {
+		return locations;
 	}
 	
 	public Sequence add(Location l) {
-		sequence.add(l);
+		locations.add(l);
 		return this; //For method chaining
 	}
 
 	public int size() {
-		return sequence.size();
+		return locations.size();
 	}
 
 	@Override
 	public String toString() {
-		return "Sequence [sequence=" + Arrays.toString(sequence.toArray()) + "]";
+		return "Sequence [sequence=" + Arrays.toString(locations.toArray()) + "]";
 	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((sequence == null) ? 0 : sequence.hashCode());
+		result = prime * result + ((locations == null) ? 0 : locations.hashCode());
 		return result;
 	}
 
@@ -65,36 +66,35 @@ public class Sequence implements Comparable<Sequence> {
 		if (getClass() != obj.getClass())
 			return false;
 		Sequence other = (Sequence) obj;
-		if (sequence == null) {
-			if (other.sequence != null)
-				return false;
-		} else if (!sequence.equals(other.sequence))
-			return false;
-		return true;
+		return locations == null ? other.locations == null : locations.equals(other.locations);
 	}
 
 	public int getNodeSize() {
-		return sequence.isEmpty() ? 0 : sequence.get(0).getAmountOfNodes();
+		return locations.isEmpty() ? 0 : locations.get(0).getAmountOfNodes();
 	}
 	
 	public int getEffectiveLineSize() {
-		return sequence.isEmpty() ? 0 : sequence.get(0).getEffectiveLines();
+		return locations.isEmpty() ? 0 : locations.get(0).getEffectiveLines();
 	}
 	
 	public int getTotalNodeVolume() {
-		return sequence.stream().mapToInt(e -> e.getAmountOfNodes()).sum();
+		return getTotalVolume(Location::getAmountOfNodes);
 	}
 	
 	public int getTotalTokenVolume() {
-		return sequence.stream().mapToInt(e -> e.getAmountOfTokens()).sum();
+		return getTotalVolume(Location::getAmountOfTokens);
 	}
 	
 	public int getTotalEffectiveLineVolume() {
-		return sequence.stream().mapToInt(e -> e.getEffectiveLines()).sum();
+		return getTotalVolume(Location::getEffectiveLines);
+	}
+	
+	public int getTotalVolume(ToIntFunction<? super Location> mapper) {
+		return locations.stream().mapToInt(mapper).sum();
 	}
 
 	public Location getAny() {
-		return sequence.get(0);
+		return locations.get(0);
 	}
 
 	@Override
@@ -118,7 +118,7 @@ public class Sequence implements Comparable<Sequence> {
 	}
 	
 	public Sequence isValid() {
-		if(sequence.size()<2 || sequence.stream().map(e -> e.getContents().getNodes().size()).distinct().count()>1)
+		if(locations.size()<2 || locations.stream().map(e -> e.getContents().getNodes().size()).distinct().count()>1)
 			throw new IllegalStateException("Invalid Sequence "+this);
 		return this;
 	}

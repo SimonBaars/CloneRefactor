@@ -1,6 +1,7 @@
 package com.simonbaars.clonerefactor.detection.type2;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -20,7 +21,7 @@ public class Type2Variability implements CalculatesPercentages, ChecksThresholds
 	public List<Sequence> determineVariability(Sequence s) {
 		List<List<Compare>> literals = createLiteralList(s);
 		int[][] equalityArray = createEqualityArray(literals);
-		if(globalThresholdsMet(equalityArray, s.getSequence().stream().mapToInt(e -> e.getContents().getTokens().size()).sum())) // We first check the thresholds for the entire sequence. If those are not met, we will try to create smaller sequences
+		if(globalThresholdsMet(equalityArray, s.getLocations().stream().mapToInt(e -> e.getContents().getTokens().size()).sum())) // We first check the thresholds for the entire sequence. If those are not met, we will try to create smaller sequences
 			return Collections.singletonList(s);
 		return findAllValidSubSequences(s, literals, equalityArray);
 	}
@@ -42,8 +43,10 @@ public class Type2Variability implements CalculatesPercentages, ChecksThresholds
 						
 				int[] locationContents = equalityArray[locationIndex];
 				Type2Contents contents = new Type2Contents(locationContents);
-				if(contentsList.contains(contents))
+				if(contentsList.contains(contents)) {
 					contents = contentsList.get(contentsList.indexOf(contents));
+					System.out.println("Found "+Arrays.toString(locationContents)+" at "+locationIndex+", "+statementIndex+" and "+contents.getStatements().get(0).getLocationIndex()+", "+contents.getStatements().get(0).getStatementIndex());
+				}
 				else contentsList.add(contents);
 				final Type2Location statement = new Type2Location(locationIndex, statementIndex, contents, prevStatement);
 				contents.getStatements().add(statement);
@@ -98,13 +101,14 @@ public class Type2Variability implements CalculatesPercentages, ChecksThresholds
 	//Creates a per statement equality array.
 	private Map<Integer, int[][]> findConnectedStatements(Sequence s, List<List<Compare>> literals, int[][] equalityArray) {
 		Map<Integer, int[][]> statementEqualityArrays = new HashMap<>();
-		for(int currNodeIndex = 0, startCompareIndex = 0, currCompareIndex = 0; currNodeIndex<s.getAny().getContents().getNodes().size(); currNodeIndex++) {
-			for(;currCompareIndex<literals.get(0).size() && getLocationForNode(s.getAny(), currNodeIndex).getRange().contains(literals.get(0).get(currCompareIndex).getRange()); currCompareIndex++);
-			statementEqualityArrays.put(currNodeIndex, new int[s.size()][currCompareIndex-startCompareIndex]);
+		for(int statementIndex = 0, startCompareIndex = 0, currCompareIndex = 0; statementIndex<s.getAny().getContents().getNodes().size(); statementIndex++) {
+			for(;currCompareIndex<literals.get(0).size() && getLocationForNode(s.getAny(), statementIndex).getRange().contains(literals.get(0).get(currCompareIndex).getRange()); currCompareIndex++);
+			statementEqualityArrays.put(statementIndex, new int[s.size()][currCompareIndex-startCompareIndex]);
 			for(int locationIndex = 0; locationIndex<s.size(); locationIndex++) {
 				for(int compareIndex = startCompareIndex; compareIndex<currCompareIndex; compareIndex++) {
-					statementEqualityArrays.get(currNodeIndex)[locationIndex][compareIndex-startCompareIndex] = equalityArray[locationIndex][compareIndex];
+					statementEqualityArrays.get(statementIndex)[locationIndex][compareIndex-startCompareIndex] = equalityArray[locationIndex][compareIndex];
 				}
+				System.out.println(locationIndex+", "+statementIndex+" = "+Arrays.toString(statementEqualityArrays.get(statementIndex)[locationIndex]));
 			}
 			startCompareIndex = currCompareIndex;
 		}
@@ -148,7 +152,7 @@ public class Type2Variability implements CalculatesPercentages, ChecksThresholds
 
 	private List<List<Compare>> createLiteralList(Sequence s) {
 		List<List<Compare>> literals = new ArrayList<>();
-		for(Location l : s.getSequence()) {
+		for(Location l : s.getLocations()) {
 			List<Compare> literals2 = l.getContents().getCompare();
 			literals.add(literals2);
 			literals2.stream().filter(Compare::doesType2Compare).forEach(e -> e.setCloneType(CloneType.TYPE1));

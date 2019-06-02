@@ -30,7 +30,7 @@ public class CloneLocation implements MetricEnum<LocationType> {
 
 	@Override
 	public LocationType get(Sequence sequence) {
-		return get(sequence.getSequence().get(0));
+		return get(sequence.getLocations().get(0));
 	}
 	
 	public LocationType get(Location l) {

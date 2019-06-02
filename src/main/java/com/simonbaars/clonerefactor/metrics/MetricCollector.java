@@ -81,7 +81,7 @@ public class MetricCollector {
 		clone.setMetrics(relationFinder, extractFinder);
 		metrics.amountPerRelation.increment(clone.getRelationType());
 		metrics.amountPerExtract.increment(clone.getRefactorability());
-		for(Location l : clone.getSequence()) {
+		for(Location l : clone.getLocations()) {
 			reportClonedLocation(l);
 		}
 	}
