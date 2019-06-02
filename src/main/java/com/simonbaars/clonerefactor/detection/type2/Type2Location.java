@@ -1,6 +1,7 @@
 package com.simonbaars.clonerefactor.detection.type2;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -32,15 +33,14 @@ public class Type2Location implements DeterminesNodeTokens {
 		this.contents.addAll(key.getContents());
 		this.prev = type2Statement.prev;
 		this.next = type2Statement.next;
-		this.mergedWith = key;
 	}
 
 	public int getLocationIndex() {
 		return locationIndex;
 	}
 	
-	public int getStatementIndex() {
-		return statementIndex;
+	public int[] getStatementIndices() {
+		return statementIndices.toArray();
 	}
 	
 	public List<Type2Contents> getContents() {
@@ -60,7 +60,7 @@ public class Type2Location implements DeterminesNodeTokens {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + locationIndex;
-		result = prime * result + statementIndex;
+		result = prime * result + Arrays.hashCode(getStatementIndices());
 		return result;
 	}
 	
@@ -75,13 +75,13 @@ public class Type2Location implements DeterminesNodeTokens {
 		Type2Location other = (Type2Location) obj;
 		if (locationIndex != other.locationIndex)
 			return false;
-		return statementIndex == other.statementIndex;
+		return Arrays.equals(getStatementIndices(), other.getStatementIndices());
 	}
 
 	@Override
 	public String toString() {
-		return "Type2Statement [locationIndex=" + locationIndex + ", statementIndex=" + statementIndex + ", contents="
-				+ contents + ", mergedWith="+mergedWith+"]";
+		return "Type2Statement [locationIndex=" + locationIndex + ", statementIndices=" + statementIndices + ", contents="
+				+ Arrays.toString(contents.toArray()) + "]";
 	}
 
 	public Type2Location getPrev() {
@@ -93,9 +93,7 @@ public class Type2Location implements DeterminesNodeTokens {
 	}
 
 	public int size() {
-		if(mergedWith == null)
-			return 1;
-		return mergedWith.size() + 1;
+		return statementIndices.size();
 	}
 	
 	public Location convertToLocation(Sequence sequence) {
@@ -103,31 +101,36 @@ public class Type2Location implements DeterminesNodeTokens {
 	}
 
 	private Location convertToLocation(Location location) {
-		return new Location(location.getFile(), getFullInstance(new ArrayList<>()).stream().map(e -> location.getContents().getNodes().get(statementIndex)).toArray(Node[]::new));
+		return new Location(location.getFile(), statementIndices.stream().boxed().map(i -> location.getContents().getNodes().get(i)).toArray(Node[]::new));
 	}
 	
 	public Type2Location getLast() {
-		if(mergedWith == null)
-			return this;
-		return mergedWith.getLast();
+		return getLocationByIndex(statementIndices.getEnd());
 	}
-	public Type2Location getSecondToLast() {
-		if(mergedWith == null)
-			throw new IllegalAccessError("This object has no second to last!");
-		if(mergedWith.mergedWith == null)
+	
+	private Type2Location getLocationByIndex(int index) {
+		if(index == statementIndices.getStart()) {
 			return this;
-		return mergedWith.getSecondToLast();
+		} else if(index>statementIndices.getStart()) {
+			return this.next.getLocationByIndex(index);
+		} 
+		return this.prev.getLocationByIndex(index);
+	}
+
+	public Type2Location getSecondToLast() {
+		if(size()<2)
+			throw new IllegalAccessError("This object has no second to last!");
+		return getLocationByIndex(statementIndices.getEnd()-1);
 	}
 
 	public int[][] getFullContents() {
 		int[][] fullContents = new int[size()][];
-		int i = 0;
-		for(Type2Location loc = this;loc!=null; loc=loc.mergedWith)
-			fullContents[i++] = loc.contents.getContents();
+		for(int i = 0; i<contents.size(); i++)
+			fullContents[i] = contents.get(i).getContents();	
 		return fullContents;
 	}
 
-	public Type2Location getMergedWith() {
+	/*public Type2Location getMergedWith() {
 		return mergedWith;
 	}
 
@@ -145,5 +148,5 @@ public class Type2Location implements DeterminesNodeTokens {
 		if(amountOfNodes>1)
 			return mergedWith.splitAt(amountOfNodes-1);
 		return this;
-	}
+	}*/
 }
