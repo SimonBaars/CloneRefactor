@@ -56,7 +56,7 @@ public class IndexRange {
 	}
 	
 	public IntStream stream() {
-		return IntStream.range(start, end);
+		return IntStream.range(start, end+1);
 	}
 	
 	public int[] toArray(){
