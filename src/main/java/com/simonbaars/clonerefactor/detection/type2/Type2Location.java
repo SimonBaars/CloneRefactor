@@ -26,13 +26,13 @@ public class Type2Location implements DeterminesNodeTokens {
 		this.prev = prev;
 	}
 	
-	public Type2Location(Type2Location type2Statement, Type2Location key) {
-		this.locationIndex = type2Statement.locationIndex;
-		this.statementIndices = key.statementIndices.withStart(type2Statement.statementIndices.getStart());
-		this.contents = new ArrayList<>(type2Statement.contents);
-		this.contents.addAll(key.getContents());
-		this.prev = type2Statement.prev;
-		this.next = type2Statement.next;
+	public Type2Location(Type2Location statementLeft, Type2Location statementRight) {
+		this.locationIndex = statementLeft.locationIndex;
+		this.statementIndices = new IndexRange(statementLeft.statementIndices.getStart(), statementRight.statementIndices.getEnd());
+		this.contents = new ArrayList<>(statementLeft.contents);
+		this.contents.addAll(statementRight.getContents());
+		this.prev = statementLeft.prev;
+		this.next = statementLeft.next;
 	}
 
 	public Type2Location(Type2Location type2Location, int amountOfNodes) {

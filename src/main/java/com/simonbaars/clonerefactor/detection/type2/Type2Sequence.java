@@ -37,18 +37,12 @@ public class Type2Sequence implements CalculatesPercentages, ChecksThresholds {
 	private boolean tryToExpand(boolean left) {
 		List<Type2Location> expandedRow = determineExpandedRow(left);
 		if(expandedRow.isEmpty() || !allRowsEqual(expandedRow)) return false;
-		List<Type2Location> locs = IntStream.range(0,expandedRow.size()).boxed().map(i -> new Type2Location(left ? expandedRow.get(i) : statements.get(i).getLast(), left ? statements.get(i) : expandedRow.get(i))).collect(Collectors.toList());
-		if(!left) {
-			IntStream.range(0,expandedRow.size()).forEach(i -> {
-				if(statements.get(i).getMergedWith() == null) statements.set(i, locs.get(i)); 
-				else statements.get(i).getSecondToLast().setMergedWith(locs.get(i));
-			});
-		}
-		if(checkType2VariabilityThreshold(calculateVariability(locs))) {
-			if(left) IntStream.range(0,expandedRow.size()).forEach(i -> statements.set(i, locs.get(i)));
+		List<Type2Location> locs = IntStream.range(0,expandedRow.size()).boxed().map(i -> 
+			new Type2Location(left ? expandedRow.get(i) : statements.get(i), left ? statements.get(i) : expandedRow.get(i))
+		).collect(Collectors.toList());
+		if(checkType2VariabilityThreshold(calculateVariability(statements))) {
+			IntStream.range(0,expandedRow.size()).forEach(i -> statements.set(i, locs.get(i)));
 			return true;
-		} else if (!left) {
-			statements.forEach(e -> e.getSecondToLast().setMergedWith(null));
 		}
 		return false;
 	}
