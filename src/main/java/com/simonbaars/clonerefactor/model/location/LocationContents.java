@@ -2,7 +2,7 @@ package com.simonbaars.clonerefactor.model.location;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -44,21 +44,18 @@ public class LocationContents implements FiltersTokens, HasRange, HasCompareList
 		this(contents, contents.range);
 	}
 
-	public LocationContents(Node n) {
-		this.tokens = calculateTokensFromNode(n);
-		this.nodes = Collections.singletonList(n);
-		if(Settings.get().useLiteratureTypeDefinitions())
-			this.compare = Collections.emptyList();
-		else {
-			if(Settings.get().getScope()!=Scope.ALL && (getMethod(n)==null || (Settings.get().getScope() == Scope.METHODBODYONLY && n instanceof MethodDeclaration))) {
-				this.compare = Collections.singletonList(new CompareFalse());
-			} else {
-				this.compare = new ArrayList<>();
-				createComparablesByNode(tokens, n);
-			}
+	public LocationContents(Node...nodes) {
+		this.nodes = new ArrayList<>();
+		this.tokens = new ArrayList<>();
+		this.compare = new ArrayList<>();
+		for(Node n : nodes) {
+			this.tokens.addAll(calculateTokensFromNode(n));
+			this.nodes.add(n);
+			if(Settings.get().getScope()!=Scope.ALL && (getMethod(n)==null || (Settings.get().getScope() == Scope.METHODBODYONLY && n instanceof MethodDeclaration)))
+				this.compare.add(new CompareFalse());
+			else if(!Settings.get().useLiteratureTypeDefinitions()) createComparablesByNode(tokens, n); 
 		}
-		this.range = getRange(tokens);
-		
+		this.range = getRange(this.tokens);
 	}
 
 	public LocationContents(LocationContents contents, Range r) {
@@ -92,8 +89,7 @@ public class LocationContents implements FiltersTokens, HasRange, HasCompareList
 		if(!(o instanceof LocationContents))
 			return false;
 		LocationContents other = (LocationContents)o;
-		if(Settings.get().useLiteratureTypeDefinitions()) return tokens.equals(other.tokens);
-		return compare.equals(other.compare);
+		return Settings.get().useLiteratureTypeDefinitions() && compare.isEmpty() ? tokens.equals(other.tokens) : compare.equals(other.compare);
 	}
 	
 	public String getEffectiveTokenTypes() {
@@ -106,7 +102,7 @@ public class LocationContents implements FiltersTokens, HasRange, HasCompareList
 
 	@Override
 	public int hashCode() {
-		if(Settings.get().useLiteratureTypeDefinitions()) return tokens.hashCode();
+		if(Settings.get().useLiteratureTypeDefinitions() && compare.isEmpty()) return tokens.hashCode();
 		int prime = 31;
 		int result = 1;
 		for(Compare node : compare) {
@@ -117,7 +113,7 @@ public class LocationContents implements FiltersTokens, HasRange, HasCompareList
 
 	@Override
 	public String toString() {
-		return getTokens().stream().map(e -> e.asString()).collect(Collectors.joining());
+		return getTokens().stream().map(JavaToken::asString).collect(Collectors.joining());
 	}
 
 	public List<JavaToken> getTokens() {
@@ -174,10 +170,19 @@ public class LocationContents implements FiltersTokens, HasRange, HasCompareList
 	}
 	
 	public void isValid() {
-		if(tokens.stream().anyMatch(e -> !range.contains(e.getRange().get()))) {
-			throw new IllegalStateException("Invalid Contents "+this);
-		}
+		if(tokens.stream().anyMatch(e -> !range.contains(e.getRange().get())))
+			throw new IllegalStateException("Invalid Token "+this);
+		if(hasDuplicate(nodes))
+			throw new IllegalStateException("Invalid Node "+this);
 	}
+	
+	public<T> boolean hasDuplicate(List<T> list) {
+		Set<T> tempSet = new HashSet<>();
+		for(T t : list)
+			if (!tempSet.add(t)) return true;
+		return false;
+	}
+
 
 	public void setTokens(TokenRange tokenRange) {
 		StreamSupport.stream(tokenRange.spliterator(), false).filter(this::isComparableToken).forEach(e -> getTokens().add(e));
