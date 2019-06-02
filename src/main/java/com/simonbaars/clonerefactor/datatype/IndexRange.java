@@ -1,4 +1,4 @@
-package com.simonbaars.clonerefactor.detection.type2;
+package com.simonbaars.clonerefactor.datatype;
 
 import java.util.stream.IntStream;
 
@@ -69,5 +69,9 @@ public class IndexRange {
 	
 	public IndexRange withEnd(int end) {
 		return new IndexRange(this.start, end);
+	}
+	
+	public int size() {
+		return end-start+1;
 	}
 }

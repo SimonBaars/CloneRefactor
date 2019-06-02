@@ -67,21 +67,24 @@ public class Type2CloneDetection  {
 
 	private void createClone(List<Type2Location> l) {
 		Type2Sequence newSequence = new Type2Sequence(l);
-		if(l.size()>1) {
+		if(l.size()>1)
 			clones.add(newSequence);
-		}
 	}
 
 	private void addAllNonEndedLocations(Type2Sequence buildingChains, int amountOfNodes, List<Type2Location> l) {
 		for(Type2Location l2 : buildingChains.getSequence()) {
 			if(!l.contains(l2) && l2.size()>=amountOfNodes) {
-				l.add(l2);
+				l.add(setSize(l2, amountOfNodes));
 			}
 		}
 	}
 
+	private Type2Location setSize(Type2Location l2, int amountOfNodes) {
+		return l2.withSize(amountOfNodes);
+	}
+
 	private Type2Sequence collectClones(Type2Location lastLoc) {
-		return new Type2Sequence(lastLoc.getContents().getStatementsWithinThreshold());
+		return new Type2Sequence(lastLoc.getFirstContents().getStatementsWithinThreshold());
 	}
 }
 

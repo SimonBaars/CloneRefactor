@@ -57,7 +57,7 @@ public class Type2Sequence implements CalculatesPercentages, ChecksThresholds {
 		Type2Location firstPrev = expandedRow.get(0);
 		for(int i = 1; i<expandedRow.size(); i++) {
 			final int j = i;
-			if(firstPrev.getContents().getEqualityMap().keySet().stream().anyMatch(e -> e.getStatements().contains(expandedRow.get(j))))
+			if(firstPrev.getFirstContents().getEqualityMap().keySet().stream().anyMatch(e -> e.getStatements().contains(expandedRow.get(j))))
 				return false;
 		}
 		return true;

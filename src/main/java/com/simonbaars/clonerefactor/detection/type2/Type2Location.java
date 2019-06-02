@@ -35,6 +35,14 @@ public class Type2Location implements DeterminesNodeTokens {
 		this.next = type2Statement.next;
 	}
 
+	public Type2Location(Type2Location type2Location, int amountOfNodes) {
+		this.locationIndex = type2Location.locationIndex;
+		this.statementIndices = type2Location.statementIndices.withEnd(type2Location.statementIndices.getStart()+amountOfNodes-1);
+		this.contents = type2Location.getContents().subList(0, amountOfNodes);
+		this.next = type2Location.next;
+		this.prev = type2Location.prev;
+	}
+
 	public int getLocationIndex() {
 		return locationIndex;
 	}
@@ -128,6 +136,18 @@ public class Type2Location implements DeterminesNodeTokens {
 		for(int i = 0; i<contents.size(); i++)
 			fullContents[i] = contents.get(i).getContents();	
 		return fullContents;
+	}
+
+	public Type2Contents getFirstContents() {
+		return contents.get(0);
+	}
+
+	public int getStatementIndex() {
+		return statementIndices.getStart();
+	}
+
+	public Type2Location withSize(int amountOfNodes) {
+		return new Type2Location(this, amountOfNodes);
 	}
 
 	/*public Type2Location getMergedWith() {
