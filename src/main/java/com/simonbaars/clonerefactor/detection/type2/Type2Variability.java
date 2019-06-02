@@ -43,10 +43,8 @@ public class Type2Variability implements CalculatesPercentages, ChecksThresholds
 						
 				int[] locationContents = equalityArray[locationIndex];
 				Type2Contents contents = new Type2Contents(locationContents);
-				if(contentsList.contains(contents)) {
+				if(contentsList.contains(contents))
 					contents = contentsList.get(contentsList.indexOf(contents));
-					System.out.println("Found "+Arrays.toString(locationContents)+" at "+locationIndex+", "+statementIndex+" and "+contents.getStatements().get(0).getLocationIndex()+", "+contents.getStatements().get(0).getStatementIndex());
-				}
 				else contentsList.add(contents);
 				final Type2Location statement = new Type2Location(locationIndex, statementIndex, contents, prevStatement);
 				contents.getStatements().add(statement);
@@ -108,7 +106,6 @@ public class Type2Variability implements CalculatesPercentages, ChecksThresholds
 				for(int compareIndex = startCompareIndex; compareIndex<currCompareIndex; compareIndex++) {
 					statementEqualityArrays.get(statementIndex)[locationIndex][compareIndex-startCompareIndex] = equalityArray[locationIndex][compareIndex];
 				}
-				System.out.println(locationIndex+", "+statementIndex+" = "+Arrays.toString(statementEqualityArrays.get(statementIndex)[locationIndex]));
 			}
 			startCompareIndex = currCompareIndex;
 		}
@@ -140,7 +137,6 @@ public class Type2Variability implements CalculatesPercentages, ChecksThresholds
 				if(index == -1) {
 					equalityArray[i][j] = literals.get(i).get(j).doesType2Compare() ? curr++ : -curr++;
 					differentCompareLiterals.add(literals.get(i).get(j));
-					System.out.println(literals.get(i).get(j)+" = "+equalityArray[i][j]);
 				} else {
 					index=index+START_NUMBER;
 					equalityArray[i][j] = literals.get(i).get(j).doesType2Compare() ? index : -index;
