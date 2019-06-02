@@ -24,40 +24,40 @@ public class CloneDetection implements ChecksThresholds, RemovesDuplicates, Dete
 	public List<Sequence> findChains(Location lastLoc) {
 		for(Sequence buildingChains = new Sequence(); lastLoc!=null; lastLoc = lastLoc.getPrev()) {
 			Sequence newClones = collectClones(lastLoc);
-			if(!buildingChains.getSequence().isEmpty() || newClones.size()>1)
+			if(!buildingChains.getLocations().isEmpty() || newClones.size()>1)
 				buildingChains = makeValid(lastLoc, buildingChains, newClones); //Because of the recent additions the current sequence may be invalidated
 			if(buildingChains.size() == 1 || (lastLoc.getPrev()!=null && lastLoc.getPrev().getFile()!=lastLoc.getFile()))
-				buildingChains.getSequence().clear();
+				buildingChains.getLocations().clear();
 		}
 		return clones;
 	}
 
 
 	private Sequence makeValid(Location lastLoc, Sequence oldClones, Sequence newClones) {
-		Map<Location /*oldClones*/, Location /*newClones*/> validChains = oldClones.getSequence().stream().distinct().filter(oldClone -> 
-			newClones.getSequence().stream().anyMatch(newClone -> newClone.getFile() == oldClone.getFile() && oldClone.getPrev()!=null && oldClone.getFile() == oldClone.getPrev().getFile()
+		Map<Location /*oldClones*/, Location /*newClones*/> validChains = oldClones.getLocations().stream().distinct().filter(oldClone -> 
+			newClones.getLocations().stream().anyMatch(newClone -> newClone.getFile() == oldClone.getFile() && oldClone.getPrev()!=null && oldClone.getFile() == oldClone.getPrev().getFile()
 		    && newClone.getContents().getRange()!= null && newClone.getContents().getRange().equals(oldClone.getPrev().getContents().getRange()))).collect(Collectors.toMap(e -> e, Location::getPrev));
 		
 		collectFinishedClones(oldClones, newClones, validChains);
 		mergeLocationsOnBasisOfChains(newClones, validChains);
 		
 		if(lastLoc.getPrev()==null || lastLoc.getPrev().getFile()!=lastLoc.getFile()) {
-			checkValidClones(newClones, newClones.getSequence());
+			checkValidClones(newClones, newClones.getLocations());
 		}
 		
 		return newClones;
 	}
 
 	private void collectFinishedClones(Sequence oldClones, Sequence newClones, Map<Location, Location> validChains) {
-		if(validChains.size()!=oldClones.size() && !oldClones.getSequence().isEmpty()) {
-			checkValidClones(oldClones, oldClones.getSequence().stream().filter(e -> !newClones.getSequence().contains(e.getPrev())).collect(Collectors.toList()));
+		if(validChains.size()!=oldClones.size() && !oldClones.getLocations().isEmpty()) {
+			checkValidClones(oldClones, oldClones.getLocations().stream().filter(e -> !newClones.getLocations().contains(e.getPrev())).collect(Collectors.toList()));
 		}
 	}
 
 	private void mergeLocationsOnBasisOfChains(Sequence newClones, Map<Location, Location> validChains) {
 		for(Entry<Location, Location> validChain : validChains.entrySet()) {
 			Location l = validChain.getValue().mergeWith(validChain.getKey());
-			newClones.getSequence().set(newClones.getSequence().indexOf(validChain.getValue()), l);
+			newClones.getLocations().set(newClones.getLocations().indexOf(validChain.getValue()), l);
 			validChain.setValue(l);
 		}
 	}
@@ -82,7 +82,7 @@ public class CloneDetection implements ChecksThresholds, RemovesDuplicates, Dete
 	}
 
 	private void addAllNonEndedLocations(Sequence oldClones, int amountOfNodes, List<Location> l) {
-		for(Location l2 : oldClones.getSequence()) {
+		for(Location l2 : oldClones.getLocations()) {
 			if(!l.contains(l2) && l2.getAmountOfNodes()>=amountOfNodes) {
 				l.add(new Location(l2, getRange(l2, amountOfNodes)));
 			}

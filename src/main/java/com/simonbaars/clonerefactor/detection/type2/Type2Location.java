@@ -1,5 +1,9 @@
 package com.simonbaars.clonerefactor.detection.type2;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import com.github.javaparser.ast.Node;
 import com.simonbaars.clonerefactor.ast.interfaces.DeterminesNodeTokens;
 import com.simonbaars.clonerefactor.model.Sequence;
 import com.simonbaars.clonerefactor.model.location.Location;
@@ -94,11 +98,11 @@ public class Type2Location implements DeterminesNodeTokens {
 	}
 	
 	public Location convertToLocation(Sequence sequence) {
-		return convertToLocation(sequence.getSequence().get(locationIndex));
+		return convertToLocation(sequence.getLocations().get(locationIndex));
 	}
 
 	private Location convertToLocation(Location location) {
-		return new Location(location.getFile(), location.getContents().getNodes().get(statementIndex));
+		return new Location(location.getFile(), getFullInstance(new ArrayList<>()).stream().map(e -> location.getContents().getNodes().get(statementIndex)).toArray(Node[]::new));
 	}
 	
 	public Type2Location getLast() {
@@ -130,5 +134,9 @@ public class Type2Location implements DeterminesNodeTokens {
 		this.mergedWith = mergedWith;
 	}
 	
-	public void stop() {}
+	public List<Type2Location> getFullInstance(List<Type2Location> type2Location) {
+		type2Location.add(this);
+		if(mergedWith!=null) mergedWith.getFullInstance(type2Location);
+		return type2Location;
+	}
 }

@@ -50,9 +50,9 @@ public class Location implements Comparable<Location>, HasRange {
 		this.prev = prevLocation;
 	}
 
-	public Location(Path file, Node node) {
+	public Location(Path file, Node...nodes) {
 		this.file = file;
-		this.contents = new LocationContents(node);
+		this.contents = new LocationContents(nodes);
 		this.range = this.contents.getRange();
 	}
 
