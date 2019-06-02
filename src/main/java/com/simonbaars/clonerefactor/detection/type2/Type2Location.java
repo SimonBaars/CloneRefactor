@@ -1,34 +1,35 @@
 package com.simonbaars.clonerefactor.detection.type2;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import com.github.javaparser.ast.Node;
 import com.simonbaars.clonerefactor.ast.interfaces.DeterminesNodeTokens;
+import com.simonbaars.clonerefactor.datatype.IndexRange;
 import com.simonbaars.clonerefactor.model.Sequence;
 import com.simonbaars.clonerefactor.model.location.Location;
 
 public class Type2Location implements DeterminesNodeTokens {
 	private final int locationIndex;
-	private final int statementIndex;
-	private final Type2Contents contents;
+	private final IndexRange statementIndices;
+	private final List<Type2Contents> contents;
 	private Type2Location next;
 	private final Type2Location prev;
-	private Type2Location mergedWith;
 	
 	public Type2Location(int locationIndex, int statementIndex, Type2Contents contents, Type2Location prev) {
 		super();
 		this.locationIndex = locationIndex;
-		this.statementIndex = statementIndex;
-		this.contents = contents;
+		this.statementIndices = new IndexRange(statementIndex);
+		this.contents = Collections.singletonList(contents);
 		this.prev = prev;
-		this.mergedWith = null;
 	}
 	
 	public Type2Location(Type2Location type2Statement, Type2Location key) {
 		this.locationIndex = type2Statement.locationIndex;
-		this.statementIndex = type2Statement.statementIndex;
-		this.contents = type2Statement.contents;
+		this.statementIndices = key.statementIndices.withStart(type2Statement.statementIndices.getStart());
+		this.contents = new ArrayList<>(type2Statement.contents);
+		this.contents.addAll(key.getContents());
 		this.prev = type2Statement.prev;
 		this.next = type2Statement.next;
 		this.mergedWith = key;
@@ -42,7 +43,7 @@ public class Type2Location implements DeterminesNodeTokens {
 		return statementIndex;
 	}
 	
-	public Type2Contents getContents() {
+	public List<Type2Contents> getContents() {
 		return contents;
 	}
 	
@@ -138,5 +139,11 @@ public class Type2Location implements DeterminesNodeTokens {
 		type2Location.add(this);
 		if(mergedWith!=null) mergedWith.getFullInstance(type2Location);
 		return type2Location;
+	}
+
+	public Type2Location splitAt(int amountOfNodes) {
+		if(amountOfNodes>1)
+			return mergedWith.splitAt(amountOfNodes-1);
+		return this;
 	}
 }
