@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.IntStream;
 
 import com.github.javaparser.ast.Node;
 import com.simonbaars.clonerefactor.ast.interfaces.DeterminesNodeTokens;
@@ -11,7 +12,7 @@ import com.simonbaars.clonerefactor.datatype.IndexRange;
 import com.simonbaars.clonerefactor.model.Sequence;
 import com.simonbaars.clonerefactor.model.location.Location;
 
-public class Type2Location implements DeterminesNodeTokens {
+public class Type2Location implements DeterminesNodeTokens, Comparable<Type2Location> {
 	private final int locationIndex;
 	private final IndexRange statementIndices;
 	private final List<Type2Contents> contents;
@@ -47,7 +48,11 @@ public class Type2Location implements DeterminesNodeTokens {
 		return locationIndex;
 	}
 	
-	public int[] getStatementIndices() {
+	public IndexRange getStatementIndices() {
+		return statementIndices;
+	}
+	
+	public int[] getStatementArray() {
 		return statementIndices.toArray();
 	}
 	
@@ -68,7 +73,7 @@ public class Type2Location implements DeterminesNodeTokens {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + locationIndex;
-		result = prime * result + Arrays.hashCode(getStatementIndices());
+		result = prime * result + Arrays.hashCode(getStatementArray());
 		return result;
 	}
 	
@@ -83,7 +88,7 @@ public class Type2Location implements DeterminesNodeTokens {
 		Type2Location other = (Type2Location) obj;
 		if (locationIndex != other.locationIndex)
 			return false;
-		return Arrays.equals(getStatementIndices(), other.getStatementIndices());
+		return Arrays.equals(getStatementArray(), other.getStatementArray());
 	}
 
 	@Override
@@ -148,6 +153,14 @@ public class Type2Location implements DeterminesNodeTokens {
 
 	public Type2Location withSize(int amountOfNodes) {
 		return new Type2Location(this, amountOfNodes);
+	}
+
+	@Override
+	public int compareTo(Type2Location o) {
+		int res;
+		if((res = Integer.compare(locationIndex, o.locationIndex)) != 0)
+			return res;
+		return Integer.compare(statementIndices.getStart(), o.statementIndices.getStart());
 	}
 
 	/*public Type2Location getMergedWith() {

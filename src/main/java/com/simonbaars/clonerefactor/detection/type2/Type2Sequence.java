@@ -30,27 +30,47 @@ public class Type2Sequence implements CalculatesPercentages, ChecksThresholds {
 		return statements.size();
 	}
 	
-	public int[] getLocationArray() {
+	public int[] locationArray() {
 		return statements.stream().mapToInt(e -> e.getLocationIndex()).sorted().toArray();
 	}
 	
+	public Object[] transformedEqualityArray(boolean left, int transform) {
+		return statements.stream().sorted().map(e -> new int[] {e.getLocationIndex(), left ? e.getStatementIndices().getStart()-transform : e.getStatementIndices().getEnd()+transform}).toArray();
+	}
+	
 	public void tryToExpand(List<Type2Sequence> sequences) {
-		while(tryToExpand(true).canContinue());
-		while(tryToExpand(false).canContinue());
+		while(tryToExpand(sequences, true));
+		while(tryToExpand(sequences, false));
 	}
 
-	private ExpandResult tryToExpand(boolean left) {
-		List<Type2Location> expandedRow = determineExpandedRow(left);
-		if(expandedRow.isEmpty() || !allRowsEqual(expandedRow)) return ExpandResult.IMPOSSIBLE;
+	private boolean tryToExpand(List<Type2Sequence> sequences, boolean left) {
+		List<Type2Location> expandedRow = checkSequenceExpansionOpportunities(sequences, determineExpandedRow(left), left);
+		if(expandedRow.isEmpty() || !allRowsEqual(expandedRow)) return false;
 		while(true) {
-			List<Type2Location> locs = IntStream.range(0,expandedRow.size()).boxed().map(i -> 
-				new Type2Location(left ? expandedRow.get(i) : statements.get(i), left ? statements.get(i) : expandedRow.get(i))
-			).collect(Collectors.toList());
+			List<Type2Location> locs = mergeLocations(expandedRow, statements, left);
 			if(checkType2VariabilityThreshold(calculateVariability(statements))) {
 				IntStream.range(0,expandedRow.size()).forEach(i -> statements.set(i, locs.get(i)));
-				return ExpandResult.SUCCESS;
+				return true;
 			}
 		}
+	}
+	
+	private Type2Location mergeLocations(Type2Location loc1, Type2Location loc2, boolean left) {
+		return new Type2Location(left ? loc1 : loc2, left ? loc2 : loc1);
+	}
+	
+	public List<Type2Location> mergeLocations(List<Type2Location> l1, List<Type2Location> l2, boolean left){
+		return IntStream.range(0,l1.size()).boxed().map(i -> mergeLocations(l1.get(i), l2.get(i), left)).collect(Collectors.toList());
+	}
+
+	private List<Type2Location> checkSequenceExpansionOpportunities(List<Type2Sequence> clones, List<Type2Location> expandedRow, boolean left) {
+		Type2Sequence expanded = new Type2Sequence(expandedRow);
+		for(Type2Sequence clone : clones) {
+			if(Arrays.deepEquals(clone.transformedEqualityArray(left, 0), expanded.transformedEqualityArray(!left, 1))) {
+				return mergeLocations(clone.getSequence(), expanded.getSequence(), left);
+			}
+		}
+		return expandedRow;
 	}
 
 	private boolean allRowsEqual(List<Type2Location> expandedRow) {
