@@ -93,7 +93,7 @@ public class Type2Sequence implements CalculatesPercentages, ChecksThresholds, C
 			expandedRow.add(left ? location.getPrev() : location.getNext());
 		}
 		if(expandedRow.stream().anyMatch(e -> e.size()>1)) {
-			throw new IllegalStateException("expandedRow may never contains locations with more than one statement!");
+			throw new IllegalStateException("expandedRow may never contain locations with more than one statement!");
 		}
 		return expandedRow;
 	}
