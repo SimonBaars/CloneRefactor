@@ -34,6 +34,7 @@ public class Type2Test extends TestCase {
     @Override
     public void setUp() {
     	Settings.get().setCloneType(CloneType.TYPE2);
+    	Settings.get().setType2VariabilityPercentage(5);
     }
     
     public void testCustom() {
@@ -70,6 +71,11 @@ public class Type2Test extends TestCase {
     public void testSingle() {
     	System.out.println("testSingle");
     	System.out.println(testProject("Single"));
+    }
+    
+    public void testPartCloned() {
+    	System.out.println("testPartCloned");
+    	System.out.println(testProject("PartCloned"));
     }
 
 	private DetectionResults testProject(String project) {
