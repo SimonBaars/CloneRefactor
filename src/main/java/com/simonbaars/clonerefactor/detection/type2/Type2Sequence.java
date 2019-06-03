@@ -46,13 +46,16 @@ public class Type2Sequence implements CalculatesPercentages, ChecksThresholds, C
 
 	private void tryToExpand(List<Type2Sequence> clones, boolean left) {
 		List<Type2Location> curStatements = new ArrayList<>(statements);
+		List<Type2Sequence> mergedClones = new ArrayList<>();
 		List<Type2Location> expandedRow;
 		while(!(expandedRow = determineExpandedRow(curStatements, left)).isEmpty()) {
-			curStatements = checkSequenceExpansionOpportunities(clones, mergeLocations(expandedRow, curStatements, left), left);
+			curStatements = checkSequenceExpansionOpportunities(mergedClones, clones, mergeLocations(expandedRow, curStatements, left), left);
 			if(!allRowsComparable(curStatements)) return;
 			if(checkType2VariabilityThreshold(calculateVariability(curStatements))) {
 				this.statements.clear();
 				this.statements.addAll(curStatements);
+				clones.removeAll(mergedClones);
+				mergedClones.clear();
 			} 
 		}
 	}
@@ -65,11 +68,12 @@ public class Type2Sequence implements CalculatesPercentages, ChecksThresholds, C
 		return IntStream.range(0,l1.size()).boxed().map(i -> mergeLocations(l1.get(i), l2.get(i), left)).collect(Collectors.toList());
 	}
 
-	private List<Type2Location> checkSequenceExpansionOpportunities(List<Type2Sequence> clones, List<Type2Location> expandedRow, boolean left) {
+	private List<Type2Location> checkSequenceExpansionOpportunities(List<Type2Sequence> mergedClones, List<Type2Sequence> clones, List<Type2Location> expandedRow, boolean left) {
 		Type2Sequence expanded = new Type2Sequence(expandedRow);
 		for(Type2Sequence clone : clones) {
 			if(Arrays.deepEquals(clone.transformedEqualityArray(left, 0), expanded.transformedEqualityArray(!left, 1))) {
 				System.out.println("CAN MERGE "+expanded);
+				mergedClones.add(clone);
 				return mergeLocations(expanded.getSequence(), clone.getSequence(), left);
 			}
 		}
@@ -107,6 +111,7 @@ public class Type2Sequence implements CalculatesPercentages, ChecksThresholds, C
 				percentages.add(new WeightedPercentage(diffPerc(fullContents1, fullContents2), fullContents1.length));
 			}
 		}
+		System.out.println(calcAvg(percentages));
 		return calcAvg(percentages);
 	}
 	
