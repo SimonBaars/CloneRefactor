@@ -98,14 +98,13 @@ public class Type2Sequence implements CalculatesPercentages, ChecksThresholds, C
 		return expandedRow;
 	}
 	
-	public double calculateVariability(List<Type2Location> statements) {
-		List<int[][]> fullContents = statements.stream().map(Type2Location::getFullContents).collect(Collectors.toList());
+	public double calculateVariability(List<Type2Location> locations) {
 		List<WeightedPercentage> percentages = new ArrayList<>();
-		for(int statementIndex = 0; statementIndex<fullContents.size(); statementIndex++) {
-			for(int locationIndex1 = 0; locationIndex1<fullContents.get(statementIndex).length; locationIndex1++) {
-				for(int locationIndex2 = locationIndex1+1; locationIndex2<fullContents.get(statementIndex).length; locationIndex2++) {
-					percentages.add(new WeightedPercentage(diffPerc(fullContents.get(statementIndex)[locationIndex1], fullContents.get(statementIndex)[locationIndex2]), fullContents.get(statementIndex)[locationIndex1].length));
-				}
+		for(int locationIndex1 = 0; locationIndex1<locations.size(); locationIndex1++) {
+			int[] fullContents1 = statements.get(locationIndex1).contentArray();
+			for(int locationIndex2 = locationIndex1+1; locationIndex2<size(); locationIndex2++) {
+				int[] fullContents2 = statements.get(locationIndex2).contentArray();
+				percentages.add(new WeightedPercentage(diffPerc(fullContents1, fullContents2), fullContents1.length));
 			}
 		}
 		return calcAvg(percentages);
