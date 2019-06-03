@@ -1,6 +1,7 @@
 package com.simonbaars.clonerefactor.detection.type2;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -21,7 +22,7 @@ public class Type2CloneDetection  {
 			if(buildingChains.size() == 1 || (lastLoc.getPrev()!=null && lastLoc.getPrev().getLocationIndex()!=lastLoc.getLocationIndex()))
 				buildingChains.getSequence().clear();
 		}
-		//clones.forEach(Type2Sequence::tryToExpand);
+		clones.forEach(e -> e.tryToExpand(Collections.unmodifiableList(clones)));
 		return clones;
 	}
 
