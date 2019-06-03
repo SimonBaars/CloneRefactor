@@ -8,10 +8,11 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import com.simonbaars.clonerefactor.detection.interfaces.CalculatesPercentages;
+import com.simonbaars.clonerefactor.detection.interfaces.ChecksForComparability;
 import com.simonbaars.clonerefactor.detection.interfaces.ChecksThresholds;
 import com.simonbaars.clonerefactor.model.Sequence;
 
-public class Type2Sequence implements CalculatesPercentages, ChecksThresholds {
+public class Type2Sequence implements CalculatesPercentages, ChecksThresholds, ChecksForComparability {
 	private final List<Type2Location> statements;
 
 	public Type2Sequence() {
@@ -46,9 +47,9 @@ public class Type2Sequence implements CalculatesPercentages, ChecksThresholds {
 	private void tryToExpand(List<Type2Sequence> clones, boolean left) {
 		List<Type2Location> curStatements = new ArrayList<>(statements);
 		List<Type2Location> expandedRow;
-		while(!(expandedRow = checkSequenceExpansionOpportunities(clones, determineExpandedRow(left), left)).isEmpty()) {
-			if(!allRowsEqual(expandedRow)) return;
-			curStatements = mergeLocations(expandedRow, curStatements, left);
+		while(!(expandedRow = determineExpandedRow(curStatements, left)).isEmpty()) {
+			curStatements = checkSequenceExpansionOpportunities(clones, mergeLocations(expandedRow, curStatements, left), left);
+			if(!allRowsComparable(curStatements)) return;
 			if(checkType2VariabilityThreshold(calculateVariability(curStatements))) {
 				this.statements.clear();
 				this.statements.addAll(curStatements);
@@ -68,13 +69,14 @@ public class Type2Sequence implements CalculatesPercentages, ChecksThresholds {
 		Type2Sequence expanded = new Type2Sequence(expandedRow);
 		for(Type2Sequence clone : clones) {
 			if(Arrays.deepEquals(clone.transformedEqualityArray(left, 0), expanded.transformedEqualityArray(!left, 1))) {
-				return mergeLocations(clone.getSequence(), expanded.getSequence(), left);
+				System.out.println("CAN MERGE "+expanded);
+				return mergeLocations(expanded.getSequence(), clone.getSequence(), left);
 			}
 		}
 		return expandedRow;
 	}
 
-	private boolean allRowsEqual(List<Type2Location> expandedRow) {
+	private boolean allRowsComparable(List<Type2Location> expandedRow) {
 		Type2Location firstPrev = expandedRow.get(0);
 		for(int i = 1; i<expandedRow.size(); i++) {
 			final int j = i;
@@ -84,13 +86,16 @@ public class Type2Sequence implements CalculatesPercentages, ChecksThresholds {
 		return true;
 	}
 
-	private List<Type2Location> determineExpandedRow(boolean left) {
+	private List<Type2Location> determineExpandedRow(List<Type2Location> curStatements, boolean left) {
 		List<Type2Location> expandedRow = new ArrayList<>();
-		for(Type2Location location : statements) {
+		for(Type2Location location : curStatements) {
 			if(!left) location = location.getLast();
 			if(left ? location.getPrev() == null : location.getNext() == null)
 				return Collections.emptyList();
 			expandedRow.add(left ? location.getPrev() : location.getNext());
+		}
+		if(expandedRow.stream().anyMatch(e -> e.size()>1)) {
+			throw new IllegalStateException("expandedRow may never contains locations with more than one statement!");
 		}
 		return expandedRow;
 	}

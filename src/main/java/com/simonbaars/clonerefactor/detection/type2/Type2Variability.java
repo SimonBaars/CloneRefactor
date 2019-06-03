@@ -7,16 +7,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 import com.simonbaars.clonerefactor.compare.Compare;
 import com.simonbaars.clonerefactor.detection.interfaces.CalculatesPercentages;
+import com.simonbaars.clonerefactor.detection.interfaces.ChecksForComparability;
 import com.simonbaars.clonerefactor.detection.interfaces.ChecksThresholds;
 import com.simonbaars.clonerefactor.model.Sequence;
 import com.simonbaars.clonerefactor.model.location.Location;
 import com.simonbaars.clonerefactor.settings.CloneType;
 
-public class Type2Variability implements CalculatesPercentages, ChecksThresholds {
+public class Type2Variability implements CalculatesPercentages, ChecksThresholds, ChecksForComparability {
 	public List<Sequence> determineVariability(Sequence s) {
 		List<List<Compare>> literals = createLiteralList(s);
 		int[][] equalityArray = createEqualityArray(literals);
@@ -39,7 +39,6 @@ public class Type2Variability implements CalculatesPercentages, ChecksThresholds
 			for(Entry<Integer, int[][]> statementEqualityEntry : statementEqualityArrays.entrySet()) {
 				int statementIndex = statementEqualityEntry.getKey();
 				int[][] equalityArray = statementEqualityEntry.getValue();
-						
 				int[] locationContents = equalityArray[locationIndex];
 				Type2Contents contents = new Type2Contents(locationContents);
 				if(contentsList.contains(contents))
@@ -60,10 +59,8 @@ public class Type2Variability implements CalculatesPercentages, ChecksThresholds
 			for(int j = i+1; j<contentsList.size(); j++) {
 				Type2Contents location1 = contentsList.get(i);
 				Type2Contents location2 = contentsList.get(j);
-				int[] location1Contents = location1.getContents();
-				int[] location2Contents = location2.getContents();
-				if(location1Contents.length==location2Contents.length && IntStream.range(0, location1Contents.length).filter(k -> location1Contents[k] < 0 || location2Contents[k] < 0).noneMatch(k -> location1Contents[k]!=location2Contents[k])) {
-					WeightedPercentage p = new WeightedPercentage(diffPerc(location1Contents, location2Contents), location1Contents.length);
+				if(isComparable(location1, location2)) {
+					WeightedPercentage p = new WeightedPercentage(diffPerc(location1.getContents(), location2.getContents()), location1.getContents().length);
 					location1.getEqualityMap().put(location2, p);
 					location2.getEqualityMap().put(location1, p);
 				}
