@@ -3,8 +3,13 @@ package com.simonbaars.clonerefactor.detection.interfaces;
 import java.util.stream.IntStream;
 
 import com.simonbaars.clonerefactor.detection.type2.Type2Contents;
+import com.simonbaars.clonerefactor.detection.type2.Type2Location;
 
 public interface ChecksForComparability {
+	public default boolean isComparable(Type2Location location1, Type2Location location2) {
+		return isComparable(location1.contentArray(), location2.contentArray());
+	}
+	
 	public default boolean isComparable(Type2Contents location1Contents, Type2Contents location2Contents) {
 		return isComparable(location1Contents.getContents(), location2Contents.getContents());
 	}

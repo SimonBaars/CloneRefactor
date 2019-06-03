@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.IntStream;
 
 import com.github.javaparser.ast.Node;
 import com.simonbaars.clonerefactor.ast.interfaces.DeterminesNodeTokens;
@@ -29,7 +30,7 @@ public class Type2Location implements DeterminesNodeTokens, Comparable<Type2Loca
 	public Type2Location(Type2Location statementLeft, Type2Location statementRight) {
 		if(statementLeft.locationIndex!=statementRight.locationIndex) {
 			throw new IllegalStateException("Left and right are in a different location!");
-		} else if(Arrays.stream(statementLeft.getStatementArray()).anyMatch(left -> Arrays.stream(statementRight.getStatementArray()).anyMatch(right -> left>=right))) {
+		} else if(Arrays.stream(statementLeft.statementArray()).anyMatch(left -> Arrays.stream(statementRight.statementArray()).anyMatch(right -> left>=right))) {
 			throw new IllegalStateException("Left may never have a statement that is bigger than right!");
 		}  
 		this.locationIndex = statementLeft.locationIndex;
@@ -56,8 +57,12 @@ public class Type2Location implements DeterminesNodeTokens, Comparable<Type2Loca
 		return statementIndices;
 	}
 	
-	public int[] getStatementArray() {
+	public int[] statementArray() {
 		return statementIndices.toArray();
+	}
+	
+	public int[] contentArray() {
+		return contents.stream().flatMapToInt(e -> IntStream.of(e.getContents())).toArray();
 	}
 	
 	public List<Type2Contents> getContents() {
@@ -77,7 +82,7 @@ public class Type2Location implements DeterminesNodeTokens, Comparable<Type2Loca
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + locationIndex;
-		result = prime * result + Arrays.hashCode(getStatementArray());
+		result = prime * result + Arrays.hashCode(statementArray());
 		return result;
 	}
 	
@@ -92,7 +97,7 @@ public class Type2Location implements DeterminesNodeTokens, Comparable<Type2Loca
 		Type2Location other = (Type2Location) obj;
 		if (locationIndex != other.locationIndex)
 			return false;
-		return Arrays.equals(getStatementArray(), other.getStatementArray());
+		return Arrays.equals(statementArray(), other.statementArray());
 	}
 
 	@Override

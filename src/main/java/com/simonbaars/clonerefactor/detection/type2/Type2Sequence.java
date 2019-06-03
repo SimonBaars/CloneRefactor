@@ -77,10 +77,8 @@ public class Type2Sequence implements CalculatesPercentages, ChecksThresholds, C
 	}
 
 	private boolean allRowsComparable(List<Type2Location> expandedRow) {
-		Type2Location firstPrev = expandedRow.get(0);
 		for(int i = 1; i<expandedRow.size(); i++) {
-			final int j = i;
-			if(firstPrev.getFirstContents().getEqualityMap().keySet().stream().anyMatch(e -> e.getStatements().contains(expandedRow.get(j))))
+			if(!isComparable(expandedRow.get(0), expandedRow.get(i)))
 				return false;
 		}
 		return true;
