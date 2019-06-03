@@ -6,9 +6,9 @@ public enum ExpandResult {
 	IMPOSSIBLE; /* If there are no more rows to expand to, which makes further expansion impossible. */
 	
 	/**
-	 * Checks whether we can try to expand further, in order to have a chance to successfully expand in the future. If type 2R clones seem to be very slow, we might (for performance reasons) chance the implementation to FAILED or IMPOSSIBLE. However, this lessens the correctness of the result.
+	 * Checks whether we can try to expand further, in order to have a chance to successfully expand in the future. If type 2R clones seem to be very slow, we might (for performance reasons) chance the implementation to only SUCCESS. However, this lessens the correctness of the result.
 	 */
-	public boolean cannotContinue() {
-		return this == IMPOSSIBLE;
+	public boolean canContinue() {
+		return this == SUCCESS || this == FAILED;
 	}
 }

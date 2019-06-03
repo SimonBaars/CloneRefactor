@@ -30,21 +30,27 @@ public class Type2Sequence implements CalculatesPercentages, ChecksThresholds {
 		return statements.size();
 	}
 	
-	public void tryToExpand() {
-		while(tryToExpand(true) || tryToExpand(false));
+	public int[] getLocationArray() {
+		return statements.stream().mapToInt(e -> e.getLocationIndex()).sorted().toArray();
+	}
+	
+	public void tryToExpand(List<Type2Sequence> sequences) {
+		while(tryToExpand(true).canContinue());
+		while(tryToExpand(false).canContinue());
 	}
 
-	private boolean tryToExpand(boolean left) {
+	private ExpandResult tryToExpand(boolean left) {
 		List<Type2Location> expandedRow = determineExpandedRow(left);
-		if(expandedRow.isEmpty() || !allRowsEqual(expandedRow)) return false;
-		List<Type2Location> locs = IntStream.range(0,expandedRow.size()).boxed().map(i -> 
-			new Type2Location(left ? expandedRow.get(i) : statements.get(i), left ? statements.get(i) : expandedRow.get(i))
-		).collect(Collectors.toList());
-		if(checkType2VariabilityThreshold(calculateVariability(statements))) {
-			IntStream.range(0,expandedRow.size()).forEach(i -> statements.set(i, locs.get(i)));
-			return true;
+		if(expandedRow.isEmpty() || !allRowsEqual(expandedRow)) return ExpandResult.IMPOSSIBLE;
+		while(true) {
+			List<Type2Location> locs = IntStream.range(0,expandedRow.size()).boxed().map(i -> 
+				new Type2Location(left ? expandedRow.get(i) : statements.get(i), left ? statements.get(i) : expandedRow.get(i))
+			).collect(Collectors.toList());
+			if(checkType2VariabilityThreshold(calculateVariability(statements))) {
+				IntStream.range(0,expandedRow.size()).forEach(i -> statements.set(i, locs.get(i)));
+				return ExpandResult.SUCCESS;
+			}
 		}
-		return false;
 	}
 
 	private boolean allRowsEqual(List<Type2Location> expandedRow) {
