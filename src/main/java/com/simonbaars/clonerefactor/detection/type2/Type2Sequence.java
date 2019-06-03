@@ -38,20 +38,21 @@ public class Type2Sequence implements CalculatesPercentages, ChecksThresholds {
 		return statements.stream().sorted().map(e -> new int[] {e.getLocationIndex(), left ? e.getStatementIndices().getStart()-transform : e.getStatementIndices().getEnd()+transform}).toArray();
 	}
 	
-	public void tryToExpand(List<Type2Sequence> sequences) {
-		while(tryToExpand(sequences, true));
-		while(tryToExpand(sequences, false));
+	public void tryToExpand(List<Type2Sequence> clones) {
+		tryToExpand(clones, true);
+		tryToExpand(clones, false);
 	}
 
-	private boolean tryToExpand(List<Type2Sequence> sequences, boolean left) {
-		List<Type2Location> expandedRow = checkSequenceExpansionOpportunities(sequences, determineExpandedRow(left), left);
-		if(expandedRow.isEmpty() || !allRowsEqual(expandedRow)) return false;
-		while(true) {
-			List<Type2Location> locs = mergeLocations(expandedRow, statements, left);
-			if(checkType2VariabilityThreshold(calculateVariability(statements))) {
-				IntStream.range(0,expandedRow.size()).forEach(i -> statements.set(i, locs.get(i)));
-				return true;
-			}
+	private void tryToExpand(List<Type2Sequence> clones, boolean left) {
+		List<Type2Location> curStatements = new ArrayList<>(statements);
+		List<Type2Location> expandedRow;
+		while(!(expandedRow = checkSequenceExpansionOpportunities(clones, determineExpandedRow(left), left)).isEmpty()) {
+			if(!allRowsEqual(expandedRow)) return;
+			curStatements = mergeLocations(expandedRow, curStatements, left);
+			if(checkType2VariabilityThreshold(calculateVariability(curStatements))) {
+				this.statements.clear();
+				this.statements.addAll(curStatements);
+			} 
 		}
 	}
 	
