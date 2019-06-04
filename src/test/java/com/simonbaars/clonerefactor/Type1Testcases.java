@@ -15,7 +15,7 @@ import junit.framework.TestSuite;
 /**
  * Unit test for the clone detector.
  */
-public class Type1Test extends TestCase {
+public class Type1Testcases extends TestCase {
     private static final String SEVERAL_METHODS_PROJECT = "SeveralMethodsCloned";
 	private static final String UNEQUAL_SIZE_CLONES_PROJECT = "UnequalSizeClones";
 	private static final String SINGLE_FILE_PROJECT = "SingleFile";
@@ -31,7 +31,7 @@ public class Type1Test extends TestCase {
      *
      * @param testName name of the test case
      */
-    public Type1Test( String testName ) {
+    public Type1Testcases( String testName ) {
         super( testName );
     }
 
@@ -39,7 +39,7 @@ public class Type1Test extends TestCase {
      * @return the suite of tests being tested
      */
     public static Test suite() {
-        return new TestSuite( Type1Test.class );
+        return new TestSuite( Type1Testcases.class );
     }
     
     @Override
@@ -154,6 +154,6 @@ public class Type1Test extends TestCase {
     }
 
 	private DetectionResults testProject(String project) {
-		return Main.cloneDetection(Type1Test.class.getClassLoader().getResource(project).getFile()).sorted();
+		return Main.cloneDetection(Type1Testcases.class.getClassLoader().getResource(project).getFile()).sorted();
 	}
 }

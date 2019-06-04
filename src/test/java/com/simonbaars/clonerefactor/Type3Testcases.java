@@ -11,14 +11,14 @@ import junit.framework.TestSuite;
 /**
  * Unit test for the clone detector.
  */
-public class Type3Test extends TestCase {    
+public class Type3Testcases extends TestCase {    
 
 	/**
      * Create the test case
      *
      * @param testName name of the test case
      */
-    public Type3Test( String testName ) {
+    public Type3Testcases( String testName ) {
         super( testName );
     }
     
@@ -31,7 +31,7 @@ public class Type3Test extends TestCase {
      * @return the suite of tests being tested
      */
     public static Test suite() {
-        return new TestSuite(Type3Test.class);
+        return new TestSuite(Type3Testcases.class);
     }
     
     public void testStatementAddedLeft() {
@@ -55,6 +55,6 @@ public class Type3Test extends TestCase {
     }
 
 	private DetectionResults testProject(String project) {
-		return Main.cloneDetection(Type3Test.class.getClassLoader().getResource("Type3"+project).getFile()).sorted();
+		return Main.cloneDetection(Type3Testcases.class.getClassLoader().getResource("Type3"+project).getFile()).sorted();
 	}
 }

@@ -13,14 +13,14 @@ import junit.framework.TestSuite;
 /**
  * Unit test for the clone detector.
  */
-public class Type2Test extends TestCase {    
+public class Type2Testcases extends TestCase {    
 
 	/**
      * Create the test case
      *
      * @param testName name of the test case
      */
-    public Type2Test( String testName ) {
+    public Type2Testcases( String testName ) {
         super( testName );
     }
 
@@ -28,7 +28,7 @@ public class Type2Test extends TestCase {
      * @return the suite of tests being tested
      */
     public static Test suite() {
-        return new TestSuite(Type2Test.class);
+        return new TestSuite(Type2Testcases.class);
     }
     
     @Override
@@ -79,6 +79,6 @@ public class Type2Test extends TestCase {
     }
 
 	private DetectionResults testProject(String project) {
-		return Main.cloneDetection(Type2Test.class.getClassLoader().getResource("Type2"+project).getFile()).sorted();
+		return Main.cloneDetection(Type2Testcases.class.getClassLoader().getResource("Type2"+project).getFile()).sorted();
 	}
 }
