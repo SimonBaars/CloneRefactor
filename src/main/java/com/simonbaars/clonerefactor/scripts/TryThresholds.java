@@ -13,7 +13,7 @@ import com.simonbaars.clonerefactor.settings.Settings;
 import com.simonbaars.clonerefactor.util.FileUtils;
 import com.simonbaars.clonerefactor.util.SavePaths;
 
-public class TryThresholds {
+public class TryThresholds implements Runnable {
 	final CountTable<RelationType> amountPerRelation = new CountTable<>();
 	final CountTable<LocationType> amountPerLocation = new CountTable<>();
 	final CountTable<ContentsType> amountPerContents = new CountTable<>();
@@ -30,7 +30,9 @@ public class TryThresholds {
 		new TryThresholds().run();
 	}
 
-	private void run() {
+	@Override
+	public void run() {
+		System.out.println("Try Thresholds");
 		for(int i = 1; i<150; i++) {
 			Settings.get().setMinAmountOfTokens(i);
 			Metrics metrics = new RunOnCorpus().startCorpusCloneDetection();

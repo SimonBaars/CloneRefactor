@@ -18,7 +18,7 @@ public class RunOnCorpus implements WritesErrors {
 
 	public Metrics startCorpusCloneDetection() {
 		try {
-			System.out.println(Settings.get().getMinAmountOfTokens());
+			System.out.println(Settings.get());
 			SavePaths.genTimestamp();
 			ThreadPool threadPool = new ThreadPool();
 			File[] corpusFiles = new File(SavePaths.getApplicationDataFolder()+"git").listFiles();

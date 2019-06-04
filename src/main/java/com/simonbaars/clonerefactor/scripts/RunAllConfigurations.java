@@ -9,6 +9,8 @@ import com.simonbaars.clonerefactor.settings.Settings;
 public class RunAllConfigurations {
 	
 	public static void main(String[] args) {
+		System.out.println("RunAllConfigurations");
+		
 		CloneType[] cloneTypes = CloneType.values();
 		Scope[] scopes = Scope.values();
 		Settings.get().setCloneType(cloneTypes[0]);
