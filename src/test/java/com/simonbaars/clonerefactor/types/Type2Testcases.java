@@ -3,18 +3,15 @@ package com.simonbaars.clonerefactor.types;
 import java.nio.file.Paths;
 
 import com.simonbaars.clonerefactor.Main;
-import com.simonbaars.clonerefactor.model.DetectionResults;
-import com.simonbaars.clonerefactor.settings.CloneType;
-import com.simonbaars.clonerefactor.settings.Settings;
+import com.simonbaars.clonerefactor.helper.Type2Test;
 
 import junit.framework.Test;
-import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 /**
  * Unit test for the clone detector.
  */
-public class Type2Testcases extends TestCase {    
+public class Type2Testcases extends Type2Test {    
 
 	/**
      * Create the test case
@@ -30,12 +27,6 @@ public class Type2Testcases extends TestCase {
      */
     public static Test suite() {
         return new TestSuite(Type2Testcases.class);
-    }
-    
-    @Override
-    public void setUp() {
-    	Settings.get().setCloneType(CloneType.TYPE2);
-    	Settings.get().setType2VariabilityPercentage(5);
     }
     
     public void testCustom() {
@@ -78,8 +69,4 @@ public class Type2Testcases extends TestCase {
     	System.out.println("testPartCloned");
     	System.out.println(testProject("PartCloned"));
     }
-
-	private DetectionResults testProject(String project) {
-		return Main.cloneDetection(Type2Testcases.class.getClassLoader().getResource("Type2"+project).getFile()).sorted();
-	}
 }

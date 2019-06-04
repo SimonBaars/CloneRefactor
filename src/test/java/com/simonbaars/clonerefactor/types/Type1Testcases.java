@@ -4,19 +4,16 @@ import java.io.File;
 import java.nio.file.Paths;
 
 import com.simonbaars.clonerefactor.Main;
-import com.simonbaars.clonerefactor.model.DetectionResults;
-import com.simonbaars.clonerefactor.settings.CloneType;
-import com.simonbaars.clonerefactor.settings.Settings;
+import com.simonbaars.clonerefactor.helper.Type1Test;
 import com.simonbaars.clonerefactor.thread.CorpusThread;
 
 import junit.framework.Test;
-import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 /**
  * Unit test for the clone detector.
  */
-public class Type1Testcases extends TestCase {
+public class Type1Testcases extends Type1Test {
     private static final String SEVERAL_METHODS_PROJECT = "SeveralMethodsCloned";
 	private static final String UNEQUAL_SIZE_CLONES_PROJECT = "UnequalSizeClones";
 	private static final String SINGLE_FILE_PROJECT = "SingleFile";
@@ -41,11 +38,6 @@ public class Type1Testcases extends TestCase {
      */
     public static Test suite() {
         return new TestSuite( Type1Testcases.class );
-    }
-    
-    @Override
-    public void setUp() {
-    	Settings.get().setCloneType(CloneType.TYPE1);
     }
     
     public void testCustom() {
@@ -153,8 +145,4 @@ public class Type1Testcases extends TestCase {
     	System.out.println("testEqualLinesDifferentLength");
     	System.out.println(testProject("EqualLinesDifferentLength"));
     }
-
-	private DetectionResults testProject(String project) {
-		return Main.cloneDetection(Type1Testcases.class.getClassLoader().getResource(project).getFile()).sorted();
-	}
 }

@@ -1,18 +1,14 @@
 package com.simonbaars.clonerefactor.types;
 
-import com.simonbaars.clonerefactor.Main;
-import com.simonbaars.clonerefactor.model.DetectionResults;
-import com.simonbaars.clonerefactor.settings.CloneType;
-import com.simonbaars.clonerefactor.settings.Settings;
+import com.simonbaars.clonerefactor.helper.Type3Test;
 
 import junit.framework.Test;
-import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 /**
  * Unit test for the clone detector.
  */
-public class Type3Testcases extends TestCase {    
+public class Type3Testcases extends Type3Test {    
 
 	/**
      * Create the test case
@@ -21,11 +17,6 @@ public class Type3Testcases extends TestCase {
      */
     public Type3Testcases( String testName ) {
         super( testName );
-    }
-    
-    @Override
-    public void setUp() {
-    	Settings.get().setCloneType(CloneType.TYPE3);
     }
 
     /**
@@ -54,8 +45,4 @@ public class Type3Testcases extends TestCase {
     	System.out.println("testSizeThreeCloneClass");
     	System.out.println(testProject("SizeThreeCloneClass"));
     }
-
-	private DetectionResults testProject(String project) {
-		return Main.cloneDetection(Type3Testcases.class.getClassLoader().getResource("Type3"+project).getFile()).sorted();
-	}
 }

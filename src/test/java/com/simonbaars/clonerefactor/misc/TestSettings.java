@@ -6,7 +6,7 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-public class TestSettings extends TestCase{
+public class TestSettings extends TestCase {
 	/**
      * Create the test case
      *
