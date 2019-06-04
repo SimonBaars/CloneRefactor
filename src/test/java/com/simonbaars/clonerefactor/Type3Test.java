@@ -34,9 +34,14 @@ public class Type3Test extends TestCase {
         return new TestSuite(Type3Test.class);
     }
     
-    public void testSimpleClone() {
-    	System.out.println("testSimpleClone");
-    	System.out.println(testProject("SimpleClone"));
+    public void testStatementAddedLeft() {
+    	System.out.println("testStatementAddedLeft");
+    	System.out.println(testProject("StatementAddedLeft"));
+    }
+    
+    public void testStatementAddedRight() {
+    	System.out.println("testStatementAddedRight");
+    	System.out.println(testProject("StatementAddedRight"));
     }
 
 	private DetectionResults testProject(String project) {
