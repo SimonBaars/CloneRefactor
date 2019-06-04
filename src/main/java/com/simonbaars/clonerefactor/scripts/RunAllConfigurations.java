@@ -15,10 +15,8 @@ public class RunAllConfigurations {
 		Scope[] scopes = Scope.values();
 		configureSettings(cloneTypes, scopes);
 		
-		for(int i = 0; i<18; i++) {
-			RunOnCorpus.main(args);
-			rotate(cloneTypes, scopes);
-		}
+		do RunOnCorpus.main(args);
+		while (rotate(cloneTypes, scopes));
 	}
 
 	private static void configureSettings(CloneType[] cloneTypes, Scope[] scopes) {
@@ -30,16 +28,21 @@ public class RunAllConfigurations {
 		Settings.get().setMinAmountOfNodes(1);
 	}
 
-	private static void rotate(CloneType[] cloneTypes, Scope[] scopes) {
+	private static boolean rotate(CloneType[] cloneTypes, Scope[] scopes) {
 		int curCloneType = Arrays.binarySearch(cloneTypes, Settings.get().getCloneType());
 		int curScope = Arrays.binarySearch(scopes, Settings.get().getScope());
 		if(Settings.get().isUseLiteratureTypeDefinitions()) {
-			if(curCloneType>curScope) {
-				curScope ++;
-			} else curCloneType ++;
+			curScope++;
+			if(curScope == scopes.length) {
+				curScope = 0;
+				curCloneType ++;
+			}
 		}
+		if(curCloneType == cloneTypes.length)
+			return false;
 		Settings.get().setUseLiteratureTypeDefinitions(!Settings.get().isUseLiteratureTypeDefinitions());
 		Settings.get().setCloneType(cloneTypes[curCloneType]);
 		Settings.get().setScope(scopes[curScope]);
+		return true;
 	}
 }
