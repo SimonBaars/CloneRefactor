@@ -4,6 +4,7 @@ import java.nio.file.Paths;
 
 import com.simonbaars.clonerefactor.Main;
 import com.simonbaars.clonerefactor.helper.Type2Test;
+import com.simonbaars.clonerefactor.settings.Settings;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
@@ -48,6 +49,13 @@ public class Type2Testcases extends Type2Test {
     }
     
     public void testAbmash() {
+    	System.out.println("abmash");
+    	String path = "/Users/sbaars/clone/git/abmash/";
+		System.out.println(Main.cloneDetection(Paths.get(path), Paths.get(path+"src/main/java/")).sorted());
+    }
+    
+    public void testAbmashLiterature() {
+    	Settings.get().setUseLiteratureTypeDefinitions(true);
     	System.out.println("abmash");
     	String path = "/Users/sbaars/clone/git/abmash/";
 		System.out.println(Main.cloneDetection(Paths.get(path), Paths.get(path+"src/main/java/")).sorted());
