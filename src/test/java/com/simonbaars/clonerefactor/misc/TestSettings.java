@@ -1,4 +1,4 @@
-package com.simonbaars.clonerefactor;
+package com.simonbaars.clonerefactor.misc;
 
 import com.simonbaars.clonerefactor.settings.Settings;
 

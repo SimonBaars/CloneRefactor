@@ -1,5 +1,6 @@
-package com.simonbaars.clonerefactor;
+package com.simonbaars.clonerefactor.metrics;
 
+import com.simonbaars.clonerefactor.Main;
 import com.simonbaars.clonerefactor.metrics.enums.CloneRelation.RelationType;
 import com.simonbaars.clonerefactor.model.DetectionResults;
 import com.simonbaars.clonerefactor.settings.CloneType;

@@ -1,6 +1,8 @@
-package com.simonbaars.clonerefactor;
+package com.simonbaars.clonerefactor.misc;
 
 import java.nio.file.Paths;
+
+import com.simonbaars.clonerefactor.Main;
 
 import junit.framework.Test;
 import junit.framework.TestCase;

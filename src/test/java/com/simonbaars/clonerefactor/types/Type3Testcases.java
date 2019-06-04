@@ -1,5 +1,6 @@
-package com.simonbaars.clonerefactor;
+package com.simonbaars.clonerefactor.types;
 
+import com.simonbaars.clonerefactor.Main;
 import com.simonbaars.clonerefactor.model.DetectionResults;
 import com.simonbaars.clonerefactor.settings.CloneType;
 import com.simonbaars.clonerefactor.settings.Settings;
