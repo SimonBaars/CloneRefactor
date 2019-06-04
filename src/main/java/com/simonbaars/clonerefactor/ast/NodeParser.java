@@ -87,8 +87,6 @@ public class NodeParser implements Parser, DeterminesNodeTokens {
 		thisLocation.setNext(prev.getNext());
 		prev.setNext(thisLocation);
 		prev.getNext().setPrev(thisLocation);
-		//System.out.println("Should be at "+prev);
-		//throw new IllegalStateException("Locations are not sequential! "+thisLocation.getPrev()+" and "+thisLocation);
 		return true;
 	}
 
