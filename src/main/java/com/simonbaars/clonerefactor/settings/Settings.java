@@ -154,9 +154,10 @@ public class Settings {
 
 	@Override
 	public String toString() {
-		return "Settings [cloneType=" + cloneType + ", minAmountOfLines=" + minAmountOfLines + ", minAmountOfTokens="
-				+ minAmountOfTokens + ", minAmountOfNodes=" + minAmountOfNodes + ", useLiteratureTypeDefinitions=" + useLiteratureTypeDefinitions
-				+ ", type2VariabilityPercentage=" + type2VariabilityPercentage + ", type3GapSize=" + type3GapSize + "]";
+		return String.format(
+				"Settings [cloneType=%s, scope=%s, minAmountOfLines=%s, minAmountOfTokens=%s, minAmountOfNodes=%s, useLiteratureTypeDefinitions=%s, type2VariabilityPercentage=%s, type3GapSize=%s]",
+				cloneType, scope, minAmountOfLines, minAmountOfTokens, minAmountOfNodes, useLiteratureTypeDefinitions,
+				type2VariabilityPercentage, type3GapSize);
 	}
 
 	public Scope getScope() {
