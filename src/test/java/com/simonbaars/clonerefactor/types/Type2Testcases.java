@@ -4,6 +4,7 @@ import java.nio.file.Paths;
 
 import com.simonbaars.clonerefactor.Main;
 import com.simonbaars.clonerefactor.helper.Type2Test;
+import com.simonbaars.clonerefactor.settings.Settings;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
@@ -29,9 +30,28 @@ public class Type2Testcases extends Type2Test {
         return new TestSuite(Type2Testcases.class);
     }
     
-    public void testCustom() {
+    public void testSolrMQ() {
     	System.out.println("custom");
         String path = "/Users/sbaars/clone/git/SolrMQ/";
+		System.out.println(Main.cloneDetection(Paths.get(path), Paths.get(path+"src/main/java/")).sorted());
+    }
+    
+    public void testSimpleHTTPServer() {
+    	System.out.println("SimpleHTTPServer");
+        String path = "/Users/sbaars/clone/git/SimpleHTTPServer/";
+		System.out.println(Main.cloneDetection(Paths.get(path), Paths.get(path+"src/main/java/")).sorted());
+    }
+    
+    public void testWykopplJavaSDK() {
+    	System.out.println("Wykop.pl-Java-SDK");
+        String path = "/Users/sbaars/clone/git/Wykop.pl-Java-SDK/";
+		System.out.println(Main.cloneDetection(Paths.get(path), Paths.get(path+"src/main/java/")).sorted());
+    }
+    
+    public void testKryoSerializers() {
+    	System.out.println("kryo-serializers");
+    	String path = "/Users/sbaars/clone/git/kryo-serializers/";
+    	System.out.println(Settings.get());
 		System.out.println(Main.cloneDetection(Paths.get(path), Paths.get(path+"src/main/java/")).sorted());
     }
     
