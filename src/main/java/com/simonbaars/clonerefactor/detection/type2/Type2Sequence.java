@@ -108,9 +108,6 @@ public class Type2Sequence implements CalculatesPercentages, ChecksThresholds, C
 				percentages.add(new WeightedPercentage(diffPerc(fullContents1, fullContents2), fullContents1.length));
 			}
 		}
-		System.out.println(Arrays.toString(locations.toArray()));
-		System.out.println(Arrays.toString(percentages.toArray()));
-		System.out.println(calcAvg(percentages));
 		return calcAvg(percentages);
 	}
 	
