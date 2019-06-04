@@ -91,7 +91,7 @@ public class LocationContents implements FiltersTokens, HasRange, HasCompareList
 		if(!(o instanceof LocationContents))
 			return false;
 		LocationContents other = (LocationContents)o;
-		return Settings.get().useLiteratureTypeDefinitions() && compare.isEmpty() ? tokens.equals(other.tokens) : compare.equals(other.compare);
+		return Settings.get().useLiteratureTypeDefinitions() && compare.isEmpty() ? filterTokensForCompare(tokens).equals(filterTokensForCompare(other.tokens)) : compare.equals(other.compare);
 	}
 	
 	public String getEffectiveTokenTypes() {
