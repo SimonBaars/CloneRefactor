@@ -19,11 +19,6 @@ public class Location implements Comparable<Location>, HasRange {
 
 	private LocationType locationType;
 
-	public Location(Path file, Range r, Location prevLocation) {
-		this(file, r);
-		this.prev = prevLocation;
-	}
-
 	public Location(Location clonedLocation) {
 		this(clonedLocation, clonedLocation.range);
 	}
@@ -124,7 +119,9 @@ public class Location implements Comparable<Location>, HasRange {
 	public Location mergeWith(Location oldClone) {
 		if(file != oldClone.getFile())
 			throw new IllegalStateException("Files of merging locations do not match! "+file+" != "+oldClone.getFile());
-		Location copy = new Location(this, getRange().withEnd(oldClone.getRange().end));
+		Range withEnd = getRange().withEnd(oldClone.getRange().end);
+		if(withEnd.begin.isAfter(withEnd.end)) throw new IllegalStateException(oldClone+" cannot be merged with "+this);
+		Location copy = new Location(this, withEnd);
 		copy.contents.merge(oldClone.getContents());
 		return copy;
 	}

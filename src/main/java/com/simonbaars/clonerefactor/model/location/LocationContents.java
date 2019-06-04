@@ -45,6 +45,7 @@ public class LocationContents implements FiltersTokens, HasRange, HasCompareList
 	}
 
 	public LocationContents(Node...nodes) {
+		if(nodes.length == 0) throw new IllegalStateException("Must have at least one node!");
 		this.nodes = new ArrayList<>();
 		this.tokens = new ArrayList<>();
 		this.compare = new ArrayList<>();
@@ -59,6 +60,7 @@ public class LocationContents implements FiltersTokens, HasRange, HasCompareList
 	}
 
 	public LocationContents(LocationContents contents, Range r) {
+		if(contents.nodes.size() == 0) throw new IllegalStateException("Must have at least one node!");
 		this.range = r;
 		this.nodes = new ArrayList<>(contents.getNodes());
 		this.tokens = new ArrayList<>(contents.getTokens());
@@ -121,6 +123,8 @@ public class LocationContents implements FiltersTokens, HasRange, HasCompareList
 	}
 
 	public void merge(LocationContents contents) {
+		if(this.size() == 0) throw new IllegalStateException("Must have one node!");
+		//System.out.println(contents.size() +", "+this.size());
 		nodes.addAll(contents.getNodes());
 		tokens.addAll(contents.getTokens());
 		compare.addAll(contents.getCompare());
@@ -167,6 +171,7 @@ public class LocationContents implements FiltersTokens, HasRange, HasCompareList
 		getNodes().removeIf(e -> {Range r = getRange(e); return r.isBefore(getRange().begin) || r.isAfter(getRange().end);});
 		getCompare().removeIf(e -> e.getRange().isBefore(getRange().begin) || e.getRange().isAfter(getRange().end));
 		getTokens().removeIf(e -> e.getRange().get().isBefore(getRange().begin) || e.getRange().get().isAfter(getRange().end));
+		if(nodes.size() == 0) throw new IllegalStateException("Must have at least one node! "+getRange());
 	}
 	
 	public void isValid() {
