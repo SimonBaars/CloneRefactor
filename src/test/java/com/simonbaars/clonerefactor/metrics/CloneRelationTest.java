@@ -1,20 +1,17 @@
 package com.simonbaars.clonerefactor.metrics;
 
-import com.simonbaars.clonerefactor.Main;
+import com.simonbaars.clonerefactor.helper.Type1Test;
 import com.simonbaars.clonerefactor.metrics.enums.CloneRelation.RelationType;
 import com.simonbaars.clonerefactor.model.DetectionResults;
-import com.simonbaars.clonerefactor.settings.CloneType;
-import com.simonbaars.clonerefactor.settings.Settings;
 
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 /**
  * Unit test for the node locations.
  */
-public class CloneRelationTest extends TestCase {
+public class CloneRelationTest extends Type1Test {
 
 	/**
      * Create the test case
@@ -23,11 +20,6 @@ public class CloneRelationTest extends TestCase {
      */
     public CloneRelationTest( String testName ) {
         super( testName );
-    }
-    
-    @Override
-    public void setUp() {
-    	Settings.get().setCloneType(CloneType.TYPE1);
     }
 
     /**
@@ -76,9 +68,5 @@ public class CloneRelationTest extends TestCase {
 	private void test(String name, RelationType loc) {
 		DetectionResults r = testProject(name);
         Assert.assertEquals(loc, r.getMetrics().amountPerRelation.keySet().iterator().next());
-	}
-
-	private DetectionResults testProject(String project) {
-		return Main.cloneDetection(CloneRelationTest.class.getClassLoader().getResource(project).getFile());
 	}
 }

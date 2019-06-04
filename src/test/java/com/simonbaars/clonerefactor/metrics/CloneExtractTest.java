@@ -1,20 +1,17 @@
 package com.simonbaars.clonerefactor.metrics;
 
-import com.simonbaars.clonerefactor.Main;
+import com.simonbaars.clonerefactor.helper.Type1Test;
 import com.simonbaars.clonerefactor.metrics.enums.CloneRefactorability.Refactorability;
 import com.simonbaars.clonerefactor.model.DetectionResults;
-import com.simonbaars.clonerefactor.settings.CloneType;
-import com.simonbaars.clonerefactor.settings.Settings;
 
 import junit.framework.Assert;
 import junit.framework.Test;
-import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 /**
  * Unit test for the node locations.
  */
-public class CloneExtractTest extends TestCase {
+public class CloneExtractTest extends Type1Test {
 
 	/**
      * Create the test case
@@ -32,11 +29,6 @@ public class CloneExtractTest extends TestCase {
         return new TestSuite( CloneExtractTest.class );
     }
     
-    @Override
-    public void setUp() {
-    	Settings.get().setCloneType(CloneType.TYPE1);
-    }
-    
     public void testFullMethod() {
         test("NestedClone", Refactorability.PARTIALBLOCK);
     }
@@ -52,9 +44,5 @@ public class CloneExtractTest extends TestCase {
 	private void test(String name, Refactorability loc) {
 		DetectionResults r = testProject(name);
         Assert.assertEquals(loc, r.getMetrics().amountPerExtract.keySet().iterator().next());
-	}
-
-	private DetectionResults testProject(String project) {
-		return Main.cloneDetection(CloneExtractTest.class.getClassLoader().getResource(project).getFile());
 	}
 }
