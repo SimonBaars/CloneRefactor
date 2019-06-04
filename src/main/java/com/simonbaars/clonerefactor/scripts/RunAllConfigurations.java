@@ -13,15 +13,22 @@ public class RunAllConfigurations {
 		
 		CloneType[] cloneTypes = CloneType.values();
 		Scope[] scopes = Scope.values();
-		Settings.get().setCloneType(cloneTypes[0]);
-		Settings.get().setScope(scopes[0]);
-		Settings.get().setUseLiteratureTypeDefinitions(false);
+		configureSettings(cloneTypes, scopes);
 		
 		for(int i = 1; i<40; i++) {
 			Settings.get().setMinAmountOfTokens(i);
 			RunOnCorpus.main(args);
 			rotate(cloneTypes, scopes);
 		}
+	}
+
+	private static void configureSettings(CloneType[] cloneTypes, Scope[] scopes) {
+		Settings.get().setCloneType(cloneTypes[0]);
+		Settings.get().setScope(scopes[0]);
+		Settings.get().setUseLiteratureTypeDefinitions(false);
+		Settings.get().setMinAmountOfLines(1);
+		Settings.get().setMinAmountOfTokens(10);
+		Settings.get().setMinAmountOfNodes(1);
 	}
 
 	private static void rotate(CloneType[] cloneTypes, Scope[] scopes) {
