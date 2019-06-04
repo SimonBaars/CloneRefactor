@@ -28,6 +28,6 @@ public abstract class TypeTest extends TestCase {
 	
 	protected DetectionResults testProject(String project) {
 		return Main.cloneDetection(CloneContentsTest.class.getClassLoader()
-				.getResource(getCloneType().getNicelyFormatted()+File.separator+project).getFile()).sorted();
+				.getResource(getCloneType().getNicelyFormatted()).getFile()+File.separator+project).sorted();
 	}
 }

@@ -1,7 +1,5 @@
 package com.simonbaars.clonerefactor.settings;
 
-import org.apache.commons.lang.WordUtils;
-
 public enum CloneType {
 	TYPE1,TYPE2,TYPE3;
 
@@ -14,6 +12,6 @@ public enum CloneType {
 	}
 	
 	public String getNicelyFormatted() {
-		return WordUtils.capitalize(name());
+		return name().charAt(0) + name().substring(1).toLowerCase();
 	}
 }
