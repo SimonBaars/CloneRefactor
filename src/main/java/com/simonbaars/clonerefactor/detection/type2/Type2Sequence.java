@@ -47,9 +47,8 @@ public class Type2Sequence implements CalculatesPercentages, ChecksThresholds, C
 	private void tryToExpand(List<Type2Sequence> clones, boolean left) {
 		List<Type2Location> curStatements = new ArrayList<>(statements);
 		List<Type2Sequence> mergedClones = new ArrayList<>();
-		List<Type2Location> expandedRow;
-		while(!(expandedRow = determineExpandedRow(curStatements, left)).isEmpty()) {
-			curStatements = checkSequenceExpansionOpportunities(mergedClones, clones, mergeLocations(expandedRow, curStatements, left), left);
+		while(!(curStatements = determineExpandedRow(curStatements, left)).isEmpty()) {
+			curStatements = checkSequenceExpansionOpportunities(mergedClones, clones, curStatements, left);
 			if(!allRowsComparable(curStatements)) return;
 			if(checkType2VariabilityThreshold(calculateVariability(curStatements))) {
 				this.statements.clear();
@@ -91,10 +90,11 @@ public class Type2Sequence implements CalculatesPercentages, ChecksThresholds, C
 	private List<Type2Location> determineExpandedRow(List<Type2Location> curStatements, boolean left) {
 		List<Type2Location> expandedRow = new ArrayList<>();
 		for(Type2Location location : curStatements) {
+			Type2Location origLocation = location;
 			if(!left) location = location.getLast();
 			if(left ? location.getPrev() == null : location.getNext() == null)
 				return Collections.emptyList();
-			expandedRow.add(left ? location.getPrev() : location.getNext());
+			expandedRow.add(mergeLocations(left ? location.getPrev() : location.getNext(), origLocation, left));
 		}
 		if(expandedRow.stream().anyMatch(e -> e.size()>1)) {
 			throw new IllegalStateException("expandedRow may never contain locations with more than one statement!");
@@ -106,7 +106,7 @@ public class Type2Sequence implements CalculatesPercentages, ChecksThresholds, C
 		List<WeightedPercentage> percentages = new ArrayList<>();
 		for(int locationIndex1 = 0; locationIndex1<locations.size(); locationIndex1++) {
 			int[] fullContents1 = statements.get(locationIndex1).contentArray();
-			for(int locationIndex2 = locationIndex1+1; locationIndex2<size(); locationIndex2++) {
+			for(int locationIndex2 = locationIndex1+1; locationIndex2<locations.size(); locationIndex2++) {
 				int[] fullContents2 = statements.get(locationIndex2).contentArray();
 				percentages.add(new WeightedPercentage(diffPerc(fullContents1, fullContents2), fullContents1.length));
 			}
