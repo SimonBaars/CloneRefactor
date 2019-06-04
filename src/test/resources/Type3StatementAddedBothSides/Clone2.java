@@ -1,3 +1,4 @@
+import java.util.stream.IntStream;
 
 public class Clone2 {
 
@@ -8,6 +9,7 @@ public class Clone2 {
 		System.out.println("I'm a clone4");
 		System.out.println("I'm a clone5");
 		System.out.println("I'm a clone6");
+		IntStream.range(0, 10).map(i -> "("+i+")").forEach(System.out::println);
 		System.out.println("I'm a clone7");
 		System.out.println("I'm a clone8");
 		System.out.println("I'm a clone9");
