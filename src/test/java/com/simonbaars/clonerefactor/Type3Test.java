@@ -48,6 +48,11 @@ public class Type3Test extends TestCase {
     	System.out.println("testStatementAddedBothSides");
     	System.out.println(testProject("StatementAddedBothSides"));
     }
+    
+    public void testSizeThreeCloneClass() {
+    	System.out.println("testSizeThreeCloneClass");
+    	System.out.println(testProject("SizeThreeCloneClass"));
+    }
 
 	private DetectionResults testProject(String project) {
 		return Main.cloneDetection(Type3Test.class.getClassLoader().getResource("Type3"+project).getFile()).sorted();
