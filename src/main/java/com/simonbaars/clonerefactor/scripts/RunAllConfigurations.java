@@ -15,8 +15,7 @@ public class RunAllConfigurations {
 		Scope[] scopes = Scope.values();
 		configureSettings(cloneTypes, scopes);
 		
-		for(int i = 1; i<40; i++) {
-			Settings.get().setMinAmountOfTokens(i);
+		for(int i = 0; i<18; i++) {
 			RunOnCorpus.main(args);
 			rotate(cloneTypes, scopes);
 		}
