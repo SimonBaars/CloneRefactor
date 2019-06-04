@@ -62,7 +62,7 @@ public class CloneParser implements Parser, RemovesDuplicates, WritesErrors {
 	}
 
 	private void doType2Transformations(List<Sequence> findChains) {
-		if(Settings.get().getCloneType().isNotTypeOne()) {
+		if(Settings.get().getCloneType().isNotTypeOne() && !Settings.get().isUseLiteratureTypeDefinitions()) {
 			IntStream.range(0, findChains.size()).forEach(i -> {
 				List<Sequence> determineVariability = new Type2Variability().determineVariability(findChains.remove(0));
 				for(Sequence s : determineVariability) {
