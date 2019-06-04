@@ -102,9 +102,9 @@ public class Type2Sequence implements CalculatesPercentages, ChecksThresholds, C
 	public double calculateVariability(List<Type2Location> locations) {
 		List<WeightedPercentage> percentages = new ArrayList<>();
 		for(int locationIndex1 = 0; locationIndex1<locations.size(); locationIndex1++) {
-			int[] fullContents1 = statements.get(locationIndex1).contentArray();
+			int[] fullContents1 = locations.get(locationIndex1).contentArray();
 			for(int locationIndex2 = locationIndex1+1; locationIndex2<locations.size(); locationIndex2++) {
-				int[] fullContents2 = statements.get(locationIndex2).contentArray();
+				int[] fullContents2 = locations.get(locationIndex2).contentArray();
 				percentages.add(new WeightedPercentage(diffPerc(fullContents1, fullContents2), fullContents1.length));
 			}
 		}
