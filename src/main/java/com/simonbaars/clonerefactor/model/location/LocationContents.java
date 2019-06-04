@@ -56,7 +56,7 @@ public class LocationContents implements FiltersTokens, HasRange, HasCompareList
 				this.compare.add(new CompareFalse());
 			else if(!Settings.get().useLiteratureTypeDefinitions()) createComparablesByNode(tokens, n); 
 		}
-		this.range = tokens.isEmpty() ? nodes[0].getRange().get() : getRange(this.tokens);
+		this.range = getRange(this.tokens);
 	}
 
 	public LocationContents(LocationContents contents, Range r) {
