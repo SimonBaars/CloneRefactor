@@ -5,6 +5,7 @@ import java.nio.file.Paths;
 
 import com.simonbaars.clonerefactor.Main;
 import com.simonbaars.clonerefactor.helper.Type1Test;
+import com.simonbaars.clonerefactor.settings.Settings;
 import com.simonbaars.clonerefactor.thread.CorpusThread;
 
 import junit.framework.Test;
@@ -41,14 +42,9 @@ public class Type1Testcases extends Type1Test {
     }
     
     public void testCustom() {
-    	System.out.println("custom");
-        String path = "/Users/sbaars/clone/java_projects/ardublock/";
-		System.out.println(Main.cloneDetection(Paths.get(path), Paths.get(path+"src/main/java/")).sorted());
-    }
-
-    public void testCustom2() {
-    	System.out.println("custom2");
-    	String path = "/Users/sbaars/clone/java_projects/gatein-forge-plugin/";
+    	System.out.println("kryo-serializers");
+    	String path = "/Users/sbaars/clone/git/kryo-serializers/";
+    	System.out.println(Settings.get());
 		System.out.println(Main.cloneDetection(Paths.get(path), Paths.get(path+"src/main/java/")).sorted());
     }
     
