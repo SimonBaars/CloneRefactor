@@ -20,6 +20,7 @@ public class RunOnCorpus implements WritesErrors {
 		try {
 			System.out.println(Settings.get());
 			SavePaths.genTimestamp();
+			System.out.println("Saving results in "+SavePaths.getMyOutputFolder());
 			ThreadPool threadPool = new ThreadPool();
 			File[] corpusFiles = new File(SavePaths.getApplicationDataFolder()+"git").listFiles();
 			writeSettings();
