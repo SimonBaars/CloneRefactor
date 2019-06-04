@@ -92,12 +92,9 @@ public class Type2Sequence implements CalculatesPercentages, ChecksThresholds, C
 		for(Type2Location location : curStatements) {
 			Type2Location origLocation = location;
 			if(!left) location = location.getLast();
-			if(left ? location.getPrev() == null : location.getNext() == null)
+			if(left ? location.getPrev() == null || location.getPrev().getLocationIndex() != location.getLocationIndex() : location.getNext() == null || location.getNext().getLocationIndex() != location.getLocationIndex())
 				return Collections.emptyList();
 			expandedRow.add(mergeLocations(left ? location.getPrev() : location.getNext(), origLocation, left));
-		}
-		if(expandedRow.stream().anyMatch(e -> e.size()>1)) {
-			throw new IllegalStateException("expandedRow may never contain locations with more than one statement!");
 		}
 		return expandedRow;
 	}
@@ -111,6 +108,8 @@ public class Type2Sequence implements CalculatesPercentages, ChecksThresholds, C
 				percentages.add(new WeightedPercentage(diffPerc(fullContents1, fullContents2), fullContents1.length));
 			}
 		}
+		System.out.println(Arrays.toString(locations.toArray()));
+		System.out.println(Arrays.toString(percentages.toArray()));
 		System.out.println(calcAvg(percentages));
 		return calcAvg(percentages);
 	}
