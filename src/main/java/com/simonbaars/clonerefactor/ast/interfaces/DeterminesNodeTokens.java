@@ -49,6 +49,6 @@ public interface DeterminesNodeTokens extends FiltersTokens, RequiresNodeOperati
 	}
 	
 	public default Range getRange(Node n) {
-		return getRange(calculateTokensFromNode(n));
+		return hasSpecialTokenFilter() ? n.getRange().get() : getRange(calculateTokensFromNode(n));
 	}
 }

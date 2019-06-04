@@ -24,6 +24,10 @@ public interface FiltersTokens {
 	}
 	
 	public default boolean isComparableToken(JavaToken t) {
-		return Arrays.stream(Settings.get().getCloneType().isNotTypeOne() && Settings.get().useLiteratureTypeDefinitions() ? LITERATURE_TYPE2_NO_TOKEN : NO_TOKEN).noneMatch(c -> c.equals(t.getCategory()));
+		return Arrays.stream(hasSpecialTokenFilter() ? LITERATURE_TYPE2_NO_TOKEN : NO_TOKEN).noneMatch(c -> c.equals(t.getCategory()));
+	}
+	
+	public default boolean hasSpecialTokenFilter() {
+		return Settings.get().getCloneType().isNotTypeOne() && Settings.get().useLiteratureTypeDefinitions();
 	}
 }
