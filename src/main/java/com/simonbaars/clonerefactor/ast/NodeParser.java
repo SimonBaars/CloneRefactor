@@ -68,9 +68,28 @@ public class NodeParser implements Parser, DeterminesNodeTokens {
 
 	public Location parseToken(Location prevLocation, CompilationUnit cu, Node n) {
 		Location thisLocation = new Location(cu.getStorage().get().getPath(), prevLocation, n);
-		if(prevLocation!=null) prevLocation.setNext(thisLocation);
 		addLineTokensToReg(thisLocation);
+		if(prevLocation!=null) {
+			if(handleInvalidOrder(thisLocation))
+				return prevLocation;
+			else prevLocation.setNext(thisLocation);
+		}
 		return thisLocation;
+	}
+
+	private boolean handleInvalidOrder(Location thisLocation) {
+		Location prev = thisLocation.getPrev();
+		while(thisLocation.getFile() == prev.getFile() && thisLocation.getContents().getNodes().get(0).getRange().get().begin.isBefore(prev.getContents().getNodes().get(0).getRange().get().begin))
+			prev = prev.getPrev();
+		if(prev == thisLocation.getPrev())
+			return false;
+		thisLocation.setPrev(prev);
+		thisLocation.setNext(prev.getNext());
+		prev.setNext(thisLocation);
+		prev.getNext().setPrev(thisLocation);
+		//System.out.println("Should be at "+prev);
+		//throw new IllegalStateException("Locations are not sequential! "+thisLocation.getPrev()+" and "+thisLocation);
+		return true;
 	}
 
 	public Location addLineTokensToReg(Location location) {
