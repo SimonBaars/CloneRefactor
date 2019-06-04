@@ -1,13 +1,14 @@
 package com.simonbaars.clonerefactor.compare;
 
+import com.github.javaparser.Range;
 import com.simonbaars.clonerefactor.settings.CloneType;
 
 public class CompareFalse extends Compare {
 	
 	private static int x = Integer.MIN_VALUE;
 	
-	public CompareFalse() {
-		super(CloneType.TYPE1, null);
+	public CompareFalse(Range range) {
+		super(CloneType.TYPE1, range);
 	}
 
 	@Override

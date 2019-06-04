@@ -5,6 +5,7 @@ import java.nio.file.Paths;
 
 import com.simonbaars.clonerefactor.Main;
 import com.simonbaars.clonerefactor.helper.Type1Test;
+import com.simonbaars.clonerefactor.settings.Scope;
 import com.simonbaars.clonerefactor.settings.Settings;
 import com.simonbaars.clonerefactor.thread.CorpusThread;
 
@@ -45,6 +46,13 @@ public class Type1Testcases extends Type1Test {
     	System.out.println("kryo-serializers");
     	String path = "/Users/sbaars/clone/git/kryo-serializers/";
     	System.out.println(Settings.get());
+		System.out.println(Main.cloneDetection(Paths.get(path), Paths.get(path+"src/main/java/")).sorted());
+    }
+    
+    public void testAbmashMethodScope() {
+    	Settings.get().setScope(Scope.METHODSONLY);
+    	System.out.println("abmash");
+    	String path = "/Users/sbaars/clone/git/abmash/";
 		System.out.println(Main.cloneDetection(Paths.get(path), Paths.get(path+"src/main/java/")).sorted());
     }
     
