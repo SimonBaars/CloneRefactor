@@ -54,6 +54,12 @@ public class Type2Testcases extends Type2Test {
 		System.out.println(Main.cloneDetection(Paths.get(path), Paths.get(path+"src/main/java/")).sorted());
     }
     
+    public void testCotopaxiCore() {
+    	System.out.println("cotopaxi-core");
+    	String path = "/Users/sbaars/clone/git/cotopaxi-core/";
+		System.out.println(Main.cloneDetection(Paths.get(path), Paths.get(path+"src/main/java/")).sorted());
+    }
+    
     public void testAbmashLiterature() {
     	Settings.get().setUseLiteratureTypeDefinitions(true);
     	System.out.println("abmash");
