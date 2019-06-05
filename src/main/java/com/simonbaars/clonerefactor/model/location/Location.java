@@ -119,7 +119,7 @@ public class Location implements Comparable<Location>, HasRange {
 	public Location mergeWith(Location oldClone) {
 		if(file != oldClone.getFile())
 			throw new IllegalStateException("Files of merging locations do not match! "+file+" != "+oldClone.getFile());
-		Location copy = new Location(this, getRange().withEnd(oldClone.getRange().end));
+		Location copy = new Location(this);
 		copy.contents.merge(oldClone.getContents());
 		copy.syncRanges();
 		return copy;

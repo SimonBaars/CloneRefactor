@@ -16,14 +16,12 @@ public class Type3Opportunities implements Type3Calculation, CalculatesPercentag
 	
 	public void determineType3Opportunities(List<Sequence> clones) {
 		outerloop: for(int i = 0; i<clones.size(); i++) {
-			System.out.println(i+"/"+clones.size());
 			FileLocations fl = new FileLocations(clones.get(i));
 			if(opportunities.containsKey(fl.hashCode())) {
 				 List<FileLocations> otherFls = opportunities.get(fl.hashCode());
 				 for(int j = 0; j<otherFls.size(); j++) {
 					 FileLocations loc = otherFls.get(j);
 					 if(isType3(fl, loc)) {
-						 System.out.println("Merge "+fl+" and "+loc);
 						 clones.remove(fl.getSeq());
 						 clones.remove(loc.getSeq());
 						 otherFls.remove(loc);
@@ -51,11 +49,8 @@ public class Type3Opportunities implements Type3Calculation, CalculatesPercentag
 			System.out.println(l1 + " vs "+l2);
 			if(l1.getFile() != l2.getFile())
 				return false;
-			System.out.println("Same file ");
-			//System.out.println(l1.getContents().getNodes().get(l1.getContents().getNodes().size()-1).getParentNode()+" vs "+l2.getContents().getNodes().get(0).getParentNode());
 			if(!Settings.get().isUseLiteratureTypeDefinitions() && !parentsEqual(l1.getContents().getNodes().get(l1.getContents().getNodes().size()-1).getParentNode(), l2.getContents().getNodes().get(0).getParentNode()))
 				return false;
-			System.out.println("Same parent "+checkType3Threshold(l1, l2));
 			if(l1.getRange().begin.isBefore(l2.getRange().begin)) {
 				return checkType3Threshold(l1, l2);
 			} else return checkType3Threshold(l2, l1);
@@ -69,7 +64,6 @@ public class Type3Opportunities implements Type3Calculation, CalculatesPercentag
 	private boolean checkType3Threshold(Location l1, Location l2) {
 		int combinedSize = l1.getAmountOfNodes() + l2.getAmountOfNodes();
 		int diff = calculateDiff(l1, l2);
-		System.out.println("res"+calcPercentage(diff, combinedSize));
 		return calcPercentage(diff, combinedSize) <= Settings.get().getType3GapSize();
 	}
 }

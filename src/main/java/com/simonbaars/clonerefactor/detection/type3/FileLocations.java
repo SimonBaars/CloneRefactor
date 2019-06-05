@@ -43,6 +43,11 @@ public class FileLocations {
 	public Sequence getSeq() {
 		return seq;
 	}
+
+	@Override
+	public String toString() {
+		return String.format("FileLocations [seq=%s]", seq);
+	}
 	
 	
 }
