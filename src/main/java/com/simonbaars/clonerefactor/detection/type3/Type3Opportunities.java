@@ -46,7 +46,6 @@ public class Type3Opportunities implements Type3Calculation, CalculatesPercentag
 		return IntStream.range(0, fl1.getLocs().size()).allMatch(i -> {
 			Location l1 = fl1.getLocs().get(i);
 			Location l2 = fl2.getLocs().get(i);
-			System.out.println(l1 + " vs "+l2);
 			if(l1.getFile() != l2.getFile())
 				return false;
 			if(!Settings.get().isUseLiteratureTypeDefinitions() && !parentsEqual(l1.getContents().getNodes().get(l1.getContents().getNodes().size()-1).getParentNode(), l2.getContents().getNodes().get(0).getParentNode()))
