@@ -7,7 +7,7 @@ import com.simonbaars.clonerefactor.model.location.Location;
 import com.simonbaars.clonerefactor.model.location.LocationContents;
 
 public class Type3Location extends Location implements Type3Calculation{
-	private final LocationContents diffContents = new LocationContents();
+	private LocationContents diffContents = new LocationContents();
 
 	public Type3Location(Location clonedLocation, Range r) {
 		super(clonedLocation, r);
@@ -27,8 +27,9 @@ public class Type3Location extends Location implements Type3Calculation{
 		if(location.getRange().isBefore(location2.getRange().begin))
 			mergeLocations(location, location2);
 		else mergeLocations(location2, location);
-		if(location instanceof Type3Location)
+		if(location instanceof Type3Location) {
 			diffContents.merge(((Type3Location)location).getDiffContents());
+		}
 	}
 
 	private void mergeLocations(Location before, Location after) {
@@ -36,10 +37,15 @@ public class Type3Location extends Location implements Type3Calculation{
 		populateContents(getContents(), before.getContents());
 		populateContents(getContents(), after.getContents());
 		setRange(r);
-		calculateDiffContents(before, after);
+		setDiffContents(calculateDiffContents(before, after));
+		getDiffContents().determineRange();
 	}
 
 	public LocationContents getDiffContents() {
 		return diffContents;
+	}
+
+	public void setDiffContents(LocationContents diffContents) {
+		this.diffContents = diffContents;
 	}
 }
