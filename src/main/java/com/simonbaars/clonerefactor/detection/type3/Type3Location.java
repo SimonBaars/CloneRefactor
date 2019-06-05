@@ -48,4 +48,10 @@ public class Type3Location extends Location implements Type3Calculation{
 	public void setDiffContents(LocationContents diffContents) {
 		this.diffContents = diffContents;
 	}
+	
+	@Override
+	public String toString() {
+		String s = super.toString();
+		return new StringBuilder(s).insert(s.length()-1, ", type3range="+diffContents.getRange()+", type3nodes="+diffContents.size()).toString();
+	}
 }
