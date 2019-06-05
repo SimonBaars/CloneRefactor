@@ -23,15 +23,15 @@ public interface HasCompareList extends DeterminesNodeTokens {
 			Optional<Entry<Range, Node>> thisNodeOptional = compareMap.entrySet().stream().filter(e -> e.getKey().contains(token.getRange().get())).findAny();
 			if(thisNodeOptional.isPresent()) {
 				if(thisNodeOptional.get().getValue()!=null)
-					createCompareFromNode(compareMap, token, thisNodeOptional.get());
-			} else getCompare().add(Compare.create(token, token, Settings.get().getCloneType()));
+					createCompareFromNode(statement, compareMap, token, thisNodeOptional.get());
+			} else getCompare().add(Compare.create(statement, null, token, Settings.get().getCloneType()));
 		});
 	}
 	
-	public default void createCompareFromNode(Map<Range, Node> compareMap, JavaToken token, Entry<Range, Node> thisNode) {
-		Compare createdNode = Compare.create(thisNode.getValue(), token, Settings.get().getCloneType());
+	public default void createCompareFromNode(Node statement, Map<Range, Node> compareMap, JavaToken token, Entry<Range, Node> thisNode) {
+		Compare createdNode = Compare.create(statement, thisNode.getValue(), token, Settings.get().getCloneType());
 		getCompare().add(createdNode);
-		getCompare().addAll(createdNode.relevantChildren(this));
+		getCompare().addAll(createdNode.relevantChildren(statement, this));
 		if(createdNode instanceof CompareToken) compareMap.remove(thisNode.getKey()); 
 		else thisNode.setValue(null);
 	}

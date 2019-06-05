@@ -2,14 +2,13 @@ package com.simonbaars.clonerefactor.compare;
 
 import com.github.javaparser.ast.type.ReferenceType;
 import com.github.javaparser.resolution.types.ResolvedReferenceType;
-import com.simonbaars.clonerefactor.settings.CloneType;
 
 public class CompareType extends Compare {
 	private final ReferenceType referenceType;
 	private final ResolvedReferenceType type;
 	
-	public CompareType(CloneType cloneType, ReferenceType t) {
-		super(cloneType, t.getRange().get());
+	public CompareType(ReferenceType t) {
+		super(t.getRange().get());
 		this.referenceType = t;
 		ResolvedReferenceType refType = null;
 		try {

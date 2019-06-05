@@ -4,20 +4,20 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.expr.MethodCallExpr;
 import com.github.javaparser.ast.expr.NameExpr;
 import com.github.javaparser.resolution.declarations.ResolvedMethodDeclaration;
 import com.simonbaars.clonerefactor.ast.interfaces.HasCompareList;
 import com.simonbaars.clonerefactor.model.FiltersTokens;
-import com.simonbaars.clonerefactor.settings.CloneType;
 
 public class CompareMethodCall extends Compare implements FiltersTokens {
 	private final MethodCallExpr methodCall;
 	private final ResolvedMethodDeclaration type;
 	private final List<Object> estimatedTypes = new ArrayList<>();
 	
-	public CompareMethodCall(CloneType cloneType, MethodCallExpr t) {
-		super(cloneType, t.getRange().get());
+	public CompareMethodCall(MethodCallExpr t) {
+		super(t.getRange().get());
 		methodCall = t;
 		ResolvedMethodDeclaration refType = null;
 		try {
@@ -27,9 +27,7 @@ public class CompareMethodCall extends Compare implements FiltersTokens {
 		estimateTypes(t);
 	}
 
-	/*
-	 * I'm not so sure about this whole estimateTypes thing. The problem is that JavaParser cannot resolve everything. In essence, we cannot guarantee equality, thus this can result in invalid refactorings. Because of that, we *should* remove this estimateTypes thing, and just mark the equality `false` for all null types.
-	 */
+	// I'm not so sure about this whole estimateTypes thing. The problem is that JavaParser cannot resolve everything. In essence, we cannot guarantee equality, thus this can result in invalid refactorings. Because of that, we *should* remove this estimateTypes thing, and just mark the equality `false` for all null types.
 	private void estimateTypes(MethodCallExpr t) {
 		estimatedTypes.addAll(t.getArguments().stream().map(e -> {
 			if(e instanceof NameExpr) 
@@ -47,7 +45,7 @@ public class CompareMethodCall extends Compare implements FiltersTokens {
 		if(type!=null && other.type !=null) {
 			String methodSignature = type.getQualifiedSignature();
 			String compareMethodSignature = other.type.getQualifiedSignature();
-			if(cloneType.isNotTypeOne()) 
+			if(getCloneType().isNotTypeOne()) 
 				return getOnlyArguments(methodSignature).equals(getOnlyArguments(compareMethodSignature));
 			return methodSignature.equals(compareMethodSignature);
 		}
@@ -71,8 +69,8 @@ public class CompareMethodCall extends Compare implements FiltersTokens {
 	}
 	
 	@Override
-	public List<Compare> relevantChildren(HasCompareList c){
-		return c.getNodesForCompare(methodCall.getArguments(), methodCall.getRange().get()).values().stream().map(e -> Compare.create(e, e.getTokenRange().get().getBegin(), cloneType)).collect(Collectors.toList());
+	public List<Compare> relevantChildren(Node statement, HasCompareList c){
+		return c.getNodesForCompare(methodCall.getArguments(), methodCall.getRange().get()).values().stream().map(e -> Compare.create(statement, e, e.getTokenRange().get().getBegin(), getCloneType())).collect(Collectors.toList());
 	}
 	
 	@Override

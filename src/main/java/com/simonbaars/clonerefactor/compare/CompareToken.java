@@ -1,14 +1,13 @@
 package com.simonbaars.clonerefactor.compare;
 
 import com.github.javaparser.JavaToken;
-import com.simonbaars.clonerefactor.settings.CloneType;
 
 public class CompareToken extends Compare {
 	
 	private final JavaToken token;
 	
-	public CompareToken(CloneType cloneType, JavaToken token) {
-		super(cloneType, token.getRange().get());
+	public CompareToken(JavaToken token) {
+		super(token.getRange().get());
 		this.token = token;
 	}
 

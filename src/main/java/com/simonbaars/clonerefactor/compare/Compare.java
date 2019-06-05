@@ -16,26 +16,37 @@ import com.simonbaars.clonerefactor.model.location.HasRange;
 import com.simonbaars.clonerefactor.settings.CloneType;
 
 public abstract class Compare implements HasRange {
-	protected CloneType cloneType;
-	private final Range range;
+	private CloneType cloneType;
+	private Range range;
+	private Node belongsToStatement;
 	
-	protected Compare(CloneType cloneType, Range range) {
-		this.cloneType=cloneType;
+	protected Compare(Range range) {
 		this.range = range;
 	}
 	
-	public static Compare create(Object tokenOrNode, JavaToken e, CloneType cloneType) {
-		if(tokenOrNode instanceof ReferenceType)
-			return new CompareType(cloneType, (ReferenceType)tokenOrNode);
-		else if(tokenOrNode instanceof NameExpr)
-			return new CompareVariable(cloneType, (NameExpr)tokenOrNode);
-		else if(tokenOrNode instanceof LiteralExpr)
-			return new CompareLiteral(cloneType, e);
-		else if(tokenOrNode instanceof SimpleName)
-			return new CompareName(cloneType, e);
-		else if(tokenOrNode instanceof MethodCallExpr)
-			return new CompareMethodCall(cloneType, (MethodCallExpr)tokenOrNode);
-		return new CompareToken(cloneType, e);
+	protected Compare(CloneType cloneType, Range range) {
+		this(range);
+		this.cloneType=cloneType;
+	}
+	
+	public static Compare create(Node statement, Node node, JavaToken e, CloneType cloneType) {
+		Compare compare;
+		if(node!=null) {
+			if(node instanceof ReferenceType)
+				compare = new CompareType((ReferenceType)node);
+			else if(node instanceof NameExpr)
+				compare = new CompareVariable((NameExpr)node);
+			else if(node instanceof LiteralExpr)
+				compare = new CompareLiteral(e);
+			else if(node instanceof SimpleName)
+				compare = new CompareName(e);
+			else if(node instanceof MethodCallExpr)
+				compare = new CompareMethodCall((MethodCallExpr)node);
+		}
+		compare = new CompareToken(e);
+		compare.setCloneType(cloneType);
+		compare.belongsToStatement = statement;
+		return compare;
 	}
 	
 	/**
@@ -60,7 +71,7 @@ public abstract class Compare implements HasRange {
 		this.cloneType = type;
 	}
 	
-	public List<Compare> relevantChildren(HasCompareList locationContents){
+	public List<Compare> relevantChildren(Node statement, HasCompareList locationContents){
 		return Collections.emptyList();
 	}
 
@@ -70,5 +81,13 @@ public abstract class Compare implements HasRange {
 	
 	public boolean doesType2Compare() {
 		return false;
+	}
+	
+	protected CloneType getCloneType() {
+		return cloneType;
+	}
+
+	public Node getBelongsToStatement() {
+		return belongsToStatement;
 	}
 }

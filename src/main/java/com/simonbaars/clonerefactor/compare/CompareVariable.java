@@ -10,8 +10,8 @@ public class CompareVariable extends Compare {
 	private final ResolvedValueDeclaration dec;
 	private final ResolvedType type;
 	
-	public CompareVariable(CloneType cloneType, NameExpr t) {
-		super(cloneType, t.getRange().get());
+	public CompareVariable(NameExpr t) {
+		super(t.getRange().get());
 		variableName = t;
 		ResolvedValueDeclaration refType = null;
 		ResolvedType resolvedType = null;
@@ -28,14 +28,14 @@ public class CompareVariable extends Compare {
 		if(!super.equals(o))
 			return false;
 		CompareVariable compareDec = ((CompareVariable)o);
-		if(cloneType == CloneType.TYPE1 && !variableName.equals(compareDec.variableName))
+		if(getCloneType() == CloneType.TYPE1 && !variableName.equals(compareDec.variableName))
 			return false;
 		return type == null || type.equals(compareDec.type);
 	}
 
 	@Override
 	public int hashCode() {
-		return (cloneType == CloneType.TYPE1 ? variableName.hashCode() : 0) + (type == null ? -3 : type.hashCode());
+		return (getCloneType() == CloneType.TYPE1 ? variableName.hashCode() : 0) + (type == null ? -3 : type.hashCode());
 	}
 
 	@Override

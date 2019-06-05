@@ -1,24 +1,23 @@
 package com.simonbaars.clonerefactor.compare;
 
 import com.github.javaparser.JavaToken;
-import com.simonbaars.clonerefactor.settings.CloneType;
 
 public class CompareName extends Compare {
 	JavaToken t;
 	
-	public CompareName(CloneType type, JavaToken t) {
-		super(type, t.getRange().get());
+	public CompareName(JavaToken t) {
+		super(t.getRange().get());
 		this.t = t;  
 	}
 
 	@Override
 	public boolean equals(Object o) {
-		return super.equals(o) && (cloneType.isNotTypeOne() || t.equals(((CompareName)o).t)); //Type two names will always be flagged as equals, as we don't take them into account.
+		return super.equals(o) && (getCloneType().isNotTypeOne() || t.equals(((CompareName)o).t)); //Type two names will always be flagged as equals, as we don't take them into account.
 	}
 
 	@Override
 	public int hashCode() {
-		return cloneType.isNotTypeOne() ? -2 : t.hashCode();
+		return getCloneType().isNotTypeOne() ? -2 : t.hashCode();
 	}
 
 	@Override
