@@ -56,7 +56,7 @@ public class LocationContents implements FiltersTokens, HasRange, HasCompareList
 				this.compare.add(new CompareFalse(getRange(n)));
 			else if(!Settings.get().useLiteratureTypeDefinitions()) createComparablesByNode(tokens, n); 
 		}
-		this.range = getRange(this.tokens);
+		determineRange();
 	}
 
 	public LocationContents(LocationContents contents, Range r) {
@@ -123,11 +123,10 @@ public class LocationContents implements FiltersTokens, HasRange, HasCompareList
 	}
 
 	public void merge(LocationContents contents) {
-		if(this.size() == 0) throw new IllegalStateException("Must have one node!");
-		//System.out.println(contents.size() +", "+this.size());
 		nodes.addAll(contents.getNodes());
 		tokens.addAll(contents.getTokens());
 		compare.addAll(contents.getCompare());
+		determineRange();
 	}
 
 	public Range getRange() {
@@ -191,5 +190,9 @@ public class LocationContents implements FiltersTokens, HasRange, HasCompareList
 
 	public void setTokens(TokenRange tokenRange) {
 		StreamSupport.stream(tokenRange.spliterator(), false).filter(this::isComparableToken).forEach(e -> getTokens().add(e));
+	}
+
+	public void determineRange() {
+		this.setRange(getRange(this.getTokens()));
 	}
 }
