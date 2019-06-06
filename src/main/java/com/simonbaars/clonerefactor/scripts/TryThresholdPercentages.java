@@ -39,7 +39,7 @@ public class TryThresholdPercentages implements Runnable {
 			Settings.get().setType2VariabilityPercentage(i);
 			Metrics metrics = new RunOnCorpus().startCorpusCloneDetection();
 			if(metrics != null)
-				collectMetrics(i+"%", metrics);
+				collectMetrics(Integer.toString(i), metrics);
 			writeTables();
 		}
 	}
