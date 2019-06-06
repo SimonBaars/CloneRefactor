@@ -54,6 +54,16 @@ public class Type1Testcases extends Type1Test {
     	System.out.println("abmash");
     	String path = "/Users/sbaars/clone/git/abmash/";
 		System.out.println(Main.cloneDetection(Paths.get(path), Paths.get(path+"src/main/java/")).sorted());
+		Settings.get().setScope(Scope.ALL);
+    }
+    
+    public void testMetricsOutput() {
+    	System.out.println("abmash");
+    	String path = "/Users/sbaars/clone/git/abmash/";
+		System.out.println(Main.cloneDetection(Paths.get(path), Paths.get(path+"src/main/java/")).getMetrics());
+		Settings.get().setUseLiteratureTypeDefinitions(true);
+		System.out.println(Main.cloneDetection(Paths.get(path), Paths.get(path+"src/main/java/")).getMetrics());
+		Settings.get().setUseLiteratureTypeDefinitions(false);
     }
     
     public void testThread() {
