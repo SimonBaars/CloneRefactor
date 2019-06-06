@@ -72,19 +72,6 @@ public class Type2Variability implements CalculatesPercentages, ChecksThresholds
 		Map<Integer, int[][]> statementEqualityArrays = findConnectedStatements(s, literals, equalityArray);
 		return findDisplacedClones(s, literals, statementEqualityArrays);
 	}
-
-	// https://stackoverflow.com/questions/40201309/best-way-to-get-a-power-set-of-an-array
-	public int[][] powerset(int[] a){
-		int max = 1 << a.length;
-		int[][] result = new int[max][];
-		for (int i = 0; i < max; ++i) {
-		    result[i] = new int[Integer.bitCount(i)];
-		    for (int j = 0, b = i, k = 0; j < a.length; ++j, b >>= 1)
-		        if ((b & 1) != 0)
-		            result[i][k++] = a[j];
-		}
-		return result;
-	}
 	
 	public Location getStatementLoc(Location l) {
 		if(l.getNext() != null)

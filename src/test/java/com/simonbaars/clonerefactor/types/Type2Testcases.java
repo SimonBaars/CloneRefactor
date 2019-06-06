@@ -98,7 +98,6 @@ public class Type2Testcases extends Type2Test {
     
     public void testThresholds() {
     	Settings.get().setType2VariabilityPercentage(100);
-    	Settings.get().setUseLiteratureTypeDefinitions(true);
     	System.out.println("testHighVariabilityInstance");
     	System.out.println(testProject("HighVariabilityInstance"));
     	Settings.get().setType2VariabilityPercentage(5);
