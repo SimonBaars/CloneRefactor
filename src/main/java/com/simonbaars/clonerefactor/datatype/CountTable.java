@@ -10,9 +10,11 @@ public class CountTable<K> extends ListMap<K, Integer> {
 	private int currentSize = 0;
 
 	private static final long serialVersionUID = 1L;
+	private String tableName;
 	private final List<String> columns = new ArrayList<>();
 
-	public CountTable() {
+	public CountTable(String tableName) {
+		this.tableName = tableName;
 	}
 
 	public CountTable(int initialCapacity, float loadFactor) {
