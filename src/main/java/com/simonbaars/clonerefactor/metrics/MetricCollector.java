@@ -12,6 +12,8 @@ import com.simonbaars.clonerefactor.metrics.enums.CloneContents;
 import com.simonbaars.clonerefactor.metrics.enums.CloneLocation;
 import com.simonbaars.clonerefactor.metrics.enums.CloneRefactorability;
 import com.simonbaars.clonerefactor.metrics.enums.CloneRelation;
+import com.simonbaars.clonerefactor.metrics.enums.Metric;
+import com.simonbaars.clonerefactor.metrics.enums.StatType;
 import com.simonbaars.clonerefactor.model.Sequence;
 import com.simonbaars.clonerefactor.model.location.Location;
 
@@ -29,13 +31,10 @@ public class MetricCollector {
 	public MetricCollector() {}
 	
 	public void reportFoundNode(Location l) {
-		//System.out.println(l.getContents().toString());
-		//System.out.println(l.getContents().getEffectiveTokenTypes());
-		//System.out.println(l.getContents().getNodeTypes());
-		metrics.totalAmountOfLines+=getUnparsedLines(l, false);
-		metrics.totalAmountOfNodes+=l.getAmountOfNodes();
-		metrics.totalAmountOfTokens+=l.getAmountOfTokens();
-		metrics.totalAmountOfEffectiveLines+=getUnparsedEffectiveLines(l, false);
+		metrics.incrementGeneralStatistic(Metric.LINES, StatType.TOTAL, getUnparsedLines(l, false));
+		metrics.incrementGeneralStatistic(Metric.NODES, StatType.TOTAL, l.getAmountOfNodes());
+		metrics.incrementGeneralStatistic(Metric.TOKENS, StatType.TOTAL, l.getAmountOfTokens());
+		metrics.incrementGeneralStatistic(Metric.EFFECTIVELINES, StatType.TOTAL, getUnparsedEffectiveLines(l, false));
 		l.getContents().getNodes().forEach(e -> relationFinder.registerNode(e));
 	}
 	
@@ -46,7 +45,7 @@ public class MetricCollector {
 			if(!lines.contains(i)) {
 				amountOfLines++;
 				lines.add(i);
-			} else if(countOverlap) metrics.overlappingEffectiveLines++;
+			} else if(countOverlap) metrics.incrementGeneralStatistic(Metric.EFFECTIVELINES, StatType.OVERLAPPING, 1);
 		}
 		return amountOfLines;
 	}
@@ -58,7 +57,7 @@ public class MetricCollector {
 			if(!lines.contains(i)) {
 				amountOfLines++;
 				lines.add(i);
-			} else if(countOverlap) metrics.overlappingLines++;
+			} else if(countOverlap) metrics.incrementGeneralStatistic(Metric.LINES, StatType.OVERLAPPING, 1);
 		}
 		return amountOfLines;
 	}
@@ -87,10 +86,10 @@ public class MetricCollector {
 	}
 
 	private void reportClonedLocation(Location l) {
-		metrics.amountOfLinesCloned+=getUnparsedLines(l, true);
-		metrics.amountOfTokensCloned+=getUnparsedTokens(l, true);
-		metrics.amountOfNodesCloned+=getUnparsedNodes(l, true);
-		metrics.amountOfEffectiveLinesCloned+=getUnparsedEffectiveLines(l, true);
+		metrics.incrementGeneralStatistic(Metric.LINES, StatType.CLONED, getUnparsedLines(l, true));
+		metrics.incrementGeneralStatistic(Metric.TOKENS, StatType.CLONED, getUnparsedTokens(l, true));
+		metrics.incrementGeneralStatistic(Metric.NODES, StatType.CLONED, getUnparsedNodes(l, true));
+		metrics.incrementGeneralStatistic(Metric.EFFECTIVELINES, StatType.CLONED, getUnparsedEffectiveLines(l, true));
 		l.setMetrics(locationFinder);
 		l.getContents().setMetrics(contentsFinder);
 		metrics.amountPerLocation.increment(l.getLocationType());
@@ -104,7 +103,7 @@ public class MetricCollector {
 			if(!parsedTokens.get(l.getFile()).contains(r)) {
 				parsedTokens.addTo(l.getFile(), r);
 				amount++;
-			} else if(countOverlap) metrics.overlappingTokens++;
+			} else if(countOverlap) metrics.incrementGeneralStatistic(Metric.TOKENS, StatType.OVERLAPPING, 1);
 		}
 		return amount;
 	}
@@ -116,7 +115,7 @@ public class MetricCollector {
 			if(!parsedNodes.get(l.getFile()).contains(r)) {
 				parsedNodes.addTo(l.getFile(), r);
 				amount++;
-			} else if(countOverlap) metrics.overlappingNodes++;
+			} else if(countOverlap) metrics.incrementGeneralStatistic(Metric.NODES, StatType.OVERLAPPING, 1);
 		}
 		return amount;
 	}

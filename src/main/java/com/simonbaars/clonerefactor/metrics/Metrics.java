@@ -5,22 +5,11 @@ import com.simonbaars.clonerefactor.metrics.enums.CloneContents.ContentsType;
 import com.simonbaars.clonerefactor.metrics.enums.CloneLocation.LocationType;
 import com.simonbaars.clonerefactor.metrics.enums.CloneRefactorability.Refactorability;
 import com.simonbaars.clonerefactor.metrics.enums.CloneRelation.RelationType;
+import com.simonbaars.clonerefactor.metrics.enums.Metric;
+import com.simonbaars.clonerefactor.metrics.enums.StatType;
 
 public class Metrics {
-	public int totalAmountOfLines = 0;
-	public int totalAmountOfEffectiveLines = 0;
-	public int totalAmountOfNodes = 0;
-	public int totalAmountOfTokens = 0;
-	
-	public int amountOfLinesCloned = 0;
-	public int amountOfEffectiveLinesCloned = 0;
-	public int amountOfNodesCloned = 0;
-	public int amountOfTokensCloned = 0;
-	
-	public int overlappingNodes = 0;
-	public int overlappingEffectiveLines = 0;
-	public int overlappingTokens = 0;
-	public int overlappingLines = 0;
+	public final CountMap<String> generalStats = new CountMap<>();
 
 	public final CountMap<RelationType> amountPerRelation = new CountMap<>();
 	public final CountMap<LocationType> amountPerLocation = new CountMap<>();
@@ -34,41 +23,17 @@ public class Metrics {
 	public final CountMap<Integer> amountPerEffectiveLines = new CountMap<>();
 	public final CountMap<Integer> amountPerTotalEffectiveLineVolume = new CountMap<>();
 
-
-
 	@Override
 	public String toString() {
-		return "Metrics [totalAmountOfLines=" + totalAmountOfLines + ", totalAmountOfEffectiveLines="
-				+ totalAmountOfEffectiveLines + ", totalAmountOfNodes=" + totalAmountOfNodes + ", totalAmountOfTokens="
-				+ totalAmountOfTokens + ", amountOfLinesCloned=" + amountOfLinesCloned
-				+ ", amountOfEffectiveLinesCloned=" + amountOfEffectiveLinesCloned + ", amountOfNodesCloned="
-				+ amountOfNodesCloned + ", amountOfTokensCloned=" + amountOfTokensCloned + ", overlappingNodes="
-				+ overlappingNodes + ", overlappingEffectiveLines=" + overlappingEffectiveLines + ", overlappingTokens="
-				+ overlappingTokens + ", overlappingLines=" + overlappingLines + ", amountPerRelation="
-				+ amountPerRelation + ", amountPerLocation=" + amountPerLocation + ", amountPerContents="
-				+ amountPerContents + ", amountPerExtract=" + amountPerExtract + ", amountPerCloneClassSize="
-				+ amountPerCloneClassSize + ", amountPerNodes=" + amountPerNodes + ", amountPerTotalNodeVolume="
-				+ amountPerTotalNodeVolume + ", amountPerEffectiveLines=" + amountPerEffectiveLines
-				+ ", amountPerTotalEffectiveLineVolume=" + amountPerTotalEffectiveLineVolume + "]";
+		return String.format(
+				"Metrics [generalStats=%s, amountPerRelation=%s, amountPerLocation=%s, amountPerContents=%s, amountPerExtract=%s, amountPerCloneClassSize=%s, amountPerNodes=%s, amountPerTotalNodeVolume=%s, amountPerEffectiveLines=%s, amountPerTotalEffectiveLineVolume=%s]",
+				generalStats, amountPerRelation, amountPerLocation, amountPerContents, amountPerExtract,
+				amountPerCloneClassSize, amountPerNodes, amountPerTotalNodeVolume, amountPerEffectiveLines,
+				amountPerTotalEffectiveLineVolume);
 	}
 
-
-
 	public void add(Metrics metrics) {
-		totalAmountOfLines+=metrics.totalAmountOfLines;
-		totalAmountOfNodes+=metrics.totalAmountOfNodes;
-		totalAmountOfTokens+=metrics.totalAmountOfTokens;
-		totalAmountOfEffectiveLines+=metrics.totalAmountOfEffectiveLines;
-		
-		amountOfLinesCloned+=metrics.amountOfLinesCloned;
-		amountOfNodesCloned+=metrics.amountOfNodesCloned;
-		amountOfTokensCloned+=metrics.amountOfTokensCloned;
-		amountOfEffectiveLinesCloned+=metrics.amountOfEffectiveLinesCloned;
-		
-		overlappingNodes += metrics.overlappingNodes;
-		overlappingEffectiveLines = metrics.overlappingEffectiveLines;
-		overlappingTokens = metrics.overlappingTokens;
-		overlappingLines = metrics.overlappingLines;
+		generalStats.addAll(metrics.generalStats);
 		
 		amountPerRelation.addAll(metrics.amountPerRelation);
 		amountPerLocation.addAll(metrics.amountPerLocation);
@@ -83,7 +48,7 @@ public class Metrics {
 		amountPerTotalEffectiveLineVolume.addAll(metrics.amountPerTotalEffectiveLineVolume);
 	}
 
-	
-	
-	
+	public void incrementGeneralStatistic(Metric metric, StatType type, int amount) {
+		generalStats.increment(type.toString()+" "+metric.toString(), amount);
+	}
 }
