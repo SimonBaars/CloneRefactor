@@ -23,10 +23,8 @@ public class CloneRefactorability implements MetricEnum<Refactorability>, Requir
 	public Refactorability get(Sequence sequence) {
 		if(new CloneContents().get(sequence)!=CloneContents.ContentsType.PARTIALMETHOD)
 			return Refactorability.NOEXTRACTIONBYCONTENTTYPE;
-		if(sequence.getLocations().stream().anyMatch(e -> e.getContents().getNodes().stream().anyMatch(n -> complexControlFlow(n)))) {
-			if(flowEndsInReturnAndContainsOnlyReturnStatements(sequence))
-				return Refactorability.COMPLEXCONTROLFLOW;
-		}
+		if(sequence.getLocations().stream().anyMatch(e -> e.getContents().getNodes().stream().anyMatch(n -> complexControlFlow(n))) && !flowEndsInReturnAndContainsOnlyReturnStatements(sequence))
+			return Refactorability.COMPLEXCONTROLFLOW;
 		for(Location location : sequence.getLocations()) {
 			for(Node n : location.getContents().getNodes()) {
 				List<Node> children = childrenToParse(n);
@@ -43,11 +41,10 @@ public class CloneRefactorability implements MetricEnum<Refactorability>, Requir
 	}
 	
 	private boolean flowEndsInReturnAndContainsOnlyReturnStatements(Sequence sequence) {
-		for(Location location : sequence.getLocations()) {
-			if(location.getContents().getNodes().stream().filter(n -> complexControlFlow(n)).allMatch(e -> e instanceof ReturnStmt) && location.getContents().getNodes().get(location.getContents().getNodes().size()-1) instanceof ReturnStmt) {
-				return false;
-			}
-		}
-		return true;
+		Location location = sequence.getAny();
+		if(location.getContents().getNodes().stream().filter(n -> complexControlFlow(n)).allMatch(e -> e instanceof ReturnStmt) 
+				&& location.getContents().getNodes().get(location.getContents().getNodes().size()-1) instanceof ReturnStmt)
+			return true;
+		return false;
 	}
 }
