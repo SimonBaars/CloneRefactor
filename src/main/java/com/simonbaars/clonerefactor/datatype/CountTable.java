@@ -42,8 +42,8 @@ public class CountTable<K> extends ListMap<K, Integer> {
 	
 	@Override
 	public String toString() {
-		String columns = "\t"+this.columns.stream().collect(Collectors.joining("\t", System.lineSeparator(), System.lineSeparator()));
-		return tableName+columns+keySet().stream().sorted().map(e -> 
+		String columns = this.columns.stream().collect(Collectors.joining("\t", tableName+"\t", System.lineSeparator()));
+		return columns+keySet().stream().sorted().map(e -> 
 			e + "\t"+get(e).stream().map(f -> f.toString()).collect(Collectors.joining("\t"))
 		).collect(Collectors.joining(System.lineSeparator()));
 	}
