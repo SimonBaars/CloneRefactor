@@ -1,5 +1,6 @@
 package com.simonbaars.clonerefactor.datatype;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -9,6 +10,7 @@ public class CountTable<K> extends ListMap<K, Integer> {
 	private int currentSize = 0;
 
 	private static final long serialVersionUID = 1L;
+	private final List<String> columns = new ArrayList<>();
 
 	public CountTable() {
 	}
@@ -25,18 +27,22 @@ public class CountTable<K> extends ListMap<K, Integer> {
 		super(m);
 	}
 	
-	public void add(CountMap<K> countMap) {
+	public void add(String columnName, CountMap<K> countMap) {
 		entrySet().stream().filter(e -> !countMap.containsKey(e.getKey())).forEach(e -> e.getValue().add(0));
 		countMap.entrySet().forEach(e -> {
 			if(!containsKey(e.getKey()))
 				IntStream.range(0, currentSize).forEach(i -> get(e.getKey()).add(0));
 			get(e.getKey()).add(e.getValue());
 		});
+		columns.add(columnName);
 		currentSize++;
     }
 	
 	@Override
 	public String toString() {
-		return keySet().stream().sorted().map(e -> e+"\t"+get(e).stream().map(f -> f.toString()).collect(Collectors.joining("\t"))).collect(Collectors.joining(System.lineSeparator()));
+		String columns = "\t"+this.columns.stream().collect(Collectors.joining("\t"));
+		return columns+keySet().stream().sorted().map(e -> 
+			e + "\t"+get(e).stream().map(f -> f.toString()).collect(Collectors.joining("\t"))
+		).collect(Collectors.joining(System.lineSeparator()));
 	}
 }

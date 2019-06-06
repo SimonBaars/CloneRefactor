@@ -37,7 +37,7 @@ public class TryThresholds implements Runnable {
 			Settings.get().setMinAmountOfTokens(i);
 			Metrics metrics = new RunOnCorpus().startCorpusCloneDetection();
 			if(metrics != null)
-				collectMetrics(metrics);
+				collectMetrics(metrics, i);
 			writeTables();
 		}
 	}
@@ -71,17 +71,17 @@ public class TryThresholds implements Runnable {
 		}
 	}
 
-	private void collectMetrics(Metrics metrics) {
-		amountPerRelation.add(metrics.amountPerRelation);
-		amountPerLocation.add(metrics.amountPerLocation);
-		amountPerContents.add(metrics.amountPerContents);
-		amountPerExtract.add(metrics.amountPerExtract);
+	private void collectMetrics(Metrics metrics, int amount) {
+		amountPerRelation.add(Integer.toString(amount), metrics.amountPerRelation);
+		amountPerLocation.add(Integer.toString(amount), metrics.amountPerLocation);
+		amountPerContents.add(Integer.toString(amount), metrics.amountPerContents);
+		amountPerExtract.add(Integer.toString(amount), metrics.amountPerExtract);
 		
-		amountPerCloneClassSize.add(metrics.amountPerCloneClassSize);
-		amountPerNodes.add(metrics.amountPerNodes);
-		amountPerTotalNodeVolume.add(metrics.amountPerTotalNodeVolume);
+		amountPerCloneClassSize.add(Integer.toString(amount), metrics.amountPerCloneClassSize);
+		amountPerNodes.add(Integer.toString(amount), metrics.amountPerNodes);
+		amountPerTotalNodeVolume.add(Integer.toString(amount), metrics.amountPerTotalNodeVolume);
 		
-		amountPerEffectiveLines.add(metrics.amountPerEffectiveLines);
-		amountPerTotalEffectiveLineVolume.add(metrics.amountPerTotalEffectiveLineVolume);
+		amountPerEffectiveLines.add(Integer.toString(amount), metrics.amountPerEffectiveLines);
+		amountPerTotalEffectiveLineVolume.add(Integer.toString(amount), metrics.amountPerTotalEffectiveLineVolume);
 	}
 }

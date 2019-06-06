@@ -39,7 +39,7 @@ public class TryThresholdPercentages implements Runnable {
 			Settings.get().setType2VariabilityPercentage(i);
 			Metrics metrics = new RunOnCorpus().startCorpusCloneDetection();
 			if(metrics != null)
-				collectMetrics(metrics);
+				collectMetrics(i+"%", metrics);
 			writeTables();
 		}
 	}
@@ -73,17 +73,17 @@ public class TryThresholdPercentages implements Runnable {
 		}
 	}
 
-	private void collectMetrics(Metrics metrics) {
-		amountPerRelation.add(metrics.amountPerRelation);
-		amountPerLocation.add(metrics.amountPerLocation);
-		amountPerContents.add(metrics.amountPerContents);
-		amountPerExtract.add(metrics.amountPerExtract);
+	private void collectMetrics(String percentage, Metrics metrics) {
+		amountPerRelation.add(percentage, metrics.amountPerRelation);
+		amountPerLocation.add(percentage, metrics.amountPerLocation);
+		amountPerContents.add(percentage, metrics.amountPerContents);
+		amountPerExtract.add(percentage, metrics.amountPerExtract);
 		
-		amountPerCloneClassSize.add(metrics.amountPerCloneClassSize);
-		amountPerNodes.add(metrics.amountPerNodes);
-		amountPerTotalNodeVolume.add(metrics.amountPerTotalNodeVolume);
+		amountPerCloneClassSize.add(percentage, metrics.amountPerCloneClassSize);
+		amountPerNodes.add(percentage, metrics.amountPerNodes);
+		amountPerTotalNodeVolume.add(percentage, metrics.amountPerTotalNodeVolume);
 		
-		amountPerEffectiveLines.add(metrics.amountPerEffectiveLines);
-		amountPerTotalEffectiveLineVolume.add(metrics.amountPerTotalEffectiveLineVolume);
+		amountPerEffectiveLines.add(percentage, metrics.amountPerEffectiveLines);
+		amountPerTotalEffectiveLineVolume.add(percentage, metrics.amountPerTotalEffectiveLineVolume);
 	}
 }
