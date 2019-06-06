@@ -104,7 +104,7 @@ public class LocationContents implements FiltersTokens, HasRange, HasCompareList
 
 	@Override
 	public int hashCode() {
-		if(Settings.get().useLiteratureTypeDefinitions() && compare.isEmpty()) return tokens.hashCode();
+		if(Settings.get().useLiteratureTypeDefinitions() && compare.isEmpty()) return filterTokensForCompare(tokens).hashCode();
 		int prime = 31;
 		int result = 1;
 		for(Compare node : compare) {
