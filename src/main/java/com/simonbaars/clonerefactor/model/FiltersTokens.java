@@ -8,6 +8,7 @@ import java.util.stream.StreamSupport;
 
 import com.github.javaparser.JavaToken;
 import com.github.javaparser.JavaToken.Category;
+import com.simonbaars.clonerefactor.settings.Settings;
 import com.github.javaparser.TokenRange;
 
 public interface FiltersTokens {
@@ -31,6 +32,6 @@ public interface FiltersTokens {
 	}
 	
 	public default List<JavaToken> filterTokensForCompare(List<JavaToken> tokens) {
-		return tokens.stream().filter(t -> isComparableToken(t, LITERATURE_TYPE2_NO_TOKEN)).collect(Collectors.toList());
+		return Settings.get().getCloneType().isNotTypeOne() ? tokens.stream().filter(t -> isComparableToken(t, LITERATURE_TYPE2_NO_TOKEN)).collect(Collectors.toList()) : tokens;
 	}
 }
