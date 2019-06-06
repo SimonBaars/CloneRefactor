@@ -30,7 +30,7 @@ public abstract class Compare implements HasRange {
 	}
 	
 	public static Compare create(Node statement, Node node, JavaToken e, CloneType cloneType) {
-		Compare compare;
+		Compare compare = null;
 		if(node!=null) {
 			if(node instanceof ReferenceType)
 				compare = new CompareType((ReferenceType)node);
@@ -43,7 +43,8 @@ public abstract class Compare implements HasRange {
 			else if(node instanceof MethodCallExpr)
 				compare = new CompareMethodCall((MethodCallExpr)node);
 		}
-		compare = new CompareToken(e);
+		if(compare == null)
+			compare = new CompareToken(e);
 		compare.setCloneType(cloneType);
 		compare.belongsToStatement = statement;
 		return compare;
