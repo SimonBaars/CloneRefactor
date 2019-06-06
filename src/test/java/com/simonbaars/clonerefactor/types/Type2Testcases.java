@@ -67,6 +67,15 @@ public class Type2Testcases extends Type2Test {
 		System.out.println(Main.cloneDetection(Paths.get(path), Paths.get(path+"src/main/java/")).sorted());
     }
     
+    public void testMetricsOutput() {
+    	System.out.println("abmash");
+    	String path = "/Users/sbaars/clone/git/abmash/";
+		System.out.println(Main.cloneDetection(Paths.get(path), Paths.get(path+"src/main/java/")).getMetrics());
+		Settings.get().setUseLiteratureTypeDefinitions(true);
+		System.out.println(Main.cloneDetection(Paths.get(path), Paths.get(path+"src/main/java/")).getMetrics());
+		Settings.get().setUseLiteratureTypeDefinitions(false);
+    }
+    
     public void testDifferentLiterals() {
     	System.out.println("testDifferentLiterals");
     	System.out.println(testProject("DifferentLiterals"));
@@ -85,6 +94,14 @@ public class Type2Testcases extends Type2Test {
     public void testHighVariabilityInstance() {
     	System.out.println("testHighVariabilityInstance");
     	System.out.println(testProject("HighVariabilityInstance"));
+    }
+    
+    public void testThresholds() {
+    	Settings.get().setType2VariabilityPercentage(100);
+    	Settings.get().setUseLiteratureTypeDefinitions(true);
+    	System.out.println("testHighVariabilityInstance");
+    	System.out.println(testProject("HighVariabilityInstance"));
+    	Settings.get().setType2VariabilityPercentage(5);
     }
     
     public void testThreeDifferent() {
