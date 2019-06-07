@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
-import com.simonbaars.clonerefactor.compare.Compare;
+import com.simonbaars.clonerefactor.ast.compare.Compare;
 import com.simonbaars.clonerefactor.detection.interfaces.CalculatesPercentages;
 import com.simonbaars.clonerefactor.detection.interfaces.ChecksForComparability;
 import com.simonbaars.clonerefactor.detection.interfaces.ChecksThresholds;

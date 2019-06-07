@@ -1,4 +1,4 @@
-package com.simonbaars.clonerefactor.compare;
+package com.simonbaars.clonerefactor.ast.compare;
 
 import java.util.ArrayList;
 import java.util.List;

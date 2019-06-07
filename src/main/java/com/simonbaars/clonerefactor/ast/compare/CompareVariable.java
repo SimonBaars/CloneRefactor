@@ -1,4 +1,4 @@
-package com.simonbaars.clonerefactor.compare;
+package com.simonbaars.clonerefactor.ast.compare;
 
 import com.github.javaparser.ast.expr.NameExpr;
 import com.github.javaparser.resolution.declarations.ResolvedValueDeclaration;

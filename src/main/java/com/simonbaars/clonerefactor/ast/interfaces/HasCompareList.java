@@ -10,8 +10,8 @@ import java.util.Optional;
 import com.github.javaparser.JavaToken;
 import com.github.javaparser.Range;
 import com.github.javaparser.ast.Node;
-import com.simonbaars.clonerefactor.compare.Compare;
-import com.simonbaars.clonerefactor.compare.CompareToken;
+import com.simonbaars.clonerefactor.ast.compare.Compare;
+import com.simonbaars.clonerefactor.ast.compare.CompareToken;
 import com.simonbaars.clonerefactor.settings.Settings;
 
 public interface HasCompareList extends DeterminesNodeTokens {
