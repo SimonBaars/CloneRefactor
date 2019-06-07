@@ -7,7 +7,8 @@ import com.simonbaars.clonerefactor.model.location.Location;
 import com.simonbaars.clonerefactor.model.location.LocationContents;
 
 public class Type3Location extends Location implements Type3Calculation{
-	private LocationContents diffContents = new LocationContents();
+	private LocationContents diffContents;
+	private LocationContents combinedContents;
 
 	public Type3Location(Location clonedLocation, Range r) {
 		super(clonedLocation, r);
@@ -29,16 +30,20 @@ public class Type3Location extends Location implements Type3Calculation{
 		else mergeLocations(location2, location);
 		if(location instanceof Type3Location) {
 			diffContents.merge(((Type3Location)location).getDiffContents());
+		} 
+		if(location2 instanceof Type3Location) {
+			diffContents.merge(((Type3Location)location2).getDiffContents());
 		}
 	}
 
 	private void mergeLocations(Location before, Location after) {
 		Range r = before.getRange().withEnd(after.getRange().end);
-		populateContents(getContents(), before.getContents());
-		populateContents(getContents(), after.getContents());
-		setRange(r);
 		setDiffContents(calculateDiffContents(before, after));
 		getDiffContents().determineRange();
+		populateContents(getContents(), before.getContents());
+		populateContents(getContents(), getDiffContents());
+		populateContents(getContents(), after.getContents());
+		setRange(r);
 	}
 
 	public LocationContents getDiffContents() {
@@ -47,6 +52,14 @@ public class Type3Location extends Location implements Type3Calculation{
 
 	public void setDiffContents(LocationContents diffContents) {
 		this.diffContents = diffContents;
+	}
+	
+	public LocationContents getCombinedContents() {
+		return combinedContents;
+	}
+
+	public void setCombinedContents(LocationContents combinedContents) {
+		this.combinedContents = combinedContents;
 	}
 	
 	@Override
