@@ -18,7 +18,7 @@ public class CompareOutOfScope extends Compare {
 	
 	@Override
 	public int hashCode() {
-		return x++;
+		return x++; // Keep changing the hashcode so they will always differ on comparison.
 	}
 
 	@Override
