@@ -24,6 +24,10 @@ public interface Type3Calculation {
 	}
 	
 	public default int calculateDiff(Location before, Location after) {
-		return calculateDiffContents(before, after).getNodes().size();
+		return calculateDiff(calculateDiffContents(before, after));
+	}
+	
+	public default int calculateDiff(LocationContents diff) {
+		return diff.getNodes().size();
 	}
 }

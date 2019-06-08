@@ -5,10 +5,12 @@ import java.util.Optional;
 import java.util.stream.IntStream;
 
 import com.github.javaparser.ast.Node;
+import com.simonbaars.clonerefactor.ast.compare.CompareFalse;
 import com.simonbaars.clonerefactor.datatype.ListMap;
 import com.simonbaars.clonerefactor.detection.interfaces.CalculatesPercentages;
 import com.simonbaars.clonerefactor.model.Sequence;
 import com.simonbaars.clonerefactor.model.location.Location;
+import com.simonbaars.clonerefactor.model.location.LocationContents;
 import com.simonbaars.clonerefactor.settings.Settings;
 
 public class Type3Opportunities implements Type3Calculation, CalculatesPercentages {
@@ -48,7 +50,7 @@ public class Type3Opportunities implements Type3Calculation, CalculatesPercentag
 			Location l2 = fl2.getLocs().get(i);
 			if(l1.getFile() != l2.getFile())
 				return false;
-			if(!Settings.get().isUseLiteratureTypeDefinitions() && !parentsEqual(l1.getContents().getNodes().get(l1.getContents().getNodes().size()-1).getParentNode(), l2.getContents().getNodes().get(0).getParentNode()))
+			if(!(Settings.get().isUseLiteratureTypeDefinitions() || parentsEqual(l1.getContents().getNodes().get(l1.getContents().getNodes().size()-1).getParentNode(), l2.getContents().getNodes().get(0).getParentNode())))
 				return false;
 			if(l1.getRange().begin.isBefore(l2.getRange().begin)) {
 				return checkType3Threshold(l1, l2);
@@ -62,7 +64,9 @@ public class Type3Opportunities implements Type3Calculation, CalculatesPercentag
 
 	private boolean checkType3Threshold(Location l1, Location l2) {
 		int combinedSize = l1.getAmountOfNodes() + l2.getAmountOfNodes();
-		int diff = calculateDiff(l1, l2);
-		return calcPercentage(diff, combinedSize) <= Settings.get().getType3GapSize();
+		LocationContents diff = calculateDiffContents(l1, l2);
+		if(diff.getCompare().stream().anyMatch(e -> e instanceof CompareFalse))
+			return false;
+		return calcPercentage(calculateDiff(diff), combinedSize) <= Settings.get().getType3GapSize();
 	}
 }
