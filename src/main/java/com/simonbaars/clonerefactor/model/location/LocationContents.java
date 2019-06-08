@@ -14,7 +14,7 @@ import com.github.javaparser.TokenRange;
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.simonbaars.clonerefactor.ast.compare.Compare;
-import com.simonbaars.clonerefactor.ast.compare.CompareFalse;
+import com.simonbaars.clonerefactor.ast.compare.CompareOutOfScope;
 import com.simonbaars.clonerefactor.ast.compare.CompareLiteral;
 import com.simonbaars.clonerefactor.ast.compare.CompareMethodCall;
 import com.simonbaars.clonerefactor.ast.compare.CompareVariable;
@@ -53,7 +53,7 @@ public class LocationContents implements FiltersTokens, HasRange, HasCompareList
 			this.tokens.addAll(calculateTokensFromNode(n));
 			this.nodes.add(n);
 			if(Settings.get().getScope()!=Scope.ALL && (getMethod(n)==null || (Settings.get().getScope() == Scope.METHODBODYONLY && n instanceof MethodDeclaration)))
-				this.compare.add(new CompareFalse(getRange(n)));
+				this.compare.add(new CompareOutOfScope(getRange(n)));
 			else if(!Settings.get().useLiteratureTypeDefinitions()) createComparablesByNode(tokens, n); 
 		}
 		determineRange();

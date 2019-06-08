@@ -5,7 +5,7 @@ import java.util.Optional;
 import java.util.stream.IntStream;
 
 import com.github.javaparser.ast.Node;
-import com.simonbaars.clonerefactor.ast.compare.CompareFalse;
+import com.simonbaars.clonerefactor.ast.compare.CompareOutOfScope;
 import com.simonbaars.clonerefactor.datatype.ListMap;
 import com.simonbaars.clonerefactor.detection.interfaces.CalculatesPercentages;
 import com.simonbaars.clonerefactor.model.Sequence;
@@ -65,7 +65,7 @@ public class Type3Opportunities implements Type3Calculation, CalculatesPercentag
 	private boolean checkType3Threshold(Location l1, Location l2) {
 		int combinedSize = l1.getAmountOfNodes() + l2.getAmountOfNodes();
 		LocationContents diff = calculateDiffContents(l1, l2);
-		if(diff.getCompare().stream().anyMatch(e -> e instanceof CompareFalse))
+		if(diff.getCompare().stream().anyMatch(e -> e instanceof CompareOutOfScope))
 			return false;
 		return calcPercentage(calculateDiff(diff), combinedSize) <= Settings.get().getType3GapSize();
 	}

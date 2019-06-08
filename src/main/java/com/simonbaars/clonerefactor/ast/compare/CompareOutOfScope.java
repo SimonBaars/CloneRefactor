@@ -3,17 +3,17 @@ package com.simonbaars.clonerefactor.ast.compare;
 import com.github.javaparser.Range;
 import com.simonbaars.clonerefactor.settings.CloneType;
 
-public class CompareFalse extends Compare {
+public class CompareOutOfScope extends Compare {
 	
 	private static int x = Integer.MIN_VALUE;
 	
-	public CompareFalse(Range range) {
+	public CompareOutOfScope(Range range) {
 		super(CloneType.TYPE1, range);
 	}
 
 	@Override
 	public boolean equals(Object o) {
-		return false; // Whatever clones we'll find, I won't be a part of it.
+		return false; // We count out of scope as never being a clone.
 	}
 	
 	@Override
