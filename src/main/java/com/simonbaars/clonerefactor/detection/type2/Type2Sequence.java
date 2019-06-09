@@ -49,7 +49,7 @@ public class Type2Sequence implements CalculatesPercentages, ChecksThresholds, C
 		List<Type2Sequence> mergedClones = new ArrayList<>();
 		while(!(curStatements = determineExpandedRow(curStatements, left)).isEmpty()) {
 			curStatements = checkSequenceExpansionOpportunities(mergedClones, clones, curStatements, left);
-			if(!allRowsComparable(curStatements)) return;
+			if(curStatements.isEmpty() || !allRowsComparable(curStatements)) return;
 			if(checkType2VariabilityThreshold(calculateVariability(curStatements))) {
 				this.statements.clear();
 				this.statements.addAll(curStatements);
@@ -71,8 +71,9 @@ public class Type2Sequence implements CalculatesPercentages, ChecksThresholds, C
 		Type2Sequence expanded = new Type2Sequence(expandedRow);
 		for(Type2Sequence clone : clones) {
 			if(Arrays.deepEquals(clone.transformedEqualityArray(left, 0), expanded.transformedEqualityArray(!left, 1))) {
-				System.out.println("CAN MERGE "+expanded);
 				mergedClones.add(clone);
+				if(IntStream.range(0,expanded.getSequence().size()).anyMatch(i -> expanded.getSequence().get(i).getLocationIndex() != clone.getSequence().get(i).getLocationIndex()))
+					return Collections.emptyList();
 				return mergeLocations(expanded.getSequence(), clone.getSequence(), left);
 			}
 		}
