@@ -19,8 +19,10 @@ import com.simonbaars.clonerefactor.ast.compare.CompareLiteral;
 import com.simonbaars.clonerefactor.ast.compare.CompareMethodCall;
 import com.simonbaars.clonerefactor.ast.compare.CompareVariable;
 import com.simonbaars.clonerefactor.ast.interfaces.HasCompareList;
+import com.simonbaars.clonerefactor.datatype.ListMap;
 import com.simonbaars.clonerefactor.metrics.enums.CloneContents;
 import com.simonbaars.clonerefactor.metrics.enums.CloneContents.ContentsType;
+import com.simonbaars.clonerefactor.metrics.enums.CloneRefactorability.Refactorability;
 import com.simonbaars.clonerefactor.metrics.enums.RequiresNodeContext;
 import com.simonbaars.clonerefactor.model.FiltersTokens;
 import com.simonbaars.clonerefactor.settings.Scope;
@@ -76,6 +78,14 @@ public class LocationContents implements FiltersTokens, HasRange, HasCompareList
 
 	public List<Node> getNodes() {
 		return nodes;
+	}
+	
+	public List<Node> getTopLevelNodes(){
+		ListMap<Integer, Node> nodeMap = new ListMap<>();
+		for(Node n : getNodes()) {
+			nodeMap.addTo(getNodeDepth(n), n);
+		}
+		return nodeMap.entrySet().stream().reduce((a, b) -> a.getKey() > b.getKey() ? a : b).get().getValue();
 	}
 
 	public int size() {

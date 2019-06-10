@@ -36,4 +36,10 @@ public interface RequiresNodeOperations {
 	public default boolean isExcluded(Node n) {
 		return n instanceof Expression || n instanceof Modifier || n instanceof NodeWithIdentifier || n instanceof Comment || n instanceof Type || n instanceof AnnotationMemberDeclaration || n instanceof Parameter || n instanceof ReceiverParameter || (n instanceof VariableDeclarator && n.getParentNode().get() instanceof FieldDeclaration);
 	}
+	
+	public default int getNodeDepth(Node n) {
+		if(n.getParentNode().isPresent())
+			return getNodeDepth(n.getParentNode().get())+1;
+		return 0;
+	}
 }
