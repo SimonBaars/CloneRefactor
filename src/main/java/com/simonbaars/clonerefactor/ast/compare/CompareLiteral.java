@@ -22,18 +22,12 @@ public class CompareLiteral extends Compare implements ResolvesSymbols {
 		if(!super.equals(o))
 			return false;
 		CompareLiteral other = (CompareLiteral)o;
-		if(getCloneType().isNotTypeOne()) {
-			return type.equals(other.type);
-		}
-		return literal.equals(other.literal); 
+		return getCloneType().isNotTypeOne() ? type.equals(other.type) : literal.equals(other.literal); 
 	}
 
 	@Override
 	public int hashCode() {
-		if(getCloneType().isNotTypeOne()) {
-			return type.hashCode();
-		}
-		return literal.hashCode();
+		return getCloneType().isNotTypeOne() ? type.hashCode() : literal.hashCode();
 	}
 	
 	@Override
