@@ -30,10 +30,11 @@ public class CompareMethodCall extends Compare implements FiltersTokens {
 	// I'm not so sure about this whole estimateTypes thing. The problem is that JavaParser cannot resolve everything. In essence, we cannot guarantee equality, thus this can result in invalid refactorings. Because of that, we *should* remove this estimateTypes thing, and just mark the equality `false` for all null types.
 	private void estimateTypes(MethodCallExpr t) {
 		estimatedTypes.addAll(t.getArguments().stream().map(e -> {
-			if(e instanceof NameExpr) 
+			if(e instanceof NameExpr) {
 				try {
-					return ((NameExpr)e).resolve().getType();
+					return e.calculateResolvedType();
 				} catch (Exception ex) {}
+			}
 			return e.getClass();
 		}).collect(Collectors.toList()));
 	}
