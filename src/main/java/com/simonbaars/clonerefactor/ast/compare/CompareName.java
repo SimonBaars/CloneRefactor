@@ -1,27 +1,40 @@
 package com.simonbaars.clonerefactor.ast.compare;
 
-import com.github.javaparser.JavaToken;
+import com.github.javaparser.ast.Node;
+import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
+import com.github.javaparser.ast.body.EnumDeclaration;
+import com.github.javaparser.ast.body.MethodDeclaration;
+import com.github.javaparser.ast.expr.SimpleName;
 
 public class CompareName extends Compare {
-	JavaToken t;
+	private final SimpleName name;
 	
-	public CompareName(JavaToken t) {
-		super(t.getRange().get());
-		this.t = t;  
+	public CompareName(SimpleName name) {
+		super(name.getRange().get());
+		this.name=name;
 	}
 
 	@Override
 	public boolean equals(Object o) {
-		return super.equals(o) && (getCloneType().isNotTypeOne() || t.equals(((CompareName)o).t)); //Type two names will always be flagged as equals, as we don't take them into account.
+		if(!super.equals(o))
+			return false;
+		CompareName other = (CompareName)o;
+		if(getCloneType().isNotTypeOne() && nameNotCompared(name.getParentNode().get()))
+			return true;
+		return name.equals(other.name);
+	}
+
+	private boolean nameNotCompared(Node node) {
+		return node instanceof MethodDeclaration || node instanceof ClassOrInterfaceDeclaration || node instanceof EnumDeclaration;
 	}
 
 	@Override
 	public int hashCode() {
-		return getCloneType().isNotTypeOne() ? -2 : t.hashCode();
+		return getCloneType().isNotTypeOne() ? -2 : name.hashCode();
 	}
 
 	@Override
 	public String toString() {
-		return "CompareName [t=" + t + "]";
+		return "CompareName [t=" + name + "]";
 	}
 }

@@ -1,26 +1,20 @@
 package com.simonbaars.clonerefactor.ast.compare;
 
+import java.util.Optional;
+
 import com.github.javaparser.ast.expr.NameExpr;
-import com.github.javaparser.resolution.declarations.ResolvedValueDeclaration;
 import com.github.javaparser.resolution.types.ResolvedType;
+import com.simonbaars.clonerefactor.ast.interfaces.ResolvesSymbols;
 import com.simonbaars.clonerefactor.settings.CloneType;
 
-public class CompareVariable extends Compare {
+public class CompareVariable extends Compare implements ResolvesSymbols {
 	private final NameExpr variableName;
-	private final ResolvedValueDeclaration dec;
-	private final ResolvedType type;
+	private final Optional<ResolvedType> type;
 	
 	public CompareVariable(NameExpr t) {
 		super(t.getRange().get());
 		variableName = t;
-		ResolvedValueDeclaration refType = null;
-		ResolvedType resolvedType = null;
-		try {
-			refType = t.resolve();
-			resolvedType = refType.getType();
-		} catch (Exception e) {}
-		dec = refType;
-		type = resolvedType;
+		type = resolve(() -> t.calculateResolvedType());
 	}
 	
 	@Override
@@ -30,7 +24,7 @@ public class CompareVariable extends Compare {
 		CompareVariable compareDec = ((CompareVariable)o);
 		if(getCloneType() == CloneType.TYPE1 && !variableName.equals(compareDec.variableName))
 			return false;
-		return type == null || type.equals(compareDec.type);
+		return type.equals(compareDec.type);
 	}
 
 	@Override
@@ -40,7 +34,7 @@ public class CompareVariable extends Compare {
 
 	@Override
 	public String toString() {
-		return "CompareVariable [dec=" + dec.getName() + ", type=" + type + "]";
+		return "CompareVariable [dec=" + variableName + ", type=" + type + "]";
 	}
 	
 	@Override
