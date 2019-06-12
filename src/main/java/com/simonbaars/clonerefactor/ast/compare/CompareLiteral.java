@@ -1,30 +1,45 @@
 package com.simonbaars.clonerefactor.ast.compare;
 
-import com.github.javaparser.JavaToken;
+import com.github.javaparser.ast.expr.LiteralExpr;
+import com.github.javaparser.resolution.types.ResolvedType;
 
 public class CompareLiteral extends Compare {
-	final JavaToken t;
 	
-	public CompareLiteral(JavaToken t) {
+	private final LiteralExpr literal;
+	private ResolvedType type = null;
+
+	public CompareLiteral(LiteralExpr t) {
 		super(t.getRange().get());
-		this.t=t;
+		this.literal=t;
+		try {
+			this.type = t.calculateResolvedType();
+		} catch (Exception e) {}
 	}
 	
 	@Override
 	public boolean equals(Object o) {
-		return super.equals(o) && (getCloneType().isNotTypeOne() || t.equals(((CompareLiteral)o).t)); 
+		if(!super.equals(o))
+			return false;
+		CompareLiteral other = (CompareLiteral)o;
+		if(getCloneType().isNotTypeOne()) {
+			return type!=null && type.equals(other.type);
+		}
+		return literal.equals(other.literal); 
 	}
 
 	@Override
 	public int hashCode() {
-		return getCloneType().isNotTypeOne() ? -1 : t.hashCode();
-	}
-
-	@Override
-	public String toString() {
-		return "CompareLiteral [t=" + t + "]";
+		if(getCloneType().isNotTypeOne()) {
+			return type!=null ? type.hashCode() : -1;
+		}
+		return literal.hashCode();
 	}
 	
+	@Override
+	public String toString() {
+		return "CompareLiteral [literal=" + literal + ", type=" + type + "]";
+	}
+
 	@Override
 	public boolean doesType2Compare() {
 		return true;
