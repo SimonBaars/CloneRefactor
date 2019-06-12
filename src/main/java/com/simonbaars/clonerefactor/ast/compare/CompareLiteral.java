@@ -1,19 +1,20 @@
 package com.simonbaars.clonerefactor.ast.compare;
 
+import java.util.Optional;
+
 import com.github.javaparser.ast.expr.LiteralExpr;
 import com.github.javaparser.resolution.types.ResolvedType;
+import com.simonbaars.clonerefactor.ast.interfaces.ResolvesSymbols;
 
-public class CompareLiteral extends Compare {
+public class CompareLiteral extends Compare implements ResolvesSymbols {
 	
 	private final LiteralExpr literal;
-	private ResolvedType type = null;
+	private final Optional<ResolvedType> type;
 
 	public CompareLiteral(LiteralExpr t) {
 		super(t.getRange().get());
 		this.literal=t;
-		try {
-			this.type = t.calculateResolvedType();
-		} catch (Exception e) {}
+		this.type = resolve(() -> t.calculateResolvedType());
 	}
 	
 	@Override
@@ -22,7 +23,7 @@ public class CompareLiteral extends Compare {
 			return false;
 		CompareLiteral other = (CompareLiteral)o;
 		if(getCloneType().isNotTypeOne()) {
-			return type!=null && type.equals(other.type);
+			return type.equals(other.type);
 		}
 		return literal.equals(other.literal); 
 	}
@@ -30,7 +31,7 @@ public class CompareLiteral extends Compare {
 	@Override
 	public int hashCode() {
 		if(getCloneType().isNotTypeOne()) {
-			return type!=null ? type.hashCode() : -1;
+			return type.hashCode();
 		}
 		return literal.hashCode();
 	}
