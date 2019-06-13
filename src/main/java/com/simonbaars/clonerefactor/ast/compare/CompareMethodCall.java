@@ -24,7 +24,7 @@ public class CompareMethodCall extends Compare implements FiltersTokens, Resolve
 			estimateTypes(t);
 	}
 
-	// I'm not so sure about this whole estimateTypes thing. The problem is that JavaParser cannot resolve everything. In essence, we cannot guarantee equality, thus this can result in invalid refactorings. Because of that, we *should* remove this estimateTypes thing, and just mark the equality `false` for all null types.
+	// I'm not so sure about this whole estimateTypes thing. The problem is that JavaParser cannot resolve everything. In essence, we cannot guarantee equality, thus this can result in invalid refactorings. Because of that, we *should* remove this estimateTypes thing, and just mark the equality `false` for all unresolved method calls.
 	private void estimateTypes(MethodCallExpr t) {
 		estimatedTypes.addAll(t.getArguments().stream().map(e -> resolve(() -> e.calculateResolvedType())).collect(Collectors.toList()));
 	}
@@ -33,22 +33,17 @@ public class CompareMethodCall extends Compare implements FiltersTokens, Resolve
 		if(!super.equals(c))
 			return false;
 		CompareMethodCall other = (CompareMethodCall)c;
-		if(type.isPresent() && other.type.isPresent()) {
-			MethodDeclarationProxy dec = type.get();
-			if(getCloneType().isNotTypeOne()) 
-				return dec.getFullyQualifiedArguments().equals(dec.getFullyQualifiedArguments());
-			return dec.getFullyQualifiedSignature().equals(dec.getFullyQualifiedSignature());
-		}
+		if(type.isPresent() && other.type.isPresent())
+			return getCloneType().isNotTypeOne() ? type.get().equalsType2(other.type.get()) : type.get().equalsType1(other.type.get());
 		return estimatedTypes.equals(other.estimatedTypes);
 	}
 
 	@Override
 	public int hashCode() {
 		if(type.isPresent()) {
-			String methodSignature = type.get().getFullyQualifiedSignature();
 			if(getCloneType().isNotTypeOne())
-				return type.get().getFullyQualifiedArguments().hashCode();
-			return methodSignature.hashCode();
+				return type.get().hashcodeType2();
+			return type.get().hashcodeType1();
 		}
 		return estimatedTypes.hashCode();
 	}
