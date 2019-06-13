@@ -37,7 +37,7 @@ public abstract class Compare implements HasRange {
 			else if(node instanceof NameExpr)
 				compare = new CompareVariable((NameExpr)node);
 			else if(node instanceof LiteralExpr)
-				compare = new CompareLiteral((LiteralExpr)node);
+				compare = new CompareLiteral((LiteralExpr)node, cloneType);
 			else if(node instanceof SimpleName)
 				compare = new CompareName((SimpleName)node);
 			else if(node instanceof MethodCallExpr)
