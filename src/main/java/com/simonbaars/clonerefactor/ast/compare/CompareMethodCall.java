@@ -7,20 +7,19 @@ import java.util.stream.Collectors;
 
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.expr.MethodCallExpr;
-import com.github.javaparser.resolution.declarations.ResolvedMethodDeclaration;
 import com.simonbaars.clonerefactor.ast.interfaces.HasCompareList;
 import com.simonbaars.clonerefactor.ast.interfaces.ResolvesSymbols;
 import com.simonbaars.clonerefactor.model.FiltersTokens;
 
 public class CompareMethodCall extends Compare implements FiltersTokens, ResolvesSymbols {
 	private final MethodCallExpr methodCall;
-	private final Optional<ResolvedMethodDeclaration> type;
+	private final Optional<MethodDeclarationProxy> type;
 	private final List<Object> estimatedTypes = new ArrayList<>();
 	
 	public CompareMethodCall(MethodCallExpr t) {
 		super(t.getRange().get());
 		methodCall = t;
-		type = resolve(() -> t.resolve());
+		type = resolve(() -> new MethodDeclarationProxy(t.resolve()));
 		if(!type.isPresent())
 			estimateTypes(t);
 	}
@@ -35,25 +34,20 @@ public class CompareMethodCall extends Compare implements FiltersTokens, Resolve
 			return false;
 		CompareMethodCall other = (CompareMethodCall)c;
 		if(type.isPresent() && other.type.isPresent()) {
-			String methodSignature = type.get().getQualifiedSignature();
-			String compareMethodSignature = other.type.get().getQualifiedSignature();
+			MethodDeclarationProxy dec = type.get();
 			if(getCloneType().isNotTypeOne()) 
-				return getOnlyArguments(methodSignature).equals(getOnlyArguments(compareMethodSignature));
-			return methodSignature.equals(compareMethodSignature);
+				return dec.getFullyQualifiedArguments().equals(dec.getFullyQualifiedArguments());
+			return dec.getFullyQualifiedSignature().equals(dec.getFullyQualifiedSignature());
 		}
 		return estimatedTypes.equals(other.estimatedTypes);
-	}
-	
-	private String getOnlyArguments(String methodSignature) {
-		return methodSignature.substring(methodSignature.indexOf('('));
 	}
 
 	@Override
 	public int hashCode() {
 		if(type.isPresent()) {
-			String methodSignature = type.get().getQualifiedSignature();
+			String methodSignature = type.get().getFullyQualifiedSignature();
 			if(getCloneType().isNotTypeOne())
-				return getOnlyArguments(methodSignature).hashCode();
+				return type.get().getFullyQualifiedArguments().hashCode();
 			return methodSignature.hashCode();
 		}
 		return estimatedTypes.hashCode();
