@@ -5,14 +5,15 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import com.github.javaparser.JavaToken;
+import com.github.javaparser.JavaToken.Category;
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.expr.MethodCallExpr;
-import com.simonbaars.clonerefactor.ast.interfaces.DeterminesNodeTokens;
 import com.simonbaars.clonerefactor.ast.interfaces.HasCompareList;
 import com.simonbaars.clonerefactor.ast.interfaces.ResolvesSymbols;
 import com.simonbaars.clonerefactor.settings.CloneType;
 
-public class CompareMethodCall extends Compare implements DeterminesNodeTokens, ResolvesSymbols {
+public class CompareMethodCall extends Compare implements ResolvesSymbols {
 	private final MethodCallExpr methodCall;
 	private final Optional<MethodDeclarationProxy> type;
 	private final List<Object> estimatedTypes = new ArrayList<>();
@@ -34,11 +35,21 @@ public class CompareMethodCall extends Compare implements DeterminesNodeTokens, 
 		if(!super.equals(c))
 			return false;
 		CompareMethodCall other = (CompareMethodCall)c;
-		if(getCloneType() == CloneType.TYPE1 && !calculateTokensFromNode(methodCall).equals(calculateTokensFromNode(other.methodCall)))
+		if(getCloneType() == CloneType.TYPE1 && !getPartsOfCall(methodCall).equals(getPartsOfCall(other.methodCall)))
 			return false;
 		if(type.isPresent() && other.type.isPresent())
 			return getCloneType().isNotTypeOne() ? type.get().equalsType2(other.type.get()) : type.get().equalsType1(other.type.get());
 		return estimatedTypes.equals(other.estimatedTypes);
+	}
+
+	private List<JavaToken> getPartsOfCall(MethodCallExpr methodCall2) {
+		List<JavaToken> tokens = new ArrayList<>();
+		for(JavaToken token : methodCall2.getTokenRange().get()) {
+			if(token.getCategory()==Category.SEPARATOR)
+				return tokens;
+			tokens.add(token);
+		}
+		return tokens;
 	}
 
 	@Override
