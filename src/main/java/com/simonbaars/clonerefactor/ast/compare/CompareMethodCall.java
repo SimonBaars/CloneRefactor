@@ -10,6 +10,7 @@ import com.github.javaparser.ast.expr.MethodCallExpr;
 import com.simonbaars.clonerefactor.ast.interfaces.HasCompareList;
 import com.simonbaars.clonerefactor.ast.interfaces.ResolvesSymbols;
 import com.simonbaars.clonerefactor.model.FiltersTokens;
+import com.simonbaars.clonerefactor.settings.CloneType;
 
 public class CompareMethodCall extends Compare implements FiltersTokens, ResolvesSymbols {
 	private final MethodCallExpr methodCall;
@@ -33,6 +34,8 @@ public class CompareMethodCall extends Compare implements FiltersTokens, Resolve
 		if(!super.equals(c))
 			return false;
 		CompareMethodCall other = (CompareMethodCall)c;
+		if(getCloneType() == CloneType.TYPE1 && !getEffectiveTokenList(methodCall.getTokenRange().get()).equals(getEffectiveTokenList(other.methodCall.getTokenRange().get())))
+			return false;
 		if(type.isPresent() && other.type.isPresent())
 			return getCloneType().isNotTypeOne() ? type.get().equalsType2(other.type.get()) : type.get().equalsType1(other.type.get());
 		return estimatedTypes.equals(other.estimatedTypes);
