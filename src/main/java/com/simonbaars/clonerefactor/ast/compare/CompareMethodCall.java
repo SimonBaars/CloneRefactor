@@ -7,12 +7,12 @@ import java.util.stream.Collectors;
 
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.expr.MethodCallExpr;
+import com.simonbaars.clonerefactor.ast.interfaces.DeterminesNodeTokens;
 import com.simonbaars.clonerefactor.ast.interfaces.HasCompareList;
 import com.simonbaars.clonerefactor.ast.interfaces.ResolvesSymbols;
-import com.simonbaars.clonerefactor.model.FiltersTokens;
 import com.simonbaars.clonerefactor.settings.CloneType;
 
-public class CompareMethodCall extends Compare implements FiltersTokens, ResolvesSymbols {
+public class CompareMethodCall extends Compare implements DeterminesNodeTokens, ResolvesSymbols {
 	private final MethodCallExpr methodCall;
 	private final Optional<MethodDeclarationProxy> type;
 	private final List<Object> estimatedTypes = new ArrayList<>();
@@ -34,7 +34,7 @@ public class CompareMethodCall extends Compare implements FiltersTokens, Resolve
 		if(!super.equals(c))
 			return false;
 		CompareMethodCall other = (CompareMethodCall)c;
-		if(getCloneType() == CloneType.TYPE1 && !getEffectiveTokenList(methodCall.getTokenRange().get()).equals(getEffectiveTokenList(other.methodCall.getTokenRange().get())))
+		if(getCloneType() == CloneType.TYPE1 && !calculateTokensFromNode(methodCall).equals(calculateTokensFromNode(other.methodCall)))
 			return false;
 		if(type.isPresent() && other.type.isPresent())
 			return getCloneType().isNotTypeOne() ? type.get().equalsType2(other.type.get()) : type.get().equalsType1(other.type.get());
