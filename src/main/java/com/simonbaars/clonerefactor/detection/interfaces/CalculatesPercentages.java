@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.IntStream;
 
-import com.simonbaars.clonerefactor.detection.type2.WeightedPercentage;
+import com.simonbaars.clonerefactor.detection.type2.model.WeightedPercentage;
 
 public interface CalculatesPercentages {
 	public default double calcPercentage(int part, int whole) {

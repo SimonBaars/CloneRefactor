@@ -1,4 +1,4 @@
-package com.simonbaars.clonerefactor.detection.type2;
+package com.simonbaars.clonerefactor.detection.type2.model;
 
 import java.util.ArrayList;
 import java.util.Arrays;

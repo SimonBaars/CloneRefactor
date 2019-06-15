@@ -2,8 +2,8 @@ package com.simonbaars.clonerefactor.detection.interfaces;
 
 import java.util.stream.IntStream;
 
-import com.simonbaars.clonerefactor.detection.type2.Type2Contents;
-import com.simonbaars.clonerefactor.detection.type2.Type2Location;
+import com.simonbaars.clonerefactor.detection.type2.model.Type2Contents;
+import com.simonbaars.clonerefactor.detection.type2.model.Type2Location;
 
 public interface ChecksForComparability {
 	public default boolean isComparable(Type2Location location1, Type2Location location2) {

@@ -1,4 +1,4 @@
-package com.simonbaars.clonerefactor.detection.type2;
+package com.simonbaars.clonerefactor.detection.type2.model;
 
 import com.simonbaars.clonerefactor.detection.interfaces.CalculatesPercentages;
 import com.simonbaars.clonerefactor.detection.interfaces.ChecksThresholds;
