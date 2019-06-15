@@ -28,10 +28,12 @@ public class Type2Location implements DeterminesNodeTokens, Comparable<Type2Loca
 	}
 	
 	public Type2Location(Type2Location statementLeft, Type2Location statementRight) {
+		final Type2Location rightStmt = statementRight;
 		if(statementLeft.locationIndex!=statementRight.locationIndex) {
 			throw new IllegalStateException("Left and right are in a different location!");
-		} else if(Arrays.stream(statementLeft.statementArray()).anyMatch(left -> Arrays.stream(statementRight.statementArray()).anyMatch(right -> left>=right))) {
-			throw new IllegalStateException("Left may never have a statement that is bigger than right!");
+		} else if(Arrays.stream(statementLeft.statementArray()).anyMatch(left -> Arrays.stream(rightStmt.statementArray()).anyMatch(right -> left>=right))) {
+			statementRight = statementLeft;
+			statementLeft = rightStmt;
 		}  
 		this.locationIndex = statementLeft.locationIndex;
 		this.statementIndices = new IndexRange(statementLeft.statementIndices.getStart(), statementRight.statementIndices.getEnd());
