@@ -35,7 +35,7 @@ public class MetricCollector {
 		metrics.incrementGeneralStatistic(Metric.NODES, StatType.TOTAL, l.getAmountOfNodes());
 		metrics.incrementGeneralStatistic(Metric.TOKENS, StatType.TOTAL, l.getAmountOfTokens());
 		metrics.incrementGeneralStatistic(Metric.EFFECTIVELINES, StatType.TOTAL, getUnparsedEffectiveLines(l, false));
-		l.getContents().getNodes().forEach(e -> relationFinder.registerNode(e));
+		l.getContents().getNodes().forEach(relationFinder::registerNode);
 	}
 	
 	private int getUnparsedEffectiveLines(Location l, boolean countOverlap) {
@@ -65,6 +65,7 @@ public class MetricCollector {
 	public Metrics reportClones(List<Sequence> clones) {
 		parsedLines.clear();
 		parsedEffectiveLines.clear();
+		parsedTokens.clear();
 		for(Sequence clone : clones)
 			reportClone(clone);
 		relationFinder.clearClasses();
@@ -72,6 +73,7 @@ public class MetricCollector {
 	}
 
 	private void reportClone(Sequence clone) {
+		metrics.incrementGeneralStatistic("Clone classes", 1);
 		metrics.amountPerCloneClassSize.increment(clone.size());
 		metrics.amountPerNodes.increment(clone.getNodeSize());
 		metrics.amountPerTotalNodeVolume.increment(clone.getTotalNodeVolume());

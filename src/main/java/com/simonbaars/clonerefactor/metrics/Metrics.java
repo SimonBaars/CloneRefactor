@@ -51,4 +51,8 @@ public class Metrics {
 	public void incrementGeneralStatistic(Metric metric, StatType type, int amount) {
 		generalStats.increment(type.toString()+" "+metric.toString(), amount);
 	}
+	
+	public void incrementGeneralStatistic(String generalStat, int amount) {
+		generalStats.increment(generalStat, amount);
+	}
 }
