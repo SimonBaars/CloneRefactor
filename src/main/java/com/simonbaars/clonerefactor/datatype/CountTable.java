@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-public class CountTable<K> extends ListMap<K, Integer> {
+public class CountTable<K> extends ListMap<String, String> {
 	private int currentSize = 0;
 
 	private static final long serialVersionUID = 1L;
@@ -25,16 +25,16 @@ public class CountTable<K> extends ListMap<K, Integer> {
 		super(initialCapacity);
 	}
 
-	public CountTable(Map<? extends K, List<Integer>> m) {
+	public CountTable(Map<String, List<String>> m) {
 		super(m);
 	}
 	
-	public void add(String columnName, CountMap<K> countMap) {
-		entrySet().stream().filter(e -> !countMap.containsKey(e.getKey())).forEach(e -> e.getValue().add(0));
+	public void add(String columnName, Map<K, ? extends Object> countMap) {
+		entrySet().stream().filter(e -> !countMap.containsKey(e.getKey())).forEach(e -> e.getValue().add("0"));
 		countMap.entrySet().forEach(e -> {
 			if(!containsKey(e.getKey()))
-				IntStream.range(0, currentSize).forEach(i -> get(e.getKey()).add(0));
-			get(e.getKey()).add(e.getValue());
+				IntStream.range(0, currentSize).forEach(i -> get(e.getKey().toString()).add("0"));
+			get(e.getKey().toString()).add(e.getValue().toString());
 		});
 		columns.add(columnName);
 		currentSize++;
@@ -42,9 +42,9 @@ public class CountTable<K> extends ListMap<K, Integer> {
 	
 	@Override
 	public String toString() {
-		String columns = this.columns.stream().collect(Collectors.joining("\t", tableName+"\t", System.lineSeparator()));
-		return columns+keySet().stream().sorted().map(e -> 
-			e + "\t"+get(e).stream().map(f -> f.toString()).collect(Collectors.joining("\t"))
+		String columnNames = this.columns.stream().collect(Collectors.joining("\t", tableName+"\t", System.lineSeparator()));
+		return columnNames+keySet().stream().sorted().map(e -> 
+			e + "\t"+get(e).stream().map(String::toString).collect(Collectors.joining("\t"))
 		).collect(Collectors.joining(System.lineSeparator()));
 	}
 }
