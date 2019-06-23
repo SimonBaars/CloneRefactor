@@ -3,6 +3,7 @@ package com.simonbaars.clonerefactor.thread;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -29,7 +30,7 @@ public class ThreadPool implements WritesErrors {
 	public void waitForThreadToFinish() {
 		if(allNull())
 			return;
-		while(Arrays.stream(threads).filter(e -> e!=null).noneMatch(e -> !e.isAlive())) {
+		while(Arrays.stream(threads).filter(Objects::nonNull).noneMatch(e -> !e.isAlive())) {
 			try {
 				Thread.sleep(100);
 				nullifyThreadIfStarved();
@@ -60,7 +61,7 @@ public class ThreadPool implements WritesErrors {
 	}
 	
 	public void finishFinalThreads() {
-		while(Arrays.stream(threads).anyMatch(e -> e!=null)) {
+		while(Arrays.stream(threads).anyMatch(Objects::nonNull)) {
 			waitForThreadToFinish();
 			for(int i = 0; i<threads.length; i++) {
 				if(threads[i] != null && !threads[i].isAlive()) {
@@ -74,7 +75,7 @@ public class ThreadPool implements WritesErrors {
 	private void writePreviousThreadResults(int i) {
 		if(threads[i]!=null && !threads[i].isAlive()) {
 			if(threads[i].res != null)
-				writeResults(threads[i].getFile(), threads[i].res);
+				writeResults(threads[i]);
 			else writeError(i);
 			if(freeMemoryPercentage()<15) JavaParserFacade.clearInstances();
 			threads[i]=null;
@@ -85,13 +86,14 @@ public class ThreadPool implements WritesErrors {
 		writeProjectError(threads[i].getFile().getName(), threads[i].error);
 	}
 
-	private void writeResults(File file, DetectionResults res) {
-		fullMetrics.add(res.getMetrics());
+	private void writeResults(CorpusThread t) {
+		t.res.getMetrics().generalStats.increment("Duration", Math.toIntExact(System.currentTimeMillis()-t.creationTime));
+		fullMetrics.add(t.res.getMetrics());
 		try {
-			FileUtils.writeStringToFile(new File(OUTPUT_FOLDER.getAbsolutePath()+"/"+file.getName()+"-"+res.getClones().size()+".txt"), res.toString());
+			FileUtils.writeStringToFile(new File(OUTPUT_FOLDER.getAbsolutePath()+File.separator+t.getFile().getName()+"-"+t.res.getClones().size()+".txt"), t.res.toString());
 			FileUtils.writeStringToFile(FULL_METRICS, fullMetrics.toString());
 		} catch (IOException e) {
-			e.printStackTrace();
+			writeProjectError(t.getFile().getName(), e);
 		}
 	}
 	
@@ -100,15 +102,15 @@ public class ThreadPool implements WritesErrors {
 	}
 
 	public String showContents() {
-		return Arrays.stream(threads).filter(e -> e!=null).map(e -> e.getFile().getName()).collect(Collectors.joining(", "));
+		return Arrays.stream(threads).filter(Objects::nonNull).map(e -> e.getFile().getName()).collect(Collectors.joining(", "));
 	}
 	
 	public boolean anyNull() {
-		return Arrays.stream(threads).anyMatch(e -> e==null);
+		return Arrays.stream(threads).anyMatch(Objects::nonNull);
 	}
 	
 	public boolean allNull() {
-		return Arrays.stream(threads).allMatch(e -> e==null);
+		return Arrays.stream(threads).allMatch(Objects::nonNull);
 	}
 	
 	public Metrics getFullMetrics() {

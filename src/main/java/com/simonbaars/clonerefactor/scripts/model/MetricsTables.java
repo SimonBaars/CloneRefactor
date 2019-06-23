@@ -23,8 +23,6 @@ public class MetricsTables {
 	
 	private final CountTable amountPerEffectiveLines = new CountTable("Amount per Effective Lines");
 	private final CountTable amountPerTotalEffectiveLineVolume = new CountTable("Amount per Total Effective Line Volume");
-
-	public MetricsTables() {}
 	
 	public void writeTables() {
 		StringBuilder tableContents = new StringBuilder();
