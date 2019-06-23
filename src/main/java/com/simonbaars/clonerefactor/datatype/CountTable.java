@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-public class CountTable<K> extends ListMap<String, String> {
+public class CountTable extends ListMap<String, String> {
 	private int currentSize = 0;
 
 	private static final long serialVersionUID = 1L;
@@ -29,7 +29,7 @@ public class CountTable<K> extends ListMap<String, String> {
 		super(m);
 	}
 	
-	public void add(String columnName, Map<K, ? extends Object> countMap) {
+	public void add(String columnName, Map<? extends Object, ? extends Object> countMap) {
 		entrySet().stream().filter(e -> !countMap.containsKey(e.getKey())).forEach(e -> e.getValue().add("0"));
 		countMap.entrySet().forEach(e -> {
 			if(!containsKey(e.getKey()))

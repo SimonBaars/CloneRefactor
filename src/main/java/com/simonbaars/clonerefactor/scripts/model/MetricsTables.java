@@ -5,28 +5,24 @@ import java.io.IOException;
 
 import com.simonbaars.clonerefactor.datatype.CountTable;
 import com.simonbaars.clonerefactor.metrics.Metrics;
-import com.simonbaars.clonerefactor.metrics.enums.CloneContents.ContentsType;
-import com.simonbaars.clonerefactor.metrics.enums.CloneLocation.LocationType;
-import com.simonbaars.clonerefactor.metrics.enums.CloneRefactorability.Refactorability;
-import com.simonbaars.clonerefactor.metrics.enums.CloneRelation.RelationType;
 import com.simonbaars.clonerefactor.util.FileUtils;
 import com.simonbaars.clonerefactor.util.SavePaths;
 
 public class MetricsTables {
 	
-	private final CountTable<String> generalStats = new CountTable<>("General Statistics");
+	private final CountTable generalStats = new CountTable("General Statistics");
 	
-	private final CountTable<RelationType> amountPerRelation = new CountTable<>("Amount per Relation");
-	private final CountTable<LocationType> amountPerLocation = new CountTable<>("Amount per Location");
-	private final CountTable<ContentsType> amountPerContents = new CountTable<>("Amount per Contents");
-	private final CountTable<Refactorability> amountPerExtract = new CountTable<>("Amount per Extract");
+	private final CountTable amountPerRelation = new CountTable("Amount per Relation");
+	private final CountTable amountPerLocation = new CountTable("Amount per Location");
+	private final CountTable amountPerContents = new CountTable("Amount per Contents");
+	private final CountTable amountPerExtract = new CountTable("Amount per Extract");
 	
-	private final CountTable<Integer> amountPerCloneClassSize = new CountTable<>("Amount per Clone Class Size");
-	private final CountTable<Integer> amountPerNodes = new CountTable<>("Amount per Nodes");
-	private final CountTable<Integer> amountPerTotalNodeVolume = new CountTable<>("Amount per Total Node Volume");
+	private final CountTable amountPerCloneClassSize = new CountTable("Amount per Clone Class Size");
+	private final CountTable amountPerNodes = new CountTable("Amount per Nodes");
+	private final CountTable amountPerTotalNodeVolume = new CountTable("Amount per Total Node Volume");
 	
-	private final CountTable<Integer> amountPerEffectiveLines = new CountTable<>("Amount per Effective Lines");
-	private final CountTable<Integer> amountPerTotalEffectiveLineVolume = new CountTable<>("Amount per Total Effective Line Volume");
+	private final CountTable amountPerEffectiveLines = new CountTable("Amount per Effective Lines");
+	private final CountTable amountPerTotalEffectiveLineVolume = new CountTable("Amount per Total Effective Line Volume");
 
 	public MetricsTables() {}
 	
