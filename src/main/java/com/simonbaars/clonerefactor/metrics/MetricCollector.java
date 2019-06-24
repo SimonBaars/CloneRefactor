@@ -66,6 +66,7 @@ public class MetricCollector {
 		parsedLines.clear();
 		parsedEffectiveLines.clear();
 		parsedTokens.clear();
+		metrics.generalStats.increment("Clone classes");
 		for(Sequence clone : clones)
 			reportClone(clone);
 		relationFinder.clearClasses();
@@ -89,6 +90,7 @@ public class MetricCollector {
 
 	private void reportClonedLocation(Location l) {
 		metrics.averages.addTo("Clone nodes", l.getContents().size());
+		metrics.averages.addTo("Clone tokens", l.getContents().getAmountOfTokens());
 		metrics.incrementGeneralStatistic(Metric.LINES, StatType.CLONED, getUnparsedLines(l, true));
 		metrics.incrementGeneralStatistic(Metric.TOKENS, StatType.CLONED, getUnparsedTokens(l, true));
 		metrics.incrementGeneralStatistic(Metric.NODES, StatType.CLONED, getUnparsedNodes(l, true));
