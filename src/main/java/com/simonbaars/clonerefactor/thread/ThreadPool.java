@@ -87,7 +87,7 @@ public class ThreadPool implements WritesErrors {
 	}
 
 	private void writeResults(CorpusThread t) {
-		t.res.getMetrics().generalStats.increment("Duration", Math.toIntExact(System.currentTimeMillis()-t.creationTime));
+		calculateGeneralMetrics(t);
 		fullMetrics.add(t.res.getMetrics());
 		try {
 			FileUtils.writeStringToFile(new File(OUTPUT_FOLDER.getAbsolutePath()+File.separator+t.getFile().getName()+"-"+t.res.getClones().size()+".txt"), t.res.toString());
@@ -95,6 +95,10 @@ public class ThreadPool implements WritesErrors {
 		} catch (IOException e) {
 			writeProjectError(t.getFile().getName(), e);
 		}
+	}
+
+	private void calculateGeneralMetrics(CorpusThread t) {
+		t.res.getMetrics().generalStats.increment("Duration", Math.toIntExact(System.currentTimeMillis()-t.creationTime));
 	}
 	
 	public double freeMemoryPercentage() {

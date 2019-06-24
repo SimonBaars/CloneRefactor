@@ -5,12 +5,14 @@ import java.io.IOException;
 
 import com.simonbaars.clonerefactor.datatype.CountTable;
 import com.simonbaars.clonerefactor.metrics.Metrics;
+import com.simonbaars.clonerefactor.thread.WritesErrors;
 import com.simonbaars.clonerefactor.util.FileUtils;
 import com.simonbaars.clonerefactor.util.SavePaths;
 
-public class MetricsTables {
+public class MetricsTables implements WritesErrors {
 	
 	private final CountTable generalStats = new CountTable("General Statistics");
+	private final CountTable averages = new CountTable("Averages");
 	
 	private final CountTable amountPerRelation = new CountTable("Amount per Relation");
 	private final CountTable amountPerLocation = new CountTable("Amount per Location");
@@ -27,6 +29,8 @@ public class MetricsTables {
 	public void writeTables() {
 		StringBuilder tableContents = new StringBuilder();
 		tableContents.append(generalStats.toString());
+		tableContents.append(System.lineSeparator()+System.lineSeparator());
+		tableContents.append(averages.toString());
 		tableContents.append(System.lineSeparator()+System.lineSeparator());
 		
 		tableContents.append(amountPerRelation.toString());
@@ -52,12 +56,13 @@ public class MetricsTables {
 		try {
 			FileUtils.writeStringToFile(new File(SavePaths.getMyOutputFolder()+"tables.txt"), tableContents.toString());
 		} catch (IOException e) {
-			e.printStackTrace();
+			writeProjectError("0_tables", e);
 		}
 	}
 
 	public void collectMetrics(String percentage, Metrics metrics) {
 		generalStats.add(percentage, metrics.generalStats);
+		averages.add(percentage, metrics.averages);
 		
 		amountPerRelation.add(percentage, metrics.amountPerRelation);
 		amountPerLocation.add(percentage, metrics.amountPerLocation);

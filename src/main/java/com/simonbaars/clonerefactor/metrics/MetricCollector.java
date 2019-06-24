@@ -73,6 +73,7 @@ public class MetricCollector {
 	}
 
 	private void reportClone(Sequence clone) {
+		metrics.averages.addTo("Clone class size", clone.size());
 		metrics.incrementGeneralStatistic("Clone classes", 1);
 		metrics.amountPerCloneClassSize.increment(clone.size());
 		metrics.amountPerNodes.increment(clone.getNodeSize());
@@ -82,12 +83,12 @@ public class MetricCollector {
 		clone.setMetrics(relationFinder, extractFinder);
 		metrics.amountPerRelation.increment(clone.getRelationType());
 		metrics.amountPerExtract.increment(clone.getRefactorability());
-		for(Location l : clone.getLocations()) {
+		for(Location l : clone.getLocations())
 			reportClonedLocation(l);
-		}
 	}
 
 	private void reportClonedLocation(Location l) {
+		metrics.averages.addTo("Clone nodes", l.getContents().size());
 		metrics.incrementGeneralStatistic(Metric.LINES, StatType.CLONED, getUnparsedLines(l, true));
 		metrics.incrementGeneralStatistic(Metric.TOKENS, StatType.CLONED, getUnparsedTokens(l, true));
 		metrics.incrementGeneralStatistic(Metric.NODES, StatType.CLONED, getUnparsedNodes(l, true));

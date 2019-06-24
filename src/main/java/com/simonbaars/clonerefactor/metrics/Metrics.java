@@ -1,5 +1,6 @@
 package com.simonbaars.clonerefactor.metrics;
 
+import com.simonbaars.clonerefactor.datatype.AverageMap;
 import com.simonbaars.clonerefactor.datatype.CountMap;
 import com.simonbaars.clonerefactor.metrics.enums.CloneContents.ContentsType;
 import com.simonbaars.clonerefactor.metrics.enums.CloneLocation.LocationType;
@@ -10,6 +11,7 @@ import com.simonbaars.clonerefactor.metrics.enums.StatType;
 
 public class Metrics {
 	public final CountMap<String> generalStats = new CountMap<>();
+	public final AverageMap<String> averages = new AverageMap<>();
 
 	public final CountMap<RelationType> amountPerRelation = new CountMap<>();
 	public final CountMap<LocationType> amountPerLocation = new CountMap<>();
@@ -34,6 +36,7 @@ public class Metrics {
 
 	public void add(Metrics metrics) {
 		generalStats.addAll(metrics.generalStats);
+		averages.addAll(metrics.averages);
 		
 		amountPerRelation.addAll(metrics.amountPerRelation);
 		amountPerLocation.addAll(metrics.amountPerLocation);
