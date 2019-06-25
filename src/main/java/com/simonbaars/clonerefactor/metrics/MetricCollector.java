@@ -66,6 +66,8 @@ public class MetricCollector {
 		parsedLines.clear();
 		parsedEffectiveLines.clear();
 		parsedTokens.clear();
+		if(clones.isEmpty())
+			metrics.generalStats.increment("Projects without clone classes");
 		metrics.generalStats.increment("Clone classes", clones.size());
 		metrics.averages.addTo("Amount of clone classes", clones.size());
 		for(Sequence clone : clones)
@@ -85,6 +87,8 @@ public class MetricCollector {
 		clone.setMetrics(relationFinder, extractFinder);
 		metrics.amountPerRelation.increment(clone.getRelationType());
 		metrics.amountPerExtract.increment(clone.getRefactorability());
+		metrics.averages.addTo("Clone instances per clone class", clone.size());
+		metrics.averages.addTo("Statements per clone class", clone.getNodeSize());
 		for(Location l : clone.getLocations())
 			reportClonedLocation(l);
 	}
