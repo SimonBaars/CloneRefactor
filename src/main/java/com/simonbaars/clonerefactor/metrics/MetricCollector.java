@@ -66,7 +66,8 @@ public class MetricCollector {
 		parsedLines.clear();
 		parsedEffectiveLines.clear();
 		parsedTokens.clear();
-		metrics.generalStats.increment("Clone classes");
+		metrics.generalStats.increment("Clone classes", clones.size());
+		metrics.averages.addTo("Amount of clone classes", clones.size());
 		for(Sequence clone : clones)
 			reportClone(clone);
 		relationFinder.clearClasses();
