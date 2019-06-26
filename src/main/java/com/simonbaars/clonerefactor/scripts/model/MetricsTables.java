@@ -61,20 +61,20 @@ public class MetricsTables implements WritesErrors {
 	}
 
 	public void collectMetrics(String percentage, Metrics metrics) {
-		generalStats.add(percentage, metrics.generalStats);
-		averages.add(percentage, metrics.averages);
+		generalStats.put(percentage, metrics.generalStats);
+		averages.put(percentage, metrics.averages);
 		
-		amountPerRelation.add(percentage, metrics.amountPerRelation);
-		amountPerLocation.add(percentage, metrics.amountPerLocation);
-		amountPerContents.add(percentage, metrics.amountPerContents);
-		amountPerExtract.add(percentage, metrics.amountPerExtract);
+		amountPerRelation.put(percentage, metrics.amountPerRelation);
+		amountPerLocation.put(percentage, metrics.amountPerLocation);
+		amountPerContents.put(percentage, metrics.amountPerContents);
+		amountPerExtract.put(percentage, metrics.amountPerExtract);
 		
-		amountPerCloneClassSize.add(percentage, metrics.amountPerCloneClassSize);
-		amountPerNodes.add(percentage, metrics.amountPerNodes);
-		amountPerTotalNodeVolume.add(percentage, metrics.amountPerTotalNodeVolume);
+		amountPerCloneClassSize.put(percentage, metrics.amountPerCloneClassSize);
+		amountPerNodes.put(percentage, metrics.amountPerNodes);
+		amountPerTotalNodeVolume.put(percentage, metrics.amountPerTotalNodeVolume);
 		
-		amountPerEffectiveLines.add(percentage, metrics.amountPerEffectiveLines);
-		amountPerTotalEffectiveLineVolume.add(percentage, metrics.amountPerTotalEffectiveLineVolume);
+		amountPerEffectiveLines.put(percentage, metrics.amountPerEffectiveLines);
+		amountPerTotalEffectiveLineVolume.put(percentage, metrics.amountPerTotalEffectiveLineVolume);
 	}
 
 }

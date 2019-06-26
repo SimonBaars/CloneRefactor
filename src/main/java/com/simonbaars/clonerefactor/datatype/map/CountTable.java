@@ -1,17 +1,15 @@
 package com.simonbaars.clonerefactor.datatype.map;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
-public class CountTable extends ListMap<String, String> {
-	private int currentSize = 0;
+public class CountTable extends LinkedHashMap<String, Map<? extends Object, ? extends Object>> {
 
 	private static final long serialVersionUID = 1L;
 	private String tableName;
-	private final List<String> columns = new ArrayList<>();
 
 	public CountTable(String tableName) {
 		this.tableName = tableName;
@@ -24,27 +22,18 @@ public class CountTable extends ListMap<String, String> {
 	public CountTable(int initialCapacity) {
 		super(initialCapacity);
 	}
-
-	public CountTable(Map<String, List<String>> m) {
-		super(m);
-	}
-	
-	public void add(String columnName, Map<? extends Object, ? extends Object> countMap) {
-		entrySet().stream().filter(e -> !countMap.containsKey(e.getKey())).forEach(e -> e.getValue().add("0"));
-		countMap.entrySet().forEach(e -> {
-			if(!containsKey(e.getKey().toString()))
-				IntStream.range(0, currentSize).forEach(i -> get(e.getKey().toString()).add("0"));
-			get(e.getKey().toString()).add(e.getValue().toString());
-		});
-		columns.add(columnName);
-		currentSize++;
-    }
 	
 	@Override
 	public String toString() {
-		String columnNames = this.columns.stream().collect(Collectors.joining("\t", tableName+"\t", System.lineSeparator()));
-		return columnNames+keySet().stream().sorted().map(e -> 
-			e + "\t"+get(e).stream().map(String::toString).collect(Collectors.joining("\t"))
+		String columnNames = this.keySet().stream().collect(Collectors.joining("\t", tableName+"\t", System.lineSeparator()));
+		Set<? extends Object> rows = values().stream().flatMap(e -> e.keySet().stream()).collect(Collectors.toSet());
+		return columnNames + rows.stream().map(header -> 
+			header + "\t" + values().stream().map(row -> 
+				row.containsKey(header) ? row.get(header).toString() : "0").collect(Collectors.joining("\t"))
 		).collect(Collectors.joining(System.lineSeparator()));
+		//return columnNames + values().stream().flatMap(row -> columns.stream().map(header -> row.containsKey(header) ? row.get(header).toString() : "0")).collect(Collectors.joining("\t"));
+		//return columnNames+values().stream()keySet().stream().sorted().map(e -> 
+		//	e + "\t"+get(e).stream().map(String::toString).collect(Collectors.joining("\t"))
+		//).collect(Collectors.joining(System.lineSeparator()));
 	}
 }
