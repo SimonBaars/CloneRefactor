@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 
 import com.simonbaars.clonerefactor.detection.type2.model.WeightedPercentage;
 
-public class AverageMap<K> extends HashMap<String, WeightedPercentage> {
+public class AverageMap<K> extends HashMap<String, WeightedPercentage> implements TableColumn {
 	/**
 	 * 
 	 */

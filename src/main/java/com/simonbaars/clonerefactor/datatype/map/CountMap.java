@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class CountMap<K> extends HashMap<K, Integer> {
+public class CountMap<K> extends HashMap<K, Integer> implements TableColumn {
 	/**
 	 * 
 	 */

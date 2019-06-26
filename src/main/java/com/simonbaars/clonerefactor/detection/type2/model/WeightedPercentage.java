@@ -1,5 +1,10 @@
 package com.simonbaars.clonerefactor.detection.type2.model;
 
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.util.Locale;
+
 import com.simonbaars.clonerefactor.detection.interfaces.CalculatesPercentages;
 import com.simonbaars.clonerefactor.detection.interfaces.ChecksThresholds;
 
@@ -33,7 +38,9 @@ public class WeightedPercentage implements CalculatesPercentages, ChecksThreshol
 
 	@Override
 	public String toString() {
-		return "WeightedPercentage [percentage=" + percentage + ", weight=" + weight + "]";
+		DecimalFormat formatter = new DecimalFormat("#.##", DecimalFormatSymbols.getInstance( Locale.ENGLISH ));
+		formatter.setRoundingMode( RoundingMode.HALF_UP );
+		return formatter.format(percentage);
 	}
 	
 	public boolean check() {
