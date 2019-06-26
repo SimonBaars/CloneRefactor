@@ -18,7 +18,7 @@ public class ThreadPool implements WritesErrors {
 	private final File OUTPUT_FOLDER = new File(SavePaths.getFullOutputFolder());
 	private final File FULL_METRICS = new File(OUTPUT_FOLDER.getParent()+"/metrics.txt");
 	private final int NUMBER_OF_THREADS = 4;
-	private final int THREAD_TIMEOUT = 600000;
+	private final int THREAD_TIMEOUT = 6000000;
 	private final Metrics fullMetrics = new Metrics();
 	
 	private final List<Optional<CorpusThread>> threads;
@@ -64,7 +64,7 @@ public class ThreadPool implements WritesErrors {
 
 	private void replaceFinishedThread(Optional<CorpusThread> t) {
 		for(int i = 0; i<threads.size(); i++) {
-			if(!(threads.get(i).isPresent() && threads.get(i).get().isAlive())) {
+			if((!threads.get(i).isPresent() && t.isPresent()) || (threads.get(i).isPresent() && !threads.get(i).get().isAlive())) {
 				writePreviousThreadResults(i);
 				threads.set(i, t);
 				break;
