@@ -3,6 +3,7 @@ package com.simonbaars.clonerefactor.thread;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -23,9 +24,7 @@ public class ThreadPool implements WritesErrors {
 	private final List<Optional<CorpusThread>> threads;
 	
 	public ThreadPool () {
-		threads = new ArrayList<>(NUMBER_OF_THREADS);
-		for(int i = 0; i<threads.size(); i++)
-			threads.set(i, Optional.empty());
+		threads = new ArrayList<>(Collections.nCopies(NUMBER_OF_THREADS, Optional.empty()));
 		OUTPUT_FOLDER.mkdirs();
 	}
 
@@ -79,8 +78,7 @@ public class ThreadPool implements WritesErrors {
 
 	private void writePreviousThreadResults(int i) {
 		if(threads.get(i).isPresent() && threads.get(i).get().isAlive()) {
-			if(threads.get(i).get().res != null)
-				writeResults(threads.get(i).get());
+			if(threads.get(i).get().res != null) writeResults(threads.get(i).get());
 			else writeError(threads.get(i).get());
 			if(freeMemoryPercentage()<15) JavaParserFacade.clearInstances();
 		}
@@ -111,6 +109,10 @@ public class ThreadPool implements WritesErrors {
 
 	public String showContents() {
 		return validElements().map(e -> e.getFile().getName()).collect(Collectors.joining(", "));
+	}
+	
+	public boolean anyNull() {
+		return validElements().count() != NUMBER_OF_THREADS;
 	}
 	
 	public boolean allNull() {
