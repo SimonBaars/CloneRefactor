@@ -77,7 +77,7 @@ public class ThreadPool implements WritesErrors {
 	}
 
 	private void writePreviousThreadResults(int i) {
-		if(threads.get(i).isPresent() && threads.get(i).get().isAlive()) {
+		if(threads.get(i).isPresent() && !threads.get(i).get().isAlive()) {
 			if(threads.get(i).get().res != null) writeResults(threads.get(i).get());
 			else writeError(threads.get(i).get());
 			if(freeMemoryPercentage()<15) JavaParserFacade.clearInstances();
