@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
-import com.simonbaars.clonerefactor.datatype.ListMap;
+import com.simonbaars.clonerefactor.datatype.map.ListMap;
 import com.simonbaars.clonerefactor.detection.type2.model.Type2Location;
 import com.simonbaars.clonerefactor.detection.type2.model.Type2Sequence;
 

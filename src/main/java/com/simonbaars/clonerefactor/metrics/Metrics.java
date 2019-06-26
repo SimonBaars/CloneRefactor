@@ -1,11 +1,11 @@
 package com.simonbaars.clonerefactor.metrics;
 
-import com.simonbaars.clonerefactor.datatype.AverageMap;
-import com.simonbaars.clonerefactor.datatype.CountMap;
 import com.simonbaars.clonerefactor.metrics.enums.CloneContents.ContentsType;
 import com.simonbaars.clonerefactor.metrics.enums.CloneLocation.LocationType;
 import com.simonbaars.clonerefactor.metrics.enums.CloneRefactorability.Refactorability;
 import com.simonbaars.clonerefactor.metrics.enums.CloneRelation.RelationType;
+import com.simonbaars.clonerefactor.datatype.map.AverageMap;
+import com.simonbaars.clonerefactor.datatype.map.CountMap;
 import com.simonbaars.clonerefactor.metrics.enums.Metric;
 import com.simonbaars.clonerefactor.metrics.enums.StatType;
 

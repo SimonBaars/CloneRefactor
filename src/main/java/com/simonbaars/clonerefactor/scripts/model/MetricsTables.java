@@ -3,7 +3,7 @@ package com.simonbaars.clonerefactor.scripts.model;
 import java.io.File;
 import java.io.IOException;
 
-import com.simonbaars.clonerefactor.datatype.CountTable;
+import com.simonbaars.clonerefactor.datatype.map.CountTable;
 import com.simonbaars.clonerefactor.metrics.Metrics;
 import com.simonbaars.clonerefactor.thread.WritesErrors;
 import com.simonbaars.clonerefactor.util.FileUtils;

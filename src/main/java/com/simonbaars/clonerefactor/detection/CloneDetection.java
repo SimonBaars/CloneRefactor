@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 import com.github.javaparser.Range;
 import com.simonbaars.clonerefactor.SequenceObservable;
 import com.simonbaars.clonerefactor.ast.interfaces.DeterminesNodeTokens;
-import com.simonbaars.clonerefactor.datatype.ListMap;
+import com.simonbaars.clonerefactor.datatype.map.ListMap;
 import com.simonbaars.clonerefactor.detection.interfaces.ChecksThresholds;
 import com.simonbaars.clonerefactor.detection.interfaces.RemovesDuplicates;
 import com.simonbaars.clonerefactor.metrics.ProblemType;

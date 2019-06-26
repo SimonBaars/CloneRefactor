@@ -6,7 +6,7 @@ import java.util.stream.IntStream;
 
 import com.github.javaparser.ast.Node;
 import com.simonbaars.clonerefactor.ast.compare.CompareOutOfScope;
-import com.simonbaars.clonerefactor.datatype.ListMap;
+import com.simonbaars.clonerefactor.datatype.map.ListMap;
 import com.simonbaars.clonerefactor.detection.interfaces.CalculatesPercentages;
 import com.simonbaars.clonerefactor.model.Sequence;
 import com.simonbaars.clonerefactor.model.location.Location;

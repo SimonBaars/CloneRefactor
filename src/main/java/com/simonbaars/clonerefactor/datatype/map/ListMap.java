@@ -1,4 +1,4 @@
-package com.simonbaars.clonerefactor.datatype;
+package com.simonbaars.clonerefactor.datatype.map;
 
 import java.util.ArrayList;
 import java.util.Arrays;

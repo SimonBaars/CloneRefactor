@@ -19,7 +19,7 @@ import com.simonbaars.clonerefactor.ast.compare.CompareMethodCall;
 import com.simonbaars.clonerefactor.ast.compare.CompareOutOfScope;
 import com.simonbaars.clonerefactor.ast.compare.CompareVariable;
 import com.simonbaars.clonerefactor.ast.interfaces.HasCompareList;
-import com.simonbaars.clonerefactor.datatype.ListMap;
+import com.simonbaars.clonerefactor.datatype.map.ListMap;
 import com.simonbaars.clonerefactor.metrics.enums.CloneContents;
 import com.simonbaars.clonerefactor.metrics.enums.CloneContents.ContentsType;
 import com.simonbaars.clonerefactor.metrics.enums.RequiresNodeContext;

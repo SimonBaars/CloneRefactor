@@ -1,4 +1,4 @@
-package com.simonbaars.clonerefactor.datatype;
+package com.simonbaars.clonerefactor.datatype.map;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
