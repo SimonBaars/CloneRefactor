@@ -32,7 +32,7 @@ public class CountTable extends ListMap<String, String> {
 	public void add(String columnName, Map<? extends Object, ? extends Object> countMap) {
 		entrySet().stream().filter(e -> !countMap.containsKey(e.getKey())).forEach(e -> e.getValue().add("0"));
 		countMap.entrySet().forEach(e -> {
-			if(!containsKey(e.getKey()))
+			if(!containsKey(e.getKey().toString()))
 				IntStream.range(0, currentSize).forEach(i -> get(e.getKey().toString()).add("0"));
 			get(e.getKey().toString()).add(e.getValue().toString());
 		});
