@@ -25,7 +25,7 @@ public class CountTable extends LinkedHashMap<String, Map<? extends Object, ? ex
 	@Override
 	public String toString() {
 		String columnNames = this.keySet().stream().collect(Collectors.joining("\t", tableName+"\t", System.lineSeparator()));
-		Set<? extends Object> rows = values().stream().flatMap(e -> e.keySet().stream()).collect(Collectors.toSet());
+		Set<? extends Object> rows = values().stream().flatMap(e -> e.keySet().stream()).sorted().collect(Collectors.toSet());
 		return columnNames + rows.stream().map(header -> 
 			header + "\t" + values().stream().map(row -> 
 				row.containsKey(header) ? row.get(header).toString() : "0").collect(Collectors.joining("\t"))
