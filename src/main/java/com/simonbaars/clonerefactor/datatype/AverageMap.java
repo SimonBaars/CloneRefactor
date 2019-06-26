@@ -36,11 +36,8 @@ public class AverageMap<K> extends HashMap<String, WeightedPercentage> {
     }
 	
 	public WeightedPercentage addTo(String key, WeightedPercentage p) {
-		if(super.containsKey(key)) {
-			WeightedPercentage wp = super.get(key);
-			wp.mergeWith(p);
-			return wp;
-		}
+		if(super.containsKey(key))
+			p = super.get(key).mergeWith(p);
         return super.put(key, p);
 	}
 	
@@ -59,7 +56,7 @@ public class AverageMap<K> extends HashMap<String, WeightedPercentage> {
 	
 	@Override
 	public String toString() {
-		return keySet().stream().sorted().map(e -> e + "\t" + get(e)).collect(Collectors.joining(System.lineSeparator()));
+		return keySet().stream().sorted().map(e -> e + "\t" + get(e).getPercentage()).collect(Collectors.joining(System.lineSeparator()));
 	}
 
 	public void addAll(AverageMap<K> amountPerCloneClassSize) {
