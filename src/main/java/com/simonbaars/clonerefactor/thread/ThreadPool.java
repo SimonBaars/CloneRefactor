@@ -2,14 +2,14 @@ package com.simonbaars.clonerefactor.thread;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Objects;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 import com.github.javaparser.symbolsolver.javaparsermodel.JavaParserFacade;
 import com.simonbaars.clonerefactor.metrics.Metrics;
-import com.simonbaars.clonerefactor.model.DetectionResults;
 import com.simonbaars.clonerefactor.util.FileUtils;
 import com.simonbaars.clonerefactor.util.SavePaths;
 
@@ -20,17 +20,19 @@ public class ThreadPool implements WritesErrors {
 	private final int THREAD_TIMEOUT = 600000;
 	private final Metrics fullMetrics = new Metrics();
 	
-	private final CorpusThread[] threads;
+	private final List<Optional<CorpusThread>> threads;
 	
 	public ThreadPool () {
-		threads = new CorpusThread[NUMBER_OF_THREADS];
+		threads = new ArrayList<>(NUMBER_OF_THREADS);
+		for(int i = 0; i<threads.size(); i++)
+			threads.set(i, Optional.empty());
 		OUTPUT_FOLDER.mkdirs();
 	}
 
-	public void waitForThreadToFinish() {
+	public boolean waitForThreadToFinish() {
 		if(allNull())
-			return;
-		while(Arrays.stream(threads).filter(Objects::nonNull).noneMatch(e -> !e.isAlive())) {
+			return false;
+		while(validElements().noneMatch(e -> !e.isAlive())) {
 			try {
 				Thread.sleep(100);
 				nullifyThreadIfStarved();
@@ -38,52 +40,54 @@ public class ThreadPool implements WritesErrors {
 				Thread.currentThread().interrupt();
 			}
 		}
+		return true;
+	}
+	
+	public Stream<CorpusThread> validElements(){
+		return validElements(threads);
+	}
+	
+	public<T> Stream<T> validElements(List<Optional<T>> list){
+		return validElements(list.stream());
+	}	
+	
+	public<T> Stream<T> validElements(Stream<Optional<T>> stream){
+		return stream.filter(Optional::isPresent).map(Optional::get);
 	}
 
 	private void nullifyThreadIfStarved() {
-		IntStream.range(0,size()).filter(i -> threads[i]!=null && threads[i].creationTime+THREAD_TIMEOUT<System.currentTimeMillis()).forEach(i -> {
-			threads[i].timeout();
-		});
-	}
-
-	private int size() {
-		return NUMBER_OF_THREADS;
+		validElements().filter(i -> i.creationTime+THREAD_TIMEOUT<System.currentTimeMillis()).forEach(CorpusThread::timeout);
 	}
 
 	public void addToAvailableThread(File file) {
-		for(int i = 0; i<threads.length; i++) {
-			if(threads[i]==null || !threads[i].isAlive()) {
+		replaceFinishedThread(Optional.of(new CorpusThread(file)));
+	}
+
+	private void replaceFinishedThread(Optional<CorpusThread> t) {
+		for(int i = 0; i<threads.size(); i++) {
+			if(!(threads.get(i).isPresent() && threads.get(i).get().isAlive())) {
 				writePreviousThreadResults(i);
-				threads[i] = new CorpusThread(file);
+				threads.set(i, t);
 				break;
 			}
 		}
 	}
 	
 	public void finishFinalThreads() {
-		while(Arrays.stream(threads).anyMatch(Objects::nonNull)) {
-			waitForThreadToFinish();
-			for(int i = 0; i<threads.length; i++) {
-				if(threads[i] != null && !threads[i].isAlive()) {
-					writePreviousThreadResults(i);
-					threads[i] = null;
-				}
-			}
-		}
+		while(waitForThreadToFinish()) replaceFinishedThread(Optional.empty());
 	}
 
 	private void writePreviousThreadResults(int i) {
-		if(threads[i]!=null && !threads[i].isAlive()) {
-			if(threads[i].res != null)
-				writeResults(threads[i]);
-			else writeError(i);
+		if(threads.get(i).isPresent() && threads.get(i).get().isAlive()) {
+			if(threads.get(i).get().res != null)
+				writeResults(threads.get(i).get());
+			else writeError(threads.get(i).get());
 			if(freeMemoryPercentage()<15) JavaParserFacade.clearInstances();
-			threads[i]=null;
 		}
 	}
 
-	private void writeError(int i) {
-		writeProjectError(threads[i].getFile().getName(), threads[i].error);
+	private void writeError(CorpusThread corpusThread) {
+		writeProjectError(corpusThread.getFile().getName(), corpusThread.error);
 	}
 
 	private void writeResults(CorpusThread t) {
@@ -106,15 +110,11 @@ public class ThreadPool implements WritesErrors {
 	}
 
 	public String showContents() {
-		return Arrays.stream(threads).filter(Objects::nonNull).map(e -> e.getFile().getName()).collect(Collectors.joining(", "));
-	}
-	
-	public boolean anyNull() {
-		return Arrays.stream(threads).anyMatch(Objects::nonNull);
+		return validElements().map(e -> e.getFile().getName()).collect(Collectors.joining(", "));
 	}
 	
 	public boolean allNull() {
-		return Arrays.stream(threads).allMatch(Objects::nonNull);
+		return !validElements().findAny().isPresent();
 	}
 	
 	public Metrics getFullMetrics() {
