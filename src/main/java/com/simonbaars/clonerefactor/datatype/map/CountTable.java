@@ -3,7 +3,6 @@ package com.simonbaars.clonerefactor.datatype.map;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 public class CountTable extends LinkedHashMap<String, Map<? extends Object, ? extends Object>> {
@@ -31,9 +30,5 @@ public class CountTable extends LinkedHashMap<String, Map<? extends Object, ? ex
 			header + "\t" + values().stream().map(row -> 
 				row.containsKey(header) ? row.get(header).toString() : "0").collect(Collectors.joining("\t"))
 		).collect(Collectors.joining(System.lineSeparator()));
-		//return columnNames + values().stream().flatMap(row -> columns.stream().map(header -> row.containsKey(header) ? row.get(header).toString() : "0")).collect(Collectors.joining("\t"));
-		//return columnNames+values().stream()keySet().stream().sorted().map(e -> 
-		//	e + "\t"+get(e).stream().map(String::toString).collect(Collectors.joining("\t"))
-		//).collect(Collectors.joining(System.lineSeparator()));
 	}
 }
