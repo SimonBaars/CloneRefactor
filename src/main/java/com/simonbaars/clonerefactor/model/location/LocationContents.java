@@ -17,6 +17,7 @@ import com.simonbaars.clonerefactor.ast.compare.Compare;
 import com.simonbaars.clonerefactor.ast.compare.CompareLiteral;
 import com.simonbaars.clonerefactor.ast.compare.CompareMethodCall;
 import com.simonbaars.clonerefactor.ast.compare.CompareOutOfScope;
+import com.simonbaars.clonerefactor.ast.compare.CompareTokens;
 import com.simonbaars.clonerefactor.ast.compare.CompareVariable;
 import com.simonbaars.clonerefactor.ast.interfaces.HasCompareList;
 import com.simonbaars.clonerefactor.datatype.map.ListMap;
@@ -51,11 +52,13 @@ public class LocationContents implements FiltersTokens, HasRange, HasCompareList
 		this.tokens = new ArrayList<>();
 		this.compare = new ArrayList<>();
 		for(Node n : nodes) {
-			this.tokens.addAll(calculateTokensFromNode(n));
+			List<JavaToken> nodeTokens = calculateTokensFromNode(n);
+			this.tokens.addAll(nodeTokens);
 			this.nodes.add(n);
 			if(Settings.get().getScope()!=Scope.ALL && (getMethod(n)==null || (Settings.get().getScope() == Scope.METHODBODYONLY && n instanceof MethodDeclaration)))
 				this.compare.add(new CompareOutOfScope(getRange(n)));
-			else if(!Settings.get().useLiteratureTypeDefinitions()) createComparablesByNode(tokens, n); 
+			else if(!Settings.get().useLiteratureTypeDefinitions()) createComparablesByNode(tokens, n);
+			else this.compare.add(new CompareTokens(filterTokensForCompare(nodeTokens), getRange(nodeTokens)));
 		}
 		determineRange();
 	}
@@ -99,8 +102,7 @@ public class LocationContents implements FiltersTokens, HasRange, HasCompareList
 	public boolean equals (Object o) {
 		if(!(o instanceof LocationContents))
 			return false;
-		LocationContents other = (LocationContents)o;
-		return Settings.get().useLiteratureTypeDefinitions() && compare.isEmpty() ? filterTokensForCompare(tokens).equals(filterTokensForCompare(other.tokens)) : compare.equals(other.compare);
+		return compare.equals(((LocationContents)o).compare);
 	}
 	
 	public String getEffectiveTokenTypes() {
@@ -113,7 +115,7 @@ public class LocationContents implements FiltersTokens, HasRange, HasCompareList
 
 	@Override
 	public int hashCode() {
-		return Settings.get().useLiteratureTypeDefinitions() && compare.isEmpty() ? filterTokensForCompare(tokens).hashCode() : compare.hashCode();
+		return compare.hashCode();
 	}
 
 	@Override
