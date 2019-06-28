@@ -42,7 +42,7 @@ public class MethodDeclarationProxy {
 	}
 	
 	public boolean equalsType1(MethodDeclarationProxy m) {
-		return returnType.equals(m.returnType) && fullyQualifiedSignature.equals(m.fullyQualifiedSignature);
+		return fullyQualifiedSignature.equals(m.fullyQualifiedSignature);
 	}
 	
 	public boolean equalsType2(MethodDeclarationProxy m) {
@@ -50,7 +50,7 @@ public class MethodDeclarationProxy {
 	}
 	
 	public int hashcodeType1() {
-		return 31 * returnType.hashCode() + fullyQualifiedSignature.hashCode();
+		return fullyQualifiedSignature.hashCode();
 	}
 	
 	public int hashcodeType2() {
