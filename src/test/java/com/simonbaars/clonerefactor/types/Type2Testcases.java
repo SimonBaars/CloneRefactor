@@ -67,9 +67,9 @@ public class Type2Testcases extends Type2Test implements CalculatesTimeIntervals
     	Settings.get().setUseLiteratureTypeDefinitions(true);
     	System.out.println("abmash");
     	String path = "/Users/sbaars/clone/git/abmash/";
-    	long t = System.currentTimeMillis();
+    	long t = System.nanoTime();
 		System.out.println(Main.cloneDetection(Paths.get(path), Paths.get(path+"src/main/java/")).sorted());
-		System.out.println("Time T2: "+interval(t));
+		System.out.println("Time T2: "+(System.nanoTime()-t));
 		Settings.get().setUseLiteratureTypeDefinitions(false);
     }
     

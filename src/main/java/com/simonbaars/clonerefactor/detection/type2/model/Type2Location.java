@@ -173,24 +173,4 @@ public class Type2Location implements DeterminesNodeTokens, Comparable<Type2Loca
 			return res;
 		return Integer.compare(statementIndices.getStart(), o.statementIndices.getStart());
 	}
-
-	/*public Type2Location getMergedWith() {
-		return mergedWith;
-	}
-
-	public void setMergedWith(Type2Location mergedWith) {
-		this.mergedWith = mergedWith;
-	}
-	
-	public List<Type2Location> getFullInstance(List<Type2Location> type2Location) {
-		type2Location.add(this);
-		if(mergedWith!=null) mergedWith.getFullInstance(type2Location);
-		return type2Location;
-	}
-
-	public Type2Location splitAt(int amountOfNodes) {
-		if(amountOfNodes>1)
-			return mergedWith.splitAt(amountOfNodes-1);
-		return this;
-	}*/
 }
