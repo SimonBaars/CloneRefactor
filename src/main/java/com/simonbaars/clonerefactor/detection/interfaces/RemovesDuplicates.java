@@ -7,7 +7,8 @@ import com.simonbaars.clonerefactor.model.Sequence;
 public interface RemovesDuplicates {
 	//TODO: We should optimise this method. It takes up 5%+ of the total runtime.
 	public default boolean removeDuplicatesOf(List<Sequence> clones, Sequence l) {
-		l.getLocations().removeIf(e -> l.getLocations().stream().anyMatch(f -> f!=e && f.getFile() == e.getFile() && f.getRange().contains(e.getRange())));
+		//Remove all locations from the current clone that are "subsets" of each other
+		//l.getLocations().removeIf(e -> l.getLocations().stream().anyMatch(f -> f!=e && f.getFile() == e.getFile() && f.getRange().contains(e.getRange())));
 		clones.removeIf(e -> isSubset(e, l));
 		return clones.stream().noneMatch(e -> isSubset(l, e));
 	}
