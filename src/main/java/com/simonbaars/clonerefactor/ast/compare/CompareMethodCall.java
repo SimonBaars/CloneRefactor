@@ -14,13 +14,15 @@ import com.simonbaars.clonerefactor.ast.interfaces.ResolvesSymbols;
 import com.simonbaars.clonerefactor.settings.CloneType;
 
 public class CompareMethodCall extends Compare implements ResolvesSymbols {
-	private final MethodCallExpr methodCall;
+	private final List<JavaToken> methodCall;
+	private final MethodCallExpr methodCallExpr;
 	private final Optional<MethodDeclarationProxy> type;
 	private final List<Object> estimatedTypes = new ArrayList<>();
 	
 	public CompareMethodCall(MethodCallExpr t) {
 		super(t.getRange().get());
-		methodCall = t;
+		this.methodCall = getPartsOfCall(t);
+		this.methodCallExpr = t;
 		type = resolve(() -> new MethodDeclarationProxy(t.resolve()));
 		if(!type.isPresent())
 			estimateTypes(t);
@@ -35,7 +37,7 @@ public class CompareMethodCall extends Compare implements ResolvesSymbols {
 		if(!super.equals(c))
 			return false;
 		CompareMethodCall other = (CompareMethodCall)c;
-		if(getCloneType() == CloneType.TYPE1 && !getPartsOfCall(methodCall).equals(getPartsOfCall(other.methodCall)))
+		if(getCloneType() == CloneType.TYPE1 && !methodCall.equals(other.methodCall))
 			return false;
 		if(type.isPresent() && other.type.isPresent())
 			return getCloneType().isNotTypeOne() ? type.get().equalsType2(other.type.get()) : type.get().equalsType1(other.type.get());
@@ -69,7 +71,7 @@ public class CompareMethodCall extends Compare implements ResolvesSymbols {
 	
 	@Override
 	public List<Compare> relevantChildren(Node statement, HasCompareList c){
-		return c.getNodesForCompare(methodCall.getArguments(), methodCall.getRange().get()).values().stream().map(e -> Compare.create(statement, e, e.getTokenRange().get().getBegin(), getCloneType())).collect(Collectors.toList());
+		return c.getNodesForCompare(methodCallExpr.getArguments(), methodCallExpr.getRange().get()).values().stream().map(e -> Compare.create(statement, e, e.getTokenRange().get().getBegin(), getCloneType())).collect(Collectors.toList());
 	}
 	
 	@Override
