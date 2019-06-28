@@ -13,7 +13,11 @@ import com.simonbaars.clonerefactor.util.SavePaths;
 public interface WritesErrors {
 	public default void writeError(String path, Exception exception) {
 		try {
-			FileUtils.writeStringToFile(new File(path+".txt"), ExceptionUtils.getStackTrace(exception));
+			try {
+				FileUtils.writeStringToFile(new File(path+".txt"), ExceptionUtils.getStackTrace(exception));
+			} catch (NullPointerException e) {
+				FileUtils.writeStringToFile(new File(path+".txt"), ExceptionUtils.getStackTrace(new IllegalStateException("No exception present")));
+			}
 		} catch (IOException | NullPointerException e) {
 			Logger.getAnonymousLogger().log(Level.WARNING, "Something went wrong while writing an error.", e);
 		}
