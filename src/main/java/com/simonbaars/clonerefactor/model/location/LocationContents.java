@@ -140,7 +140,7 @@ public class LocationContents implements FiltersTokens, HasRange, HasCompareList
 		this.range = range;
 	}
 
-	public Set<Integer> getEffectiveLines() {
+	public Set<Integer> effectiveLines() {
 		return getTokens().stream().map(e -> e.getRange().get().begin.line).collect(Collectors.toSet());
 	}
 

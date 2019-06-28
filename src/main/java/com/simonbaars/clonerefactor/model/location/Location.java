@@ -73,7 +73,7 @@ public class Location implements Comparable<Location>, HasRange {
 	}
 	
 	public int getEffectiveLines() {
-		return getContents().getEffectiveLines().size();
+		return getContents().effectiveLines().size();
 	}
 
 	public boolean isSame(Location other) {

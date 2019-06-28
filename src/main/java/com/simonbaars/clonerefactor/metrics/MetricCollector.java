@@ -40,7 +40,7 @@ public class MetricCollector {
 	
 	private int getUnparsedEffectiveLines(Location l, boolean countOverlap) {
 		int amountOfLines = 0;
-		for(Integer i : l.getContents().getEffectiveLines()) {
+		for(Integer i : l.getContents().effectiveLines()) {
 			Set<Integer> lines = parsedEffectiveLines.get(l.getFile());
 			if(!lines.contains(i)) {
 				amountOfLines++;
@@ -87,15 +87,15 @@ public class MetricCollector {
 		clone.setMetrics(relationFinder, extractFinder);
 		metrics.amountPerRelation.increment(clone.getRelationType());
 		metrics.amountPerExtract.increment(clone.getRefactorability());
-		metrics.averages.addTo("Clone instances per clone class", clone.size());
 		metrics.averages.addTo("Statements per clone class", clone.getNodeSize());
 		for(Location l : clone.getLocations())
 			reportClonedLocation(l);
 	}
 
 	private void reportClonedLocation(Location l) {
-		metrics.averages.addTo("Clone nodes", l.getContents().size());
-		metrics.averages.addTo("Clone tokens", l.getContents().getAmountOfTokens());
+		metrics.averages.addTo("Clone nodes", l.getAmountOfNodes());
+		metrics.averages.addTo("Clone tokens", l.getAmountOfTokens());
+		metrics.averages.addTo("Clone effective lines", l.getEffectiveLines());
 		metrics.incrementGeneralStatistic(Metric.LINES, StatType.CLONED, getUnparsedLines(l, true));
 		metrics.incrementGeneralStatistic(Metric.TOKENS, StatType.CLONED, getUnparsedTokens(l, true));
 		metrics.incrementGeneralStatistic(Metric.NODES, StatType.CLONED, getUnparsedNodes(l, true));
