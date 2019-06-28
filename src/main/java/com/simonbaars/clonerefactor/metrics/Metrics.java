@@ -28,8 +28,8 @@ public class Metrics {
 	@Override
 	public String toString() {
 		return String.format(
-				"Metrics [generalStats=%s, amountPerRelation=%s, amountPerLocation=%s, amountPerContents=%s, amountPerExtract=%s, amountPerCloneClassSize=%s, amountPerNodes=%s, amountPerTotalNodeVolume=%s, amountPerEffectiveLines=%s, amountPerTotalEffectiveLineVolume=%s]",
-				generalStats, amountPerRelation, amountPerLocation, amountPerContents, amountPerExtract,
+				"Metrics [generalStats=%s, averages=%s, amountPerRelation=%s, amountPerLocation=%s, amountPerContents=%s, amountPerExtract=%s, amountPerCloneClassSize=%s, amountPerNodes=%s, amountPerTotalNodeVolume=%s, amountPerEffectiveLines=%s, amountPerTotalEffectiveLineVolume=%s]",
+				generalStats, averages, amountPerRelation, amountPerLocation, amountPerContents, amountPerExtract,
 				amountPerCloneClassSize, amountPerNodes, amountPerTotalNodeVolume, amountPerEffectiveLines,
 				amountPerTotalEffectiveLineVolume);
 	}

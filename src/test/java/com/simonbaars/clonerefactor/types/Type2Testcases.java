@@ -5,6 +5,7 @@ import java.nio.file.Paths;
 import com.simonbaars.clonerefactor.Main;
 import com.simonbaars.clonerefactor.helper.Type2Test;
 import com.simonbaars.clonerefactor.settings.Settings;
+import com.simonbaars.clonerefactor.thread.CalculatesTimeIntervals;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
@@ -12,7 +13,7 @@ import junit.framework.TestSuite;
 /**
  * Unit test for the clone detector.
  */
-public class Type2Testcases extends Type2Test {    
+public class Type2Testcases extends Type2Test implements CalculatesTimeIntervals {    
 
 	/**
      * Create the test case
@@ -57,23 +58,18 @@ public class Type2Testcases extends Type2Test {
     public void testAbmash() {
     	System.out.println("abmash");
     	String path = "/Users/sbaars/clone/git/abmash/";
+    	long t = System.currentTimeMillis();
 		System.out.println(Main.cloneDetection(Paths.get(path), Paths.get(path+"src/main/java/")).sorted());
+		System.out.println("Time 2R: "+interval(t));
     }
     
     public void testAbmashLiterature() {
     	Settings.get().setUseLiteratureTypeDefinitions(true);
     	System.out.println("abmash");
     	String path = "/Users/sbaars/clone/git/abmash/";
+    	long t = System.currentTimeMillis();
 		System.out.println(Main.cloneDetection(Paths.get(path), Paths.get(path+"src/main/java/")).sorted());
-		Settings.get().setUseLiteratureTypeDefinitions(false);
-    }
-    
-    public void testMetricsOutput() {
-    	System.out.println("abmash");
-    	String path = "/Users/sbaars/clone/git/abmash/";
-		System.out.println(Main.cloneDetection(Paths.get(path), Paths.get(path+"src/main/java/")).getMetrics());
-		Settings.get().setUseLiteratureTypeDefinitions(true);
-		System.out.println(Main.cloneDetection(Paths.get(path), Paths.get(path+"src/main/java/")).getMetrics());
+		System.out.println("Time T2: "+interval(t));
 		Settings.get().setUseLiteratureTypeDefinitions(false);
     }
     
