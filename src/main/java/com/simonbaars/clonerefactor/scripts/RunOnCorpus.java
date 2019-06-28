@@ -5,12 +5,13 @@ import java.io.IOException;
 
 import com.simonbaars.clonerefactor.metrics.Metrics;
 import com.simonbaars.clonerefactor.settings.Settings;
+import com.simonbaars.clonerefactor.thread.CalculatesTimeIntervals;
 import com.simonbaars.clonerefactor.thread.ThreadPool;
 import com.simonbaars.clonerefactor.thread.WritesErrors;
 import com.simonbaars.clonerefactor.util.FileUtils;
 import com.simonbaars.clonerefactor.util.SavePaths;
 
-public class RunOnCorpus implements WritesErrors {
+public class RunOnCorpus implements WritesErrors, CalculatesTimeIntervals {
 
 	public static void main(String[] args) {
 		new RunOnCorpus().startCorpusCloneDetection();
@@ -24,8 +25,10 @@ public class RunOnCorpus implements WritesErrors {
 			ThreadPool threadPool = new ThreadPool();
 			File[] corpusFiles = new File(SavePaths.getApplicationDataFolder()+"git").listFiles();
 			writeSettings();
+			long startTime = System.currentTimeMillis();
 			analyzeAllProjects(threadPool, corpusFiles);
 			threadPool.finishFinalThreads();
+			threadPool.getFullMetrics().generalStats.increment("Total Duration", interval(startTime));
 			return threadPool.getFullMetrics();
 		} catch (Exception e) {
 			writeError(SavePaths.getMyOutputFolder()+"terminate", e);
