@@ -14,7 +14,7 @@ import com.simonbaars.clonerefactor.metrics.Metrics;
 import com.simonbaars.clonerefactor.util.FileUtils;
 import com.simonbaars.clonerefactor.util.SavePaths;
 
-public class ThreadPool implements WritesErrors {
+public class ThreadPool implements WritesErrors, CalculatesTimeIntervals {
 	private final File OUTPUT_FOLDER = new File(SavePaths.getFullOutputFolder());
 	private final File FULL_METRICS = new File(OUTPUT_FOLDER.getParent()+"/metrics.txt");
 	private final int NUMBER_OF_THREADS = 4;
@@ -100,7 +100,9 @@ public class ThreadPool implements WritesErrors {
 	}
 
 	private void calculateGeneralMetrics(CorpusThread t) {
-		t.res.getMetrics().generalStats.increment("Duration", Math.toIntExact(System.currentTimeMillis()-t.creationTime));
+		int duration = interval(t.creationTime);
+		t.res.getMetrics().generalStats.increment("Duration", duration);
+		t.res.getMetrics().averages.addTo("Average duration", duration);
 	}
 	
 	public double freeMemoryPercentage() {
