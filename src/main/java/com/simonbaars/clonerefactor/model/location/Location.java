@@ -10,6 +10,7 @@ import com.simonbaars.clonerefactor.metrics.enums.CloneLocation.LocationType;
 public class Location implements Comparable<Location>, HasRange {
 	private final Path file;
 	private Range range;
+	public boolean isVisited = false;
 	
 	private final LocationContents contents;
 	
@@ -36,10 +37,25 @@ public class Location implements Comparable<Location>, HasRange {
 		this.prev = clonedLocation.prev;
 		this.clone = clonedLocation.clone;
 		this.next = clonedLocation.next;
-		if(range!=clonedLocation.range)
+		this.isVisited = clonedLocation.isVisited;
+		if(range!=clonedLocation.range) {
 			getContents().stripToRange();
+			if(next != null) this.isVisited = next.prev.isRangeVisited(r);
+			else if(prev != null) this.isVisited = prev.next.isRangeVisited(r);
+		}
 	}
 	
+	private boolean isRangeVisited(Range r) {
+		//System.out.println("Determine visited range "+r+" with "+range+"and isvisited "+isVisited);
+		if(!r.contains(range))
+			return true;
+		else if(!isVisited)
+			return false;
+		else if(next == null)
+			return true;
+		return next.isRangeVisited(r);
+	}
+
 	public Location(Path path, Location prevLocation, Node n) {
 		this(path, n);
 		this.prev = prevLocation;
@@ -122,6 +138,7 @@ public class Location implements Comparable<Location>, HasRange {
 		Location copy = new Location(this);
 		copy.contents.merge(oldClone.getContents());
 		copy.syncRanges();
+		copy.isVisited = oldClone.isVisited && isVisited;
 		return copy;
 	}
 

@@ -24,6 +24,7 @@ public class CloneDetection implements ChecksThresholds, RemovesDuplicates, Dete
 	public List<Sequence> findChains(Location lastLoc) {
 		for(Sequence buildingChains = new Sequence(); lastLoc!=null; lastLoc = lastLoc.getPrev()) {
 			Sequence newClones = collectClones(lastLoc);
+			//System.out.println("Last loc is now "+lastLoc);
 			if(!buildingChains.getLocations().isEmpty() || newClones.size()>1)
 				buildingChains = makeValid(lastLoc, buildingChains, newClones); //Because of the recent additions the current sequence may be invalidated
 			if(buildingChains.size() == 1 || (lastLoc.getPrev()!=null && lastLoc.getPrev().getFile()!=lastLoc.getFile()))
@@ -75,8 +76,19 @@ public class CloneDetection implements ChecksThresholds, RemovesDuplicates, Dete
 
 	private void createClone(List<Location> l) {
 		Sequence newSequence = new Sequence(l);
-		if(l.size()>1 && checkThresholds(newSequence) && removeDuplicatesOf(clones, newSequence)) {
+		//System.out.println("newSequence = "+newSequence);
+		if(l.size()>1 && checkThresholds(newSequence) && !isDuplicate(newSequence) /*&& removeDuplicatesOf(clones, newSequence)*/) {
+			//System.out.println("Save clone");
+			while(!clones.isEmpty() && prevRedundant(newSequence, clones.get(clones.size()-1))) 
+				clones.remove(clones.size()-1);
+			clones.stream().filter(e -> isSubset(e, newSequence)).forEach(e -> {
+				System.out.println("HELP!! Subset: "+newSequence+" sub of "+e);
+			});
+			clones.stream().filter(e -> isSubset(newSequence, e)).forEach(e -> {
+				System.out.println("HELP!! Subset: "+newSequence+" sub of "+e);
+			});
 			clones.add(newSequence.isValid());
+			//System.out.println("ADDED "+newSequence);
 			SequenceObservable.get().sendUpdate(ProblemType.DUPLICATION, newSequence, newSequence.getTotalNodeVolume());
 		}
 	}
@@ -85,6 +97,7 @@ public class CloneDetection implements ChecksThresholds, RemovesDuplicates, Dete
 		for(Location l2 : oldClones.getLocations()) {
 			if(!l.contains(l2) && l2.getAmountOfNodes()>=amountOfNodes) {
 				l.add(new Location(l2, getRange(l2, amountOfNodes)));
+				//System.out.println("Added "+l.get(l.size()-1)+" to seq");
 			}
 		}
 	}
@@ -98,6 +111,10 @@ public class CloneDetection implements ChecksThresholds, RemovesDuplicates, Dete
 		while(lastLoc!=null) {
 			c.add(lastLoc);
 			lastLoc = lastLoc.getClone();
+			if(lastLoc!=null) {
+				lastLoc.isVisited = true;
+				//System.out.println("Set "+lastLoc +" to visited");
+			}
 		}
 		return c;
 	}

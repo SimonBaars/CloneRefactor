@@ -130,6 +130,11 @@ public class Type1Testcases extends Type1Test {
     	System.out.println(testProject(SINGLE_FILE_PROJECT));
     }
     
+    public void testEqualLinesSingleFile() {
+    	System.out.println("testEqualLinesSingleFile");
+    	System.out.println(testProject("EqualLinesSingleFile"));
+    }
+    
     
     /**
      * Test for clones that differ in length but consist of lines with equal tokens.
