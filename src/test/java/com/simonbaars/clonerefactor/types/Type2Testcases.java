@@ -37,6 +37,15 @@ public class Type2Testcases extends Type2Test implements CalculatesTimeIntervals
 		System.out.println(Main.cloneDetection(Paths.get(path), Paths.get(path+"src/main/java/")).sorted());
     }
     
+    public void testCaronas() {
+    	Settings.get().setUseLiteratureTypeDefinitions(true);
+    	System.out.println("caronas");
+    	String path = "/Users/sbaars/clone/git/Caronas/";
+    	System.out.println(Settings.get());
+		System.out.println(Main.cloneDetection(Paths.get(path), Paths.get(path+"src/main/java/")).sorted());
+		Settings.get().setUseLiteratureTypeDefinitions(false);
+    }
+    
     public void testSimpleHTTPServer() {
     	System.out.println("SimpleHTTPServer");
         String path = "/Users/sbaars/clone/git/SimpleHTTPServer/";

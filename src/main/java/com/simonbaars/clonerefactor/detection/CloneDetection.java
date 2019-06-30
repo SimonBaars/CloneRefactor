@@ -65,6 +65,7 @@ public class CloneDetection implements ChecksThresholds, RemovesDuplicates, Dete
 	private void checkValidClones(Sequence oldClones, List<Location> endedClones) {
 		ListMap<Integer /*Sequence size*/, Location /* Clones */> cloneList = new ListMap<>();
 		endedClones.stream().forEach(e -> cloneList.addTo(e.getAmountOfNodes(), e));
+		
 		for(Entry<Integer, List<Location>> entry : cloneList.entrySet()) {
 			int amountOfNodes = entry.getKey();
 			List<Location> l = entry.getValue();
@@ -76,14 +77,10 @@ public class CloneDetection implements ChecksThresholds, RemovesDuplicates, Dete
 	private void createClone(List<Location> l) {
 		Sequence newSequence = new Sequence(l);
 		if(l.size()>1 && checkThresholds(newSequence) && !isDuplicate(newSequence)) {
-			while(!clones.isEmpty() && prevRedundant(newSequence, clones.get(clones.size()-1))) 
-				clones.remove(clones.size()-1);
-			clones.stream().filter(e -> isSubset(e, newSequence)).forEach(e -> {
-				System.out.println("HELP!! Subset: "+newSequence+" sub of "+e);
-			});
-			clones.stream().filter(e -> isSubset(newSequence, e)).forEach(e -> {
-				System.out.println("HELP!! Subset: "+newSequence+" sub of "+e);
-			});
+			for(int i = clones.size()-1; !clones.isEmpty() && isPossiblyRedundant(newSequence, clones.get(i)); i--) {
+				if(isSubset(clones.get(i), newSequence))
+					clones.remove(i);
+			}
 			clones.add(newSequence.isValid());
 			SequenceObservable.get().sendUpdate(ProblemType.DUPLICATION, newSequence, newSequence.getTotalNodeVolume());
 		}

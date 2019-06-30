@@ -120,8 +120,8 @@ public class Sequence implements Comparable<Sequence> {
 	public Sequence isValid() {
 		if(locations.size()<2)
 			throw new IllegalStateException("Not enough locations for "+this);
-		if(locations.stream().map(e -> e.getContents().getNodes().size()).distinct().count()>1)
-			throw new IllegalStateException("Unequal location node sizes for "+this);
+		//if(locations.stream().map(e -> e.getContents().getNodes().size()).distinct().count()>1)
+		//	throw new IllegalStateException("Unequal location node sizes for "+this);
 		//if(locations.stream().map(e -> e.getContents().getCompare().size()).distinct().count()>1)
 		//	throw new IllegalStateException("Unequal location compare sizes for "+this);
 		return this;

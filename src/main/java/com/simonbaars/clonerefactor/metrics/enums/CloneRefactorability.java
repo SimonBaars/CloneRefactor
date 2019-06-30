@@ -28,9 +28,8 @@ public class CloneRefactorability implements MetricEnum<Refactorability>, Requir
 		for(Location location : sequence.getLocations()) {
 			for(Node n : location.getContents().getNodes()) {
 				List<Node> children = childrenToParse(n);
-				if(children.stream().anyMatch(e -> !isExcluded(e) && !location.getContents().getNodes().contains(e))) {
+				if(children.stream().anyMatch(e -> !isExcluded(e) && !location.getContents().getNodes().contains(e)))
 					return Refactorability.PARTIALBLOCK;
-				}
 			}
 		}
 		return Refactorability.CANBEEXTRACTED;

@@ -16,8 +16,8 @@ public interface RemovesDuplicates {
 		return l.getLocations().stream().allMatch(e -> e.isVisited);
 	}
 	
-	public default boolean prevRedundant(Sequence newSeq, Sequence prev) {
-		return isSubset(prev, newSeq);
+	public default boolean isPossiblyRedundant(Sequence newSeq, Sequence prev) {
+		return newSeq.getLocations().stream().anyMatch(e -> prev.getLocations().stream().anyMatch(f -> e.getRange().contains(f.getRange())));
 	}
 	
 	public default boolean isSubset(Sequence existentClone, Sequence newClone) {
