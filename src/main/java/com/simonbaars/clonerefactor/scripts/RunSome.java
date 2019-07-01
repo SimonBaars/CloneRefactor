@@ -20,9 +20,9 @@ public class RunSome {
 		
 		for(int i = 0; i<cloneTypes.length; i++) {
 			Settings.get().setCloneType(cloneTypes[i]);
-			for(int j = 0; j<2; i++) {
+			for(int j = 0; j<2; j++) {
 				Settings.get().setUseLiteratureTypeDefinitions(!Settings.get().isUseLiteratureTypeDefinitions());
-				table.collectMetrics("T"+Settings.get().getCloneType().getTypeAsNumber()+(Settings.get().isUseLiteratureTypeDefinitions() ? "" : "R")+" "+Settings.get().getScope(), new RunOnCorpus().startCorpusCloneDetection());
+				table.collectMetrics("T"+Settings.get().getCloneType().getTypeAsNumber()+(Settings.get().isUseLiteratureTypeDefinitions() ? "" : "R"), new RunOnCorpus().startCorpusCloneDetection());
 				table.writeTables();
 			}
 		}
