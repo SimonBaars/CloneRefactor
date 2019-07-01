@@ -26,9 +26,10 @@ import com.simonbaars.clonerefactor.model.location.Location;
 import com.simonbaars.clonerefactor.model.location.LocationHolder;
 import com.simonbaars.clonerefactor.settings.CloneType;
 import com.simonbaars.clonerefactor.settings.Settings;
+import com.simonbaars.clonerefactor.thread.CalculatesTimeIntervals;
 import com.simonbaars.clonerefactor.thread.WritesErrors;
 
-public class CloneParser implements Parser, RemovesDuplicates, WritesErrors {
+public class CloneParser implements Parser, RemovesDuplicates, WritesErrors, CalculatesTimeIntervals {
 
 	private NodeParser astParser;
 	public final MetricCollector metricCollector = new MetricCollector();
@@ -37,8 +38,10 @@ public class CloneParser implements Parser, RemovesDuplicates, WritesErrors {
 		astParser = new NodeParser(metricCollector);
 		Location lastLoc = calculateLineReg(sourceRoot, config);
 		if(lastLoc!=null) {
+			long beginTime = System.currentTimeMillis();
 			List<Sequence> findChains = new CloneDetection().findChains(lastLoc);
 			doTypeSpecificTransformations(findChains);
+			metricCollector.getMetrics().generalStats.increment("Detection time", interval(beginTime));
 			return new DetectionResults(metricCollector.reportClones(findChains), findChains);
 		}
 		return new DetectionResults();
