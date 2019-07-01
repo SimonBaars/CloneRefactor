@@ -35,10 +35,10 @@ public class CloneParser implements Parser, RemovesDuplicates, WritesErrors, Cal
 	public final MetricCollector metricCollector = new MetricCollector();
 	
 	public DetectionResults parse(SourceRoot sourceRoot, ParserConfiguration config) {
+		long beginTime = System.currentTimeMillis();
 		astParser = new NodeParser(metricCollector);
 		Location lastLoc = calculateLineReg(sourceRoot, config);
 		if(lastLoc!=null) {
-			long beginTime = System.currentTimeMillis();
 			List<Sequence> findChains = new CloneDetection().findChains(lastLoc);
 			doTypeSpecificTransformations(findChains);
 			metricCollector.getMetrics().generalStats.increment("Detection time", interval(beginTime));
