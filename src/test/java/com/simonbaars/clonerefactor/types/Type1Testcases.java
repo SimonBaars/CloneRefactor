@@ -49,6 +49,13 @@ public class Type1Testcases extends Type1Test {
 		System.out.println(Main.cloneDetection(Paths.get(path), Paths.get(path+"src/main/java/")).sorted());
     }
     
+    public void testAthena() {
+    	System.out.println("athena");
+    	String path = "/Users/sbaars/clone/git/athena/";
+    	System.out.println(Settings.get());
+		System.out.println(Main.cloneDetection(Paths.get(path), Paths.get(path+"src/main/java/")).sorted());
+    }
+    
     public void testCaronas() {
     	System.out.println("caronas");
     	String path = "/Users/sbaars/clone/git/Caronas/";
