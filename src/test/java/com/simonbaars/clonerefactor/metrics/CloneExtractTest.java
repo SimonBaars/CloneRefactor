@@ -33,6 +33,10 @@ public class CloneExtractTest extends Type1Test {
         test("PartialBlock", Refactorability.PARTIALBLOCK);
     }
     
+    public void testReturnAllFlows() {
+        test("ReturnAllFlows", Refactorability.CANBEEXTRACTED);
+    }
+    
     public void testPartialMethod() {
         test("SimpleClone", Refactorability.CANBEEXTRACTED);
     }
