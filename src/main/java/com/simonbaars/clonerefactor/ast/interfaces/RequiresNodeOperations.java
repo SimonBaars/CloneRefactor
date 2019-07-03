@@ -3,6 +3,8 @@ package com.simonbaars.clonerefactor.ast.interfaces;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import com.github.javaparser.ast.Modifier;
 import com.github.javaparser.ast.Node;
@@ -30,6 +32,8 @@ public interface RequiresNodeOperations {
 			return ((NodeWithBody)parent).getBody().getChildNodes();
 		else if (parent instanceof NodeWithBlockStmt)
 			return ((NodeWithBlockStmt)parent).getBody().getChildNodes();
+		else if (parent.getChildNodes().stream().anyMatch(e -> e instanceof BlockStmt))
+			return parent.getChildNodes().stream().flatMap(e -> e instanceof BlockStmt ? e.getChildNodes().stream() : Stream.of(e)).collect(Collectors.toList());
 		return parent.getChildNodes();
 	}
 	
