@@ -13,18 +13,19 @@ import com.simonbaars.clonerefactor.model.location.Location;
 
 public class CloneRefactorability implements MetricEnum<Refactorability>, RequiresNodeOperations {
 	public enum Refactorability{
-		CANBEEXTRACTED,
-		NOEXTRACTIONBYCONTENTTYPE,
-		PARTIALBLOCK,
-		COMPLEXCONTROLFLOW,
+		CANBEEXTRACTED, //Can be extracted
+		NOEXTRACTIONBYCONTENTTYPE, //When the clone is not a partial method
+		PARTIALBLOCK, //When the clone spans part of a block (TODO: can we make the clone smaller to not make it a partial block, or should we turn it into a type 3 clone?)
+		COMPLEXCONTROLFLOW, //When the clone spans break, continue or return statements. However, exceptions apply:
+							// - All flows end in return OR break OR continue
+							// - The for loop that is being `continue` or `break` is included
+						
 	}
 
 	@Override
 	public Refactorability get(Sequence sequence) {
 		if(new CloneContents().get(sequence)!=CloneContents.ContentsType.PARTIALMETHOD)
 			return Refactorability.NOEXTRACTIONBYCONTENTTYPE;
-		if(sequence.getLocations().stream().anyMatch(e -> e.getContents().getNodes().stream().anyMatch(n -> complexControlFlow(n))) && !flowEndsInReturnAndContainsOnlyReturnStatements(sequence))
-			return Refactorability.COMPLEXCONTROLFLOW;
 		for(Location location : sequence.getLocations()) {
 			for(Node n : location.getContents().getNodes()) {
 				List<Node> children = childrenToParse(n);
@@ -32,6 +33,8 @@ public class CloneRefactorability implements MetricEnum<Refactorability>, Requir
 					return Refactorability.PARTIALBLOCK;
 			}
 		}
+		if(sequence.getLocations().stream().anyMatch(e -> e.getContents().getNodes().stream().anyMatch(n -> complexControlFlow(n))) && !flowEndsInReturnAndContainsOnlyReturnStatements(sequence))
+			return Refactorability.COMPLEXCONTROLFLOW;
 		return Refactorability.CANBEEXTRACTED;
 	}
 	
