@@ -48,8 +48,13 @@ public class CloneExtractTest extends Type1Test {
     public void testSeveralMethods() {
         test("SeveralMethodsCloned", Refactorability.NOEXTRACTIONBYCONTENTTYPE);
     }
+    
+    public void testBreakInNonClonedLoop() {
+        test("BreakInNonClonedLoop", Refactorability.COMPLEXCONTROLFLOW);
+    }
 
 	private void test(String name, Refactorability loc) {
+		System.out.println(name);
 		DetectionResults r = testProject(name);
 		System.out.println(r);
         Assert.assertEquals(loc, r.getMetrics().amountPerExtract.keySet().iterator().next());
