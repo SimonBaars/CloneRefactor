@@ -37,6 +37,10 @@ public class CloneExtractTest extends Type1Test {
         test("ReturnAllFlows", Refactorability.CANBEEXTRACTED);
     }
     
+    public void testReturnNotAllFlows() {
+        test("ReturnNotAllFlows", Refactorability.COMPLEXCONTROLFLOW);
+    }
+    
     public void testPartialMethod() {
         test("SimpleClone", Refactorability.CANBEEXTRACTED);
     }
