@@ -85,7 +85,7 @@ public class LocationContents implements FiltersTokens, HasRange, HasCompareList
 	public List<Node> getTopLevelNodes(){
 		ListMap<Integer, Node> nodeMap = new ListMap<>();
 		for(Node n : getNodes()) {
-			nodeMap.addTo(getNodeDepth(n), n);
+			nodeMap.addTo(nodeDepth(n), n);
 		}
 		return nodeMap.entrySet().stream().reduce((a, b) -> a.getKey() > b.getKey() ? a : b).get().getValue();
 	}

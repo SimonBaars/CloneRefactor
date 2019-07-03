@@ -104,6 +104,6 @@ public class CloneRefactorability implements MetricEnum<Refactorability>, Requir
 		Node lastNode = l.getContents().getNodes().get(l.getContents().getNodes().size()-1);
 		if(!(lastNode instanceof ReturnStmt))
 			return false;
-		return getNodeDepth(lastNode) == getNodeDepth(l.getContents().getNodes().get(0));
+		return nodeDepth(lastNode) == nodeDepth(l.getContents().getNodes().get(0));
 	}
 }

@@ -21,6 +21,7 @@ import com.github.javaparser.ast.nodeTypes.NodeWithBody;
 import com.github.javaparser.ast.nodeTypes.NodeWithIdentifier;
 import com.github.javaparser.ast.stmt.BlockStmt;
 import com.github.javaparser.ast.type.Type;
+import com.simonbaars.clonerefactor.datatype.map.ListMap;
 
 public interface RequiresNodeOperations {
 	@SuppressWarnings("rawtypes")
@@ -41,9 +42,19 @@ public interface RequiresNodeOperations {
 		return n instanceof Expression || n instanceof Modifier || n instanceof NodeWithIdentifier || n instanceof Comment || n instanceof Type || n instanceof AnnotationMemberDeclaration || n instanceof Parameter || n instanceof ReceiverParameter || (n instanceof VariableDeclarator && n.getParentNode().get() instanceof FieldDeclaration);
 	}
 	
-	public default int getNodeDepth(Node n) {
+	public default int nodeDepth(Node n) {
 		if(n.getParentNode().isPresent())
-			return getNodeDepth(n.getParentNode().get())+1;
+			return nodeDepth(n.getParentNode().get())+1;
 		return 0;
+	}
+	
+	public default ListMap<Integer, Node> depthMap(List<Node> nodes){
+		ListMap<Integer, Node> nodeDepths = new ListMap<>();
+		nodes.forEach(n -> nodeDepths.addTo(nodeDepth(n), n));
+		return nodeDepths;
+	}
+	
+	public default List<Node> lowestNodes(List<Node> nodes) {
+		return depthMap(nodes).entrySet().stream().reduce((e1, e2) -> e1.getKey() < e2.getKey() ? e1 : e2).get().getValue();
 	}
 }
