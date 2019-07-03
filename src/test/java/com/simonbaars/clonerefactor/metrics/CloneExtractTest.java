@@ -30,7 +30,7 @@ public class CloneExtractTest extends Type1Test {
     }
     
     public void testFullMethod() {
-        test("NestedClone", Refactorability.PARTIALBLOCK);
+        test("PartialBlock", Refactorability.PARTIALBLOCK);
     }
     
     public void testPartialMethod() {
@@ -43,6 +43,7 @@ public class CloneExtractTest extends Type1Test {
 
 	private void test(String name, Refactorability loc) {
 		DetectionResults r = testProject(name);
+		System.out.println(r);
         Assert.assertEquals(loc, r.getMetrics().amountPerExtract.keySet().iterator().next());
 	}
 }
