@@ -36,19 +36,26 @@ public class CloneRefactorability implements MetricEnum<Refactorability>, Requir
 	public Refactorability get(Sequence sequence) {
 		if(new CloneContents().get(sequence)!=CloneContents.ContentsType.PARTIALMETHOD)
 			return Refactorability.NOEXTRACTIONBYCONTENTTYPE;
-		if(isPartialBlock(sequence))
+		else if(isPartialBlock(sequence))
 			return Refactorability.PARTIALBLOCK;
-		if(hasComplexControlFlow(sequence))
+		else if(hasComplexControlFlow(sequence))
 			return Refactorability.COMPLEXCONTROLFLOW;
 		return Refactorability.CANBEEXTRACTED;
 	}
 	
-	private boolean hasComplexControlFlow(Sequence sequence) {
-		// sequence.getLocations().stream().anyMatch(e -> e.getContents().getNodes().stream().anyMatch(n -> complexControlFlow(n))) && !flowEndsInReturnAndContainsOnlyReturnStatements(sequence)
-		if(!loopForAllBreakAndContinueStatementsIsIncluded(sequence.getAny()))
-			return true;
-
+	private boolean isPartialBlock(Sequence sequence) {
+		for(Location location : sequence.getLocations()) {
+			for(Node n : location.getContents().getNodes()) {
+				List<Node> children = childrenToParse(n);
+				if(children.stream().anyMatch(e -> !isExcluded(e) && !location.getContents().getNodes().contains(e)))
+					return true;
+			}
+		}
 		return false;
+	}
+	
+	private boolean hasComplexControlFlow(Sequence sequence) {
+		return !loopForAllBreakAndContinueStatementsIsIncluded(sequence.getAny()) || !allPathsReturn(sequence.getAny());
 	}
 	
 	private boolean loopForAllBreakAndContinueStatementsIsIncluded(Location l) {
@@ -70,7 +77,7 @@ public class CloneRefactorability implements MetricEnum<Refactorability>, Requir
 	}
 	
 	public Node getLoop(Node n, Optional<SimpleName> label, boolean isContinue) {
-		if((isContinue ? canBeContinued(n) : canBeBroken(n)) && (!label.isPresent() || n.getParentNode().get() instanceof LabeledStmt && ((LabeledStmt)n.getParentNode().get()).getLabel().equals(label.get()))) {
+		if((isContinue ? canBeContinued(n) : canBeBroken(n)) && (!label.isPresent() || (n.getParentNode().get() instanceof LabeledStmt && ((LabeledStmt)n.getParentNode().get()).getLabel().equals(label.get())))) {
 			return n;
 		}
 		return getLoop(n.getParentNode().get(), label, isContinue);
@@ -85,23 +92,20 @@ public class CloneRefactorability implements MetricEnum<Refactorability>, Requir
 		}
 		return ((ContinueStmt)breakOrContinue).getLabel();
 	}
-
-	private boolean complexControlFlow(Node n) {
-		return continueOrBreak(n) || n instanceof ReturnStmt;
-	}
 	
 	private boolean continueOrBreak(Node n) {
 		return n instanceof BreakStmt || n instanceof ContinueStmt;
 	}
 	
-	private boolean isPartialBlock(Sequence sequence) {
-		for(Location location : sequence.getLocations()) {
-			for(Node n : location.getContents().getNodes()) {
-				List<Node> children = childrenToParse(n);
-				if(children.stream().anyMatch(e -> !isExcluded(e) && !location.getContents().getNodes().contains(e)))
-					return true;
-			}
-		}
+	private<T> boolean allPathsReturn(Location l) {
+		List<ReturnStmt> returnStatements = l.getContents().getNodes().stream().filter(n -> n instanceof ReturnStmt).map(n -> (ReturnStmt)n).collect(Collectors.toList());
+		if(returnStatements.isEmpty())
+			return true;
+		Node lastNode = l.getContents().getNodes().get(l.getContents().getNodes().size()-1);
+		if(!(lastNode instanceof ReturnStmt))
+			return false;
+		else if(getNodeDepth(lastNode) == getNodeDepth(l.getContents().getNodes().get(0)))
+			return true;
 		return false;
 	}
 }
