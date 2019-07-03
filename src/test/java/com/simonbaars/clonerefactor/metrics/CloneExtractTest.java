@@ -56,6 +56,14 @@ public class CloneExtractTest extends Type1Test {
     public void testBreakInClonedLoop() {
         test("BreakInClonedLoop", Refactorability.CANBEEXTRACTED);
     }
+    
+    public void testContinueInNonClonedLoop() {
+        test("ContinueInNonClonedLoop", Refactorability.COMPLEXCONTROLFLOW);
+    }
+    
+    public void testContinueInClonedLoop() {
+        test("ContinueInClonedLoop", Refactorability.CANBEEXTRACTED);
+    }
 
 	private void test(String name, Refactorability loc) {
 		System.out.println(name);
