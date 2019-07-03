@@ -26,25 +26,36 @@ public class CloneRefactorability implements MetricEnum<Refactorability>, Requir
 	public Refactorability get(Sequence sequence) {
 		if(new CloneContents().get(sequence)!=CloneContents.ContentsType.PARTIALMETHOD)
 			return Refactorability.NOEXTRACTIONBYCONTENTTYPE;
-		for(Location location : sequence.getLocations()) {
-			for(Node n : location.getContents().getNodes()) {
-				List<Node> children = childrenToParse(n);
-				if(children.stream().anyMatch(e -> !isExcluded(e) && !location.getContents().getNodes().contains(e)))
-					return Refactorability.PARTIALBLOCK;
-			}
-		}
-		if(sequence.getLocations().stream().anyMatch(e -> e.getContents().getNodes().stream().anyMatch(n -> complexControlFlow(n))) && !flowEndsInReturnAndContainsOnlyReturnStatements(sequence))
+		if(isPartialBlock(sequence))
+			return Refactorability.PARTIALBLOCK;
+		if(hasComplexControlFlow(sequence))
 			return Refactorability.COMPLEXCONTROLFLOW;
 		return Refactorability.CANBEEXTRACTED;
 	}
 	
+	private boolean hasComplexControlFlow(Sequence sequence) {
+		// sequence.getLocations().stream().anyMatch(e -> e.getContents().getNodes().stream().anyMatch(n -> complexControlFlow(n))) && !flowEndsInReturnAndContainsOnlyReturnStatements(sequence)
+		return false;
+	}
+
 	private boolean complexControlFlow(Node n) {
 		return n instanceof BreakStmt || n instanceof ReturnStmt || n instanceof ContinueStmt;
 	}
 	
-	private boolean flowEndsInReturnAndContainsOnlyReturnStatements(Sequence sequence) {
+	private boolean isPartialBlock(Sequence sequence) {
+		for(Location location : sequence.getLocations()) {
+			for(Node n : location.getContents().getNodes()) {
+				List<Node> children = childrenToParse(n);
+				if(children.stream().anyMatch(e -> !isExcluded(e) && !location.getContents().getNodes().contains(e)))
+					return true;
+			}
+		}
+		return false;
+	}
+	
+	private<T> boolean allPathsBroken(Sequence sequence, Class<? extends Node> c) {
 		Location location = sequence.getAny();
-		if(location.getContents().getNodes().stream().filter(n -> complexControlFlow(n)).allMatch(e -> e instanceof ReturnStmt) 
+		if(location.getContents().getNodes().stream().filter(n -> complexControlFlow(n)).allMatch(e -> c.isAssignableFrom(e.getClass())) 
 				&& location.getContents().getNodes().get(location.getContents().getNodes().size()-1) instanceof ReturnStmt)
 			return true;
 		return false;
