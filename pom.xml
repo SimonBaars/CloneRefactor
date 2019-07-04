@@ -15,7 +15,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<jdk.version>1.8</jdk.version>
 		<junit.version>3.8.1</junit.version>
-		<javaparser.version>3.14.1</javaparser.version>
+		<javaparser.version>3.14.5</javaparser.version>
 		<progressbar.version>0.7.3</progressbar.version>
 		<vcs4j.version>1.6.0</vcs4j.version>
 		<jgit.version>5.3.1.201904271842-r</jgit.version>
