@@ -50,7 +50,11 @@ public class Main {
     			.setStoreTokens(true)
     			.setSymbolResolver(new JavaSymbolSolver(combinedTypeSolver));
         SourceRoot root = new SourceRoot(sourceRoot);
-		return new CloneParser().parse(root, config);
+		DetectionResults res = new CloneParser().parse(root, config);
+		if(!res.getClones().isEmpty() && Settings.get().isApplyRefactorings()) {
+			// Write back stuff
+		}
+		return res;
 	}
 
 	private static void addLibrariesToTypeSolver(Path path, CombinedTypeSolver combinedTypeSolver) {
