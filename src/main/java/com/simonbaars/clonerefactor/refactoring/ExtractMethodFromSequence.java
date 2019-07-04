@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 
 import com.github.javaparser.ast.Modifier;
 import com.github.javaparser.ast.Modifier.Keyword;
@@ -57,5 +58,16 @@ public class ExtractMethodFromSequence implements RequiresNodeContext, RequiresN
 				return d.getType();
 		}
 		return new VoidType();
+	}
+
+	public void refactor(List<Sequence> findChains) {
+		for(Sequence s : findChains) {
+			if(noOverlap(refactoredSequences.keySet(), s))
+				tryToExtractMethod(s);
+		}
+	}
+
+	private boolean noOverlap(Set<Sequence> keySet, Sequence s) {
+		return keySet.stream().anyMatch(e -> e.overlapsWith(s));
 	}
 }

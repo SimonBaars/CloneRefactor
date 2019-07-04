@@ -1,10 +1,12 @@
 package com.simonbaars.clonerefactor.model;
 
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.ToIntFunction;
 
+import com.simonbaars.clonerefactor.datatype.map.ListMap;
 import com.simonbaars.clonerefactor.metrics.enums.CloneRefactorability;
 import com.simonbaars.clonerefactor.metrics.enums.CloneRefactorability.Refactorability;
 import com.simonbaars.clonerefactor.metrics.enums.CloneRelation;
@@ -125,5 +127,20 @@ public class Sequence implements Comparable<Sequence> {
 		//if(locations.stream().map(e -> e.getContents().getCompare().size()).distinct().count()>1)
 		//	throw new IllegalStateException("Unequal location compare sizes for "+this);
 		return this;
+	}
+
+	public boolean overlapsWith(Sequence s) {
+		ListMap<Path, Location> fileMap = new ListMap<>();
+		s.getLocations().forEach(e -> fileMap.addTo(e.getFile(), e));
+		for(Location l1 : locations) {
+			if(fileMap.containsKey(l1.getFile())) {
+				for(Location l2 : fileMap.get(l1.getFile())) {
+					if(l1.overlapsWith(l2)) {
+						return true;
+					}
+				}
+			}
+		}
+		return false;
 	}
 }

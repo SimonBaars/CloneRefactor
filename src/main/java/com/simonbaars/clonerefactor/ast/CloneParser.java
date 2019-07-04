@@ -24,6 +24,7 @@ import com.simonbaars.clonerefactor.model.DetectionResults;
 import com.simonbaars.clonerefactor.model.Sequence;
 import com.simonbaars.clonerefactor.model.location.Location;
 import com.simonbaars.clonerefactor.model.location.LocationHolder;
+import com.simonbaars.clonerefactor.refactoring.ExtractMethodFromSequence;
 import com.simonbaars.clonerefactor.settings.CloneType;
 import com.simonbaars.clonerefactor.settings.Settings;
 import com.simonbaars.clonerefactor.thread.CalculatesTimeIntervals;
@@ -42,7 +43,9 @@ public class CloneParser implements Parser, RemovesDuplicates, WritesErrors, Cal
 			List<Sequence> findChains = new CloneDetection().findChains(lastLoc);
 			doTypeSpecificTransformations(findChains);
 			metricCollector.getMetrics().generalStats.increment("Detection time", interval(beginTime));
-			return new DetectionResults(metricCollector.reportClones(findChains), findChains);
+			DetectionResults res = new DetectionResults(metricCollector.reportClones(findChains), findChains);
+			if(Settings.get().isApplyRefactorings()) new ExtractMethodFromSequence().refactor(findChains);
+			return res;
 		}
 		return new DetectionResults();
 	}

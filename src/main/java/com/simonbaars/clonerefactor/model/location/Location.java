@@ -169,4 +169,8 @@ public class Location implements Comparable<Location>, HasRange {
 	public String getName() {
 		return file.getName(file.getNameCount()-1).toString();
 	}
+
+	public boolean overlapsWith(Location other) {
+		return getRange().contains(other.getRange());
+	}
 }
