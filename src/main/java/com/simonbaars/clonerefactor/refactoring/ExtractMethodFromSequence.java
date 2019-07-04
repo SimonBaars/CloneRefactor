@@ -1,6 +1,8 @@
 package com.simonbaars.clonerefactor.refactoring;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 import com.github.javaparser.ast.Modifier;
@@ -24,6 +26,7 @@ import com.simonbaars.clonerefactor.model.location.Location;
 
 public class ExtractMethodFromSequence implements RequiresNodeContext, RequiresNodeOperations {
 	private final Random rand = new Random();
+	private final Map<Sequence, MethodDeclaration> refactoredSequences = new HashMap<>();
 	
 	public void tryToExtractMethod(Sequence s) {
 		Refactorability ref = s.getRefactorability();
@@ -42,6 +45,7 @@ public class ExtractMethodFromSequence implements RequiresNodeContext, RequiresN
 				((BlockStmt)parent).getStatements().add(new ExpressionStmt(new MethodCallExpr(methodName)));
 			}
 			lowestNodes.forEach(n -> lowestNodes.get(0).getParentNode().get().remove(n));
+			refactoredSequences.put(s, decl);
 		}
 	}
 
