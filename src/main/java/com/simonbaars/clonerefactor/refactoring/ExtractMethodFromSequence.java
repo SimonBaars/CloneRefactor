@@ -8,6 +8,9 @@ import com.github.javaparser.ast.Modifier.Keyword;
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
+import com.github.javaparser.ast.expr.MethodCallExpr;
+import com.github.javaparser.ast.stmt.BlockStmt;
+import com.github.javaparser.ast.stmt.ExpressionStmt;
 import com.github.javaparser.ast.stmt.ReturnStmt;
 import com.github.javaparser.ast.stmt.Statement;
 import com.github.javaparser.ast.type.Type;
@@ -26,15 +29,19 @@ public class ExtractMethodFromSequence implements RequiresNodeContext, RequiresN
 		Refactorability ref = s.getRefactorability();
 		if(ref == Refactorability.CANBEEXTRACTED) {
 			RelationType relation = s.getRelationType();
-			MethodDeclaration decl = new MethodDeclaration(Modifier.createModifierList(Keyword.PRIVATE), getReturnType(s.getAny()), "cloneRefactor"+rand.nextInt());
+			String methodName = "cloneRefactor"+rand.nextInt();
+			MethodDeclaration decl = new MethodDeclaration(Modifier.createModifierList(Keyword.PRIVATE), getReturnType(s.getAny()), methodName);
 			s.getAny().getContents().getNodes().forEach(node -> decl.getBody().get().addStatement((Statement)node));
 			if(relation == RelationType.SAMECLASS || relation == RelationType.SAMEMETHOD) {
 				ClassOrInterfaceDeclaration cd = getClass(s.getAny().getContents().getNodes().get(0));
 				cd.getMembers().add(decl);
 			}
 			List<Node> lowestNodes = lowestNodes(s.getAny().getContents().getNodes());
+			Node parent = lowestNodes.get(0).getParentNode().get();
+			if(parent instanceof BlockStmt) {
+				((BlockStmt)parent).getStatements().add(new ExpressionStmt(new MethodCallExpr(methodName)));
+			}
 			lowestNodes.forEach(n -> lowestNodes.get(0).getParentNode().get().remove(n));
-			// TODO: Add the new method call!
 		}
 	}
 

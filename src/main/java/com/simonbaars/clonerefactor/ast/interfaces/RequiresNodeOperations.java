@@ -10,7 +10,6 @@ import com.github.javaparser.ast.Modifier;
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.AnnotationMemberDeclaration;
 import com.github.javaparser.ast.body.FieldDeclaration;
-import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.body.Parameter;
 import com.github.javaparser.ast.body.ReceiverParameter;
 import com.github.javaparser.ast.body.VariableDeclarator;
@@ -19,15 +18,16 @@ import com.github.javaparser.ast.expr.Expression;
 import com.github.javaparser.ast.nodeTypes.NodeWithBlockStmt;
 import com.github.javaparser.ast.nodeTypes.NodeWithBody;
 import com.github.javaparser.ast.nodeTypes.NodeWithIdentifier;
+import com.github.javaparser.ast.nodeTypes.NodeWithOptionalBlockStmt;
 import com.github.javaparser.ast.stmt.BlockStmt;
 import com.github.javaparser.ast.type.Type;
 import com.simonbaars.clonerefactor.datatype.map.ListMap;
 
 public interface RequiresNodeOperations {
-	@SuppressWarnings("rawtypes")
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public default List<Node> childrenToParse(Node parent){
-		if(parent instanceof MethodDeclaration) {
-			Optional<BlockStmt> body = ((MethodDeclaration)parent).getBody();
+		if(parent instanceof NodeWithOptionalBlockStmt) {
+			Optional<BlockStmt> body = ((NodeWithOptionalBlockStmt)parent).getBody();
 			return body.isPresent() ? body.get().getChildNodes() : new ArrayList<>(0);
 		} else if(parent instanceof NodeWithBody)
 			return ((NodeWithBody)parent).getBody().getChildNodes();
