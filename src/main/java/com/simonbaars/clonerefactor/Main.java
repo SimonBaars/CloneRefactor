@@ -17,6 +17,7 @@ import com.github.javaparser.symbolsolver.resolution.typesolvers.ReflectionTypeS
 import com.github.javaparser.utils.SourceRoot;
 import com.simonbaars.clonerefactor.ast.CloneParser;
 import com.simonbaars.clonerefactor.model.DetectionResults;
+import com.simonbaars.clonerefactor.settings.Settings;
 import com.simonbaars.clonerefactor.util.NoJavaFilesFoundException;
 
 public class Main {
@@ -45,7 +46,7 @@ public class Main {
         addLibrariesToTypeSolver(path, combinedTypeSolver);
        
         final ParserConfiguration config = new ParserConfiguration()
-    			.setLexicalPreservationEnabled(false) //Disabled for now, we'll enable it when we start refactoring.
+    			.setLexicalPreservationEnabled(Settings.get().isApplyRefactorings())
     			.setStoreTokens(true)
     			.setSymbolResolver(new JavaSymbolSolver(combinedTypeSolver));
         SourceRoot root = new SourceRoot(sourceRoot);

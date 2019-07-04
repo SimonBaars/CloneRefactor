@@ -31,6 +31,9 @@ public class Settings {
 	private int unitSize;
 	private int unitInterfaceParameters;
 	
+	// Transform the AST and refactor the code
+	private boolean applyRefactorings;
+	
 	private Settings() {
 		try (InputStream input = Settings.class.getClassLoader().getResourceAsStream(CLONEREFACTOR_PROPERTIES)) {
             Properties prop = new Properties();
@@ -47,6 +50,7 @@ public class Settings {
             cyclomaticComplexity = Integer.parseInt(prop.getProperty("max_cc"));
             unitSize = Integer.parseInt(prop.getProperty("max_methodlines"));
             unitInterfaceParameters = Integer.parseInt(prop.getProperty("max_interface_parameters"));
+            setApplyRefactorings(prop.getProperty("apply_refactorings").equals("true"));
         } catch (IOException ex) {
             throw new IllegalStateException("Could not get settings! Please check for the existence of the properties file!");
         }
@@ -155,9 +159,9 @@ public class Settings {
 	@Override
 	public String toString() {
 		return String.format(
-				"Settings [cloneType=%s, scope=%s, minAmountOfLines=%s, minAmountOfTokens=%s, minAmountOfNodes=%s, useLiteratureTypeDefinitions=%s, type2VariabilityPercentage=%s, type3GapSize=%s]",
+				"Settings [cloneType=%s, scope=%s, minAmountOfLines=%s, minAmountOfTokens=%s, minAmountOfNodes=%s, useLiteratureTypeDefinitions=%s, type2VariabilityPercentage=%s, type3GapSize=%s, applyRefactorings=%s]",
 				cloneType, scope, minAmountOfLines, minAmountOfTokens, minAmountOfNodes, useLiteratureTypeDefinitions,
-				type2VariabilityPercentage, type3GapSize);
+				type2VariabilityPercentage, type3GapSize, applyRefactorings);
 	}
 
 	public Scope getScope() {
@@ -166,5 +170,13 @@ public class Settings {
 
 	public void setScope(Scope scope) {
 		this.scope = scope;
+	}
+
+	public boolean isApplyRefactorings() {
+		return applyRefactorings;
+	}
+
+	public void setApplyRefactorings(boolean applyRefactorings) {
+		this.applyRefactorings = applyRefactorings;
 	}
 }
