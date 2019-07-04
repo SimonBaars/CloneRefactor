@@ -1,11 +1,17 @@
 package com.simonbaars.clonerefactor.refactoring;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
+import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Modifier;
 import com.github.javaparser.ast.Modifier.Keyword;
 import com.github.javaparser.ast.Node;
@@ -24,6 +30,8 @@ import com.simonbaars.clonerefactor.metrics.enums.CloneRelation.RelationType;
 import com.simonbaars.clonerefactor.metrics.enums.RequiresNodeContext;
 import com.simonbaars.clonerefactor.model.Sequence;
 import com.simonbaars.clonerefactor.model.location.Location;
+import com.simonbaars.clonerefactor.util.FileUtils;
+import com.simonbaars.clonerefactor.util.SavePaths;
 
 public class ExtractMethodFromSequence implements RequiresNodeContext, RequiresNodeOperations {
 	private final Random rand = new Random();
@@ -47,7 +55,26 @@ public class ExtractMethodFromSequence implements RequiresNodeContext, RequiresN
 			}
 			lowestNodes.forEach(n -> lowestNodes.get(0).getParentNode().get().remove(n));
 			refactoredSequences.put(s, decl);
+			for(Location p : getUniqueLocations(s.getLocations())) {
+				try {
+					FileUtils.writeStringToFile(SavePaths.createDirForFile(SavePaths.getRefactorFolder()+p.getFile().toString()), getCompilationUnit(p.getContents().getNodes().get(0)).toString());
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
 		}
+	}
+
+	private List<Location> getUniqueLocations(List<Location> locations) {
+		Set<Path> set = new HashSet<>();
+		List<Location> list = new ArrayList<>();
+		for(Location location : locations) {
+			if(!set.contains(location.getFile())) {
+				list.add(location);
+				set.add(location.getFile());
+			}
+		}
+		return list;
 	}
 
 	private Type getReturnType(Location any) {
@@ -68,6 +95,6 @@ public class ExtractMethodFromSequence implements RequiresNodeContext, RequiresN
 	}
 
 	private boolean noOverlap(Set<Sequence> keySet, Sequence s) {
-		return keySet.stream().anyMatch(e -> e.overlapsWith(s));
+		return keySet.stream().anyMatch(s::overlapsWith);
 	}
 }

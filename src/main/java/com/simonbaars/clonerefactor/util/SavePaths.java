@@ -68,4 +68,14 @@ public class SavePaths {
 	public static String getTableFolder() {
 		return getMyOutputFolder()+"tables"+File.separator;
 	}
+
+	public static String getRefactorFolder() {
+		return getMyOutputFolder()+"refactor"+File.separator;
+	}
+
+	public static File createDirForFile(String string) {
+		File f = new File(string);
+		f.getParentFile().mkdirs();
+		return f;
+	}
 }
