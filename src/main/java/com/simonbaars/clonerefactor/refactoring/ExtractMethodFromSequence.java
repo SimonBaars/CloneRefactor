@@ -8,7 +8,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import com.github.javaparser.ast.Modifier;
 import com.github.javaparser.ast.Modifier.Keyword;
@@ -22,7 +21,6 @@ import com.github.javaparser.ast.stmt.ReturnStmt;
 import com.github.javaparser.ast.stmt.Statement;
 import com.github.javaparser.ast.type.Type;
 import com.github.javaparser.ast.type.VoidType;
-import com.github.javaparser.utils.Pair;
 import com.simonbaars.clonerefactor.ast.interfaces.RequiresNodeOperations;
 import com.simonbaars.clonerefactor.datatype.map.ListMap;
 import com.simonbaars.clonerefactor.metrics.enums.CloneRefactorability.Refactorability;
@@ -57,13 +55,17 @@ public class ExtractMethodFromSequence implements RequiresNodeContext, RequiresN
 			s.getAny().getContents().getNodes().forEach(node -> decl.getBody().get().addStatement((Statement)node));
 			
 			refactoredSequences.put(s, decl);
-			for(Location p : getUniqueLocations(s.getLocations())) {
-				try {
-					System.out.println("path = "+SavePaths.getRefactorFolder()+p.getFile().toString().replace(folder.getParent().toString(), "").substring(1));
-					FileUtils.writeStringToFile(SavePaths.createDirForFile(SavePaths.getRefactorFolder()+p.getFile().toString().replace(folder.getParent().toString(), "").substring(1)), getCompilationUnit(decl).toString());
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
+			writeRefactoringsToFile(s, decl);
+		}
+	}
+
+	private void writeRefactoringsToFile(Sequence s, MethodDeclaration decl) {
+		for(Location p : getUniqueLocations(s.getLocations())) {
+			try {
+				System.out.println("path = "+SavePaths.getRefactorFolder()+p.getFile().toString().replace(folder.getParent().toString(), "").substring(1));
+				FileUtils.writeStringToFile(SavePaths.createDirForFile(SavePaths.getRefactorFolder()+p.getFile().toString().replace(folder.getParent().toString(), "").substring(1)), getCompilationUnit(decl).toString());
+			} catch (IOException e) {
+				e.printStackTrace();
 			}
 		}
 	}
