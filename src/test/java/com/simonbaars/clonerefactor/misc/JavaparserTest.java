@@ -35,7 +35,7 @@ public class JavaparserTest extends TestCase {
 			List<Statement> statements = body.getStatements();
 			List<Statement> clones = statements.stream().filter(e -> e.toString().contains("I'm a clone")).collect(Collectors.toList());
 			IntStream.range(10,clones.size()).forEach(i -> clones.get(i).getParentNode().get().remove(clones.get(i)));
-			IntStream.range(0, clones.size()).forEach(i -> System.out.println(clones.get(10).getParentNode()));
+			IntStream.range(0, clones.size()).forEach(i -> System.out.println(clones.get(i).getParentNode()));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
