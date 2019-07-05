@@ -44,7 +44,7 @@ public class Main {
         addLibrariesToTypeSolver(path, combinedTypeSolver);
        
         final ParserConfiguration config = new ParserConfiguration()
-    			.setLexicalPreservationEnabled(Settings.get().isApplyRefactorings())
+    			.setLexicalPreservationEnabled(false)//Settings.get().isApplyRefactorings())
     			.setStoreTokens(true)
     			.setSymbolResolver(new JavaSymbolSolver(combinedTypeSolver));
         SourceRoot root = new SourceRoot(sourceRoot);

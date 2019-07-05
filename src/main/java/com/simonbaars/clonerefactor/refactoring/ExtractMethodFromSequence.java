@@ -87,13 +87,9 @@ public class ExtractMethodFromSequence implements RequiresNodeContext, RequiresN
 		}
 	}
 
-	private void removeLowestNodes(List<Node> lowestNodes, BlockStmt inBlock, int index, String methodName) {
-		System.out.println("Remove lowest");
-		System.out.println(lowestNodes.stream().map(e -> e.getRange().get().toString()).collect(Collectors.joining(", ")));
+	private void removeLowestNodes(List<Node> lowestNodes, BlockStmt inBlock, int i, String methodName) {
+		inBlock.getStatements().add(inBlock.getStatements().indexOf(lowestNodes.get(0)), new ExpressionStmt(new MethodCallExpr(methodName)));
 		lowestNodes.forEach(n -> inBlock.remove(n));
-		inBlock.getStatements().add(index, new ExpressionStmt(new MethodCallExpr(methodName)));
-		//System.out.println(Arrays.toString(lowestNodes.toArray()));
-		
 	}
 
 	private List<Location> getUniqueLocations(List<Location> locations) {
