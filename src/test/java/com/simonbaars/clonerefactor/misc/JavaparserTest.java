@@ -6,6 +6,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import com.github.javaparser.ParseResult;
 import com.github.javaparser.ast.CompilationUnit;
@@ -32,9 +33,9 @@ public class JavaparserTest extends TestCase {
 			MethodDeclaration method = classDec.getMethods().get(0);
 			BlockStmt body = method.getBody().get();
 			List<Statement> statements = body.getStatements();
-			List<Statement> clones = statements.stream().filter(e -> e.toString().contains("clone1\"")).collect(Collectors.toList());
-			clones.get(0).getParentNode().get().remove(clones.get(1));
-			System.out.println(clones.get(0).getParentNode());
+			List<Statement> clones = statements.stream().filter(e -> e.toString().contains("I'm a clone")).collect(Collectors.toList());
+			IntStream.range(10,clones.size()).forEach(i -> clones.get(i).getParentNode().get().remove(clones.get(i)));
+			IntStream.range(0, clones.size()).forEach(i -> System.out.println(clones.get(10).getParentNode()));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
