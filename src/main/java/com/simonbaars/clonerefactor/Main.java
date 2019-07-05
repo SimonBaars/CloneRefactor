@@ -39,9 +39,7 @@ public class Main {
 	}
 	
 	public static DetectionResults cloneDetection(Path path, Path sourceRoot) {
-		CombinedTypeSolver combinedTypeSolver = new CombinedTypeSolver();
-        combinedTypeSolver.add(new ReflectionTypeSolver());
-        combinedTypeSolver.add(new JavaParserTypeSolver(sourceRoot));
+		CombinedTypeSolver combinedTypeSolver = new CombinedTypeSolver(new ReflectionTypeSolver(), new JavaParserTypeSolver(sourceRoot));
         
         addLibrariesToTypeSolver(path, combinedTypeSolver);
        

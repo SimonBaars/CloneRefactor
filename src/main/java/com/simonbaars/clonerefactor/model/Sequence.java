@@ -3,6 +3,7 @@ package com.simonbaars.clonerefactor.model;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.ToIntFunction;
 
@@ -142,5 +143,10 @@ public class Sequence implements Comparable<Sequence> {
 			}
 		}
 		return false;
+	}
+	
+	public void sortLocations(boolean reverse) {
+		Collections.sort(locations);
+		if(reverse) Collections.reverse(locations);
 	}
 }
