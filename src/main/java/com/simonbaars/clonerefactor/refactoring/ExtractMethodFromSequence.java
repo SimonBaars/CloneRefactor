@@ -3,7 +3,6 @@ package com.simonbaars.clonerefactor.refactoring;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -23,6 +22,7 @@ import com.github.javaparser.ast.stmt.ReturnStmt;
 import com.github.javaparser.ast.stmt.Statement;
 import com.github.javaparser.ast.type.Type;
 import com.github.javaparser.ast.type.VoidType;
+import com.github.javaparser.utils.Pair;
 import com.simonbaars.clonerefactor.ast.interfaces.RequiresNodeOperations;
 import com.simonbaars.clonerefactor.datatype.map.ListMap;
 import com.simonbaars.clonerefactor.metrics.enums.CloneRefactorability.Refactorability;
@@ -53,16 +53,22 @@ public class ExtractMethodFromSequence implements RequiresNodeContext, RequiresN
 				cd.getMembers().add(decl);
 			}
 			ListMap<Location, Node> lowestNodes = new ListMap<>();
-			Map<Location, BlockStmt> insideBlock = new HashMap<>();
+			Map<Location, Pair<BlockStmt, Integer>> insideBlock = new HashMap<>();
 			s.getLocations().forEach(e -> {
 				List<Node> lowest = lowestNodes(e.getContents().getNodes());
 				lowestNodes.put(e, lowest);
-				if(lowest.get(0).getParentNode().isPresent() && lowest.get(0).getParentNode().get() instanceof BlockStmt) insideBlock.put(e, (BlockStmt)lowest.get(0).getParentNode().get());
+				if(lowest.get(0).getParentNode().isPresent() && lowest.get(0).getParentNode().get() instanceof BlockStmt) {
+					BlockStmt blockStmt = (BlockStmt)lowest.get(0).getParentNode().get();
+					insideBlock.put(e, new Pair<BlockStmt, Integer>(blockStmt, blockStmt.getStatements().indexOf(lowest.get(0))));
+				}
 			});
-			s.getLocations().forEach(e -> insideBlock.put(e, lowestNodes.get(e).));
-			List<Node> lowestNodes = lowestNodes(s.getAny().getContents().getNodes());
-			List<BlockStmt> removeFromMethod = lowestNodes.stream().map(e -> e.getParentNode()).map(e -> e.isPresent() && e.get() instanceof BlockStmt ?  (BlockStmt)e.get() : null).collect(Collectors.toList());
-			s.getLocations().forEach(l -> removeLowestNodes(l, methodName));
+			if(lowestNodes.size() == insideBlock.size()) {
+				insideBlock.entrySet().forEach(e -> {
+					Pair<BlockStmt, Integer> block = insideBlock.get(e.getKey());
+					removeLowestNodes(lowestNodes.get(e.getKey()), block.a, block.b, methodName);
+				});
+			}
+			
 			s.getAny().getContents().getNodes().forEach(node -> decl.getBody().get().addStatement((Statement)node));
 			
 			refactoredSequences.put(s, decl);
@@ -77,15 +83,13 @@ public class ExtractMethodFromSequence implements RequiresNodeContext, RequiresN
 		}
 	}
 
-	private void removeLowestNodes(Location l, String methodName) {
+	private void removeLowestNodes(List<Node> lowestNodes, BlockStmt inBlock, int index, String methodName) {
 		System.out.println("Remove lowest");
-		Collections.reverse(lowestNodes);
 		System.out.println(lowestNodes.stream().map(e -> e.getRange().get().toString()).collect(Collectors.joining(", ")));
 		Node parent = lowestNodes.get(0).getParentNode().get();
 		if(parent instanceof BlockStmt) {
-			int firstIndex = ((BlockStmt)parent).getStatements().indexOf(lowestNodes.get(0));
 			lowestNodes.forEach(n -> n.getParentNode().get().remove(n));
-			((BlockStmt)parent).getStatements().add(firstIndex, new ExpressionStmt(new MethodCallExpr(methodName)));
+			inBlock.getStatements().add(index, new ExpressionStmt(new MethodCallExpr(methodName)));
 		}
 		//System.out.println(Arrays.toString(lowestNodes.toArray()));
 		
