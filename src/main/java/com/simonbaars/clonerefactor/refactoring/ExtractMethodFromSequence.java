@@ -99,6 +99,6 @@ public class ExtractMethodFromSequence implements RequiresNodeContext, RequiresN
 	}
 
 	private boolean noOverlap(Set<Sequence> keySet, Sequence s) {
-		return keySet.stream().anyMatch(s::overlapsWith);
+		return keySet.stream().noneMatch(s::overlapsWith);
 	}
 }
