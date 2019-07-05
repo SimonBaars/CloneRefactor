@@ -52,22 +52,7 @@ public class ExtractMethodFromSequence implements RequiresNodeContext, RequiresN
 				ClassOrInterfaceDeclaration cd = getClass(s.getAny().getContents().getNodes().get(0));
 				cd.getMembers().add(decl);
 			}
-			ListMap<Location, Node> lowestNodes = new ListMap<>();
-			Map<Location, Pair<BlockStmt, Integer>> insideBlock = new HashMap<>();
-			s.getLocations().forEach(e -> {
-				List<Node> lowest = lowestNodes(e.getContents().getNodes());
-				lowestNodes.put(e, lowest);
-				if(lowest.get(0).getParentNode().isPresent() && lowest.get(0).getParentNode().get() instanceof BlockStmt) {
-					BlockStmt blockStmt = (BlockStmt)lowest.get(0).getParentNode().get();
-					insideBlock.put(e, new Pair<BlockStmt, Integer>(blockStmt, blockStmt.getStatements().indexOf(lowest.get(0))));
-				}
-			});
-			if(lowestNodes.size() == insideBlock.size()) {
-				insideBlock.entrySet().forEach(e -> {
-					Pair<BlockStmt, Integer> block = insideBlock.get(e.getKey());
-					removeLowestNodes(lowestNodes.get(e.getKey()), block.a, block.b, methodName);
-				});
-			}
+			removeLowestNodes(s, methodName);
 			
 			s.getAny().getContents().getNodes().forEach(node -> decl.getBody().get().addStatement((Statement)node));
 			
@@ -80,6 +65,25 @@ public class ExtractMethodFromSequence implements RequiresNodeContext, RequiresN
 					e.printStackTrace();
 				}
 			}
+		}
+	}
+
+	private void removeLowestNodes(Sequence s, String methodName) {
+		ListMap<Location, Node> lowestNodes = new ListMap<>();
+		Map<Location, Pair<BlockStmt, Integer>> insideBlock = new HashMap<>();
+		s.getLocations().forEach(e -> {
+			List<Node> lowest = lowestNodes(e.getContents().getNodes());
+			lowestNodes.put(e, lowest);
+			if(lowest.get(0).getParentNode().isPresent() && lowest.get(0).getParentNode().get() instanceof BlockStmt) {
+				BlockStmt blockStmt = (BlockStmt)lowest.get(0).getParentNode().get();
+				insideBlock.put(e, new Pair<BlockStmt, Integer>(blockStmt, blockStmt.getStatements().indexOf(lowest.get(0))));
+			}
+		});
+		if(lowestNodes.size() == insideBlock.size()) {
+			insideBlock.entrySet().forEach(e -> {
+				Pair<BlockStmt, Integer> block = insideBlock.get(e.getKey());
+				removeLowestNodes(lowestNodes.get(e.getKey()), block.a, block.b, methodName);
+			});
 		}
 	}
 
