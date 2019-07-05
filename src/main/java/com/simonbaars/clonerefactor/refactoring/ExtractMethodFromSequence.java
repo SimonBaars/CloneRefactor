@@ -1,6 +1,5 @@
 package com.simonbaars.clonerefactor.refactoring;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -11,7 +10,6 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
-import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Modifier;
 import com.github.javaparser.ast.Modifier.Keyword;
 import com.github.javaparser.ast.Node;
@@ -36,6 +34,11 @@ import com.simonbaars.clonerefactor.util.SavePaths;
 public class ExtractMethodFromSequence implements RequiresNodeContext, RequiresNodeOperations {
 	private final Random rand = new Random();
 	private final Map<Sequence, MethodDeclaration> refactoredSequences = new HashMap<>();
+	private final Path folder;
+	
+	public ExtractMethodFromSequence(Path path) {
+		this.folder = path;
+	}
 	
 	public void tryToExtractMethod(Sequence s) {
 		Refactorability ref = s.getRefactorability();
@@ -57,7 +60,8 @@ public class ExtractMethodFromSequence implements RequiresNodeContext, RequiresN
 			refactoredSequences.put(s, decl);
 			for(Location p : getUniqueLocations(s.getLocations())) {
 				try {
-					FileUtils.writeStringToFile(SavePaths.createDirForFile(SavePaths.getRefactorFolder()+p.getFile().toString()), getCompilationUnit(p.getContents().getNodes().get(0)).toString());
+					//System.out.println("path = "+p.getFile()+", folder = "+folder+", relative = "+p.getFile().relativize(folder.getParent()));
+					FileUtils.writeStringToFile(SavePaths.createDirForFile(SavePaths.getRefactorFolder()+p.getFile().relativize(folder.getParent()).toString()), getCompilationUnit(p.getContents().getNodes().get(0)).toString());
 				} catch (IOException e) {
 					e.printStackTrace();
 				}

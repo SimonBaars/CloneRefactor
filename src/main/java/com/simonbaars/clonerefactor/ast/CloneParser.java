@@ -44,7 +44,7 @@ public class CloneParser implements Parser, RemovesDuplicates, WritesErrors, Cal
 			doTypeSpecificTransformations(findChains);
 			metricCollector.getMetrics().generalStats.increment("Detection time", interval(beginTime));
 			DetectionResults res = new DetectionResults(metricCollector.reportClones(findChains), findChains);
-			if(Settings.get().isApplyRefactorings()) new ExtractMethodFromSequence().refactor(findChains);
+			if(Settings.get().isApplyRefactorings()) new ExtractMethodFromSequence(sourceRoot.getRoot()).refactor(findChains);
 			return res;
 		}
 		return new DetectionResults();
