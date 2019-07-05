@@ -41,22 +41,25 @@ public class ExtractMethodFromSequence implements RequiresNodeContext, RequiresN
 	}
 	
 	public void tryToExtractMethod(Sequence s) {
-		Refactorability ref = s.getRefactorability();
-		if(ref == Refactorability.CANBEEXTRACTED) {
-			RelationType relation = s.getRelationType();
-			String methodName = "cloneRefactor"+(x++);
-			MethodDeclaration decl = new MethodDeclaration(Modifier.createModifierList(Keyword.PRIVATE), getReturnType(s.getAny()), methodName);
-			if(relation == RelationType.SAMECLASS || relation == RelationType.SAMEMETHOD) {
-				ClassOrInterfaceDeclaration cd = getClass(s.getAny().getContents().getNodes().get(0));
-				cd.getMembers().add(decl);
-			}
-			removeLowestNodes(s, methodName);
-			
-			s.getAny().getContents().getNodes().forEach(node -> decl.getBody().get().addStatement((Statement)node));
-			
-			refactoredSequences.put(s, decl);
-			writeRefactoringsToFile(s, decl);
+		if(s.getRefactorability() == Refactorability.CANBEEXTRACTED) {
+			extractMethod(s);
 		}
+	}
+
+	private void extractMethod(Sequence s) {
+		RelationType relation = s.getRelationType();
+		String methodName = "cloneRefactor"+(x++);
+		MethodDeclaration decl = new MethodDeclaration(Modifier.createModifierList(Keyword.PRIVATE), getReturnType(s.getAny()), methodName);
+		if(relation == RelationType.SAMECLASS || relation == RelationType.SAMEMETHOD) {
+			ClassOrInterfaceDeclaration cd = getClass(s.getAny().getContents().getNodes().get(0));
+			cd.getMembers().add(decl);
+		}
+		removeLowestNodes(s, methodName);
+		
+		s.getAny().getContents().getNodes().forEach(node -> decl.getBody().get().addStatement((Statement)node));
+		
+		refactoredSequences.put(s, decl);
+		writeRefactoringsToFile(s, decl);
 	}
 
 	private void writeRefactoringsToFile(Sequence s, MethodDeclaration decl) {
