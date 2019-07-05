@@ -70,24 +70,18 @@ public class ExtractMethodFromSequence implements RequiresNodeContext, RequiresN
 
 	private void removeLowestNodes(Sequence s, String methodName) {
 		ListMap<Location, Node> lowestNodes = new ListMap<>();
-		Map<Location, Pair<BlockStmt, Integer>> insideBlock = new HashMap<>();
+		Map<Location, BlockStmt> insideBlock = new HashMap<>();
 		s.getLocations().forEach(e -> {
 			List<Node> lowest = lowestNodes(e.getContents().getNodes());
 			lowestNodes.put(e, lowest);
-			if(lowest.get(0).getParentNode().isPresent() && lowest.get(0).getParentNode().get() instanceof BlockStmt) {
-				BlockStmt blockStmt = (BlockStmt)lowest.get(0).getParentNode().get();
-				insideBlock.put(e, new Pair<BlockStmt, Integer>(blockStmt, blockStmt.getStatements().indexOf(lowest.get(0))));
-			}
+			if(lowest.get(0).getParentNode().isPresent() && lowest.get(0).getParentNode().get() instanceof BlockStmt)
+				insideBlock.put(e, (BlockStmt)lowest.get(0).getParentNode().get());
 		});
-		if(lowestNodes.size() == insideBlock.size()) {
-			s.getLocations().forEach(l -> {
-				Pair<BlockStmt, Integer> block = insideBlock.get(l);
-				removeLowestNodes(lowestNodes.get(l), block.a, block.b, methodName);
-			});
-		}
+		if(lowestNodes.size() == insideBlock.size())
+			s.getLocations().forEach(l -> removeLowestNodes(lowestNodes.get(l), insideBlock.get(l), methodName));
 	}
 
-	private void removeLowestNodes(List<Node> lowestNodes, BlockStmt inBlock, int i, String methodName) {
+	private void removeLowestNodes(List<Node> lowestNodes, BlockStmt inBlock, String methodName) {
 		inBlock.getStatements().add(inBlock.getStatements().indexOf(lowestNodes.get(0)), new ExpressionStmt(new MethodCallExpr(methodName)));
 		lowestNodes.forEach(n -> inBlock.remove(n));
 	}
