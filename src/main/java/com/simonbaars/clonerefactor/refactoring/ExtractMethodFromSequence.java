@@ -3,12 +3,14 @@ package com.simonbaars.clonerefactor.refactoring;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.github.javaparser.ast.Modifier;
 import com.github.javaparser.ast.Modifier.Keyword;
@@ -32,9 +34,9 @@ import com.simonbaars.clonerefactor.util.FileUtils;
 import com.simonbaars.clonerefactor.util.SavePaths;
 
 public class ExtractMethodFromSequence implements RequiresNodeContext, RequiresNodeOperations {
-	private final Random rand = new Random();
 	private final Map<Sequence, MethodDeclaration> refactoredSequences = new HashMap<>();
 	private final Path folder;
+	private int x = 0;
 	
 	public ExtractMethodFromSequence(Path path) {
 		this.folder = path;
@@ -44,19 +46,17 @@ public class ExtractMethodFromSequence implements RequiresNodeContext, RequiresN
 		Refactorability ref = s.getRefactorability();
 		if(ref == Refactorability.CANBEEXTRACTED) {
 			RelationType relation = s.getRelationType();
-			String methodName = "cloneRefactor"+rand.nextInt();
+			String methodName = "cloneRefactor"+(x++);
 			MethodDeclaration decl = new MethodDeclaration(Modifier.createModifierList(Keyword.PRIVATE), getReturnType(s.getAny()), methodName);
-			s.getAny().getContents().getNodes().forEach(node -> decl.getBody().get().addStatement((Statement)node));
 			if(relation == RelationType.SAMECLASS || relation == RelationType.SAMEMETHOD) {
 				ClassOrInterfaceDeclaration cd = getClass(s.getAny().getContents().getNodes().get(0));
 				cd.getMembers().add(decl);
 			}
-			List<Node> lowestNodes = lowestNodes(s.getAny().getContents().getNodes());
-			Node parent = lowestNodes.get(0).getParentNode().get();
-			if(parent instanceof BlockStmt) {
-				((BlockStmt)parent).getStatements().add(new ExpressionStmt(new MethodCallExpr(methodName)));
-			}
-			lowestNodes.forEach(n -> lowestNodes.get(0).getParentNode().get().remove(n));
+			//List<MethodDeclaration> removeFromMethod = s.getLocations().stream().map(e -> e.getContents().getNodes().get(0)).collect(Collectors.to)
+			s.sortLocations(true);
+			s.getLocations().forEach(l -> removeLowestNodes(l, methodName));
+			s.getAny().getContents().getNodes().forEach(node -> decl.getBody().get().addStatement((Statement)node));
+			
 			refactoredSequences.put(s, decl);
 			for(Location p : getUniqueLocations(s.getLocations())) {
 				try {
@@ -67,6 +67,21 @@ public class ExtractMethodFromSequence implements RequiresNodeContext, RequiresN
 				}
 			}
 		}
+	}
+
+	private void removeLowestNodes(Location l, String methodName) {
+		System.out.println("Remove lowest");
+		List<Node> lowestNodes = lowestNodes(l.getContents().getNodes());
+		Collections.reverse(lowestNodes);
+		System.out.println(lowestNodes.stream().map(e -> e.getRange().get().toString()).collect(Collectors.joining(", ")));
+		Node parent = lowestNodes.get(0).getParentNode().get();
+		if(parent instanceof BlockStmt) {
+			int firstIndex = ((BlockStmt)parent).getStatements().indexOf(lowestNodes.get(0));
+			lowestNodes.forEach(n -> n.getParentNode().get().remove(n));
+			((BlockStmt)parent).getStatements().add(firstIndex, new ExpressionStmt(new MethodCallExpr(methodName)));
+		}
+		//System.out.println(Arrays.toString(lowestNodes.toArray()));
+		
 	}
 
 	private List<Location> getUniqueLocations(List<Location> locations) {
@@ -92,9 +107,13 @@ public class ExtractMethodFromSequence implements RequiresNodeContext, RequiresN
 	}
 
 	public void refactor(List<Sequence> findChains) {
+		System.out.println("Refactor");
 		for(Sequence s : findChains) {
-			if(noOverlap(refactoredSequences.keySet(), s))
+			if(noOverlap(refactoredSequences.keySet(), s)) {
+				System.out.println("refactoring "+s);
 				tryToExtractMethod(s);
+				System.out.println("Tried extract");
+			}
 		}
 	}
 
