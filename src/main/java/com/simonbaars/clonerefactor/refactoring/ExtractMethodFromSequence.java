@@ -59,8 +59,8 @@ public class ExtractMethodFromSequence implements RequiresNodeContext, RequiresN
 			refactoredSequences.put(s, decl);
 			for(Location p : getUniqueLocations(s.getLocations())) {
 				try {
-					//System.out.println("path = "+p.getFile()+", folder = "+folder+", relative = "+p.getFile().relativize(folder.getParent()));
-					FileUtils.writeStringToFile(SavePaths.createDirForFile(SavePaths.getRefactorFolder()+p.getFile().relativize(folder.getParent()).toString()), getCompilationUnit(p.getContents().getNodes().get(0)).toString());
+					System.out.println("path = "+SavePaths.getRefactorFolder()+p.getFile().toString().replace(folder.getParent().toString(), "").substring(1));
+					FileUtils.writeStringToFile(SavePaths.createDirForFile(SavePaths.getRefactorFolder()+p.getFile().toString().replace(folder.getParent().toString(), "").substring(1)), getCompilationUnit(p.getContents().getNodes().get(0)).toString());
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
