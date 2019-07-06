@@ -28,6 +28,8 @@ import com.simonbaars.clonerefactor.metrics.enums.CloneRelation.RelationType;
 import com.simonbaars.clonerefactor.metrics.enums.RequiresNodeContext;
 import com.simonbaars.clonerefactor.model.Sequence;
 import com.simonbaars.clonerefactor.model.location.Location;
+import com.simonbaars.clonerefactor.refactoring.target.ExtractToClassOrInterface;
+import com.simonbaars.clonerefactor.refactoring.target.ExtractToNewInterface;
 import com.simonbaars.clonerefactor.util.FileUtils;
 import com.simonbaars.clonerefactor.util.SavePaths;
 
@@ -61,8 +63,9 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 	private void placeMethodOnBasisOfRelation(Sequence s, MethodDeclaration decl) {
 		RelationType relation = s.getRelationType();
 		if(relation == RelationType.SAMECLASS || relation == RelationType.SAMEMETHOD) {
-			ClassOrInterfaceDeclaration cd = getClass(s.getAny().getContents().getNodes().get(0));
-			cd.getMembers().add(decl);
+			new ExtractToClassOrInterface(s).extract(decl);
+		} else if (relation == RelationType.UNRELATED) {
+			new ExtractToNewInterface()
 		}
 	}
 
