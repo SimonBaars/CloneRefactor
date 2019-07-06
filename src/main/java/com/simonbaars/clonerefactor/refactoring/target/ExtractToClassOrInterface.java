@@ -1,4 +1,4 @@
-package com.simonbaars.clonerefactor.refactoring;
+package com.simonbaars.clonerefactor.refactoring.target;
 
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 

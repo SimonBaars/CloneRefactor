@@ -31,12 +31,12 @@ import com.simonbaars.clonerefactor.model.location.Location;
 import com.simonbaars.clonerefactor.util.FileUtils;
 import com.simonbaars.clonerefactor.util.SavePaths;
 
-public class ExtractMethodFromSequence implements RequiresNodeContext, RequiresNodeOperations {
+public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperations {
 	private final Map<Sequence, MethodDeclaration> refactoredSequences = new HashMap<>();
 	private final Path folder;
 	private int x = 0;
 	
-	public ExtractMethodFromSequence(Path path) {
+	public ExtractMethod(Path path) {
 		this.folder = path;
 	}
 	
