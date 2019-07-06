@@ -69,7 +69,6 @@ public class ExtractMethodFromSequence implements RequiresNodeContext, RequiresN
 	private void writeRefactoringsToFile(Sequence s, MethodDeclaration decl) {
 		for(Location p : getUniqueLocations(s.getLocations())) {
 			try {
-				System.out.println("path = "+SavePaths.getRefactorFolder()+p.getFile().toString().replace(folder.getParent().toString(), "").substring(1));
 				FileUtils.writeStringToFile(SavePaths.createDirForFile(SavePaths.getRefactorFolder()+p.getFile().toString().replace(folder.getParent().toString(), "").substring(1)), getCompilationUnit(decl).toString());
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -92,7 +91,7 @@ public class ExtractMethodFromSequence implements RequiresNodeContext, RequiresN
 
 	private void removeLowestNodes(List<Node> lowestNodes, BlockStmt inBlock, String methodName) {
 		inBlock.getStatements().add(inBlock.getStatements().indexOf(lowestNodes.get(0)), new ExpressionStmt(new MethodCallExpr(methodName)));
-		lowestNodes.forEach(n -> inBlock.remove(n));
+		lowestNodes.forEach(inBlock::remove);
 	}
 
 	private List<Location> getUniqueLocations(List<Location> locations) {
@@ -118,12 +117,9 @@ public class ExtractMethodFromSequence implements RequiresNodeContext, RequiresN
 	}
 
 	public void refactor(List<Sequence> findChains) {
-		System.out.println("Refactor");
 		for(Sequence s : findChains) {
 			if(noOverlap(refactoredSequences.keySet(), s)) {
-				System.out.println("refactoring "+s);
 				tryToExtractMethod(s);
-				System.out.println("Tried extract");
 			}
 		}
 	}
