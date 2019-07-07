@@ -12,7 +12,6 @@ import java.util.Set;
 import com.github.javaparser.ast.Modifier;
 import com.github.javaparser.ast.Modifier.Keyword;
 import com.github.javaparser.ast.Node;
-import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.expr.MethodCallExpr;
 import com.github.javaparser.ast.stmt.BlockStmt;
@@ -65,7 +64,7 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 		if(relation == RelationType.SAMECLASS || relation == RelationType.SAMEMETHOD) {
 			new ExtractToClassOrInterface(s).extract(decl);
 		} else if (relation == RelationType.UNRELATED) {
-			new ExtractToNewInterface().extract(decl);
+			new ExtractToNewInterface(s).extract(decl);
 		}
 	}
 

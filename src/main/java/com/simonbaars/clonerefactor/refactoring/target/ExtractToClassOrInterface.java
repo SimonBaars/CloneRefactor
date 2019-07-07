@@ -26,4 +26,9 @@ public class ExtractToClassOrInterface implements ExtractionTarget, RequiresNode
 	public void extract(MethodDeclaration d) {
 		classOrInterface.getMembers().add(d);
 	}
+
+	@Override
+	public void save() {
+		
+	}
 }
