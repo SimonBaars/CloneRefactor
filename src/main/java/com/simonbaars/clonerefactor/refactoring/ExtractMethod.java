@@ -65,7 +65,7 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 		if(relation == RelationType.SAMECLASS || relation == RelationType.SAMEMETHOD) {
 			new ExtractToClassOrInterface(s).extract(decl);
 		} else if (relation == RelationType.UNRELATED) {
-			new ExtractToNewInterface()
+			new ExtractToNewInterface().extract(decl);
 		}
 	}
 
