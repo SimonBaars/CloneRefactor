@@ -44,7 +44,7 @@ public class CloneRelation implements MetricEnum<RelationType> {
 		ClassOrInterfaceDeclaration c2 = getClass(n2);
 		if(c1 == null || c2 == null || c1.isInterface() || c2.isInterface())
 			return UNRELATED;
-		if(c1!=null && getFullyQualifiedName(c1).equals(getFullyQualifiedName(c2))) {
+		if(getFullyQualifiedName(c1).equals(getFullyQualifiedName(c2))) {
 			if(isMethod(n1, n2))
 				return SAMEMETHOD;
 			return SAMECLASS;
