@@ -9,6 +9,7 @@ import static com.simonbaars.clonerefactor.metrics.enums.CloneRelation.RelationT
 import static com.simonbaars.clonerefactor.metrics.enums.CloneRelation.RelationType.SIBLING;
 import static com.simonbaars.clonerefactor.metrics.enums.CloneRelation.RelationType.SUPERCLASS;
 import static com.simonbaars.clonerefactor.metrics.enums.CloneRelation.RelationType.UNRELATED;
+import static com.simonbaars.clonerefactor.metrics.enums.CloneRelation.RelationType.SAMEINTERFACE;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -32,6 +33,7 @@ public class CloneRelation implements MetricEnum<RelationType> {
 		FIRSTCOUSIN,
 		COMMONHIERARCHY,
 		EXTERNALSUPERCLASS,
+		SAMEINTERFACE,
 		UNRELATED
 	}
 	
@@ -61,9 +63,15 @@ public class CloneRelation implements MetricEnum<RelationType> {
 			return EXTERNALSUPERCLASS;
 		if(inSameHierarchy(c1,c2))
 			return COMMONHIERARCHY;
+		if(haveSameInterface(c1, c2))
+			return SAMEINTERFACE;
 		return UNRELATED;
 	}
 	
+	private boolean haveSameInterface(ClassOrInterfaceDeclaration c1, ClassOrInterfaceDeclaration c2) {
+		return false;
+	}
+
 	private boolean inSameHierarchy(ClassOrInterfaceDeclaration c1, ClassOrInterfaceDeclaration c2) {
 		List<String> classesInHierarchy = new ArrayList<>();
 		collectSuperclasses(c1, classesInHierarchy);
