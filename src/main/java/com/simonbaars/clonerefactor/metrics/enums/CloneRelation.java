@@ -72,15 +72,27 @@ public class CloneRelation implements MetricEnum<RelationType> {
 	}
 	
 	private boolean haveSameInterface(ClassOrInterfaceDeclaration c1, ClassOrInterfaceDeclaration c2) {
-		List<String> classesInHierarchy = new ArrayList<>();
-		collectSuperclasses(c1, classesInHierarchy, c1::getImplementedTypes, c1::getImplementedTypes);
-		return collectSuperclasses(c2, classesInHierarchy, c2::getImplementedTypes, c2::getImplementedTypes);
+		
+		return false;
 	}
 
 	private boolean inSameHierarchy(ClassOrInterfaceDeclaration c1, ClassOrInterfaceDeclaration c2) {
 		List<String> classesInHierarchy = new ArrayList<>();
-		collectSuperclasses(c1, classesInHierarchy, c1::getExtendedTypes, c1::getExtendedTypes);
-		return collectSuperclasses(c2, classesInHierarchy, c2::getExtendedTypes, c2::getExtendedTypes);
+		collectSuperclasses(c1, classesInHierarchy);
+		return collectSuperclasses(c2, classesInHierarchy);
+	}
+
+	private boolean collectSuperclasses(ClassOrInterfaceDeclaration c2, List<String> classesInHierarchy) {
+		String className = getFullyQualifiedName(c2);
+		if(classesInHierarchy.contains(className))
+			return true;
+		classesInHierarchy.add(className);
+		if(!c2.getExtendedTypes().isEmpty()) {
+			String fullyQualifiedName = getFullyQualifiedName(c2.getExtendedTypes(0));
+			if(classes.containsKey(fullyQualifiedName))
+				return collectSuperclasses(classes.get(fullyQualifiedName), classesInHierarchy);
+		}
+		return false;
 	}
 	
 	private boolean collectSuperclasses(ClassOrInterfaceDeclaration c2, List<String> classesInHierarchy, Supplier<NodeList<ClassOrInterfaceType>> getTypes, Function<Integer, ClassOrInterfaceType> getType) {
@@ -92,7 +104,7 @@ public class CloneRelation implements MetricEnum<RelationType> {
 			String fullyQualifiedName = getFullyQualifiedName(getType.apply(0));
 			if(classes.containsKey(fullyQualifiedName)) {
 				ClassOrInterfaceDeclaration superClass = classes.get(fullyQualifiedName);
-				return collectSuperclasses(superClass, classesInHierarchy, superClass::getExtendedTypes, superClass::getExtendedTypes);
+				return collectSuperclasses(superClass, classesInHierarchy);
 			}
 		}
 		return false;
