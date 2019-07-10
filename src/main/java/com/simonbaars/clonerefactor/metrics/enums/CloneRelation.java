@@ -5,21 +5,24 @@ import static com.simonbaars.clonerefactor.metrics.enums.CloneRelation.RelationT
 import static com.simonbaars.clonerefactor.metrics.enums.CloneRelation.RelationType.EXTERNALSUPERCLASS;
 import static com.simonbaars.clonerefactor.metrics.enums.CloneRelation.RelationType.FIRSTCOUSIN;
 import static com.simonbaars.clonerefactor.metrics.enums.CloneRelation.RelationType.SAMECLASS;
+import static com.simonbaars.clonerefactor.metrics.enums.CloneRelation.RelationType.SAMEINTERFACE;
 import static com.simonbaars.clonerefactor.metrics.enums.CloneRelation.RelationType.SAMEMETHOD;
 import static com.simonbaars.clonerefactor.metrics.enums.CloneRelation.RelationType.SIBLING;
 import static com.simonbaars.clonerefactor.metrics.enums.CloneRelation.RelationType.SUPERCLASS;
 import static com.simonbaars.clonerefactor.metrics.enums.CloneRelation.RelationType.UNRELATED;
-import static com.simonbaars.clonerefactor.metrics.enums.CloneRelation.RelationType.SAMEINTERFACE;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Supplier;
 
 import com.github.javaparser.ast.Node;
+import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
+import com.google.common.base.Function;
 import com.simonbaars.clonerefactor.metrics.enums.CloneRelation.RelationType;
 import com.simonbaars.clonerefactor.model.Sequence;
 
@@ -69,6 +72,7 @@ public class CloneRelation implements MetricEnum<RelationType> {
 	}
 	
 	private boolean haveSameInterface(ClassOrInterfaceDeclaration c1, ClassOrInterfaceDeclaration c2) {
+		
 		return false;
 	}
 
@@ -90,13 +94,29 @@ public class CloneRelation implements MetricEnum<RelationType> {
 		}
 		return false;
 	}
+	
+	private boolean collectSuperclasses(ClassOrInterfaceDeclaration c2, List<String> classesInHierarchy, Supplier<NodeList<ClassOrInterfaceType>> getTypes, Function<Integer, ClassOrInterfaceType> getType) {
+		String className = getFullyQualifiedName(c2);
+		if(classesInHierarchy.contains(className))
+			return true;
+		classesInHierarchy.add(className);
+		if(!getTypes.get().isEmpty()) {
+			String fullyQualifiedName = getFullyQualifiedName(getType.apply(0));
+			if(classes.containsKey(fullyQualifiedName)) {
+				ClassOrInterfaceDeclaration superClass = classes.get(fullyQualifiedName);
+				return collectSuperclasses(superClass, classesInHierarchy);
+			}
+		}
+		return false;
+	}
 
 	private boolean hasExternalSuperclass(ClassOrInterfaceDeclaration c1, ClassOrInterfaceDeclaration c2) {
 		if(c1.getExtendedTypes().isEmpty() || c2.getExtendedTypes().isEmpty())
 			return false;
 		ClassOrInterfaceType superclassC1 = c1.getExtendedTypes().get(0);
 		ClassOrInterfaceType superclassC2 = c2.getExtendedTypes().get(0);
-		return !superclassC1.getNameAsString().equals("Object") && !superclassC2.getNameAsString().equals("Object") && 
+		return !superclassC1.getNameAsString().equals("Object") && 
+			   !superclassC2.getNameAsString().equals("Object") && 
 				getFullyQualifiedName(superclassC1).equals(getFullyQualifiedName(superclassC2));
 	}
 
@@ -118,12 +138,10 @@ public class CloneRelation implements MetricEnum<RelationType> {
 	}
 	
 	private ClassOrInterfaceDeclaration goUp(ClassOrInterfaceDeclaration c1, int i) {
-		if(i>0) {
-			if(!c1.getExtendedTypes().isEmpty()) {
-				String fullyQualifiedName = getFullyQualifiedName(c1.getExtendedTypes(0));
-				if(classes.containsKey(fullyQualifiedName))
-					return goUp(classes.get(fullyQualifiedName), i-1);
-			}
+		if(i>0 && !c1.getExtendedTypes().isEmpty()) {
+			String fullyQualifiedName = getFullyQualifiedName(c1.getExtendedTypes(0));
+			if(classes.containsKey(fullyQualifiedName))
+				return goUp(classes.get(fullyQualifiedName), i-1);
 		}
 		return c1;
 	}
