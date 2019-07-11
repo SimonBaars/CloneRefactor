@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.BiFunction;
 import java.util.function.Supplier;
 
 import com.github.javaparser.ast.Node;
@@ -73,17 +74,25 @@ public class CloneRelation implements MetricEnum<RelationType> {
 	
 	private boolean haveSameInterface(ClassOrInterfaceDeclaration c1, ClassOrInterfaceDeclaration c2) {
 		List<String> classesInHierarchy = new ArrayList<>();
-		collectSuperclasses(c1, classesInHierarchy, c1::getImplementedTypes, c1::getImplementedTypes);
-		return collectSuperclasses(c2, classesInHierarchy, c2::getImplementedTypes, c2::getImplementedTypes);
+		collectInterfaces(c1, classesInHierarchy);
+		return collectInterfaces(c2, classesInHierarchy);
 	}
 
 	private boolean inSameHierarchy(ClassOrInterfaceDeclaration c1, ClassOrInterfaceDeclaration c2) {
 		List<String> classesInHierarchy = new ArrayList<>();
-		collectSuperclasses(c1, classesInHierarchy, c1::getExtendedTypes, c1::getExtendedTypes);
-		return collectSuperclasses(c2, classesInHierarchy, c2::getExtendedTypes, c2::getExtendedTypes);
+		collectSuperclasses(c1, classesInHierarchy);
+		return collectSuperclasses(c2, classesInHierarchy);
 	}
 	
-	private boolean collectSuperclasses(ClassOrInterfaceDeclaration c2, List<String> classesInHierarchy, Supplier<NodeList<ClassOrInterfaceType>> getTypes, Function<Integer, ClassOrInterfaceType> getType) {
+	private boolean collectSuperclasses(ClassOrInterfaceDeclaration classDecl, List<String> classesInHierarchy) {
+		return collectSuperclasses(classDecl, classesInHierarchy, classDecl::getExtendedTypes, classDecl::getExtendedTypes, this::collectSuperclasses);
+	}
+	
+	private boolean collectInterfaces(ClassOrInterfaceDeclaration classDecl, List<String> classesInHierarchy) {
+		return collectSuperclasses(classDecl, classesInHierarchy, classDecl::getImplementedTypes, classDecl::getImplementedTypes, this::collectInterfaces);
+	}
+	
+	private boolean collectSuperclasses(ClassOrInterfaceDeclaration c2, List<String> classesInHierarchy, Supplier<NodeList<ClassOrInterfaceType>> getTypes, Function<Integer, ClassOrInterfaceType> getType, BiFunction<ClassOrInterfaceDeclaration, List<String>, Boolean> recurse) {
 		String className = getFullyQualifiedName(c2);
 		if(classesInHierarchy.contains(className))
 			return true;
@@ -92,7 +101,7 @@ public class CloneRelation implements MetricEnum<RelationType> {
 			String fullyQualifiedName = getFullyQualifiedName(getType.apply(0));
 			if(classes.containsKey(fullyQualifiedName)) {
 				ClassOrInterfaceDeclaration superClass = classes.get(fullyQualifiedName);
-				return collectSuperclasses(superClass, classesInHierarchy, superClass::getExtendedTypes, superClass::getExtendedTypes);
+				return recurse.apply(superClass, classesInHierarchy);
 			}
 		}
 		return false;
