@@ -64,6 +64,10 @@ public class CloneRelationTest extends Type1Test {
     public void testSameHierarchy() {
         test("SameHierarchy", RelationType.COMMONHIERARCHY);
     }
+    
+    public void testSameInterface() {
+        test("SameInterface", RelationType.SAMEINTERFACE);
+    }
 
 	private void test(String name, RelationType loc) {
 		DetectionResults r = testProject(name);
