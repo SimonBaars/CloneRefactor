@@ -86,20 +86,20 @@ public class CloneRelation implements MetricEnum<RelationType> {
 	}
 	
 	private boolean collectSuperclasses(ClassOrInterfaceDeclaration classDecl, List<String> classesInHierarchy) {
-		return collectSuperclasses(classDecl, classesInHierarchy, classDecl::getExtendedTypes, classDecl::getExtendedTypes, this::collectSuperclasses);
+		return collectSuperclasses(classDecl, classesInHierarchy, classDecl::getExtendedTypes, this::collectSuperclasses);
 	}
 	
 	private boolean collectInterfaces(ClassOrInterfaceDeclaration classDecl, List<String> classesInHierarchy) {
-		return collectSuperclasses(classDecl, classesInHierarchy, classDecl::getImplementedTypes, classDecl::getImplementedTypes, this::collectInterfaces);
+		return collectSuperclasses(classDecl, classesInHierarchy, classDecl::getImplementedTypes, this::collectInterfaces);
 	}
 	
-	private boolean collectSuperclasses(ClassOrInterfaceDeclaration classDecl, List<String> classesInHierarchy, Supplier<NodeList<ClassOrInterfaceType>> getTypes, Function<Integer, ClassOrInterfaceType> getType, BiFunction<ClassOrInterfaceDeclaration, List<String>, Boolean> recurse) {
+	private boolean collectSuperclasses(ClassOrInterfaceDeclaration classDecl, List<String> classesInHierarchy, Supplier<NodeList<ClassOrInterfaceType>> getTypes, BiFunction<ClassOrInterfaceDeclaration, List<String>, Boolean> recurse) {
 		String className = getFullyQualifiedName(classDecl);
 		if(classesInHierarchy.contains(className))
 			return true;
 		classesInHierarchy.add(className);
-		if(!getTypes.get().isEmpty()) {
-			String fullyQualifiedName = getFullyQualifiedName(getType.apply(0));
+		for(ClassOrInterfaceType type : getTypes.get()) {
+			String fullyQualifiedName = getFullyQualifiedName(type);
 			if(classes.containsKey(fullyQualifiedName)) {
 				ClassOrInterfaceDeclaration superClass = classes.get(fullyQualifiedName);
 				return recurse.apply(superClass, classesInHierarchy);
