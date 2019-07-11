@@ -51,38 +51,38 @@ public class CloneRelation implements MetricEnum<RelationType> {
 		ComparingClasses rev = cc.reverse();
 		if(cc.invalid())
 			return UNRELATED;
-		if(getFullyQualifiedName(c1).equals(getFullyQualifiedName(c2))) {
+		if(getFullyQualifiedName(cc.getClassOne()).equals(getFullyQualifiedName(cc.getClassTwo()))) {
 			if(isMethod(n1, n2))
 				return SAMEMETHOD;
 			return SAMECLASS;
 		}
-		if(isSuperClass(c1, c2) || isSuperClass(c2, c1)) 
+		if(isSuperClass(cc) || isSuperClass(rev)) 
 			return SUPERCLASS;
-		if(isAncestor(c1,c2) || isAncestor(c2,c1))
+		if(isAncestor(cc) || isAncestor(rev))
 			return ANCESTOR;
-		if(isSiblingOrCousin(c1, c2, 1, 1))
+		if(isSiblingOrCousin(cc, 1, 1))
 			return SIBLING;
-		if(isSiblingOrCousin(c1, c2, 2, 2))
+		if(isSiblingOrCousin(cc, 2, 2))
 			return FIRSTCOUSIN;
-		if(hasExternalSuperclass(c1, c2))
-			return EXTERNALSUPERCLASS;
-		if(inSameHierarchy(c1,c2))
+		if(inSameHierarchy(cc))
 			return COMMONHIERARCHY;
-		if(haveSameInterface(c1, c2))
+		if(haveSameInterface(cc))
 			return SAMEINTERFACE;
+		if(hasExternalSuperclass(cc))
+			return EXTERNALSUPERCLASS;
 		return UNRELATED;
 	}
-	
-	private boolean haveSameInterface(ClassOrInterfaceDeclaration c1, ClassOrInterfaceDeclaration c2) {
+
+	private boolean haveSameInterface(ComparingClasses cc) {
 		List<String> classesInHierarchy = new ArrayList<>();
-		collectInterfaces(c1, classesInHierarchy);
-		return collectInterfaces(c2, classesInHierarchy);
+		collectInterfaces(cc.getClassOne(), classesInHierarchy);
+		return collectInterfaces(cc.getClassTwo(), classesInHierarchy);
 	}
 
-	private boolean inSameHierarchy(ClassOrInterfaceDeclaration c1, ClassOrInterfaceDeclaration c2) {
+	private boolean inSameHierarchy(ComparingClasses cc) {
 		List<String> classesInHierarchy = new ArrayList<>();
-		collectSuperclasses(c1, classesInHierarchy);
-		return collectSuperclasses(c2, classesInHierarchy);
+		collectSuperclasses(cc.getClassOne(), classesInHierarchy);
+		return collectSuperclasses(cc.getClassTwo(), classesInHierarchy);
 	}
 	
 	private boolean collectSuperclasses(ClassOrInterfaceDeclaration classDecl, List<String> classesInHierarchy) {
@@ -93,8 +93,8 @@ public class CloneRelation implements MetricEnum<RelationType> {
 		return collectSuperclasses(classDecl, classesInHierarchy, classDecl::getImplementedTypes, classDecl::getImplementedTypes, this::collectInterfaces);
 	}
 	
-	private boolean collectSuperclasses(ClassOrInterfaceDeclaration c2, List<String> classesInHierarchy, Supplier<NodeList<ClassOrInterfaceType>> getTypes, Function<Integer, ClassOrInterfaceType> getType, BiFunction<ClassOrInterfaceDeclaration, List<String>, Boolean> recurse) {
-		String className = getFullyQualifiedName(c2);
+	private boolean collectSuperclasses(ClassOrInterfaceDeclaration classDecl, List<String> classesInHierarchy, Supplier<NodeList<ClassOrInterfaceType>> getTypes, Function<Integer, ClassOrInterfaceType> getType, BiFunction<ClassOrInterfaceDeclaration, List<String>, Boolean> recurse) {
+		String className = getFullyQualifiedName(classDecl);
 		if(classesInHierarchy.contains(className))
 			return true;
 		classesInHierarchy.add(className);
@@ -108,11 +108,11 @@ public class CloneRelation implements MetricEnum<RelationType> {
 		return false;
 	}
 
-	private boolean hasExternalSuperclass(ClassOrInterfaceDeclaration c1, ClassOrInterfaceDeclaration c2) {
-		if(c1.getExtendedTypes().isEmpty() || c2.getExtendedTypes().isEmpty())
+	private boolean hasExternalSuperclass(ComparingClasses cc) {
+		if(!cc.hasExtendedTypes())
 			return false;
-		ClassOrInterfaceType superclassC1 = c1.getExtendedTypes().get(0);
-		ClassOrInterfaceType superclassC2 = c2.getExtendedTypes().get(0);
+		ClassOrInterfaceType superclassC1 = cc.getClassOne().getExtendedTypes().get(0);
+		ClassOrInterfaceType superclassC2 = cc.getClassTwo().getExtendedTypes().get(0);
 		return !superclassC1.getNameAsString().equals("Object") && 
 			   !superclassC2.getNameAsString().equals("Object") && 
 				getFullyQualifiedName(superclassC1).equals(getFullyQualifiedName(superclassC2));
@@ -129,30 +129,31 @@ public class CloneRelation implements MetricEnum<RelationType> {
 		classes.clear();
 	}
 
-	private boolean isSiblingOrCousin(ClassOrInterfaceDeclaration c1, ClassOrInterfaceDeclaration c2, int c1GoUp, int c2GoUp) {
-		ClassOrInterfaceDeclaration parent1 = goUp(c1, c1GoUp);
-		ClassOrInterfaceDeclaration parent2 = goUp(c2, c2GoUp);
+	private boolean isSiblingOrCousin(ComparingClasses cc, int c1GoUp, int c2GoUp) {
+		ClassOrInterfaceDeclaration parent1 = goUp(cc.getClassOne(), c1GoUp);
+		ClassOrInterfaceDeclaration parent2 = goUp(cc.getClassTwo(), c2GoUp);
 		return parent1!=null && getFullyQualifiedName(parent1).equals(getFullyQualifiedName(parent2));
 	}
 	
-	private ClassOrInterfaceDeclaration goUp(ClassOrInterfaceDeclaration c1, int i) {
-		if(i>0 && !c1.getExtendedTypes().isEmpty()) {
-			String fullyQualifiedName = getFullyQualifiedName(c1.getExtendedTypes(0));
+	private ClassOrInterfaceDeclaration goUp(ClassOrInterfaceDeclaration classDecl, int i) {
+		if(i>0 && !classDecl.getExtendedTypes().isEmpty()) {
+			String fullyQualifiedName = getFullyQualifiedName(classDecl.getExtendedTypes(0));
 			if(classes.containsKey(fullyQualifiedName))
 				return goUp(classes.get(fullyQualifiedName), i-1);
 		}
-		return c1;
+		return classDecl;
 	}
 
-	private boolean isAncestor(ClassOrInterfaceDeclaration c1, ClassOrInterfaceDeclaration c2) {
-		if(!c1.getExtendedTypes().isEmpty()) {
-			String fullyQualifiedName = getFullyQualifiedName(c1.getExtendedTypes(0));
+	private boolean isAncestor(ComparingClasses cc) {
+		if(!cc.getClassOne().getExtendedTypes().isEmpty()) {
+			String fullyQualifiedName = getFullyQualifiedName(cc.getClassOne().getExtendedTypes(0));
 			if(!classes.containsKey(fullyQualifiedName))
 				return false;
-			ClassOrInterfaceDeclaration parent = classes.get(fullyQualifiedName);
-			if(isSuperClass(parent, c2))
+			ComparingClasses superCC = new ComparingClasses(classes.get(fullyQualifiedName), cc.getClassTwo());
+			
+			if(isSuperClass(superCC))
 				return true;
-			else return isAncestor(parent, c2);
+			else return isAncestor(superCC);
 		}
 		return false;
 	}
@@ -163,12 +164,12 @@ public class CloneRelation implements MetricEnum<RelationType> {
 		return m1!=null && m1.equals(m2);
 	}
 
-	private boolean isSuperClass(ClassOrInterfaceDeclaration c1, ClassOrInterfaceDeclaration c2) {
-		return c1.getExtendedTypes().stream().anyMatch(e -> {
+	private boolean isSuperClass(ComparingClasses cc) {
+		return cc.getClassOne().getExtendedTypes().stream().anyMatch(e -> {
 			String fullyQualifiedName = getFullyQualifiedName(e);
 			if(!classes.containsKey(fullyQualifiedName))
 				return false;
-			return getFullyQualifiedName(c2).equals(fullyQualifiedName);
+			return getFullyQualifiedName(cc.getClassTwo()).equals(fullyQualifiedName);
 		});
 	}
 

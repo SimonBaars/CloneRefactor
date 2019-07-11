@@ -26,6 +26,10 @@ public class ComparingClasses {
 	public boolean invalid() {
 		return classOne == null || classTwo == null;
 	}
+
+	public boolean hasExtendedTypes() {
+		return !classOne.getExtendedTypes().isEmpty() && !classTwo.getExtendedTypes().isEmpty();
+	}
 	
 	
 }
