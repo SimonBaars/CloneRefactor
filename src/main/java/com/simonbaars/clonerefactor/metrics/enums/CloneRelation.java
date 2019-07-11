@@ -86,14 +86,14 @@ public class CloneRelation implements MetricEnum<RelationType> {
 	}
 	
 	private boolean collectSuperclasses(ClassOrInterfaceDeclaration classDecl, List<String> classesInHierarchy) {
-		return collectSuperclasses(classDecl, classesInHierarchy, classDecl::getExtendedTypes, this::collectSuperclasses);
+		return collectSuperclasses(classDecl, classesInHierarchy, classDecl::getExtendedTypes);
 	}
 	
 	private boolean collectInterfaces(ClassOrInterfaceDeclaration classDecl, List<String> classesInHierarchy) {
-		return collectSuperclasses(classDecl, classesInHierarchy, classDecl::getImplementedTypes, this::collectInterfaces);
+		return collectSuperclasses(classDecl, classesInHierarchy, classDecl::getImplementedTypes);
 	}
 	
-	private boolean collectSuperclasses(ClassOrInterfaceDeclaration classDecl, List<String> classesInHierarchy, Supplier<NodeList<ClassOrInterfaceType>> getTypes, BiFunction<ClassOrInterfaceDeclaration, List<String>, Boolean> recurse) {
+	private boolean collectSuperclasses(ClassOrInterfaceDeclaration classDecl, List<String> classesInHierarchy, Supplier<NodeList<ClassOrInterfaceType>> getTypes) {
 		String className = getFullyQualifiedName(classDecl);
 		if(classesInHierarchy.contains(className))
 			return true;
@@ -102,7 +102,7 @@ public class CloneRelation implements MetricEnum<RelationType> {
 			String fullyQualifiedName = getFullyQualifiedName(type);
 			if(classes.containsKey(fullyQualifiedName)) {
 				ClassOrInterfaceDeclaration superClass = classes.get(fullyQualifiedName);
-				return recurse.apply(superClass, classesInHierarchy);
+				return collectSuperclasses(superClass, classesInHierarchy);
 			}
 		}
 		return false;
