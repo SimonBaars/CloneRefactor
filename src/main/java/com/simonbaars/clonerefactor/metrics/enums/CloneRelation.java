@@ -36,8 +36,8 @@ public class CloneRelation implements MetricEnum<RelationType> {
 		SIBLING,
 		FIRSTCOUSIN,
 		COMMONHIERARCHY,
-		EXTERNALSUPERCLASS,
 		SAMEINTERFACE,
+		EXTERNALSUPERCLASS,
 		UNRELATED
 	}
 	
