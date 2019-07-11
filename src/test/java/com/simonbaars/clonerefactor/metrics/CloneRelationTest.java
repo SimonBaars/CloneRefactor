@@ -73,6 +73,10 @@ public class CloneRelationTest extends Type1Test {
         test("SameInterfaceInSuperclass", RelationType.SAMEINTERFACE);
     }
 
+    public void testSameInterfaceInInterfaceHierarchy() {
+        test("SameInterfaceInInterfaceHierarchy", RelationType.SAMEINTERFACE);
+    }
+    
 	private void test(String name, RelationType loc) {
 		DetectionResults r = testProject(name);
         Assert.assertEquals(loc, r.getMetrics().amountPerRelation.keySet().iterator().next());
