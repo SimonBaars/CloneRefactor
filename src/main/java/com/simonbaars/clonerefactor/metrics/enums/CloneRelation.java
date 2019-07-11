@@ -29,16 +29,16 @@ import com.simonbaars.clonerefactor.model.Sequence;
 
 public class CloneRelation implements MetricEnum<RelationType> { 
 	public enum RelationType { //Please note that the order of these enum constants matters
-		SAMEMETHOD,
-		SAMECLASS,
-		SUPERCLASS,
-		ANCESTOR,
-		SIBLING,
-		FIRSTCOUSIN,
-		COMMONHIERARCHY,
-		SAMEINTERFACE,
-		EXTERNALSUPERCLASS,
-		UNRELATED
+		SAMEMETHOD, // Refactor to same class
+		SAMECLASS, // Refactor to same class
+		SUPERCLASS, // Refactor to topmost class
+		ANCESTOR, // Refactor to common parent class
+		SIBLING, // Refactor to common parent class
+		FIRSTCOUSIN, // Refactor to common parent class
+		COMMONHIERARCHY, // Refactor to common parent class
+		SAMEINTERFACE, // Refactor common interface as an default method
+		EXTERNALSUPERCLASS, // Refactor to newly created interface as a default method
+		UNRELATED // Refactor to newly created interface as a default method
 	}
 	
 	private final Map<String, ClassOrInterfaceDeclaration> classes = new HashMap<>();
