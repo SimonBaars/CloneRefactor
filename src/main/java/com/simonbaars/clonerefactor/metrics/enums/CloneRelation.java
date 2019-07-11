@@ -23,7 +23,6 @@ import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
-import com.google.common.base.Function;
 import com.simonbaars.clonerefactor.metrics.enums.CloneRelation.RelationType;
 import com.simonbaars.clonerefactor.metrics.model.ComparingClasses;
 import com.simonbaars.clonerefactor.model.Sequence;
@@ -86,16 +85,18 @@ public class CloneRelation implements MetricEnum<RelationType> {
 	}
 	
 	private boolean collectSuperclasses(ClassOrInterfaceDeclaration classDecl, List<String> classesInHierarchy) {
-		return collectSuperclasses(classDecl, classesInHierarchy, classDecl::getExtendedTypes, this::collectSuperclasses);
+		return collectSuperclasses(classDecl, classesInHierarchy, classDecl::getExtendedTypes, this::collectSuperclasses, false);
 	}
 	
 	private boolean collectInterfaces(ClassOrInterfaceDeclaration classDecl, List<String> classesInHierarchy) {
-		return collectSuperclasses(classDecl, classesInHierarchy, classDecl::getImplementedTypes, this::collectInterfaces);
+		if(collectSuperclasses(classDecl, classesInHierarchy, classDecl::getExtendedTypes, this::collectInterfaces, true))
+			return true;
+		return collectSuperclasses(classDecl, classesInHierarchy, classDecl::getImplementedTypes, this::collectInterfaces, true);
 	}
 	
-	private boolean collectSuperclasses(ClassOrInterfaceDeclaration classDecl, List<String> classesInHierarchy, Supplier<NodeList<ClassOrInterfaceType>> getTypes, BiFunction<ClassOrInterfaceDeclaration, List<String>, Boolean> recurse) {
+	private boolean collectSuperclasses(ClassOrInterfaceDeclaration classDecl, List<String> classesInHierarchy, Supplier<NodeList<ClassOrInterfaceType>> getTypes, BiFunction<ClassOrInterfaceDeclaration, List<String>, Boolean> recurse, boolean isInterface) {
 		String className = getFullyQualifiedName(classDecl);
-		if(classesInHierarchy.contains(className))
+		if(classesInHierarchy.contains(className) && classDecl.isInterface() == isInterface)
 			return true;
 		classesInHierarchy.add(className);
 		for(ClassOrInterfaceType type : getTypes.get()) {
