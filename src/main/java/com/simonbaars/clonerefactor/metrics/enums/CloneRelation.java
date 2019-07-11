@@ -25,6 +25,7 @@ import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import com.google.common.base.Function;
 import com.simonbaars.clonerefactor.metrics.enums.CloneRelation.RelationType;
+import com.simonbaars.clonerefactor.metrics.model.ComparingClasses;
 import com.simonbaars.clonerefactor.model.Sequence;
 
 public class CloneRelation implements MetricEnum<RelationType> { 
@@ -46,9 +47,9 @@ public class CloneRelation implements MetricEnum<RelationType> {
 	public CloneRelation() {}
 	
 	public RelationType getLocation(Node n1, Node n2) {
-		ClassOrInterfaceDeclaration c1 = getClass(n1);
-		ClassOrInterfaceDeclaration c2 = getClass(n2);
-		if(c1 == null || c2 == null || c1.isInterface() || c2.isInterface())
+		ComparingClasses cc = new ComparingClasses(getClass(n1), getClass(n2));
+		ComparingClasses rev = cc.reverse();
+		if(cc.invalid())
 			return UNRELATED;
 		if(getFullyQualifiedName(c1).equals(getFullyQualifiedName(c2))) {
 			if(isMethod(n1, n2))
