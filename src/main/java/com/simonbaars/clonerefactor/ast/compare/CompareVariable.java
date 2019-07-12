@@ -29,7 +29,7 @@ public class CompareVariable extends Compare implements ResolvesSymbols {
 
 	@Override
 	public int hashCode() {
-		return (getCloneType() == CloneType.TYPE1 ? variableName.hashCode() : 0) + (type == null ? -3 : type.hashCode());
+		return (getCloneType() == CloneType.TYPE1 ? variableName.hashCode() : 0) + (type.isPresent() ? type.get().hashCode() : -3);
 	}
 
 	@Override

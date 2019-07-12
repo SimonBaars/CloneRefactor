@@ -27,9 +27,9 @@ public class CompareType extends Compare implements ResolvesSymbols {
 	
 	@Override
 	public int hashCode() {
-		if(type==null)
-			return referenceType.hashCode();
-		return type.hashCode();
+		if(type.isPresent())
+			return type.hashCode();
+		return referenceType.hashCode();
 	}
 
 	@Override
