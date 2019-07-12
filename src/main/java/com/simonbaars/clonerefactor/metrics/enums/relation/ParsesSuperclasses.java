@@ -4,15 +4,16 @@ import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Supplier;
 
-import com.simonbaars.clonerefactor.metrics.enums.ClassOrInterfaceDeclaration;
-import com.simonbaars.clonerefactor.metrics.enums.ClassOrInterfaceType;
-import com.simonbaars.clonerefactor.metrics.enums.NodeList;
+import com.github.javaparser.ast.NodeList;
+import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
+import com.github.javaparser.ast.type.ClassOrInterfaceType;
+import com.google.common.base.Optional;
 
-public interface ParsesSuperclasses {
-	private boolean collectSuperclasses(ClassOrInterfaceDeclaration classDecl, List<String> classesInHierarchy, Supplier<NodeList<ClassOrInterfaceType>> getTypes, BiFunction<ClassOrInterfaceDeclaration, List<String>, Boolean> recurse, boolean isInterface) {
+public interface ParsesSuperclasses extends ResolvesFullyQualifiedIdentifiers {
+	public default Optional<ClassOrInterfaceDeclaration> collectSuperclasses(ClassOrInterfaceDeclaration classDecl, List<String> classesInHierarchy, Supplier<NodeList<ClassOrInterfaceType>> getTypes, BiFunction<ClassOrInterfaceDeclaration, List<String>, Boolean> recurse, boolean isInterface) {
 		String className = getFullyQualifiedName(classDecl);
 		if(classesInHierarchy.contains(className) && classDecl.isInterface() == isInterface)
-			return true;
+			return Optional.of(classDecl);
 		classesInHierarchy.add(className);
 		for(ClassOrInterfaceType type : getTypes.get()) {
 			String fullyQualifiedName = getFullyQualifiedName(type);
