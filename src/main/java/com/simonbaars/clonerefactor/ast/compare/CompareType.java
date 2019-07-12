@@ -13,7 +13,7 @@ public class CompareType extends Compare implements ResolvesSymbols {
 	public CompareType(ReferenceType t) {
 		super(t.getRange().get());
 		this.referenceType = t;
-		type = resolve(() -> t.resolve());
+		type = resolve(t::resolve);
 	}
 	
 	public boolean equals(Object o) {

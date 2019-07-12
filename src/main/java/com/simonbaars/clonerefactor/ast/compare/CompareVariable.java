@@ -14,7 +14,7 @@ public class CompareVariable extends Compare implements ResolvesSymbols {
 	public CompareVariable(NameExpr t) {
 		super(t.getRange().get());
 		variableName = t;
-		type = resolve(() -> t.calculateResolvedType());
+		type = resolve(t::calculateResolvedType);
 	}
 	
 	@Override

@@ -16,7 +16,7 @@ public class CompareLiteral extends Compare implements ResolvesSymbols {
 		super(t.getRange().get());
 		this.literal=t;
 		if(cloneType.isNotTypeOne())
-			this.type = resolve(() -> t.calculateResolvedType());
+			this.type = resolve(t::calculateResolvedType);
 		else this.type = Optional.empty();
 	}
 	

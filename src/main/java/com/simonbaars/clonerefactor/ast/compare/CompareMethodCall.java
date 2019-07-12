@@ -30,9 +30,10 @@ public class CompareMethodCall extends Compare implements ResolvesSymbols {
 
 	// I'm not so sure about this whole estimateTypes thing. The problem is that JavaParser cannot resolve everything. In essence, we cannot guarantee equality, thus this can result in invalid refactorings. Because of that, we *should* remove this estimateTypes thing, and just mark the equality `false` for all unresolved method calls.
 	private void estimateTypes(MethodCallExpr t) {
-		estimatedTypes.addAll(t.getArguments().stream().map(e -> resolve(() -> e.calculateResolvedType())).collect(Collectors.toList()));
+		estimatedTypes.addAll(t.getArguments().stream().map(e -> resolve(e::calculateResolvedType)).collect(Collectors.toList()));
 	}
 	
+	@Override
 	public boolean equals(Object c) {
 		if(!super.equals(c))
 			return false;
