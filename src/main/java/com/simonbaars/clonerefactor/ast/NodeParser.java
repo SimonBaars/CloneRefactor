@@ -13,7 +13,7 @@ import com.github.javaparser.ast.stmt.BlockStmt;
 import com.github.javaparser.ast.stmt.LocalClassDeclarationStmt;
 import com.simonbaars.clonerefactor.SequenceObservable;
 import com.simonbaars.clonerefactor.ast.interfaces.DeterminesNodeTokens;
-import com.simonbaars.clonerefactor.ast.interfaces.Parser;
+import com.simonbaars.clonerefactor.ast.interfaces.SetsIfNotNull;
 import com.simonbaars.clonerefactor.metrics.MetricCollector;
 import com.simonbaars.clonerefactor.metrics.ProblemType;
 import com.simonbaars.clonerefactor.metrics.collectors.CyclomaticComplexityCalculator;
@@ -24,7 +24,7 @@ import com.simonbaars.clonerefactor.model.location.Location;
 import com.simonbaars.clonerefactor.model.location.LocationContents;
 import com.simonbaars.clonerefactor.settings.Settings;
 
-public class NodeParser implements Parser, DeterminesNodeTokens {
+public class NodeParser implements SetsIfNotNull, DeterminesNodeTokens {
 	final Map<LocationContents, Location> lineReg = new HashMap<>();
 	private final MetricCollector metricCollector;
 	
