@@ -1,4 +1,4 @@
-package com.simonbaars.clonerefactor.metrics.enums.relation;
+package com.simonbaars.clonerefactor.metrics.context.relation;
 
 import java.util.List;
 import java.util.Map;
