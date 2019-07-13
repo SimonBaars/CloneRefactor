@@ -1,4 +1,4 @@
-package com.simonbaars.clonerefactor.metrics.enums;
+package com.simonbaars.clonerefactor.metrics.context;
 
 public enum StatType {
 	TOTAL, CLONED, OVERLAPPING;

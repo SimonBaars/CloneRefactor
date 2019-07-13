@@ -1,4 +1,4 @@
-package com.simonbaars.clonerefactor.metrics.enums;
+package com.simonbaars.clonerefactor.metrics.context;
 
 import com.simonbaars.clonerefactor.model.Sequence;
 

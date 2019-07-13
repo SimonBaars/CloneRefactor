@@ -1,4 +1,4 @@
-package com.simonbaars.clonerefactor.metrics.enums;
+package com.simonbaars.clonerefactor.metrics.context;
 
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;

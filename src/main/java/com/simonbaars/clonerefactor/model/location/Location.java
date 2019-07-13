@@ -4,8 +4,8 @@ import java.nio.file.Path;
 
 import com.github.javaparser.Range;
 import com.github.javaparser.ast.Node;
-import com.simonbaars.clonerefactor.metrics.enums.CloneLocation;
-import com.simonbaars.clonerefactor.metrics.enums.CloneLocation.LocationType;
+import com.simonbaars.clonerefactor.metrics.context.CloneLocation;
+import com.simonbaars.clonerefactor.metrics.context.CloneLocation.LocationType;
 
 public class Location implements Comparable<Location>, HasRange {
 	private final Path file;

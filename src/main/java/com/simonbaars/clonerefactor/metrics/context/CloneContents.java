@@ -1,21 +1,21 @@
-package com.simonbaars.clonerefactor.metrics.enums;
+package com.simonbaars.clonerefactor.metrics.context;
 
-import static com.simonbaars.clonerefactor.metrics.enums.CloneContents.ContentsType.FULLCLASS;
-import static com.simonbaars.clonerefactor.metrics.enums.CloneContents.ContentsType.FULLCONSTRUCTOR;
-import static com.simonbaars.clonerefactor.metrics.enums.CloneContents.ContentsType.FULLENUM;
-import static com.simonbaars.clonerefactor.metrics.enums.CloneContents.ContentsType.FULLINTERFACE;
-import static com.simonbaars.clonerefactor.metrics.enums.CloneContents.ContentsType.FULLMETHOD;
-import static com.simonbaars.clonerefactor.metrics.enums.CloneContents.ContentsType.HASCLASSDECLARATION;
-import static com.simonbaars.clonerefactor.metrics.enums.CloneContents.ContentsType.HASENUMDECLARATION;
-import static com.simonbaars.clonerefactor.metrics.enums.CloneContents.ContentsType.HASENUMFIELDS;
-import static com.simonbaars.clonerefactor.metrics.enums.CloneContents.ContentsType.HASINTERFACEDECLARATION;
-import static com.simonbaars.clonerefactor.metrics.enums.CloneContents.ContentsType.INCLUDESCONSTRUCTOR;
-import static com.simonbaars.clonerefactor.metrics.enums.CloneContents.ContentsType.INCLUDESFIELDS;
-import static com.simonbaars.clonerefactor.metrics.enums.CloneContents.ContentsType.ONLYFIELDS;
-import static com.simonbaars.clonerefactor.metrics.enums.CloneContents.ContentsType.OTHER;
-import static com.simonbaars.clonerefactor.metrics.enums.CloneContents.ContentsType.PARTIALCONSTRUCTOR;
-import static com.simonbaars.clonerefactor.metrics.enums.CloneContents.ContentsType.PARTIALMETHOD;
-import static com.simonbaars.clonerefactor.metrics.enums.CloneContents.ContentsType.SEVERALMETHODS;
+import static com.simonbaars.clonerefactor.metrics.context.CloneContents.ContentsType.FULLCLASS;
+import static com.simonbaars.clonerefactor.metrics.context.CloneContents.ContentsType.FULLCONSTRUCTOR;
+import static com.simonbaars.clonerefactor.metrics.context.CloneContents.ContentsType.FULLENUM;
+import static com.simonbaars.clonerefactor.metrics.context.CloneContents.ContentsType.FULLINTERFACE;
+import static com.simonbaars.clonerefactor.metrics.context.CloneContents.ContentsType.FULLMETHOD;
+import static com.simonbaars.clonerefactor.metrics.context.CloneContents.ContentsType.HASCLASSDECLARATION;
+import static com.simonbaars.clonerefactor.metrics.context.CloneContents.ContentsType.HASENUMDECLARATION;
+import static com.simonbaars.clonerefactor.metrics.context.CloneContents.ContentsType.HASENUMFIELDS;
+import static com.simonbaars.clonerefactor.metrics.context.CloneContents.ContentsType.HASINTERFACEDECLARATION;
+import static com.simonbaars.clonerefactor.metrics.context.CloneContents.ContentsType.INCLUDESCONSTRUCTOR;
+import static com.simonbaars.clonerefactor.metrics.context.CloneContents.ContentsType.INCLUDESFIELDS;
+import static com.simonbaars.clonerefactor.metrics.context.CloneContents.ContentsType.ONLYFIELDS;
+import static com.simonbaars.clonerefactor.metrics.context.CloneContents.ContentsType.OTHER;
+import static com.simonbaars.clonerefactor.metrics.context.CloneContents.ContentsType.PARTIALCONSTRUCTOR;
+import static com.simonbaars.clonerefactor.metrics.context.CloneContents.ContentsType.PARTIALMETHOD;
+import static com.simonbaars.clonerefactor.metrics.context.CloneContents.ContentsType.SEVERALMETHODS;
 
 import java.util.List;
 import java.util.Optional;
@@ -28,7 +28,7 @@ import com.github.javaparser.ast.body.EnumDeclaration;
 import com.github.javaparser.ast.body.FieldDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.simonbaars.clonerefactor.ast.interfaces.RequiresNodeOperations;
-import com.simonbaars.clonerefactor.metrics.enums.CloneContents.ContentsType;
+import com.simonbaars.clonerefactor.metrics.context.CloneContents.ContentsType;
 import com.simonbaars.clonerefactor.model.Sequence;
 import com.simonbaars.clonerefactor.model.location.LocationContents;
 

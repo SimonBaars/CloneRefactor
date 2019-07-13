@@ -2,7 +2,7 @@ package com.simonbaars.clonerefactor.refactoring.target;
 
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
-import com.simonbaars.clonerefactor.metrics.enums.RequiresNodeContext;
+import com.simonbaars.clonerefactor.metrics.context.RequiresNodeContext;
 import com.simonbaars.clonerefactor.model.Sequence;
 
 public class ExtractToClassOrInterface implements ExtractionTarget, RequiresNodeContext {

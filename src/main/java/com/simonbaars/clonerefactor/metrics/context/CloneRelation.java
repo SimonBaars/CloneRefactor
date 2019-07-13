@@ -1,15 +1,15 @@
-package com.simonbaars.clonerefactor.metrics.enums;
+package com.simonbaars.clonerefactor.metrics.context;
 
-import static com.simonbaars.clonerefactor.metrics.enums.CloneRelation.RelationType.ANCESTOR;
-import static com.simonbaars.clonerefactor.metrics.enums.CloneRelation.RelationType.COMMONHIERARCHY;
-import static com.simonbaars.clonerefactor.metrics.enums.CloneRelation.RelationType.EXTERNALSUPERCLASS;
-import static com.simonbaars.clonerefactor.metrics.enums.CloneRelation.RelationType.FIRSTCOUSIN;
-import static com.simonbaars.clonerefactor.metrics.enums.CloneRelation.RelationType.SAMECLASS;
-import static com.simonbaars.clonerefactor.metrics.enums.CloneRelation.RelationType.SAMEINTERFACE;
-import static com.simonbaars.clonerefactor.metrics.enums.CloneRelation.RelationType.SAMEMETHOD;
-import static com.simonbaars.clonerefactor.metrics.enums.CloneRelation.RelationType.SIBLING;
-import static com.simonbaars.clonerefactor.metrics.enums.CloneRelation.RelationType.SUPERCLASS;
-import static com.simonbaars.clonerefactor.metrics.enums.CloneRelation.RelationType.UNRELATED;
+import static com.simonbaars.clonerefactor.metrics.context.CloneRelation.RelationType.ANCESTOR;
+import static com.simonbaars.clonerefactor.metrics.context.CloneRelation.RelationType.COMMONHIERARCHY;
+import static com.simonbaars.clonerefactor.metrics.context.CloneRelation.RelationType.EXTERNALSUPERCLASS;
+import static com.simonbaars.clonerefactor.metrics.context.CloneRelation.RelationType.FIRSTCOUSIN;
+import static com.simonbaars.clonerefactor.metrics.context.CloneRelation.RelationType.SAMECLASS;
+import static com.simonbaars.clonerefactor.metrics.context.CloneRelation.RelationType.SAMEINTERFACE;
+import static com.simonbaars.clonerefactor.metrics.context.CloneRelation.RelationType.SAMEMETHOD;
+import static com.simonbaars.clonerefactor.metrics.context.CloneRelation.RelationType.SIBLING;
+import static com.simonbaars.clonerefactor.metrics.context.CloneRelation.RelationType.SUPERCLASS;
+import static com.simonbaars.clonerefactor.metrics.context.CloneRelation.RelationType.UNRELATED;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -23,7 +23,7 @@ import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
-import com.simonbaars.clonerefactor.metrics.enums.CloneRelation.RelationType;
+import com.simonbaars.clonerefactor.metrics.context.CloneRelation.RelationType;
 import com.simonbaars.clonerefactor.metrics.model.ComparingClasses;
 import com.simonbaars.clonerefactor.model.Sequence;
 
