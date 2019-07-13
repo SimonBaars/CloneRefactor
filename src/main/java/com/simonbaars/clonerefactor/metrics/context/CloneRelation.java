@@ -23,11 +23,13 @@ import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
+import com.simonbaars.clonerefactor.ast.interfaces.SetsIfNotNull;
 import com.simonbaars.clonerefactor.metrics.context.CloneRelation.RelationType;
 import com.simonbaars.clonerefactor.metrics.model.ComparingClasses;
+import com.simonbaars.clonerefactor.metrics.model.Relation;
 import com.simonbaars.clonerefactor.model.Sequence;
 
-public class CloneRelation implements MetricEnum<RelationType> { 
+public class CloneRelation implements MetricEnum<RelationType>, SetsIfNotNull { 
 	public enum RelationType { //Please note that the order of these enum constants matters
 		SAMEMETHOD, // Refactor to same class
 		SAMECLASS, // Refactor to same class
@@ -48,7 +50,7 @@ public class CloneRelation implements MetricEnum<RelationType> {
 	public RelationType getLocation(Node n1, Node n2) {
 		ComparingClasses cc = new ComparingClasses(getClass(n1), getClass(n2));
 		ComparingClasses rev = cc.reverse();
-		ClassOrInterfaceDeclaration intersectingClass;
+		final Relation relation = new Relation();
 		if(cc.invalid())
 			return UNRELATED;
 		if(getFullyQualifiedName(cc.getClassOne()).equals(getFullyQualifiedName(cc.getClassTwo()))) {

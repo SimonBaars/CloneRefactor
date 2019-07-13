@@ -10,6 +10,10 @@ public class Relation {
 	private RelationType type;
 	private ClassOrInterfaceDeclaration intersectingClass;
 	
+	public Relation() {
+		super();
+	}
+	
 	public Relation(RelationType type, ClassOrInterfaceDeclaration intersectingClass) {
 		super();
 		this.type = type;
