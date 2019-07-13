@@ -14,7 +14,7 @@ import com.github.javaparser.ParserConfiguration;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.utils.SourceRoot;
 import com.github.javaparser.utils.SourceRoot.Callback.Result;
-import com.simonbaars.clonerefactor.ast.interfaces.Parser;
+import com.simonbaars.clonerefactor.ast.interfaces.SetsIfNotNull;
 import com.simonbaars.clonerefactor.detection.CloneDetection;
 import com.simonbaars.clonerefactor.detection.interfaces.RemovesDuplicates;
 import com.simonbaars.clonerefactor.detection.type2.Type2Variability;
@@ -30,7 +30,7 @@ import com.simonbaars.clonerefactor.settings.Settings;
 import com.simonbaars.clonerefactor.thread.CalculatesTimeIntervals;
 import com.simonbaars.clonerefactor.thread.WritesErrors;
 
-public class CloneParser implements Parser, RemovesDuplicates, WritesErrors, CalculatesTimeIntervals {
+public class CloneParser implements SetsIfNotNull, RemovesDuplicates, WritesErrors, CalculatesTimeIntervals {
 
 	private NodeParser astParser;
 	public final MetricCollector metricCollector = new MetricCollector();
