@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Supplier;
 
@@ -28,8 +29,9 @@ import com.simonbaars.clonerefactor.metrics.context.CloneRelation.RelationType;
 import com.simonbaars.clonerefactor.metrics.model.ComparingClasses;
 import com.simonbaars.clonerefactor.metrics.model.Relation;
 import com.simonbaars.clonerefactor.model.Sequence;
+import com.simonbaars.clonerefactor.refactoring.target.ExtractToNewInterface;
 
-public class CloneRelation implements MetricEnum<RelationType>, SetsIfNotNull { 
+public class CloneRelation implements MetricEnum<RelationType> { 
 	public enum RelationType { //Please note that the order of these enum constants matters
 		SAMEMETHOD, // Refactor to same class
 		SAMECLASS, // Refactor to same class
@@ -51,15 +53,12 @@ public class CloneRelation implements MetricEnum<RelationType>, SetsIfNotNull {
 		ComparingClasses cc = new ComparingClasses(getClass(n1), getClass(n2));
 		ComparingClasses rev = cc.reverse();
 		final Relation relation = new Relation();
-		if(cc.invalid())
-			return UNRELATED;
-		if(getFullyQualifiedName(cc.getClassOne()).equals(getFullyQualifiedName(cc.getClassTwo()))) {
-			if(isMethod(n1, n2))
-				return SAMEMETHOD;
-			return SAMECLASS;
-		}
-		if(isSuperClass(cc) || isSuperClass(rev)) 
-			return SUPERCLASS;
+		relation.setRelationIfNotYetDetermined(UNRELATED, () -> cc.invalid() ? Optional.of(new ExtractToNewInterface().getClassOrInterface()) : Optional.empty());
+		relation.setRelationIfNotYetDetermined(SAMECLASS, () -> isSameClass(cc));
+		relation.setRelationIfNotYetDetermined(SAMEMETHOD, () -> isMethod(cc, n1, n2), true);
+		relation.setRelationIfNotYetDetermined(SUPERCLASS, () -> isSuperClass(cc));
+		relation.setRelationIfNotYetDetermined(SUPERCLASS, () -> isSuperClass(rev));
+
 		if(isAncestor(cc) || isAncestor(rev))
 			return ANCESTOR;
 		if(isSiblingOrCousin(cc, 1, 1))
@@ -73,6 +72,12 @@ public class CloneRelation implements MetricEnum<RelationType>, SetsIfNotNull {
 		if(hasExternalSuperclass(cc))
 			return EXTERNALSUPERCLASS;
 		return UNRELATED;
+	}
+
+	private Optional<ClassOrInterfaceDeclaration> isSameClass(ComparingClasses cc) {
+		if(getFullyQualifiedName(cc.getClassOne()).equals(getFullyQualifiedName(cc.getClassTwo())))
+			return Optional.of(cc.getClassOne());
+		return Optional.empty();
 	}
 
 	private boolean haveSameInterface(ComparingClasses cc) {
@@ -162,19 +167,19 @@ public class CloneRelation implements MetricEnum<RelationType>, SetsIfNotNull {
 		return false;
 	}
 
-	private boolean isMethod(Node n1, Node n2) {
+	private Optional<ClassOrInterfaceDeclaration> isMethod(ComparingClasses cc, Node n1, Node n2) {
 		MethodDeclaration m1 = getMethod(n1);
 		MethodDeclaration m2 = getMethod(n2);
-		return m1!=null && m1.equals(m2);
+		return m1!=null && m1 == m2 ? Optional.of(cc.getClassOne()) : Optional.empty();
 	}
 
-	private boolean isSuperClass(ComparingClasses cc) {
-		return cc.getClassOne().getExtendedTypes().stream().anyMatch(e -> {
+	private Optional<ClassOrInterfaceDeclaration> isSuperClass(ComparingClasses cc) {
+		return cc.getClassOne().getExtendedTypes().stream().filter(e -> {
 			String fullyQualifiedName = getFullyQualifiedName(e);
 			if(!classes.containsKey(fullyQualifiedName))
 				return false;
 			return getFullyQualifiedName(cc.getClassTwo()).equals(fullyQualifiedName);
-		});
+		}).map(e -> cc.getClassTwo()).findAny();
 	}
 
 	private String getFullyQualifiedName(ClassOrInterfaceType t) {
