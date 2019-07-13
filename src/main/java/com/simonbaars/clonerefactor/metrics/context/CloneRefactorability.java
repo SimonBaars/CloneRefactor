@@ -29,7 +29,6 @@ public class CloneRefactorability implements MetricEnum<Refactorability>, Requir
 		COMPLEXCONTROLFLOW, //When the clone spans break, continue or return statements. However, exceptions apply:
 							// - All flows end in return (however not fully implemented)
 							// - The for loop that is being `continue` or `break` is included
-						
 	}
 
 	@Override

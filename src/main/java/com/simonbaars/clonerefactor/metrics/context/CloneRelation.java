@@ -48,6 +48,7 @@ public class CloneRelation implements MetricEnum<RelationType> {
 	public RelationType getLocation(Node n1, Node n2) {
 		ComparingClasses cc = new ComparingClasses(getClass(n1), getClass(n2));
 		ComparingClasses rev = cc.reverse();
+		ClassOrInterfaceDeclaration intersectingClass;
 		if(cc.invalid())
 			return UNRELATED;
 		if(getFullyQualifiedName(cc.getClassOne()).equals(getFullyQualifiedName(cc.getClassTwo()))) {
