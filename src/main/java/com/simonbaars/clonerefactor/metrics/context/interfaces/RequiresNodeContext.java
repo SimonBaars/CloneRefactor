@@ -18,8 +18,8 @@ public interface RequiresNodeContext {
 		return getNode(ConstructorDeclaration.class, n1);
 	}
 	
-	public default ClassOrInterfaceDeclaration getClass(Node n1) {
-		return getNode(ClassOrInterfaceDeclaration.class, n1).get();
+	public default Optional<ClassOrInterfaceDeclaration> getClass(Node n1) {
+		return getNode(ClassOrInterfaceDeclaration.class, n1);
 	}
 	
 	public default CompilationUnit getCompilationUnit(Node n1) {

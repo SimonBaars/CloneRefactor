@@ -15,7 +15,7 @@ public class ExtractToClassOrInterface implements ExtractionTarget, RequiresNode
 	
 	public ExtractToClassOrInterface(Sequence sequence) {
 		super();
-		this.classOrInterface = getClass(sequence.getAny().getContents().getNodes().get(0));
+		this.classOrInterface = getClass(sequence.getAny().getContents().getNodes().get(0)).get();
 	}
 
 	public ClassOrInterfaceDeclaration getClassOrInterface() {

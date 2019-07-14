@@ -19,7 +19,7 @@ public class ExtractToNewInterface extends ExtractToClassOrInterface {
 	
 	public ExtractToNewInterface(Sequence s) {
 		this();
-		Set<ClassOrInterfaceDeclaration> classOrInterface = s.getLocations().stream().map(l -> getClass(l.getContents().getNodes().get(0))).collect(Collectors.toSet());
+		Set<ClassOrInterfaceDeclaration> classOrInterface = s.getLocations().stream().map(l -> getClass(l.getContents().getNodes().get(0)).get()).collect(Collectors.toSet());
 		ClassOrInterfaceType implementedType = new JavaParser().parseClassOrInterfaceType(getClassOrInterface().getNameAsString()).getResult().get();
 		classOrInterface.stream().filter(c -> c.getImplementedTypes().stream().noneMatch(t -> t.getNameAsString().equals(implementedType.getNameAsString()))).forEach(c -> c.addImplementedType(implementedType));
 	}

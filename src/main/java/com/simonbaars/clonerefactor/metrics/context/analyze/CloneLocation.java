@@ -9,6 +9,7 @@ import static com.simonbaars.clonerefactor.metrics.context.analyze.CloneLocation
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
@@ -47,9 +48,9 @@ public class CloneLocation implements MetricEnum<LocationType> {
 			return METHODLEVEL;
 		if(getConstructor(node).isPresent() && (!(node instanceof ConstructorDeclaration) || i == 0))
 			return CONSTRUCTORLEVEL;
-		ClassOrInterfaceDeclaration class1 = getClass(node);
-		if(class1 != null) {
-			if(class1.isInterface())
+		Optional<ClassOrInterfaceDeclaration> class1 = getClass(node);
+		if(class1.isPresent()) {
+			if(class1.get().isInterface())
 				return INTERFACELEVEL;
 			else return CLASSLEVEL;
 		}
