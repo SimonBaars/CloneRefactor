@@ -42,4 +42,9 @@ public class Relation {
 			}
 		}
 	}
+
+	public void unrelated(ClassOrInterfaceDeclaration classOrInterface) {
+		this.type = RelationType.UNRELATED;
+		this.intersectingClass = classOrInterface;
+	}
 }

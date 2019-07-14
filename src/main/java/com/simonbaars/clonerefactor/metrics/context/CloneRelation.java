@@ -58,20 +58,20 @@ public class CloneRelation implements MetricEnum<RelationType> {
 		relation.setRelationIfNotYetDetermined(SAMEMETHOD, () -> isMethod(cc, n1, n2), true);
 		relation.setRelationIfNotYetDetermined(SUPERCLASS, () -> isSuperClass(cc));
 		relation.setRelationIfNotYetDetermined(SUPERCLASS, () -> isSuperClass(rev));
-
-		if(isAncestor(cc) || isAncestor(rev))
-			return ANCESTOR;
-		if(isSiblingOrCousin(cc, 1, 1))
-			return SIBLING;
-		if(isSiblingOrCousin(cc, 2, 2))
-			return FIRSTCOUSIN;
+		relation.setRelationIfNotYetDetermined(ANCESTOR, () -> isAncestor(cc));
+		relation.setRelationIfNotYetDetermined(ANCESTOR, () -> isAncestor(rev));
+		relation.setRelationIfNotYetDetermined(SIBLING, () -> isSibling(cc));
+		relation.setRelationIfNotYetDetermined(FIRSTCOUSIN, () -> isFirstCousin(cc));
+		
 		if(inSameHierarchy(cc))
 			return COMMONHIERARCHY;
 		if(haveSameInterface(cc))
 			return SAMEINTERFACE;
 		if(hasExternalSuperclass(cc))
 			return EXTERNALSUPERCLASS;
-		return UNRELATED;
+		if(relation.getType() == null)
+			relation.unrelated(new ExtractToNewInterface().getClassOrInterface());
+		return relation.getType();
 	}
 
 	private Optional<ClassOrInterfaceDeclaration> isSameClass(ComparingClasses cc) {
@@ -137,11 +137,19 @@ public class CloneRelation implements MetricEnum<RelationType> {
 	public void clearClasses() {
 		classes.clear();
 	}
+	
+	private Optional<ClassOrInterfaceDeclaration> isSibling(ComparingClasses cc){
+		return isSiblingOrCousin(cc, 1, 1);
+	}
+	
+	private Optional<ClassOrInterfaceDeclaration> isFirstCousin(ComparingClasses cc){
+		return isSiblingOrCousin(cc, 2, 2);
+	}
 
-	private boolean isSiblingOrCousin(ComparingClasses cc, int c1GoUp, int c2GoUp) {
+	private Optional<ClassOrInterfaceDeclaration> isSiblingOrCousin(ComparingClasses cc, int c1GoUp, int c2GoUp) {
 		ClassOrInterfaceDeclaration parent1 = goUp(cc.getClassOne(), c1GoUp);
 		ClassOrInterfaceDeclaration parent2 = goUp(cc.getClassTwo(), c2GoUp);
-		return parent1!=null && getFullyQualifiedName(parent1).equals(getFullyQualifiedName(parent2));
+		return parent1 == parent2 ? Optional.of(parent1) : Optional.empty();
 	}
 	
 	private ClassOrInterfaceDeclaration goUp(ClassOrInterfaceDeclaration classDecl, int i) {
@@ -153,18 +161,19 @@ public class CloneRelation implements MetricEnum<RelationType> {
 		return classDecl;
 	}
 
-	private boolean isAncestor(ComparingClasses cc) {
+	private Optional<ClassOrInterfaceDeclaration> isAncestor(ComparingClasses cc) {
 		if(!cc.getClassOne().getExtendedTypes().isEmpty()) {
 			String fullyQualifiedName = getFullyQualifiedName(cc.getClassOne().getExtendedTypes(0));
 			if(!classes.containsKey(fullyQualifiedName))
-				return false;
+				return Optional.empty();
 			ComparingClasses superCC = new ComparingClasses(classes.get(fullyQualifiedName), cc.getClassTwo());
 			
-			if(isSuperClass(superCC))
-				return true;
+			Optional<ClassOrInterfaceDeclaration> superclass = isSuperClass(superCC);
+			if(superclass.isPresent())
+				return superclass;
 			else return isAncestor(superCC);
 		}
-		return false;
+		return Optional.empty();
 	}
 
 	private Optional<ClassOrInterfaceDeclaration> isMethod(ComparingClasses cc, Node n1, Node n2) {
