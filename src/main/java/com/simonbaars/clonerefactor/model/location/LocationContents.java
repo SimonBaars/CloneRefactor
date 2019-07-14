@@ -55,7 +55,7 @@ public class LocationContents implements FiltersTokens, HasRange, HasCompareList
 			List<JavaToken> nodeTokens = calculateTokensFromNode(n);
 			this.tokens.addAll(nodeTokens);
 			this.nodes.add(n);
-			if(Settings.get().getScope()!=Scope.ALL && (getMethod(n)==null || (Settings.get().getScope() == Scope.METHODBODYONLY && n instanceof MethodDeclaration)))
+			if(Settings.get().getScope()!=Scope.ALL && (!getMethod(n).isPresent() || (Settings.get().getScope() == Scope.METHODBODYONLY && n instanceof MethodDeclaration)))
 				this.compare.add(new CompareOutOfScope(getRange(n)));
 			else if(!Settings.get().useLiteratureTypeDefinitions()) createComparablesByNode(tokens, n);
 			else this.compare.add(new CompareTokens(filterTokensForCompare(nodeTokens), getRange(nodeTokens)));
@@ -64,7 +64,7 @@ public class LocationContents implements FiltersTokens, HasRange, HasCompareList
 	}
 
 	public LocationContents(LocationContents contents, Range r) {
-		if(contents.nodes.size() == 0) throw new IllegalStateException("Must have at least one node!");
+		if(contents.nodes.isEmpty()) throw new IllegalStateException("Must have at least one node!");
 		this.range = r;
 		this.nodes = new ArrayList<>(contents.getNodes());
 		this.tokens = new ArrayList<>(contents.getTokens());

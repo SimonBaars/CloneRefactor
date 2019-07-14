@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import com.github.javaparser.ast.Modifier;
@@ -111,9 +112,9 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 	private Type getReturnType(Location any) {
 		Node lastNode = any.getContents().getNodes().get(any.getContents().getNodes().size()-1);
 		if(lastNode instanceof ReturnStmt) {
-			MethodDeclaration d = getMethod(lastNode);
-			if(d != null)
-				return d.getType();
+			Optional<MethodDeclaration> d = getMethod(lastNode);
+			if(d.isPresent())
+				return d.get().getType();
 		}
 		return new VoidType();
 	}
