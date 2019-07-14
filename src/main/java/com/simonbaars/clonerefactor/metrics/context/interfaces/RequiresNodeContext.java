@@ -22,8 +22,8 @@ public interface RequiresNodeContext {
 		return getNode(ClassOrInterfaceDeclaration.class, n1);
 	}
 	
-	public default CompilationUnit getCompilationUnit(Node n1) {
-		return getNode(CompilationUnit.class, n1).get();
+	public default Optional<CompilationUnit> getCompilationUnit(Node n1) {
+		return getNode(CompilationUnit.class, n1);
 	}
 	
 	public default EnumDeclaration getEnum(Node n1) {
