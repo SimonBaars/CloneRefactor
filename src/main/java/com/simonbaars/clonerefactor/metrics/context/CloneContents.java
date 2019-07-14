@@ -29,6 +29,7 @@ import com.github.javaparser.ast.body.FieldDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.simonbaars.clonerefactor.ast.interfaces.RequiresNodeOperations;
 import com.simonbaars.clonerefactor.metrics.context.CloneContents.ContentsType;
+import com.simonbaars.clonerefactor.metrics.context.interfaces.MetricEnum;
 import com.simonbaars.clonerefactor.model.Sequence;
 import com.simonbaars.clonerefactor.model.location.LocationContents;
 

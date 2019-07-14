@@ -1,4 +1,4 @@
-package com.simonbaars.clonerefactor.metrics.context;
+package com.simonbaars.clonerefactor.metrics.context.interfaces;
 
 import com.simonbaars.clonerefactor.model.Sequence;
 

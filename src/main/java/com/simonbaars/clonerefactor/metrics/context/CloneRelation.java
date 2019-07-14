@@ -9,7 +9,6 @@ import static com.simonbaars.clonerefactor.metrics.context.CloneRelation.Relatio
 import static com.simonbaars.clonerefactor.metrics.context.CloneRelation.RelationType.SAMEMETHOD;
 import static com.simonbaars.clonerefactor.metrics.context.CloneRelation.RelationType.SIBLING;
 import static com.simonbaars.clonerefactor.metrics.context.CloneRelation.RelationType.SUPERCLASS;
-import static com.simonbaars.clonerefactor.metrics.context.CloneRelation.RelationType.UNRELATED;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -22,6 +21,7 @@ import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import com.simonbaars.clonerefactor.metrics.context.CloneRelation.RelationType;
+import com.simonbaars.clonerefactor.metrics.context.interfaces.MetricEnum;
 import com.simonbaars.clonerefactor.metrics.context.relation.SeekClassHierarchy;
 import com.simonbaars.clonerefactor.metrics.context.relation.SeekInterfaceHierarchy;
 import com.simonbaars.clonerefactor.metrics.model.ComparingClasses;
