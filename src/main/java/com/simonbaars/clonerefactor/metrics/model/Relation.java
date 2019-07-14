@@ -47,4 +47,9 @@ public class Relation {
 		this.type = RelationType.UNRELATED;
 		this.intersectingClass = classOrInterface;
 	}
+
+	@Override
+	public String toString() {
+		return "Relation [type=" + type + ", intersectingClass=" + intersectingClass + "]";
+	}
 }
