@@ -33,7 +33,7 @@ public class Relation {
 	}
 	
 	public void setRelationIfNotYetDetermined(RelationType type, /*BiFunction<ComparingClasses, Map<String, ClassOrInterfaceDeclaration>, Optional<ClassOrInterfaceDeclaration>> fetchRelation*/ Supplier<Optional<ClassOrInterfaceDeclaration>> fetchRelation, boolean replaceType) {
-		if((!replaceType && type == null) || (replaceType && type!=null)){
+		if((!replaceType && this.type == null) || (replaceType && this.type!=null)){
 			Optional<ClassOrInterfaceDeclaration> result = fetchRelation.get();
 			if(result.isPresent()) {
 				this.type = type;
