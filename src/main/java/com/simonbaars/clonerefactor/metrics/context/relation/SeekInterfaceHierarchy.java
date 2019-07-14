@@ -9,10 +9,6 @@ import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.simonbaars.clonerefactor.metrics.model.ComparingClasses;
 
 public interface SeekInterfaceHierarchy extends ParsesSuperclasses {
-	public default boolean haveSameInterface(Map<String, ClassOrInterfaceDeclaration> classes, ComparingClasses cc) {
-		return sameInterface(classes, cc).isPresent();
-	}
-	
 	public default Optional<ClassOrInterfaceDeclaration> sameInterface(Map<String, ClassOrInterfaceDeclaration> classes, ComparingClasses cc) {
 		List<String> classesInHierarchy = new ArrayList<>();
 		collectInterfaces(classes, cc.getClassOne(), classesInHierarchy);

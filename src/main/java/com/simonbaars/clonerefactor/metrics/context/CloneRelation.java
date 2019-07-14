@@ -16,22 +16,20 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.function.BiFunction;
-import java.util.function.Supplier;
 
 import com.github.javaparser.ast.Node;
-import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
-import com.simonbaars.clonerefactor.ast.interfaces.SetsIfNotNull;
 import com.simonbaars.clonerefactor.metrics.context.CloneRelation.RelationType;
+import com.simonbaars.clonerefactor.metrics.context.relation.SeekClassHierarchy;
+import com.simonbaars.clonerefactor.metrics.context.relation.SeekInterfaceHierarchy;
 import com.simonbaars.clonerefactor.metrics.model.ComparingClasses;
 import com.simonbaars.clonerefactor.metrics.model.Relation;
 import com.simonbaars.clonerefactor.model.Sequence;
 import com.simonbaars.clonerefactor.refactoring.target.ExtractToNewInterface;
 
-public class CloneRelation implements MetricEnum<RelationType> { 
+public class CloneRelation implements MetricEnum<RelationType>, SeekClassHierarchy, SeekInterfaceHierarchy { 
 	public enum RelationType { //Please note that the order of these enum constants matters
 		SAMEMETHOD, // Refactor to same class
 		SAMECLASS, // Refactor to same class
@@ -62,13 +60,9 @@ public class CloneRelation implements MetricEnum<RelationType> {
 		relation.setRelationIfNotYetDetermined(ANCESTOR, () -> isAncestor(rev));
 		relation.setRelationIfNotYetDetermined(SIBLING, () -> isSibling(cc));
 		relation.setRelationIfNotYetDetermined(FIRSTCOUSIN, () -> isFirstCousin(cc));
-		
-		if(inSameHierarchy(cc))
-			return COMMONHIERARCHY;
-		if(haveSameInterface(cc))
-			return SAMEINTERFACE;
-		if(hasExternalSuperclass(cc))
-			return EXTERNALSUPERCLASS;
+		relation.setRelationIfNotYetDetermined(COMMONHIERARCHY, () -> sameHierarchy(classes, cc));
+		relation.setRelationIfNotYetDetermined(SAMEINTERFACE, () -> sameInterface(classes, cc));
+		relation.setRelationIfNotYetDetermined(EXTERNALSUPERCLASS, () -> hasExternalSuperclass(cc) ? Optional.of(new ExtractToNewInterface().getClassOrInterface()) : Optional.empty());
 		if(relation.getType() == null)
 			relation.unrelated(new ExtractToNewInterface().getClassOrInterface());
 		return relation.getType();
@@ -79,44 +73,7 @@ public class CloneRelation implements MetricEnum<RelationType> {
 			return Optional.of(cc.getClassOne());
 		return Optional.empty();
 	}
-
-	private boolean haveSameInterface(ComparingClasses cc) {
-		List<String> classesInHierarchy = new ArrayList<>();
-		collectInterfaces(cc.getClassOne(), classesInHierarchy);
-		return collectInterfaces(cc.getClassTwo(), classesInHierarchy);
-	}
-
-	private boolean inSameHierarchy(ComparingClasses cc) {
-		List<String> classesInHierarchy = new ArrayList<>();
-		collectSuperclasses(cc.getClassOne(), classesInHierarchy);
-		return collectSuperclasses(cc.getClassTwo(), classesInHierarchy);
-	}
 	
-	private boolean collectSuperclasses(ClassOrInterfaceDeclaration classDecl, List<String> classesInHierarchy) {
-		return collectSuperclasses(classDecl, classesInHierarchy, classDecl::getExtendedTypes, this::collectSuperclasses, false);
-	}
-	
-	private boolean collectInterfaces(ClassOrInterfaceDeclaration classDecl, List<String> classesInHierarchy) {
-		if(collectSuperclasses(classDecl, classesInHierarchy, classDecl::getExtendedTypes, this::collectInterfaces, true))
-			return true;
-		return collectSuperclasses(classDecl, classesInHierarchy, classDecl::getImplementedTypes, this::collectInterfaces, true);
-	}
-	
-	private boolean collectSuperclasses(ClassOrInterfaceDeclaration classDecl, List<String> classesInHierarchy, Supplier<NodeList<ClassOrInterfaceType>> getTypes, BiFunction<ClassOrInterfaceDeclaration, List<String>, Boolean> recurse, boolean isInterface) {
-		String className = getFullyQualifiedName(classDecl);
-		if(classesInHierarchy.contains(className) && classDecl.isInterface() == isInterface)
-			return true;
-		classesInHierarchy.add(className);
-		for(ClassOrInterfaceType type : getTypes.get()) {
-			String fullyQualifiedName = getFullyQualifiedName(type);
-			if(classes.containsKey(fullyQualifiedName)) {
-				ClassOrInterfaceDeclaration superClass = classes.get(fullyQualifiedName);
-				return recurse.apply(superClass, classesInHierarchy);
-			}
-		}
-		return false;
-	}
-
 	private boolean hasExternalSuperclass(ComparingClasses cc) {
 		if(!cc.hasExtendedTypes())
 			return false;
@@ -189,22 +146,6 @@ public class CloneRelation implements MetricEnum<RelationType> {
 				return false;
 			return getFullyQualifiedName(cc.getClassTwo()).equals(fullyQualifiedName);
 		}).map(e -> cc.getClassTwo()).findAny();
-	}
-
-	private String getFullyQualifiedName(ClassOrInterfaceType t) {
-		try { 
-			return t.resolve().getQualifiedName();
-		} catch (Exception e) {
-			return t.getNameAsString();
-		}
-	}
-
-	private String getFullyQualifiedName(ClassOrInterfaceDeclaration c2) {
-		try { 
-			return c2.resolve().getQualifiedName();
-		} catch (Exception e) {
-			return c2.getNameAsString();
-		}
 	}
 
 	@Override
