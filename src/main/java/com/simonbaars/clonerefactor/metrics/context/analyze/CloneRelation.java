@@ -9,6 +9,7 @@ import static com.simonbaars.clonerefactor.metrics.context.analyze.CloneRelation
 import static com.simonbaars.clonerefactor.metrics.context.analyze.CloneRelation.RelationType.SAMEMETHOD;
 import static com.simonbaars.clonerefactor.metrics.context.analyze.CloneRelation.RelationType.SIBLING;
 import static com.simonbaars.clonerefactor.metrics.context.analyze.CloneRelation.RelationType.SUPERCLASS;
+import static com.simonbaars.clonerefactor.metrics.context.analyze.CloneRelation.RelationType.UNRELATED;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -48,7 +49,13 @@ public class CloneRelation implements MetricEnum<Relation>, SeekClassHierarchy, 
 	public CloneRelation() {}
 	
 	public Relation getLocation(Node n1, Node n2) {
-		ComparingClasses cc = new ComparingClasses(getClass(n1), getClass(n2));
+		Optional<ClassOrInterfaceDeclaration> class1 = getClass(n1);
+		Optional<ClassOrInterfaceDeclaration> class2 = getClass(n2);
+		
+		if(!class1.isPresent() || !class2.isPresent())
+			return new Relation(UNRELATED, null);
+		
+		ComparingClasses cc = new ComparingClasses(class1.get(), class2.get());
 		ComparingClasses rev = cc.reverse();
 		final Relation relation = new Relation();
 		relation.setRelationIfNotYetDetermined(SAMECLASS, () -> isSameClass(cc));
