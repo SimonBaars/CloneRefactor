@@ -8,10 +8,10 @@ import java.util.List;
 import java.util.function.ToIntFunction;
 
 import com.simonbaars.clonerefactor.datatype.map.ListMap;
-import com.simonbaars.clonerefactor.metrics.context.CloneRefactorability;
-import com.simonbaars.clonerefactor.metrics.context.CloneRelation;
-import com.simonbaars.clonerefactor.metrics.context.CloneRefactorability.Refactorability;
-import com.simonbaars.clonerefactor.metrics.context.CloneRelation.RelationType;
+import com.simonbaars.clonerefactor.metrics.context.analyze.CloneRefactorability;
+import com.simonbaars.clonerefactor.metrics.context.analyze.CloneRelation;
+import com.simonbaars.clonerefactor.metrics.context.analyze.CloneRefactorability.Refactorability;
+import com.simonbaars.clonerefactor.metrics.context.analyze.CloneRelation.RelationType;
 import com.simonbaars.clonerefactor.model.location.Location;
 
 public class Sequence implements Comparable<Sequence> {

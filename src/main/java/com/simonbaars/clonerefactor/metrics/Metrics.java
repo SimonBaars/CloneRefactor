@@ -4,10 +4,10 @@ import com.simonbaars.clonerefactor.datatype.map.AverageMap;
 import com.simonbaars.clonerefactor.datatype.map.CountMap;
 import com.simonbaars.clonerefactor.metrics.context.Metric;
 import com.simonbaars.clonerefactor.metrics.context.StatType;
-import com.simonbaars.clonerefactor.metrics.context.CloneContents.ContentsType;
-import com.simonbaars.clonerefactor.metrics.context.CloneLocation.LocationType;
-import com.simonbaars.clonerefactor.metrics.context.CloneRefactorability.Refactorability;
-import com.simonbaars.clonerefactor.metrics.context.CloneRelation.RelationType;
+import com.simonbaars.clonerefactor.metrics.context.analyze.CloneContents.ContentsType;
+import com.simonbaars.clonerefactor.metrics.context.analyze.CloneLocation.LocationType;
+import com.simonbaars.clonerefactor.metrics.context.analyze.CloneRefactorability.Refactorability;
+import com.simonbaars.clonerefactor.metrics.context.analyze.CloneRelation.RelationType;
 
 public class Metrics {
 	public final CountMap<String> generalStats = new CountMap<>();

@@ -8,12 +8,12 @@ import com.github.javaparser.JavaToken;
 import com.github.javaparser.Range;
 import com.github.javaparser.ast.Node;
 import com.simonbaars.clonerefactor.datatype.map.SetMap;
-import com.simonbaars.clonerefactor.metrics.context.CloneContents;
-import com.simonbaars.clonerefactor.metrics.context.CloneLocation;
-import com.simonbaars.clonerefactor.metrics.context.CloneRefactorability;
-import com.simonbaars.clonerefactor.metrics.context.CloneRelation;
 import com.simonbaars.clonerefactor.metrics.context.Metric;
 import com.simonbaars.clonerefactor.metrics.context.StatType;
+import com.simonbaars.clonerefactor.metrics.context.analyze.CloneContents;
+import com.simonbaars.clonerefactor.metrics.context.analyze.CloneLocation;
+import com.simonbaars.clonerefactor.metrics.context.analyze.CloneRefactorability;
+import com.simonbaars.clonerefactor.metrics.context.analyze.CloneRelation;
 import com.simonbaars.clonerefactor.model.Sequence;
 import com.simonbaars.clonerefactor.model.location.Location;
 

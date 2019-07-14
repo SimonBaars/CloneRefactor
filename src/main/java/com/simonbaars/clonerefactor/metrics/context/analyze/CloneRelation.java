@@ -1,14 +1,14 @@
-package com.simonbaars.clonerefactor.metrics.context;
+package com.simonbaars.clonerefactor.metrics.context.analyze;
 
-import static com.simonbaars.clonerefactor.metrics.context.CloneRelation.RelationType.ANCESTOR;
-import static com.simonbaars.clonerefactor.metrics.context.CloneRelation.RelationType.COMMONHIERARCHY;
-import static com.simonbaars.clonerefactor.metrics.context.CloneRelation.RelationType.EXTERNALSUPERCLASS;
-import static com.simonbaars.clonerefactor.metrics.context.CloneRelation.RelationType.FIRSTCOUSIN;
-import static com.simonbaars.clonerefactor.metrics.context.CloneRelation.RelationType.SAMECLASS;
-import static com.simonbaars.clonerefactor.metrics.context.CloneRelation.RelationType.SAMEINTERFACE;
-import static com.simonbaars.clonerefactor.metrics.context.CloneRelation.RelationType.SAMEMETHOD;
-import static com.simonbaars.clonerefactor.metrics.context.CloneRelation.RelationType.SIBLING;
-import static com.simonbaars.clonerefactor.metrics.context.CloneRelation.RelationType.SUPERCLASS;
+import static com.simonbaars.clonerefactor.metrics.context.analyze.CloneRelation.RelationType.ANCESTOR;
+import static com.simonbaars.clonerefactor.metrics.context.analyze.CloneRelation.RelationType.COMMONHIERARCHY;
+import static com.simonbaars.clonerefactor.metrics.context.analyze.CloneRelation.RelationType.EXTERNALSUPERCLASS;
+import static com.simonbaars.clonerefactor.metrics.context.analyze.CloneRelation.RelationType.FIRSTCOUSIN;
+import static com.simonbaars.clonerefactor.metrics.context.analyze.CloneRelation.RelationType.SAMECLASS;
+import static com.simonbaars.clonerefactor.metrics.context.analyze.CloneRelation.RelationType.SAMEINTERFACE;
+import static com.simonbaars.clonerefactor.metrics.context.analyze.CloneRelation.RelationType.SAMEMETHOD;
+import static com.simonbaars.clonerefactor.metrics.context.analyze.CloneRelation.RelationType.SIBLING;
+import static com.simonbaars.clonerefactor.metrics.context.analyze.CloneRelation.RelationType.SUPERCLASS;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -20,7 +20,7 @@ import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
-import com.simonbaars.clonerefactor.metrics.context.CloneRelation.RelationType;
+import com.simonbaars.clonerefactor.metrics.context.analyze.CloneRelation.RelationType;
 import com.simonbaars.clonerefactor.metrics.context.interfaces.MetricEnum;
 import com.simonbaars.clonerefactor.metrics.context.relation.SeekClassHierarchy;
 import com.simonbaars.clonerefactor.metrics.context.relation.SeekInterfaceHierarchy;
