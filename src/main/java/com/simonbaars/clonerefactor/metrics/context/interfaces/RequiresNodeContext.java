@@ -14,8 +14,8 @@ public interface RequiresNodeContext {
 		return getNode(MethodDeclaration.class, n1);
 	}
 	
-	public default ConstructorDeclaration getConstructor(Node n1) {
-		return getNode(ConstructorDeclaration.class, n1).get();
+	public default Optional<ConstructorDeclaration> getConstructor(Node n1) {
+		return getNode(ConstructorDeclaration.class, n1);
 	}
 	
 	public default ClassOrInterfaceDeclaration getClass(Node n1) {

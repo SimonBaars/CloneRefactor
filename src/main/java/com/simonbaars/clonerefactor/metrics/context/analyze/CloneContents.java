@@ -61,22 +61,31 @@ public class CloneContents implements MetricEnum<ContentsType>, RequiresNodeOper
 	//TODO: This method must be refactored
 	public ContentsType get(LocationContents c) {
 		List<Node> nodes = c.getNodes();
-		if(nodes.get(0) instanceof MethodDeclaration && nodes.get(nodes.size()-1) == getLastStatement(nodes.get(0))) {
+		Node lastNode = nodes.get(nodes.size()-1);
+		Node lastStatement = getLastStatement(nodes.get(0));
+		if(nodes.get(0) instanceof MethodDeclaration && lastNode == lastStatement) {
 			return FULLMETHOD;
 		} 
 		
 		Optional<MethodDeclaration> method = getMethod(nodes.get(0));
 		if(method.isPresent()) {
-			Optional<MethodDeclaration> method2 = getMethod(nodes.get(nodes.size()-1));
+			Optional<MethodDeclaration> method2 = getMethod(lastNode);
 			if(method2.isPresent() && method.get() == method2.get())
 				return PARTIALMETHOD;
 		}
 
-		if(nodes.get(0) instanceof ConstructorDeclaration && nodes.get(nodes.size()-1) == getLastStatement(nodes.get(0))) {
+		if(nodes.get(0) instanceof ConstructorDeclaration && lastNode == lastStatement) {
 			return FULLCONSTRUCTOR;
-		} else if(getConstructor(nodes.get(0))!=null && getConstructor(nodes.get(0)) == getConstructor(nodes.get(nodes.size()-1))) {
-			return PARTIALCONSTRUCTOR;
-		} else if(nodes.stream().allMatch(e -> getMethod(e).isPresent())) {
+		} 
+
+		Optional<ConstructorDeclaration> constructor = getConstructor(nodes.get(0));
+		if(constructor.isPresent()) {
+			Optional<ConstructorDeclaration> constructor2 = getConstructor(lastNode);
+			if(constructor2.isPresent() && constructor == constructor2) {
+				return PARTIALCONSTRUCTOR;
+			} 
+		}
+		if(nodes.stream().allMatch(e -> getMethod(e).isPresent())) {
 			return SEVERALMETHODS;
 		} else if(nodes.stream().allMatch(e -> e instanceof FieldDeclaration)) {
 			return ONLYFIELDS;
@@ -96,7 +105,7 @@ public class CloneContents implements MetricEnum<ContentsType>, RequiresNodeOper
 			return HASENUMFIELDS;
 		} else if(nodes.stream().anyMatch(e -> e instanceof FieldDeclaration)) {
 			return INCLUDESFIELDS;
-		} else if(nodes.stream().anyMatch(e -> getConstructor(e)!=null)) {
+		} else if(nodes.stream().anyMatch(e -> getConstructor(e).isPresent())) {
 			return INCLUDESCONSTRUCTOR;
 		}
 		return OTHER;

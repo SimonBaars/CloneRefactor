@@ -45,7 +45,7 @@ public class CloneLocation implements MetricEnum<LocationType> {
 	private LocationType getLocation(Node node, int i) {
 		if(getMethod(node).isPresent() && (!(node instanceof MethodDeclaration) || i == 0))
 			return METHODLEVEL;
-		if(getConstructor(node)!=null && (!(node instanceof ConstructorDeclaration) || i == 0))
+		if(getConstructor(node).isPresent() && (!(node instanceof ConstructorDeclaration) || i == 0))
 			return CONSTRUCTORLEVEL;
 		ClassOrInterfaceDeclaration class1 = getClass(node);
 		if(class1 != null) {
