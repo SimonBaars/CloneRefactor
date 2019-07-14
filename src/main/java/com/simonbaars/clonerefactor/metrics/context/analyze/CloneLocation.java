@@ -54,7 +54,7 @@ public class CloneLocation implements MetricEnum<LocationType> {
 				return INTERFACELEVEL;
 			else return CLASSLEVEL;
 		}
-		if(getEnum(node)!=null)
+		if(getEnum(node).isPresent())
 			return ENUMLEVEL;
 		return OUTSIDE;
 	}

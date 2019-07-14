@@ -26,8 +26,8 @@ public interface RequiresNodeContext {
 		return getNode(CompilationUnit.class, n1);
 	}
 	
-	public default EnumDeclaration getEnum(Node n1) {
-		return getNode(EnumDeclaration.class, n1).get();
+	public default Optional<EnumDeclaration> getEnum(Node n1) {
+		return getNode(EnumDeclaration.class, n1);
 	}
 	
 	@SuppressWarnings("unchecked")
