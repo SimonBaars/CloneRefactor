@@ -29,7 +29,7 @@ import com.simonbaars.clonerefactor.metrics.model.Relation;
 import com.simonbaars.clonerefactor.model.Sequence;
 import com.simonbaars.clonerefactor.refactoring.target.ExtractToNewInterface;
 
-public class CloneRelation implements MetricEnum<RelationType>, SeekClassHierarchy, SeekInterfaceHierarchy { 
+public class CloneRelation implements MetricEnum<Relation>, SeekClassHierarchy, SeekInterfaceHierarchy { 
 	public enum RelationType { //Please note that the order of these enum constants matters
 		SAMEMETHOD, // Refactor to same class
 		SAMECLASS, // Refactor to same class
@@ -47,7 +47,7 @@ public class CloneRelation implements MetricEnum<RelationType>, SeekClassHierarc
 	
 	public CloneRelation() {}
 	
-	public RelationType getLocation(Node n1, Node n2) {
+	public Relation getLocation(Node n1, Node n2) {
 		ComparingClasses cc = new ComparingClasses(getClass(n1), getClass(n2));
 		ComparingClasses rev = cc.reverse();
 		final Relation relation = new Relation();
@@ -64,7 +64,7 @@ public class CloneRelation implements MetricEnum<RelationType>, SeekClassHierarc
 		relation.setRelationIfNotYetDetermined(EXTERNALSUPERCLASS, () -> hasExternalSuperclass(cc) ? Optional.of(new ExtractToNewInterface().getClassOrInterface()) : Optional.empty());
 		if(relation.getType() == null)
 			relation.unrelated(new ExtractToNewInterface().getClassOrInterface());
-		return relation.getType();
+		return relation;
 	}
 
 	private Optional<ClassOrInterfaceDeclaration> isSameClass(ComparingClasses cc) {
@@ -152,8 +152,8 @@ public class CloneRelation implements MetricEnum<RelationType>, SeekClassHierarc
 	}
 
 	@Override
-	public RelationType get(Sequence clone) {
-		List<RelationType> locations = new ArrayList<>();
+	public Relation get(Sequence clone) {
+		List<Relation> locations = new ArrayList<>();
 		for(int i = 0; i<clone.getLocations().get(0).getContents().getNodes().size(); i++) {
 			for(int j = 0; j<clone.getLocations().size(); j++) {
 				for(int z = j+1; z<clone.getLocations().size(); z++) {
@@ -163,6 +163,6 @@ public class CloneRelation implements MetricEnum<RelationType>, SeekClassHierarc
 				}
 			}
 		}
-		return locations.stream().sorted().reduce((first, second) -> second).get();
+		return locations.stream().reduce((first, second) -> first.getType().compareTo(second.getType()) < 0 ? first : second).get();
 	}
 }

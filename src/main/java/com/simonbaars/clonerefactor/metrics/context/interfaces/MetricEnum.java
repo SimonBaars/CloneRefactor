@@ -2,7 +2,6 @@ package com.simonbaars.clonerefactor.metrics.context.interfaces;
 
 import com.simonbaars.clonerefactor.model.Sequence;
 
-@SuppressWarnings("rawtypes")
-public interface MetricEnum<E extends Enum> extends RequiresNodeContext {
+public interface MetricEnum<E> extends RequiresNodeContext {
 	public E get(Sequence sequence);
 }

@@ -9,15 +9,16 @@ import java.util.function.ToIntFunction;
 
 import com.simonbaars.clonerefactor.datatype.map.ListMap;
 import com.simonbaars.clonerefactor.metrics.context.analyze.CloneRefactorability;
-import com.simonbaars.clonerefactor.metrics.context.analyze.CloneRelation;
 import com.simonbaars.clonerefactor.metrics.context.analyze.CloneRefactorability.Refactorability;
+import com.simonbaars.clonerefactor.metrics.context.analyze.CloneRelation;
 import com.simonbaars.clonerefactor.metrics.context.analyze.CloneRelation.RelationType;
+import com.simonbaars.clonerefactor.metrics.model.Relation;
 import com.simonbaars.clonerefactor.model.location.Location;
 
 public class Sequence implements Comparable<Sequence> {
 	private final List<Location> locations;
 	
-	private RelationType relationType;
+	private Relation relation;
 	private Refactorability refactorability;
 
 	public Sequence(List<Location> collection) {
@@ -108,16 +109,16 @@ public class Sequence implements Comparable<Sequence> {
 	}
 	
 	public void setMetrics(CloneRelation relation, CloneRefactorability r) {
-		relationType = relation.get(this);
-		refactorability = r.get(this);
+		this.relation = relation.get(this);
+		this.refactorability = r.get(this);
 	}
 	
 	public RelationType getRelationType() {
-		return relationType;
+		return this.relation.getType();
 	}
 	
 	public Refactorability getRefactorability() {
-		return refactorability;
+		return this.refactorability;
 	}
 	
 	public Sequence isValid() {
