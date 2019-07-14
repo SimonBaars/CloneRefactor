@@ -68,7 +68,7 @@ public class CloneRelation implements MetricEnum<RelationType>, SeekClassHierarc
 	}
 
 	private Optional<ClassOrInterfaceDeclaration> isSameClass(ComparingClasses cc) {
-		if(getFullyQualifiedName(cc.getClassOne()).equals(getFullyQualifiedName(cc.getClassTwo())))
+		if(cc.getClassOne()  == cc.getClassTwo())
 			return Optional.of(cc.getClassOne());
 		return Optional.empty();
 	}
