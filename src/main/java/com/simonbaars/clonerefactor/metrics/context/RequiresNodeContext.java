@@ -10,8 +10,8 @@ import com.github.javaparser.ast.body.EnumDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 
 public interface RequiresNodeContext {
-	public default MethodDeclaration getMethod(Node n1) {
-		return getNode(MethodDeclaration.class, n1).get();
+	public default Optional<MethodDeclaration> getMethod(Node n1) {
+		return getNode(MethodDeclaration.class, n1);
 	}
 	
 	public default ConstructorDeclaration getConstructor(Node n1) {

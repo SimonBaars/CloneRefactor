@@ -57,19 +57,27 @@ public class CloneContents implements MetricEnum<ContentsType>, RequiresNodeOper
 		return get(sequence.getAny().getContents());
 	}
 
+	//TODO: This method must be refactored
 	public ContentsType get(LocationContents c) {
 		List<Node> nodes = c.getNodes();
 		if(nodes.get(0) instanceof MethodDeclaration && nodes.get(nodes.size()-1) == getLastStatement(nodes.get(0))) {
 			return FULLMETHOD;
-		} else if(getMethod(nodes.get(0))!=null && getMethod(nodes.get(0)) == getMethod(nodes.get(nodes.size()-1))) {
-			return PARTIALMETHOD;
-		} else if(nodes.get(0) instanceof ConstructorDeclaration && nodes.get(nodes.size()-1) == getLastStatement(nodes.get(0))) {
+		} 
+		
+		Optional<MethodDeclaration> method = getMethod(nodes.get(0));
+		if(method.isPresent()) {
+			Optional<MethodDeclaration> method2 = getMethod(nodes.get(nodes.size()-1));
+			if(method2.isPresent() && method.get() == method2.get())
+				return PARTIALMETHOD;
+		}
+
+		if(nodes.get(0) instanceof ConstructorDeclaration && nodes.get(nodes.size()-1) == getLastStatement(nodes.get(0))) {
 			return FULLCONSTRUCTOR;
 		} else if(getConstructor(nodes.get(0))!=null && getConstructor(nodes.get(0)) == getConstructor(nodes.get(nodes.size()-1))) {
 			return PARTIALCONSTRUCTOR;
-		} else if(nodes.stream().allMatch(e -> getMethod(e)!=null)) {
+		} else if(nodes.stream().allMatch(e -> getMethod(e).isPresent())) {
 			return SEVERALMETHODS;
-		} else if(nodes.stream().allMatch(e -> getMethod(e)== null && e instanceof FieldDeclaration)) {
+		} else if(nodes.stream().allMatch(e -> e instanceof FieldDeclaration)) {
 			return ONLYFIELDS;
 		} else if(nodes.get(0) instanceof ClassOrInterfaceDeclaration && !((ClassOrInterfaceDeclaration)nodes.get(0)).isInterface() && nodes.get(nodes.size()-1) == getLastStatement(nodes.get(0))) {
 			return FULLCLASS;
@@ -85,7 +93,7 @@ public class CloneContents implements MetricEnum<ContentsType>, RequiresNodeOper
 			return HASENUMDECLARATION;
 		} else if(nodes.stream().anyMatch(e -> e instanceof EnumConstantDeclaration)) {
 			return HASENUMFIELDS;
-		} else if(nodes.stream().anyMatch(e -> getMethod(e)== null && e instanceof FieldDeclaration)) {
+		} else if(nodes.stream().anyMatch(e -> e instanceof FieldDeclaration)) {
 			return INCLUDESFIELDS;
 		} else if(nodes.stream().anyMatch(e -> getConstructor(e)!=null)) {
 			return INCLUDESCONSTRUCTOR;

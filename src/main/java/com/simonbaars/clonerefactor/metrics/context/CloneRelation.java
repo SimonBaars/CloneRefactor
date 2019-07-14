@@ -51,7 +51,6 @@ public class CloneRelation implements MetricEnum<RelationType>, SeekClassHierarc
 		ComparingClasses cc = new ComparingClasses(getClass(n1), getClass(n2));
 		ComparingClasses rev = cc.reverse();
 		final Relation relation = new Relation();
-		relation.setRelationIfNotYetDetermined(UNRELATED, () -> cc.invalid() ? Optional.of(new ExtractToNewInterface().getClassOrInterface()) : Optional.empty());
 		relation.setRelationIfNotYetDetermined(SAMECLASS, () -> isSameClass(cc));
 		relation.setRelationIfNotYetDetermined(SAMEMETHOD, () -> isMethod(cc, n1, n2), true);
 		relation.setRelationIfNotYetDetermined(SUPERCLASS, () -> isSuperClass(cc));
@@ -134,9 +133,13 @@ public class CloneRelation implements MetricEnum<RelationType>, SeekClassHierarc
 	}
 
 	private Optional<ClassOrInterfaceDeclaration> isMethod(ComparingClasses cc, Node n1, Node n2) {
-		MethodDeclaration m1 = getMethod(n1);
-		MethodDeclaration m2 = getMethod(n2);
-		return m1!=null && m1 == m2 ? Optional.of(cc.getClassOne()) : Optional.empty();
+		Optional<MethodDeclaration> m1 = getMethod(n1);
+		if(m1.isPresent()) {
+			Optional<MethodDeclaration> m2 = getMethod(n2);
+			if(m2.isPresent() && m1.get() == m2.get())
+				return Optional.of(cc.getClassOne());
+		}
+		return Optional.empty();
 	}
 
 	private Optional<ClassOrInterfaceDeclaration> isSuperClass(ComparingClasses cc) {
