@@ -74,7 +74,7 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 		} else {
 			decl.addModifier(Keyword.PROTECTED);
 		}
-		if(relation.getType() == RelationType.UNRELATED) {
+		if(relation.isEffectivelyUnrelated()) {
 			Set<ClassOrInterfaceDeclaration> classOrInterface = s.getLocations().stream().map(l -> getClass(l.getContents().getNodes().get(0)).get()).collect(Collectors.toSet());
 			ClassOrInterfaceType implementedType = new JavaParser().parseClassOrInterfaceType(relation.getIntersectingClass().getNameAsString()).getResult().get();
 			classOrInterface.stream().filter(c -> c.getImplementedTypes().stream().noneMatch(t -> t.getNameAsString().equals(implementedType.getNameAsString()))).forEach(c -> c.addImplementedType(implementedType));

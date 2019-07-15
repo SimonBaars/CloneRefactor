@@ -56,4 +56,8 @@ public class Relation {
 	public boolean isSameClass() {
 		return type == RelationType.SAMECLASS || type == RelationType.SAMEMETHOD;
 	}
+
+	public boolean isEffectivelyUnrelated() {
+		return type == RelationType.UNRELATED || type == RelationType.EXTERNALSUPERCLASS;
+	}
 }
