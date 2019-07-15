@@ -21,7 +21,6 @@ import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
-import com.simonbaars.clonerefactor.metrics.context.analyze.CloneRelation.RelationType;
 import com.simonbaars.clonerefactor.metrics.context.interfaces.MetricEnum;
 import com.simonbaars.clonerefactor.metrics.context.relation.SeekClassHierarchy;
 import com.simonbaars.clonerefactor.metrics.context.relation.SeekInterfaceHierarchy;
