@@ -74,7 +74,8 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 			Set<ClassOrInterfaceDeclaration> classOrInterface = s.getLocations().stream().map(l -> getClass(l.getContents().getNodes().get(0)).get()).collect(Collectors.toSet());
 			ClassOrInterfaceType implementedType = new JavaParser().parseClassOrInterfaceType(relation.getIntersectingClass().getNameAsString()).getResult().get();
 			classOrInterface.stream().filter(c -> c.getImplementedTypes().stream().noneMatch(t -> t.getNameAsString().equals(implementedType.getNameAsString()))).forEach(c -> c.addImplementedType(implementedType));
-		} else new ExtractToClassOrInterface(relation.getIntersectingClass()).extract(decl);
+		} 
+		new ExtractToClassOrInterface(relation.getIntersectingClass()).extract(decl);
 		if(relation.getIntersectingClass().isInterface()) {
 			decl.addModifier(Keyword.DEFAULT, Keyword.PUBLIC);
 		} else if(relation.isSameClass()) {
