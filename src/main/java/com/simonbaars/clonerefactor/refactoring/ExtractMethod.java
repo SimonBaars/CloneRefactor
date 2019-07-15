@@ -96,14 +96,17 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 
 	private void writeRefactoringsToFile(List<ExpressionStmt> methodcalls, Sequence s, MethodDeclaration decl) {
 		try {
-			for(CompilationUnit p : getUniqueLocations(methodcalls))
-				FileUtils.writeStringToFile(SavePaths.createDirForFile(SavePaths.getRefactorFolder()+p.getFile().toString().replace(folder.getParent().toString(), "").substring(1)), getCompilationUnit(p.getAnyNode()).get().toString());
+			for(CompilationUnit cu : getUniqueLocations(methodcalls))
+				FileUtils.writeStringToFile(SavePaths.createDirForFile(compilationUnitFilePath(cu)), cu.toString());
 			CompilationUnit unit = getCompilationUnit(decl).get();
-			FileUtils.writeStringToFile(new File(SavePaths.getRefactorFolder() + folder.getFileName() + File.separator + packageToPath(unit) + getClassName(unit) + ".java"), unit.toString());
-			System.out.println("Wrote to "+folder + File.separator + packageToPath(unit) + getClassName(unit) + ".java");
+			FileUtils.writeStringToFile(new File(compilationUnitFilePath(unit)), unit.toString());
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	private String compilationUnitFilePath(CompilationUnit unit) {
+		return SavePaths.getRefactorFolder() + folder.getFileName() + File.separator + packageToPath(unit) + getClassName(unit) + ".java";
 	}
 
 	private Set<CompilationUnit> getUniqueLocations(List<ExpressionStmt> methodcalls) {
