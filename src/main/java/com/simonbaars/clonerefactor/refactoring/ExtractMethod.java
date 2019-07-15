@@ -71,6 +71,10 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 		if(relation.isEffectivelyUnrelated())
 			createRelation(s, relation);
 		new ExtractToClassOrInterface(relation.getIntersectingClass()).extract(decl);
+		addKeywords(decl, relation);
+	}
+
+	private void addKeywords(MethodDeclaration decl, Relation relation) {
 		if(relation.getIntersectingClass().isInterface()) {
 			decl.addModifier(Keyword.DEFAULT, Keyword.PUBLIC);
 		} else if(relation.isSameClass()) {
