@@ -79,7 +79,7 @@ public class NodeParser implements SetsIfNotNull, DeterminesNodeTokens {
 
 	private boolean handleInvalidOrder(Location thisLocation) {
 		Location prev = thisLocation.getPrev();
-		while(thisLocation.getFile() == prev.getFile() && thisLocation.getContents().getNodes().get(0).getRange().get().begin.isBefore(prev.getContents().getNodes().get(0).getRange().get().begin))
+		while(thisLocation.getFile() == prev.getFile() && thisLocation.getAnyNode().getRange().get().begin.isBefore(prev.getAnyNode().getRange().get().begin))
 			prev = prev.getPrev();
 		if(prev == thisLocation.getPrev())
 			return false;

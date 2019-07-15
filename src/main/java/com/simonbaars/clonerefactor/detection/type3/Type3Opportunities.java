@@ -50,7 +50,7 @@ public class Type3Opportunities implements Type3Calculation, CalculatesPercentag
 			Location l2 = fl2.getLocs().get(i);
 			if(l1.getFile() != l2.getFile())
 				return false;
-			if(!(Settings.get().isUseLiteratureTypeDefinitions() || parentsEqual(l1.getContents().getNodes().get(l1.getContents().getNodes().size()-1).getParentNode(), l2.getContents().getNodes().get(0).getParentNode())))
+			if(!(Settings.get().isUseLiteratureTypeDefinitions() || parentsEqual(l1.getContents().getNodes().get(l1.getContents().getNodes().size()-1).getParentNode(), l2.getAnyNode().getParentNode())))
 				return false;
 			if(l1.getRange().begin.isBefore(l2.getRange().begin)) {
 				return checkType3Threshold(l1, l2);

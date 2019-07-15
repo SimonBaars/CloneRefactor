@@ -68,10 +68,10 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 	private void placeMethodOnBasisOfRelation(Sequence s, MethodDeclaration decl) {
 		Relation relation = s.getRelation();
 		if(relation.isEffectivelyUnrelated()) {
-			Optional<PackageDeclaration> pack = getCompilationUnit(s.getAny().getContents().getNodes().get(0)).get().getPackageDeclaration();
+			Optional<PackageDeclaration> pack = getCompilationUnit(s.getAny().getAnyNode()).get().getPackageDeclaration();
 			CompilationUnit cu = pack.isPresent() ? new CompilationUnit(pack.get().getNameAsString()) : new CompilationUnit();
 			relation.setIntersectingClass(cu.addInterface("cloneRefactor"+(x++), Keyword.PUBLIC));
-			Set<ClassOrInterfaceDeclaration> classOrInterface = s.getLocations().stream().map(l -> getClass(l.getContents().getNodes().get(0)).get()).collect(Collectors.toSet());
+			Set<ClassOrInterfaceDeclaration> classOrInterface = s.getLocations().stream().map(l -> getClass(l.getAnyNode()).get()).collect(Collectors.toSet());
 			ClassOrInterfaceType implementedType = new JavaParser().parseClassOrInterfaceType(relation.getIntersectingClass().getNameAsString()).getResult().get();
 			classOrInterface.stream().filter(c -> c.getImplementedTypes().stream().noneMatch(t -> t.getNameAsString().equals(implementedType.getNameAsString()))).forEach(c -> c.addImplementedType(implementedType));
 		} 
@@ -83,7 +83,6 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 		} else {
 			decl.addModifier(Keyword.PROTECTED);
 		}
-		
 	}
 
 	private void writeRefactoringsToFile(Sequence s, MethodDeclaration decl) {
