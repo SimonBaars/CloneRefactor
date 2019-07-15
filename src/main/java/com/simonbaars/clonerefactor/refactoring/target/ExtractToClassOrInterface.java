@@ -8,7 +8,7 @@ import com.simonbaars.clonerefactor.model.Sequence;
 public class ExtractToClassOrInterface implements ExtractionTarget, RequiresNodeContext {
 	private final ClassOrInterfaceDeclaration classOrInterface;
 
-	protected ExtractToClassOrInterface(ClassOrInterfaceDeclaration classOrInterface) {
+	public ExtractToClassOrInterface(ClassOrInterfaceDeclaration classOrInterface) {
 		super();
 		this.classOrInterface = classOrInterface;
 	}

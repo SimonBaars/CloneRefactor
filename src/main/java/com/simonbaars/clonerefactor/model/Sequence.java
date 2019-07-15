@@ -150,4 +150,8 @@ public class Sequence implements Comparable<Sequence> {
 		Collections.sort(locations);
 		if(reverse) Collections.reverse(locations);
 	}
+
+	public Relation getRelation() {
+		return relation;
+	}
 }

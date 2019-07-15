@@ -52,4 +52,8 @@ public class Relation {
 	public String toString() {
 		return "Relation [type=" + type + ", intersectingClass=" + intersectingClass + "]";
 	}
+
+	public boolean isSameClass() {
+		return type == RelationType.SAMECLASS || type == RelationType.SAMEMETHOD;
+	}
 }

@@ -26,6 +26,7 @@ import com.simonbaars.clonerefactor.datatype.map.ListMap;
 import com.simonbaars.clonerefactor.metrics.context.analyze.CloneRefactorability.Refactorability;
 import com.simonbaars.clonerefactor.metrics.context.analyze.CloneRelation.RelationType;
 import com.simonbaars.clonerefactor.metrics.context.interfaces.RequiresNodeContext;
+import com.simonbaars.clonerefactor.metrics.model.Relation;
 import com.simonbaars.clonerefactor.model.Sequence;
 import com.simonbaars.clonerefactor.model.location.Location;
 import com.simonbaars.clonerefactor.refactoring.target.ExtractToClassOrInterface;
@@ -50,7 +51,7 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 
 	private void extractMethod(Sequence s) {
 		String methodName = "cloneRefactor"+(x++);
-		MethodDeclaration decl = new MethodDeclaration(Modifier.createModifierList(Keyword.PRIVATE), getReturnType(s.getAny()), methodName);
+		MethodDeclaration decl = new MethodDeclaration(Modifier.createModifierList(Keyword.FINAL), getReturnType(s.getAny()), methodName);
 		placeMethodOnBasisOfRelation(s, decl);
 		removeLowestNodes(s, methodName);
 		
@@ -61,12 +62,16 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 	}
 
 	private void placeMethodOnBasisOfRelation(Sequence s, MethodDeclaration decl) {
-		RelationType relation = s.getRelationType();
-		if(relation == RelationType.SAMECLASS || relation == RelationType.SAMEMETHOD) {
-			new ExtractToClassOrInterface(s).extract(decl);
-		} else if (relation == RelationType.UNRELATED) {
-			new ExtractToNewInterface(s).extract(decl);
+		Relation relation = s.getRelation();
+		new ExtractToClassOrInterface(relation.getIntersectingClass()).extract(decl);
+		if(relation.getIntersectingClass().isInterface()) {
+			decl.addModifier(Keyword.DEFAULT, Keyword.PUBLIC);
+		} else if(relation.isSameClass()) {
+			decl.addModifier(Keyword.PRIVATE);
+		} else {
+			decl.addModifier(Keyword.PROTECTED);
 		}
+		
 	}
 
 	private void writeRefactoringsToFile(Sequence s, MethodDeclaration decl) {
