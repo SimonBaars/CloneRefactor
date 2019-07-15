@@ -68,14 +68,8 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 
 	private void placeMethodOnBasisOfRelation(Sequence s, MethodDeclaration decl) {
 		Relation relation = s.getRelation();
-		if(relation.isEffectivelyUnrelated()) {
-			Optional<PackageDeclaration> pack = getCompilationUnit(s.getAny().getAnyNode()).get().getPackageDeclaration();
-			CompilationUnit cu = pack.isPresent() ? new CompilationUnit(pack.get().getNameAsString()) : new CompilationUnit();
-			relation.setIntersectingClass(cu.addInterface("CloneRefactor"+(x++), Keyword.PUBLIC));
-			Set<ClassOrInterfaceDeclaration> classOrInterface = s.getLocations().stream().map(l -> getClass(l.getAnyNode()).get()).collect(Collectors.toSet());
-			ClassOrInterfaceType implementedType = new JavaParser().parseClassOrInterfaceType(relation.getIntersectingClass().getNameAsString()).getResult().get();
-			classOrInterface.stream().filter(c -> c.getImplementedTypes().stream().noneMatch(t -> t.getNameAsString().equals(implementedType.getNameAsString()))).forEach(c -> c.addImplementedType(implementedType));
-		} 
+		if(relation.isEffectivelyUnrelated())
+			createRelation(s, relation);
 		new ExtractToClassOrInterface(relation.getIntersectingClass()).extract(decl);
 		if(relation.getIntersectingClass().isInterface()) {
 			decl.addModifier(Keyword.DEFAULT, Keyword.PUBLIC);
@@ -84,6 +78,15 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 		} else {
 			decl.addModifier(Keyword.PROTECTED);
 		}
+	}
+
+	private void createRelation(Sequence s, Relation relation) {
+		Optional<PackageDeclaration> pack = getCompilationUnit(s.getAny().getAnyNode()).get().getPackageDeclaration();
+		CompilationUnit cu = pack.isPresent() ? new CompilationUnit(pack.get().getNameAsString()) : new CompilationUnit();
+		relation.setIntersectingClass(cu.addInterface("CloneRefactor"+(x++), Keyword.PUBLIC));
+		Set<ClassOrInterfaceDeclaration> classOrInterface = s.getLocations().stream().map(l -> getClass(l.getAnyNode()).get()).collect(Collectors.toSet());
+		ClassOrInterfaceType implementedType = new JavaParser().parseClassOrInterfaceType(relation.getIntersectingClass().getNameAsString()).getResult().get();
+		classOrInterface.stream().filter(c -> c.getImplementedTypes().stream().noneMatch(t -> t.getNameAsString().equals(implementedType.getNameAsString()))).forEach(c -> c.addImplementedType(implementedType));
 	}
 
 	private void writeRefactoringsToFile(Sequence s, MethodDeclaration decl) {
