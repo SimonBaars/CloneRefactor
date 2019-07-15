@@ -43,9 +43,8 @@ public class Relation {
 		}
 	}
 
-	public void unrelated(ClassOrInterfaceDeclaration classOrInterface) {
-		this.type = RelationType.UNRELATED;
-		this.intersectingClass = classOrInterface;
+	public void unrelated(boolean isExternal) {
+		this.type = isExternal ? RelationType.EXTERNALSUPERCLASS : RelationType.UNRELATED;
 	}
 
 	@Override
@@ -59,5 +58,9 @@ public class Relation {
 
 	public boolean isEffectivelyUnrelated() {
 		return type == RelationType.UNRELATED || type == RelationType.EXTERNALSUPERCLASS;
+	}
+
+	public void setIntersectingClass(ClassOrInterfaceDeclaration addInterface) {
+		this.intersectingClass = addInterface;
 	}
 }

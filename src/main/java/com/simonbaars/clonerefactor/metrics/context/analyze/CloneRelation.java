@@ -2,7 +2,6 @@ package com.simonbaars.clonerefactor.metrics.context.analyze;
 
 import static com.simonbaars.clonerefactor.metrics.context.analyze.CloneRelation.RelationType.ANCESTOR;
 import static com.simonbaars.clonerefactor.metrics.context.analyze.CloneRelation.RelationType.COMMONHIERARCHY;
-import static com.simonbaars.clonerefactor.metrics.context.analyze.CloneRelation.RelationType.EXTERNALSUPERCLASS;
 import static com.simonbaars.clonerefactor.metrics.context.analyze.CloneRelation.RelationType.FIRSTCOUSIN;
 import static com.simonbaars.clonerefactor.metrics.context.analyze.CloneRelation.RelationType.SAMECLASS;
 import static com.simonbaars.clonerefactor.metrics.context.analyze.CloneRelation.RelationType.SAMEINTERFACE;
@@ -27,7 +26,6 @@ import com.simonbaars.clonerefactor.metrics.context.relation.SeekInterfaceHierar
 import com.simonbaars.clonerefactor.metrics.model.ComparingClasses;
 import com.simonbaars.clonerefactor.metrics.model.Relation;
 import com.simonbaars.clonerefactor.model.Sequence;
-import com.simonbaars.clonerefactor.refactoring.target.ExtractToNewInterface;
 
 public class CloneRelation implements MetricEnum<Relation>, SeekClassHierarchy, SeekInterfaceHierarchy { 
 	public enum RelationType { //Please note that the order of these enum constants matters
@@ -67,9 +65,8 @@ public class CloneRelation implements MetricEnum<Relation>, SeekClassHierarchy, 
 		relation.setRelationIfNotYetDetermined(FIRSTCOUSIN, () -> isFirstCousin(cc));
 		relation.setRelationIfNotYetDetermined(COMMONHIERARCHY, () -> sameHierarchy(classes, cc));
 		relation.setRelationIfNotYetDetermined(SAMEINTERFACE, () -> sameInterface(classes, cc));
-		relation.setRelationIfNotYetDetermined(EXTERNALSUPERCLASS, () -> hasExternalSuperclass(cc) ? Optional.of(new ExtractToNewInterface().getClassOrInterface()) : Optional.empty());
 		if(relation.getType() == null)
-			relation.unrelated(new ExtractToNewInterface().getClassOrInterface());
+			relation.unrelated(hasExternalSuperclass(cc));
 		return relation;
 	}
 
