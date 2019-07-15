@@ -173,4 +173,8 @@ public class Location implements Comparable<Location>, HasRange {
 	public boolean overlapsWith(Location other) {
 		return getRange().contains(other.getRange());
 	}
+	
+	public Node getAnyNode() {
+		return getContents().getNodes().get(0);
+	}
 }
