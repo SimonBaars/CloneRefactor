@@ -1,5 +1,6 @@
 package com.simonbaars.clonerefactor.refactoring;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -70,7 +71,7 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 		if(relation.isEffectivelyUnrelated()) {
 			Optional<PackageDeclaration> pack = getCompilationUnit(s.getAny().getAnyNode()).get().getPackageDeclaration();
 			CompilationUnit cu = pack.isPresent() ? new CompilationUnit(pack.get().getNameAsString()) : new CompilationUnit();
-			relation.setIntersectingClass(cu.addInterface("cloneRefactor"+(x++), Keyword.PUBLIC));
+			relation.setIntersectingClass(cu.addInterface("CloneRefactor"+(x++), Keyword.PUBLIC));
 			Set<ClassOrInterfaceDeclaration> classOrInterface = s.getLocations().stream().map(l -> getClass(l.getAnyNode()).get()).collect(Collectors.toSet());
 			ClassOrInterfaceType implementedType = new JavaParser().parseClassOrInterfaceType(relation.getIntersectingClass().getNameAsString()).getResult().get();
 			classOrInterface.stream().filter(c -> c.getImplementedTypes().stream().noneMatch(t -> t.getNameAsString().equals(implementedType.getNameAsString()))).forEach(c -> c.addImplementedType(implementedType));
@@ -86,13 +87,22 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 	}
 
 	private void writeRefactoringsToFile(Sequence s, MethodDeclaration decl) {
-		for(Location p : getUniqueLocations(s.getLocations())) {
-			try {
+		try {
+			for(Location p : getUniqueLocations(s.getLocations()))
 				FileUtils.writeStringToFile(SavePaths.createDirForFile(SavePaths.getRefactorFolder()+p.getFile().toString().replace(folder.getParent().toString(), "").substring(1)), getCompilationUnit(s.getAny().getAnyNode()).get().toString());
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+			CompilationUnit unit = getCompilationUnit(decl).get();
+			FileUtils.writeStringToFile(new File(folder + File.separator + packageToPath(unit) + getClassName(unit) + ".java"), unit.toString());
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
+	}
+
+	private String packageToPath(CompilationUnit unit) {
+		return unit.getPackageDeclaration().isPresent() ? unit.getPackageDeclaration().get().getNameAsString().replace('.', File.separatorChar) : "";
+	}
+
+	private String getClassName(CompilationUnit unit) {
+		return unit.getChildNodes().stream().filter(e -> e instanceof ClassOrInterfaceDeclaration).map(e -> (ClassOrInterfaceDeclaration)e).findAny().get().getNameAsString();
 	}
 
 	private void removeLowestNodes(Sequence s, String methodName) {
