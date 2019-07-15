@@ -89,9 +89,9 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 	private void writeRefactoringsToFile(Sequence s, MethodDeclaration decl) {
 		try {
 			for(Location p : getUniqueLocations(s.getLocations()))
-				FileUtils.writeStringToFile(SavePaths.createDirForFile(SavePaths.getRefactorFolder()+p.getFile().toString().replace(folder.getParent().toString(), "").substring(1)), getCompilationUnit(s.getAny().getAnyNode()).get().toString());
+				FileUtils.writeStringToFile(SavePaths.createDirForFile(SavePaths.getRefactorFolder()+p.getFile().toString().replace(folder.getParent().toString(), "").substring(1)), getCompilationUnit(p.getAnyNode()).get().toString());
 			CompilationUnit unit = getCompilationUnit(decl).get();
-			FileUtils.writeStringToFile(new File(folder + File.separator + packageToPath(unit) + getClassName(unit) + ".java"), unit.toString());
+			FileUtils.writeStringToFile(new File(SavePaths.getRefactorFolder() + folder.getFileName() + File.separator + packageToPath(unit) + getClassName(unit) + ".java"), unit.toString());
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
