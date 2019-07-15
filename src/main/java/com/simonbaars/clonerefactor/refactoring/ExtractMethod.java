@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -58,12 +59,12 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 		String methodName = "cloneRefactor"+(x++);
 		MethodDeclaration decl = new MethodDeclaration(Modifier.createModifierList(Keyword.FINAL), getReturnType(s.getAny()), methodName);
 		placeMethodOnBasisOfRelation(s, decl);
-		removeLowestNodes(s, methodName);
+		List<ExpressionStmt> methodcalls = removeLowestNodes(s, methodName);
 		
 		s.getAny().getContents().getNodes().forEach(node -> decl.getBody().get().addStatement((Statement)node));
 		
 		refactoredSequences.put(s, decl);
-		writeRefactoringsToFile(s, decl);
+		writeRefactoringsToFile(methodcalls, s, decl);
 	}
 
 	private void placeMethodOnBasisOfRelation(Sequence s, MethodDeclaration decl) {
@@ -93,15 +94,20 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 		classOrInterface.stream().filter(c -> c.getImplementedTypes().stream().noneMatch(t -> t.getNameAsString().equals(implementedType.getNameAsString()))).forEach(c -> c.addImplementedType(implementedType));
 	}
 
-	private void writeRefactoringsToFile(Sequence s, MethodDeclaration decl) {
+	private void writeRefactoringsToFile(List<ExpressionStmt> methodcalls, Sequence s, MethodDeclaration decl) {
 		try {
-			for(Location p : getUniqueLocations(s.getLocations()))
+			for(CompilationUnit p : getUniqueLocations(methodcalls))
 				FileUtils.writeStringToFile(SavePaths.createDirForFile(SavePaths.getRefactorFolder()+p.getFile().toString().replace(folder.getParent().toString(), "").substring(1)), getCompilationUnit(p.getAnyNode()).get().toString());
 			CompilationUnit unit = getCompilationUnit(decl).get();
 			FileUtils.writeStringToFile(new File(SavePaths.getRefactorFolder() + folder.getFileName() + File.separator + packageToPath(unit) + getClassName(unit) + ".java"), unit.toString());
+			System.out.println("Wrote to "+folder + File.separator + packageToPath(unit) + getClassName(unit) + ".java");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	private Set<CompilationUnit> getUniqueLocations(List<ExpressionStmt> methodcalls) {
+		return methodcalls.stream().map(e -> getCompilationUnit(e)).filter(e -> e.isPresent()).map(e -> e.get()).collect(Collectors.toSet());
 	}
 
 	private String packageToPath(CompilationUnit unit) {
@@ -112,7 +118,7 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 		return unit.getChildNodes().stream().filter(e -> e instanceof ClassOrInterfaceDeclaration).map(e -> (ClassOrInterfaceDeclaration)e).findAny().get().getNameAsString();
 	}
 
-	private void removeLowestNodes(Sequence s, String methodName) {
+	private List<ExpressionStmt> removeLowestNodes(Sequence s, String methodName) {
 		ListMap<Location, Node> lowestNodes = new ListMap<>();
 		Map<Location, BlockStmt> insideBlock = new HashMap<>();
 		s.getLocations().forEach(e -> {
@@ -122,24 +128,15 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 				insideBlock.put(e, (BlockStmt)lowest.get(0).getParentNode().get());
 		});
 		if(lowestNodes.size() == insideBlock.size())
-			s.getLocations().forEach(l -> removeLowestNodes(lowestNodes.get(l), insideBlock.get(l), methodName));
+			return s.getLocations().stream().map(l -> removeLowestNodes(lowestNodes.get(l), insideBlock.get(l), methodName)).collect(Collectors.toList());
+		return Collections.emptyList();
 	}
 
-	private void removeLowestNodes(List<Node> lowestNodes, BlockStmt inBlock, String methodName) {
-		inBlock.getStatements().add(inBlock.getStatements().indexOf(lowestNodes.get(0)), new ExpressionStmt(new MethodCallExpr(methodName)));
+	private ExpressionStmt removeLowestNodes(List<Node> lowestNodes, BlockStmt inBlock, String methodName) {
+		ExpressionStmt methodcall = new ExpressionStmt(new MethodCallExpr(methodName));
+		inBlock.getStatements().add(inBlock.getStatements().indexOf(lowestNodes.get(0)), methodcall);
 		lowestNodes.forEach(inBlock::remove);
-	}
-
-	private List<Location> getUniqueLocations(List<Location> locations) {
-		Set<Path> set = new HashSet<>();
-		List<Location> list = new ArrayList<>();
-		for(Location location : locations) {
-			if(!set.contains(location.getFile())) {
-				list.add(location);
-				set.add(location.getFile());
-			}
-		}
-		return list;
+		return methodcall;
 	}
 
 	private Type getReturnType(Location any) {
