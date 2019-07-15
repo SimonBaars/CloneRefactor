@@ -12,9 +12,11 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.github.javaparser.JavaParser;
+import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Modifier;
 import com.github.javaparser.ast.Modifier.Keyword;
 import com.github.javaparser.ast.Node;
+import com.github.javaparser.ast.PackageDeclaration;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.expr.MethodCallExpr;
@@ -28,7 +30,6 @@ import com.github.javaparser.ast.type.VoidType;
 import com.simonbaars.clonerefactor.ast.interfaces.RequiresNodeOperations;
 import com.simonbaars.clonerefactor.datatype.map.ListMap;
 import com.simonbaars.clonerefactor.metrics.context.analyze.CloneRefactorability.Refactorability;
-import com.simonbaars.clonerefactor.metrics.context.analyze.CloneRelation.RelationType;
 import com.simonbaars.clonerefactor.metrics.context.interfaces.RequiresNodeContext;
 import com.simonbaars.clonerefactor.metrics.model.Relation;
 import com.simonbaars.clonerefactor.model.Sequence;
@@ -66,7 +67,14 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 
 	private void placeMethodOnBasisOfRelation(Sequence s, MethodDeclaration decl) {
 		Relation relation = s.getRelation();
-		new ExtractToClassOrInterface(relation.getIntersectingClass()).extract(decl);
+		if(relation.isEffectivelyUnrelated()) {
+			Optional<PackageDeclaration> pack = getCompilationUnit(s.getAny().getContents().getNodes().get(0)).get().getPackageDeclaration();
+			CompilationUnit cu = pack.isPresent() ? new CompilationUnit(pack.get().getNameAsString()) : new CompilationUnit();
+			relation.setIntersectingClass(cu.addInterface("cloneRefactor"+(x++), Keyword.PUBLIC));
+			Set<ClassOrInterfaceDeclaration> classOrInterface = s.getLocations().stream().map(l -> getClass(l.getContents().getNodes().get(0)).get()).collect(Collectors.toSet());
+			ClassOrInterfaceType implementedType = new JavaParser().parseClassOrInterfaceType(relation.getIntersectingClass().getNameAsString()).getResult().get();
+			classOrInterface.stream().filter(c -> c.getImplementedTypes().stream().noneMatch(t -> t.getNameAsString().equals(implementedType.getNameAsString()))).forEach(c -> c.addImplementedType(implementedType));
+		} else new ExtractToClassOrInterface(relation.getIntersectingClass()).extract(decl);
 		if(relation.getIntersectingClass().isInterface()) {
 			decl.addModifier(Keyword.DEFAULT, Keyword.PUBLIC);
 		} else if(relation.isSameClass()) {
@@ -74,11 +82,7 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 		} else {
 			decl.addModifier(Keyword.PROTECTED);
 		}
-		if(relation.isEffectivelyUnrelated()) {
-			Set<ClassOrInterfaceDeclaration> classOrInterface = s.getLocations().stream().map(l -> getClass(l.getContents().getNodes().get(0)).get()).collect(Collectors.toSet());
-			ClassOrInterfaceType implementedType = new JavaParser().parseClassOrInterfaceType(relation.getIntersectingClass().getNameAsString()).getResult().get();
-			classOrInterface.stream().filter(c -> c.getImplementedTypes().stream().noneMatch(t -> t.getNameAsString().equals(implementedType.getNameAsString()))).forEach(c -> c.addImplementedType(implementedType));
-		}
+		
 	}
 
 	private void writeRefactoringsToFile(Sequence s, MethodDeclaration decl) {
