@@ -3,10 +3,8 @@ package com.simonbaars.clonerefactor.refactoring;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -57,7 +55,7 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 
 	private void extractMethod(Sequence s) {
 		String methodName = "cloneRefactor"+(x++);
-		MethodDeclaration decl = new MethodDeclaration(Modifier.createModifierList(Keyword.FINAL), getReturnType(s.getAny()), methodName);
+		MethodDeclaration decl = new MethodDeclaration(Modifier.createModifierList(), getReturnType(s.getAny()), methodName);
 		placeMethodOnBasisOfRelation(s, decl);
 		List<ExpressionStmt> methodcalls = removeLowestNodes(s, methodName);
 		

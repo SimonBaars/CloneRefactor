@@ -23,7 +23,7 @@ import com.simonbaars.clonerefactor.settings.CloneType;
 public class Type2Variability implements CalculatesPercentages, ChecksThresholds, ChecksForComparability {
 	public List<Sequence> determineVariability(Sequence s) {
 		List<List<Compare>> literals = createLiteralList(s);
-		int[][] equalityArray = createEqualityArray(literals);
+		int[/*location*/][/*compare*/] equalityArray = createEqualityArray(literals);
 		if(globalThresholdsMet(equalityArray, s.getLocations().stream().mapToInt(e -> e.getContents().getTokens().size()).sum())) // We first check the thresholds for the entire sequence. If those are not met, we will try to create smaller sequences
 			return Collections.singletonList(s);
 		return findAllValidSubSequences(s, literals, equalityArray);
