@@ -21,14 +21,14 @@ import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
-import com.simonbaars.clonerefactor.metrics.context.interfaces.MetricEnum;
+import com.simonbaars.clonerefactor.metrics.context.interfaces.DeterminesMetric;
 import com.simonbaars.clonerefactor.metrics.context.relation.SeekClassHierarchy;
 import com.simonbaars.clonerefactor.metrics.context.relation.SeekInterfaceHierarchy;
 import com.simonbaars.clonerefactor.metrics.model.ComparingClasses;
 import com.simonbaars.clonerefactor.metrics.model.Relation;
 import com.simonbaars.clonerefactor.model.Sequence;
 
-public class CloneRelation implements MetricEnum<Relation>, SeekClassHierarchy, SeekInterfaceHierarchy { 
+public class CloneRelation implements DeterminesMetric<Relation>, SeekClassHierarchy, SeekInterfaceHierarchy { 
 	public enum RelationType { //Please note that the order of these enum constants matters
 		SAMEMETHOD, // Refactor to same class as a private method
 		SAMECLASS, // Refactor to same class as a private method

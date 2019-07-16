@@ -18,11 +18,11 @@ import com.github.javaparser.ast.stmt.SwitchStmt;
 import com.github.javaparser.ast.stmt.WhileStmt;
 import com.simonbaars.clonerefactor.ast.interfaces.RequiresNodeOperations;
 import com.simonbaars.clonerefactor.metrics.context.analyze.CloneRefactorability.Refactorability;
-import com.simonbaars.clonerefactor.metrics.context.interfaces.MetricEnum;
+import com.simonbaars.clonerefactor.metrics.context.interfaces.DeterminesMetric;
 import com.simonbaars.clonerefactor.model.Sequence;
 import com.simonbaars.clonerefactor.model.location.Location;
 
-public class CloneRefactorability implements MetricEnum<Refactorability>, RequiresNodeOperations {
+public class CloneRefactorability implements DeterminesMetric<Refactorability>, RequiresNodeOperations {
 	public enum Refactorability{
 		CANBEEXTRACTED, //Can be extracted
 		NOEXTRACTIONBYCONTENTTYPE, //When the clone is not a partial method
