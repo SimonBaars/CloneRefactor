@@ -5,9 +5,7 @@ import java.util.List;
 import com.simonbaars.clonerefactor.model.Sequence;
 
 public interface RemovesDuplicates {
-	//TODO: We should optimise this method. It takes up 5%+ of the total runtime.
 	public default boolean removeDuplicatesOf(List<Sequence> clones, Sequence l) {
-		//return true;
 		clones.removeIf(e -> isSubset(e, l));
 		return clones.stream().noneMatch(e -> isSubset(l, e));
 	}
