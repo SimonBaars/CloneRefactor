@@ -28,6 +28,8 @@ public class CloneRefactorability implements DeterminesMetric<Refactorability>, 
 	public Refactorability get(Sequence sequence) {
 		if(new CloneContents().get(sequence)!=ContentsType.PARTIALMETHOD)
 			return Refactorability.NOEXTRACTIONBYCONTENTTYPE;
+		else if (hasOverlap(sequence))
+			return Refactorability.OVERLAPS;
 		else if(isPartialBlock(sequence))
 			return Refactorability.PARTIALBLOCK;
 		else if(hasComplexControlFlow(sequence))
@@ -35,6 +37,19 @@ public class CloneRefactorability implements DeterminesMetric<Refactorability>, 
 		return Refactorability.CANBEEXTRACTED;
 	}
 	
+	private boolean hasOverlap(Sequence sequence) {
+		for(int i = 0; i<sequence.size(); i++) {
+			for(int j = i+1; j<sequence.size(); j++) {
+				Location location1 = sequence.getLocations().get(i);
+				Location location2 = sequence.getLocations().get(j);
+				if(location1.getFile().equals(location2.getFile()) &&
+						location1.overlapsWith(location2))
+					return true;
+			}
+		}
+		return false;
+	}
+
 	private boolean isPartialBlock(Sequence sequence) {
 		for(Location location : sequence.getLocations()) {
 			for(Node n : location.getContents().getNodes()) {
