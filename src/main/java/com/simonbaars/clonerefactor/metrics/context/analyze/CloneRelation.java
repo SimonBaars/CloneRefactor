@@ -9,6 +9,7 @@ import static com.simonbaars.clonerefactor.metrics.context.analyze.CloneRelation
 import static com.simonbaars.clonerefactor.metrics.context.analyze.CloneRelation.RelationType.SIBLING;
 import static com.simonbaars.clonerefactor.metrics.context.analyze.CloneRelation.RelationType.SUPERCLASS;
 import static com.simonbaars.clonerefactor.metrics.context.analyze.CloneRelation.RelationType.UNRELATED;
+import static com.simonbaars.clonerefactor.metrics.context.analyze.CloneRelation.RelationType.NOSUPERCLASS;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -66,9 +67,14 @@ public class CloneRelation implements MetricEnum<Relation>, SeekClassHierarchy, 
 		relation.setRelationIfNotYetDetermined(FIRSTCOUSIN, () -> isFirstCousin(cc));
 		relation.setRelationIfNotYetDetermined(COMMONHIERARCHY, () -> sameHierarchy(classes, cc));
 		relation.setRelationIfNotYetDetermined(SAMEINTERFACE, () -> sameInterface(classes, cc));
+		relation.setRelationIfNotYetDetermined(NOSUPERCLASS, () -> noSuperclass(cc));
 		if(relation.getType() == null)
 			relation.unrelated(hasExternalSuperclass(cc));
 		return relation;
+	}
+
+	private Optional<ClassOrInterfaceDeclaration> noSuperclass(ComparingClasses cc) {
+		return cc.getClassOne().getExtendedTypes().isEmpty() && cc.getClassTwo().getExtendedTypes().isEmpty() ? Optional.of(cc.getClassOne()) : Optional.empty();
 	}
 
 	private Optional<ClassOrInterfaceDeclaration> isSameClass(ComparingClasses cc) {
