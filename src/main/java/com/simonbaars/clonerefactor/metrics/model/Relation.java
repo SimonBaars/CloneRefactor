@@ -28,11 +28,11 @@ public class Relation {
 		return intersectingClass;
 	}
 	
-	public void setRelationIfNotYetDetermined(RelationType type, /*BiFunction<ComparingClasses, Map<String, ClassOrInterfaceDeclaration>, Optional<ClassOrInterfaceDeclaration>> fetchRelation*/ Supplier<Optional<ClassOrInterfaceDeclaration>> fetchRelation) {
+	public void setRelationIfNotYetDetermined(RelationType type, Supplier<Optional<ClassOrInterfaceDeclaration>> fetchRelation) {
 		setRelationIfNotYetDetermined(type, fetchRelation, false);
 	}
 	
-	public void setRelationIfNotYetDetermined(RelationType type, /*BiFunction<ComparingClasses, Map<String, ClassOrInterfaceDeclaration>, Optional<ClassOrInterfaceDeclaration>> fetchRelation*/ Supplier<Optional<ClassOrInterfaceDeclaration>> fetchRelation, boolean replaceType) {
+	public void setRelationIfNotYetDetermined(RelationType type, Supplier<Optional<ClassOrInterfaceDeclaration>> fetchRelation, boolean replaceType) {
 		if((!replaceType && this.type == null) || (replaceType && this.type!=null)){
 			Optional<ClassOrInterfaceDeclaration> result = fetchRelation.get();
 			if(result.isPresent()) {
