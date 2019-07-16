@@ -37,8 +37,8 @@ public class CloneRelation implements MetricEnum<Relation>, SeekClassHierarchy, 
 		SIBLING, // Refactor to common parent class as a protected method
 		FIRSTCOUSIN, // Refactor to common parent class as a protected method
 		COMMONHIERARCHY, // Refactor to common parent class as a protected method
-		SAMEINTERFACE, // Refactor common interface as an default method
 		NOSUPERCLASS, // Refactor to newly created abstract class as a protected method
+		SAMEINTERFACE, // Refactor common interface as an default method
 		EXTERNALSUPERCLASS, // Refactor to newly created interface as a default method
 		UNRELATED // Refactor to newly created interface as a default method
 	}
@@ -66,8 +66,8 @@ public class CloneRelation implements MetricEnum<Relation>, SeekClassHierarchy, 
 		relation.setRelationIfNotYetDetermined(SIBLING, () -> isSibling(cc));
 		relation.setRelationIfNotYetDetermined(FIRSTCOUSIN, () -> isFirstCousin(cc));
 		relation.setRelationIfNotYetDetermined(COMMONHIERARCHY, () -> sameHierarchy(classes, cc));
-		relation.setRelationIfNotYetDetermined(SAMEINTERFACE, () -> sameInterface(classes, cc));
 		relation.setRelationIfNotYetDetermined(NOSUPERCLASS, () -> noSuperclass(cc));
+		relation.setRelationIfNotYetDetermined(SAMEINTERFACE, () -> sameInterface(classes, cc));
 		if(relation.getType() == null)
 			relation.unrelated(hasExternalSuperclass(cc));
 		return relation;
