@@ -21,8 +21,6 @@ import com.simonbaars.clonerefactor.model.Sequence;
 import com.simonbaars.clonerefactor.model.location.Location;
 
 public class CloneLocation implements DeterminesMetric<LocationType> {
-	
-
 	@Override
 	public LocationType get(Sequence sequence) {
 		return get(sequence.getLocations().get(0));

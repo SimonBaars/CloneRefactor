@@ -34,14 +34,12 @@ import com.simonbaars.clonerefactor.model.Sequence;
 import com.simonbaars.clonerefactor.model.location.LocationContents;
 
 public class CloneContents implements DeterminesMetric<ContentsType>, RequiresNodeOperations {
-	
-
 	@Override
 	public ContentsType get(Sequence sequence) {
 		return get(sequence.getAny().getContents());
 	}
 
-	//TODO: This method must be refactored
+	//TODO: This method must be refactored (it is horrible to look at, my eyes hurt)
 	public ContentsType get(LocationContents c) {
 		List<Node> nodes = c.getNodes();
 		Node lastNode = nodes.get(nodes.size()-1);

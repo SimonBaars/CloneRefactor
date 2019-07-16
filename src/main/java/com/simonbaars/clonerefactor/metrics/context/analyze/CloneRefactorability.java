@@ -24,8 +24,6 @@ import com.simonbaars.clonerefactor.model.Sequence;
 import com.simonbaars.clonerefactor.model.location.Location;
 
 public class CloneRefactorability implements DeterminesMetric<Refactorability>, RequiresNodeOperations {
-	
-
 	@Override
 	public Refactorability get(Sequence sequence) {
 		if(new CloneContents().get(sequence)!=ContentsType.PARTIALMETHOD)
