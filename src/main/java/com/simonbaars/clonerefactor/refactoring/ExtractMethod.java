@@ -71,7 +71,7 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 	private void placeMethodOnBasisOfRelation(Sequence s, MethodDeclaration decl) {
 		Relation relation = s.getRelation();
 		if(relation.isEffectivelyUnrelated())
-			createRelation(s, relation, relation.getType() != RelationType.NOSUPERCLASS);
+			createRelation(s, relation, relation.getType() != RelationType.NODIRECTSUPERCLASS);
 		new ExtractToClassOrInterface(relation.getIntersectingClass()).extract(decl);
 		addKeywords(decl, relation);
 	}

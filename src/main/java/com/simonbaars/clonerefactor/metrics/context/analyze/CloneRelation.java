@@ -9,7 +9,7 @@ import static com.simonbaars.clonerefactor.metrics.context.analyze.CloneRelation
 import static com.simonbaars.clonerefactor.metrics.context.analyze.CloneRelation.RelationType.SIBLING;
 import static com.simonbaars.clonerefactor.metrics.context.analyze.CloneRelation.RelationType.SUPERCLASS;
 import static com.simonbaars.clonerefactor.metrics.context.analyze.CloneRelation.RelationType.UNRELATED;
-import static com.simonbaars.clonerefactor.metrics.context.analyze.CloneRelation.RelationType.NOSUPERCLASS;
+import static com.simonbaars.clonerefactor.metrics.context.analyze.CloneRelation.RelationType.NODIRECTSUPERCLASS;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -37,7 +37,7 @@ public class CloneRelation implements MetricEnum<Relation>, SeekClassHierarchy, 
 		SIBLING, // Refactor to common parent class as a protected method
 		FIRSTCOUSIN, // Refactor to common parent class as a protected method
 		COMMONHIERARCHY, // Refactor to common parent class as a protected method
-		NOSUPERCLASS, // Refactor to newly created abstract class as a protected method
+		NODIRECTSUPERCLASS, // Refactor to newly created abstract class as a protected method
 		SAMEINTERFACE, // Refactor common interface as an default method
 		EXTERNALSUPERCLASS, // Refactor to newly created interface as a default method
 		UNRELATED // Refactor to newly created interface as a default method
@@ -66,7 +66,7 @@ public class CloneRelation implements MetricEnum<Relation>, SeekClassHierarchy, 
 		relation.setRelationIfNotYetDetermined(SIBLING, () -> isSibling(cc));
 		relation.setRelationIfNotYetDetermined(FIRSTCOUSIN, () -> isFirstCousin(cc));
 		relation.setRelationIfNotYetDetermined(COMMONHIERARCHY, () -> sameHierarchy(classes, cc));
-		relation.setRelationIfNotYetDetermined(NOSUPERCLASS, () -> noSuperclass(cc));
+		relation.setRelationIfNotYetDetermined(NODIRECTSUPERCLASS, () -> noSuperclass(cc));
 		relation.setRelationIfNotYetDetermined(SAMEINTERFACE, () -> sameInterface(classes, cc));
 		if(relation.getType() == null)
 			relation.unrelated(hasExternalSuperclass(cc));
