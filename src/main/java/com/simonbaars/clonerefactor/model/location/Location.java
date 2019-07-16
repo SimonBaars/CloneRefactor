@@ -2,6 +2,7 @@ package com.simonbaars.clonerefactor.model.location;
 
 import java.nio.file.Path;
 
+import com.github.javaparser.Position;
 import com.github.javaparser.Range;
 import com.github.javaparser.ast.Node;
 import com.simonbaars.clonerefactor.metrics.context.analyze.CloneLocation;
@@ -171,9 +172,13 @@ public class Location implements Comparable<Location>, HasRange {
 	}
 
 	public boolean overlapsWith(Location other) {
-		return getRange().contains(other.getRange());
+		return contains(other.getRange(), getRange().begin) || contains(other.getRange(), getRange().end);
 	}
 	
+	private boolean contains(Range range2, Position begin) {
+		return begin.isAfter(range2.begin) && begin.isBefore(range2.end);
+	}
+
 	public Node getAnyNode() {
 		return getContents().getNodes().get(0);
 	}
