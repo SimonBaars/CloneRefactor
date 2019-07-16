@@ -1,10 +1,21 @@
 package com.simonbaars.clonerefactor.metrics.context.enums;
 
 public enum LocationType{
-	METHODLEVEL,
-	CONSTRUCTORLEVEL,
-	CLASSLEVEL,
-	INTERFACELEVEL,
-	ENUMLEVEL,
-	OUTSIDE;
+	METHODLEVEL("Method Level"),
+	CONSTRUCTORLEVEL("Constructor Level"),
+	CLASSLEVEL("Class Level"),
+	INTERFACELEVEL("Interface Level"),
+	ENUMLEVEL("Enum Level"),
+	OUTSIDE("Outside");
+	
+	private final String name;
+	
+	private LocationType(String name) {
+		this.name = name;
+	}
+	
+	@Override
+	public String toString() {
+		return name;
+	}
 }
