@@ -57,7 +57,7 @@ public class Relation {
 	}
 
 	public boolean isEffectivelyUnrelated() {
-		return type == RelationType.UNRELATED || type == RelationType.EXTERNALSUPERCLASS;
+		return type == RelationType.UNRELATED || type == RelationType.EXTERNALSUPERCLASS || type == RelationType.NODIRECTSUPERCLASS;
 	}
 
 	public void setIntersectingClass(ClassOrInterfaceDeclaration addInterface) {
