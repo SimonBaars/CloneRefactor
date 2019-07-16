@@ -1,4 +1,5 @@
 package com.simonbaars.clonerefactor.metrics.context.enums;
+
 public enum Refactorability{
 	CANBEEXTRACTED("Can Be Extracted"), //Can be extracted
 	NOEXTRACTIONBYCONTENTTYPE("Is Not A Partial Method"), //When the clone is not a partial method
