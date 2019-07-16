@@ -4,6 +4,7 @@ import static com.simonbaars.clonerefactor.metrics.context.enums.RelationType.AN
 import static com.simonbaars.clonerefactor.metrics.context.enums.RelationType.COMMONHIERARCHY;
 import static com.simonbaars.clonerefactor.metrics.context.enums.RelationType.FIRSTCOUSIN;
 import static com.simonbaars.clonerefactor.metrics.context.enums.RelationType.NODIRECTSUPERCLASS;
+import static com.simonbaars.clonerefactor.metrics.context.enums.RelationType.NOINDIRECTSUPERCLASS;
 import static com.simonbaars.clonerefactor.metrics.context.enums.RelationType.SAMECLASS;
 import static com.simonbaars.clonerefactor.metrics.context.enums.RelationType.SAMEINTERFACE;
 import static com.simonbaars.clonerefactor.metrics.context.enums.RelationType.SAMEMETHOD;
@@ -55,9 +56,14 @@ public class CloneRelation implements DeterminesMetric<Relation>, SeekClassHiera
 		relation.setRelationIfNotYetDetermined(COMMONHIERARCHY, () -> sameHierarchy(classes, cc));
 		relation.setRelationIfNotYetDetermined(SAMEINTERFACE, () -> sameInterface(classes, cc));
 		relation.setRelationIfNotYetDetermined(NODIRECTSUPERCLASS, () -> noSuperclass(cc));
+		relation.setRelationIfNotYetDetermined(NOINDIRECTSUPERCLASS, () -> noIndirectSuperclass(cc));
 		if(relation.getType() == null)
 			relation.unrelated(hasExternalSuperclass(cc));
 		return relation;
+	}
+
+	private Optional<ClassOrInterfaceDeclaration> noIndirectSuperclass(ComparingClasses cc) {
+		return Optional.empty();
 	}
 
 	private Optional<ClassOrInterfaceDeclaration> noSuperclass(ComparingClasses cc) {
