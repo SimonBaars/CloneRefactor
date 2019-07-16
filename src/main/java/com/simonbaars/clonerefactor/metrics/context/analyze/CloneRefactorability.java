@@ -17,24 +17,18 @@ import com.github.javaparser.ast.stmt.ReturnStmt;
 import com.github.javaparser.ast.stmt.SwitchStmt;
 import com.github.javaparser.ast.stmt.WhileStmt;
 import com.simonbaars.clonerefactor.ast.interfaces.RequiresNodeOperations;
-import com.simonbaars.clonerefactor.metrics.context.analyze.CloneRefactorability.Refactorability;
+import com.simonbaars.clonerefactor.metrics.context.enums.ContentsType;
+import com.simonbaars.clonerefactor.metrics.context.enums.Refactorability;
 import com.simonbaars.clonerefactor.metrics.context.interfaces.DeterminesMetric;
 import com.simonbaars.clonerefactor.model.Sequence;
 import com.simonbaars.clonerefactor.model.location.Location;
 
 public class CloneRefactorability implements DeterminesMetric<Refactorability>, RequiresNodeOperations {
-	public enum Refactorability{
-		CANBEEXTRACTED, //Can be extracted
-		NOEXTRACTIONBYCONTENTTYPE, //When the clone is not a partial method
-		PARTIALBLOCK, //When the clone spans part of a block (TODO: can we make the clone smaller to not make it a partial block, or should we turn it into a type 3 clone?)
-		COMPLEXCONTROLFLOW, //When the clone spans break, continue or return statements. However, exceptions apply:
-							// - All flows end in return (however not fully implemented)
-							// - The for loop that is being `continue` or `break` is included
-	}
+	
 
 	@Override
 	public Refactorability get(Sequence sequence) {
-		if(new CloneContents().get(sequence)!=CloneContents.ContentsType.PARTIALMETHOD)
+		if(new CloneContents().get(sequence)!=ContentsType.PARTIALMETHOD)
 			return Refactorability.NOEXTRACTIONBYCONTENTTYPE;
 		else if(isPartialBlock(sequence))
 			return Refactorability.PARTIALBLOCK;

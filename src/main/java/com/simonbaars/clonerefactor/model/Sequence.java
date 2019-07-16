@@ -9,9 +9,9 @@ import java.util.function.ToIntFunction;
 
 import com.simonbaars.clonerefactor.datatype.map.ListMap;
 import com.simonbaars.clonerefactor.metrics.context.analyze.CloneRefactorability;
-import com.simonbaars.clonerefactor.metrics.context.analyze.CloneRefactorability.Refactorability;
 import com.simonbaars.clonerefactor.metrics.context.analyze.CloneRelation;
-import com.simonbaars.clonerefactor.metrics.context.analyze.CloneRelation.RelationType;
+import com.simonbaars.clonerefactor.metrics.context.enums.Refactorability;
+import com.simonbaars.clonerefactor.metrics.context.enums.RelationType;
 import com.simonbaars.clonerefactor.metrics.model.Relation;
 import com.simonbaars.clonerefactor.model.location.Location;
 

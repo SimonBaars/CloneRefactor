@@ -1,15 +1,15 @@
 package com.simonbaars.clonerefactor.metrics.context.analyze;
 
-import static com.simonbaars.clonerefactor.metrics.context.analyze.CloneRelation.RelationType.ANCESTOR;
-import static com.simonbaars.clonerefactor.metrics.context.analyze.CloneRelation.RelationType.COMMONHIERARCHY;
-import static com.simonbaars.clonerefactor.metrics.context.analyze.CloneRelation.RelationType.FIRSTCOUSIN;
-import static com.simonbaars.clonerefactor.metrics.context.analyze.CloneRelation.RelationType.SAMECLASS;
-import static com.simonbaars.clonerefactor.metrics.context.analyze.CloneRelation.RelationType.SAMEINTERFACE;
-import static com.simonbaars.clonerefactor.metrics.context.analyze.CloneRelation.RelationType.SAMEMETHOD;
-import static com.simonbaars.clonerefactor.metrics.context.analyze.CloneRelation.RelationType.SIBLING;
-import static com.simonbaars.clonerefactor.metrics.context.analyze.CloneRelation.RelationType.SUPERCLASS;
-import static com.simonbaars.clonerefactor.metrics.context.analyze.CloneRelation.RelationType.UNRELATED;
-import static com.simonbaars.clonerefactor.metrics.context.analyze.CloneRelation.RelationType.NODIRECTSUPERCLASS;
+import static com.simonbaars.clonerefactor.metrics.context.enums.RelationType.ANCESTOR;
+import static com.simonbaars.clonerefactor.metrics.context.enums.RelationType.COMMONHIERARCHY;
+import static com.simonbaars.clonerefactor.metrics.context.enums.RelationType.FIRSTCOUSIN;
+import static com.simonbaars.clonerefactor.metrics.context.enums.RelationType.NODIRECTSUPERCLASS;
+import static com.simonbaars.clonerefactor.metrics.context.enums.RelationType.SAMECLASS;
+import static com.simonbaars.clonerefactor.metrics.context.enums.RelationType.SAMEINTERFACE;
+import static com.simonbaars.clonerefactor.metrics.context.enums.RelationType.SAMEMETHOD;
+import static com.simonbaars.clonerefactor.metrics.context.enums.RelationType.SIBLING;
+import static com.simonbaars.clonerefactor.metrics.context.enums.RelationType.SUPERCLASS;
+import static com.simonbaars.clonerefactor.metrics.context.enums.RelationType.UNRELATED;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -29,19 +29,6 @@ import com.simonbaars.clonerefactor.metrics.model.Relation;
 import com.simonbaars.clonerefactor.model.Sequence;
 
 public class CloneRelation implements DeterminesMetric<Relation>, SeekClassHierarchy, SeekInterfaceHierarchy { 
-	public enum RelationType { //Please note that the order of these enum constants matters
-		SAMEMETHOD, // Refactor to same class as a private method
-		SAMECLASS, // Refactor to same class as a private method
-		SUPERCLASS, // Refactor to topmost class as a protected method
-		ANCESTOR, // Refactor to common parent class as a protected method
-		SIBLING, // Refactor to common parent class as a protected method
-		FIRSTCOUSIN, // Refactor to common parent class as a protected method
-		COMMONHIERARCHY, // Refactor to common parent class as a protected method
-		SAMEINTERFACE, // Refactor common interface as an default method
-		NODIRECTSUPERCLASS, // Refactor to newly created abstract class as a protected method
-		EXTERNALSUPERCLASS, // Refactor to newly created interface as a default method
-		UNRELATED // Refactor to newly created interface as a default method
-	}
 	
 	private final Map<String, ClassOrInterfaceDeclaration> classes = new HashMap<>();
 	

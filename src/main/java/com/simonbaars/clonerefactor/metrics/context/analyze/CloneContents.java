@@ -1,21 +1,21 @@
 package com.simonbaars.clonerefactor.metrics.context.analyze;
 
-import static com.simonbaars.clonerefactor.metrics.context.analyze.CloneContents.ContentsType.FULLCLASS;
-import static com.simonbaars.clonerefactor.metrics.context.analyze.CloneContents.ContentsType.FULLCONSTRUCTOR;
-import static com.simonbaars.clonerefactor.metrics.context.analyze.CloneContents.ContentsType.FULLENUM;
-import static com.simonbaars.clonerefactor.metrics.context.analyze.CloneContents.ContentsType.FULLINTERFACE;
-import static com.simonbaars.clonerefactor.metrics.context.analyze.CloneContents.ContentsType.FULLMETHOD;
-import static com.simonbaars.clonerefactor.metrics.context.analyze.CloneContents.ContentsType.HASCLASSDECLARATION;
-import static com.simonbaars.clonerefactor.metrics.context.analyze.CloneContents.ContentsType.HASENUMDECLARATION;
-import static com.simonbaars.clonerefactor.metrics.context.analyze.CloneContents.ContentsType.HASENUMFIELDS;
-import static com.simonbaars.clonerefactor.metrics.context.analyze.CloneContents.ContentsType.HASINTERFACEDECLARATION;
-import static com.simonbaars.clonerefactor.metrics.context.analyze.CloneContents.ContentsType.INCLUDESCONSTRUCTOR;
-import static com.simonbaars.clonerefactor.metrics.context.analyze.CloneContents.ContentsType.INCLUDESFIELDS;
-import static com.simonbaars.clonerefactor.metrics.context.analyze.CloneContents.ContentsType.ONLYFIELDS;
-import static com.simonbaars.clonerefactor.metrics.context.analyze.CloneContents.ContentsType.OTHER;
-import static com.simonbaars.clonerefactor.metrics.context.analyze.CloneContents.ContentsType.PARTIALCONSTRUCTOR;
-import static com.simonbaars.clonerefactor.metrics.context.analyze.CloneContents.ContentsType.PARTIALMETHOD;
-import static com.simonbaars.clonerefactor.metrics.context.analyze.CloneContents.ContentsType.SEVERALMETHODS;
+import static com.simonbaars.clonerefactor.metrics.context.enums.ContentsType.FULLCLASS;
+import static com.simonbaars.clonerefactor.metrics.context.enums.ContentsType.FULLCONSTRUCTOR;
+import static com.simonbaars.clonerefactor.metrics.context.enums.ContentsType.FULLENUM;
+import static com.simonbaars.clonerefactor.metrics.context.enums.ContentsType.FULLINTERFACE;
+import static com.simonbaars.clonerefactor.metrics.context.enums.ContentsType.FULLMETHOD;
+import static com.simonbaars.clonerefactor.metrics.context.enums.ContentsType.HASCLASSDECLARATION;
+import static com.simonbaars.clonerefactor.metrics.context.enums.ContentsType.HASENUMDECLARATION;
+import static com.simonbaars.clonerefactor.metrics.context.enums.ContentsType.HASENUMFIELDS;
+import static com.simonbaars.clonerefactor.metrics.context.enums.ContentsType.HASINTERFACEDECLARATION;
+import static com.simonbaars.clonerefactor.metrics.context.enums.ContentsType.INCLUDESCONSTRUCTOR;
+import static com.simonbaars.clonerefactor.metrics.context.enums.ContentsType.INCLUDESFIELDS;
+import static com.simonbaars.clonerefactor.metrics.context.enums.ContentsType.ONLYFIELDS;
+import static com.simonbaars.clonerefactor.metrics.context.enums.ContentsType.OTHER;
+import static com.simonbaars.clonerefactor.metrics.context.enums.ContentsType.PARTIALCONSTRUCTOR;
+import static com.simonbaars.clonerefactor.metrics.context.enums.ContentsType.PARTIALMETHOD;
+import static com.simonbaars.clonerefactor.metrics.context.enums.ContentsType.SEVERALMETHODS;
 
 import java.util.List;
 import java.util.Optional;
@@ -28,30 +28,13 @@ import com.github.javaparser.ast.body.EnumDeclaration;
 import com.github.javaparser.ast.body.FieldDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.simonbaars.clonerefactor.ast.interfaces.RequiresNodeOperations;
-import com.simonbaars.clonerefactor.metrics.context.analyze.CloneContents.ContentsType;
+import com.simonbaars.clonerefactor.metrics.context.enums.ContentsType;
 import com.simonbaars.clonerefactor.metrics.context.interfaces.DeterminesMetric;
 import com.simonbaars.clonerefactor.model.Sequence;
 import com.simonbaars.clonerefactor.model.location.LocationContents;
 
 public class CloneContents implements DeterminesMetric<ContentsType>, RequiresNodeOperations {
-	public enum ContentsType{
-		FULLMETHOD, 
-		PARTIALMETHOD, 
-		SEVERALMETHODS, 
-		FULLCONSTRUCTOR,
-		PARTIALCONSTRUCTOR,
-		ONLYFIELDS, 
-		FULLCLASS, 
-		FULLINTERFACE,
-		FULLENUM,
-		HASCLASSDECLARATION, 
-		HASINTERFACEDECLARATION, 
-		HASENUMDECLARATION, 
-		HASENUMFIELDS,
-		INCLUDESFIELDS,
-		INCLUDESCONSTRUCTOR,
-		OTHER;
-	}
+	
 
 	@Override
 	public ContentsType get(Sequence sequence) {

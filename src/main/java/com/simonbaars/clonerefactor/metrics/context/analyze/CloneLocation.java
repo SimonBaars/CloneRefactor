@@ -1,11 +1,11 @@
 package com.simonbaars.clonerefactor.metrics.context.analyze;
 
-import static com.simonbaars.clonerefactor.metrics.context.analyze.CloneLocation.LocationType.CLASSLEVEL;
-import static com.simonbaars.clonerefactor.metrics.context.analyze.CloneLocation.LocationType.CONSTRUCTORLEVEL;
-import static com.simonbaars.clonerefactor.metrics.context.analyze.CloneLocation.LocationType.ENUMLEVEL;
-import static com.simonbaars.clonerefactor.metrics.context.analyze.CloneLocation.LocationType.INTERFACELEVEL;
-import static com.simonbaars.clonerefactor.metrics.context.analyze.CloneLocation.LocationType.METHODLEVEL;
-import static com.simonbaars.clonerefactor.metrics.context.analyze.CloneLocation.LocationType.OUTSIDE;
+import static com.simonbaars.clonerefactor.metrics.context.enums.LocationType.CLASSLEVEL;
+import static com.simonbaars.clonerefactor.metrics.context.enums.LocationType.CONSTRUCTORLEVEL;
+import static com.simonbaars.clonerefactor.metrics.context.enums.LocationType.ENUMLEVEL;
+import static com.simonbaars.clonerefactor.metrics.context.enums.LocationType.INTERFACELEVEL;
+import static com.simonbaars.clonerefactor.metrics.context.enums.LocationType.METHODLEVEL;
+import static com.simonbaars.clonerefactor.metrics.context.enums.LocationType.OUTSIDE;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,20 +15,13 @@ import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.ConstructorDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
-import com.simonbaars.clonerefactor.metrics.context.analyze.CloneLocation.LocationType;
+import com.simonbaars.clonerefactor.metrics.context.enums.LocationType;
 import com.simonbaars.clonerefactor.metrics.context.interfaces.DeterminesMetric;
 import com.simonbaars.clonerefactor.model.Sequence;
 import com.simonbaars.clonerefactor.model.location.Location;
 
 public class CloneLocation implements DeterminesMetric<LocationType> {
-	public enum LocationType{
-		METHODLEVEL,
-		CONSTRUCTORLEVEL,
-		CLASSLEVEL,
-		INTERFACELEVEL,
-		ENUMLEVEL,
-		OUTSIDE;
-	}
+	
 
 	@Override
 	public LocationType get(Sequence sequence) {

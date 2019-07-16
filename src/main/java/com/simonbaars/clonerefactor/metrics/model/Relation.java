@@ -4,7 +4,7 @@ import java.util.Optional;
 import java.util.function.Supplier;
 
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
-import com.simonbaars.clonerefactor.metrics.context.analyze.CloneRelation.RelationType;
+import com.simonbaars.clonerefactor.metrics.context.enums.RelationType;
 
 public class Relation {
 	private RelationType type;
