@@ -179,7 +179,11 @@ public class Location implements Comparable<Location>, HasRange {
 		return begin.isAfter(range2.begin) && begin.isBefore(range2.end);
 	}
 
-	public Node getAnyNode() {
+	public Node getFirstNode() {
 		return getContents().getNodes().get(0);
+	}
+
+	public Node getLastNode() {
+		return getContents().getNodes().get(getContents().getNodes().size()-1);
 	}
 }
