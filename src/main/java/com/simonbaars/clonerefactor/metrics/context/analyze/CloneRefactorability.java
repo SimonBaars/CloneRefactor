@@ -111,6 +111,6 @@ public class CloneRefactorability implements DeterminesMetric<Refactorability>, 
 		Node lastNode = l.getContents().getNodes().get(l.getContents().getNodes().size()-1);
 		if(!(lastNode instanceof ReturnStmt))
 			return false;
-		return nodeDepth(lastNode) == nodeDepth(l.getAnyNode());
+		return nodeDepth(lastNode) == nodeDepth(l.getFirstNode());
 	}
 }
