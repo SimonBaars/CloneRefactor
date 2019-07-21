@@ -46,6 +46,13 @@ public class CloneRelation implements DeterminesMetric<Relation>, SeekClassHiera
 		
 		ComparingClasses cc = new ComparingClasses(class1.get(), class2.get());
 		ComparingClasses rev = cc.reverse();
+		final Relation relation = findRelation(n1, n2, cc, rev);
+		if(relation.getType() == null)
+			relation.unrelated(hasExternalSuperclass(cc));
+		return relation;
+	}
+
+	private Relation findRelation(Node n1, Node n2, ComparingClasses cc, ComparingClasses rev) {
 		final Relation relation = new Relation();
 		relation.setRelationIfNotYetDetermined(SAMEMETHOD, () -> isMethod(cc, n1, n2));
 		relation.setRelationIfNotYetDetermined(SAMECLASS, () -> isSameClass(cc));
@@ -59,8 +66,6 @@ public class CloneRelation implements DeterminesMetric<Relation>, SeekClassHiera
 		relation.setRelationIfNotYetDetermined(SAMEINTERFACE, () -> sameInterface(classes, cc));
 		relation.setRelationIfNotYetDetermined(NODIRECTSUPERCLASS, () -> noSuperclass(cc));
 		relation.setRelationIfNotYetDetermined(NOINDIRECTSUPERCLASS, () -> noIndirectSuperclass(cc));
-		if(relation.getType() == null)
-			relation.unrelated(hasExternalSuperclass(cc));
 		return relation;
 	}
 
