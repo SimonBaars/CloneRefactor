@@ -11,14 +11,14 @@ import junit.framework.TestSuite;
 /**
  * Unit test for the node locations.
  */
-public class CloneExtractTest extends Type1Test {
+public class CloneRefactorabilityTest extends Type1Test {
 
 	/**
      * Create the test case
      *
      * @param testName name of the test case
      */
-    public CloneExtractTest( String testName ) {
+    public CloneRefactorabilityTest( String testName ) {
         super( testName );
     }
 
@@ -26,7 +26,7 @@ public class CloneExtractTest extends Type1Test {
      * @return the suite of tests being tested
      */
     public static Test suite() {
-        return new TestSuite( CloneExtractTest.class );
+        return new TestSuite( CloneRefactorabilityTest.class );
     }
     
     public void testFullMethod() {
