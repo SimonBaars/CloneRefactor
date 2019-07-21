@@ -50,7 +50,7 @@ public class CloneRelationTest extends Type1Test {
     }
     
     public void testNoRelation() {
-        test("SimpleClone", RelationType.UNRELATED);
+        test("Unrelated", RelationType.UNRELATED);
     }
     
     public void testSameClass() {
@@ -75,6 +75,10 @@ public class CloneRelationTest extends Type1Test {
 
     public void testSameInterfaceInInterfaceHierarchy() {
         test("SameInterfaceInInterfaceHierarchy", RelationType.SAMEINTERFACE);
+    }
+    
+    public void testNoDirectSuperclass() {
+        test("SimpleClone", RelationType.NODIRECTSUPERCLASS);
     }
     
 	private void test(String name, RelationType loc) {
