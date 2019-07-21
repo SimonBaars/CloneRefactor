@@ -94,7 +94,11 @@ public class CloneRelation implements DeterminesMetric<Relation>, SeekClassHiera
 	}
 
 	private Optional<ClassOrInterfaceDeclaration> noSuperclass(ComparingClasses cc) {
-		return cc.getClassOne().getExtendedTypes().isEmpty() && cc.getClassTwo().getExtendedTypes().isEmpty() ? Optional.of(cc.getClassOne()) : Optional.empty();
+		return noSuperclass(cc.getClassOne()) && noSuperclass(cc.getClassTwo()) ? Optional.of(cc.getClassOne()) : Optional.empty();
+	}
+
+	private boolean noSuperclass(ClassOrInterfaceDeclaration classOne) {
+		return classOne.getExtendedTypes().isEmpty() || (classOne.getExtendedTypes().size() == 1 && classOne.getExtendedTypes().get(0).asString().equals(JAVA_OBJECT_CLASS_NAME));
 	}
 
 	private Optional<ClassOrInterfaceDeclaration> isSameClass(ComparingClasses cc) {
