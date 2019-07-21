@@ -64,6 +64,10 @@ public class CloneRefactorabilityTest extends Type1Test {
     public void testContinueInClonedLoop() {
         test("ContinueInClonedLoop", Refactorability.CANBEEXTRACTED);
     }
+    
+    public void testOverlaps() {
+        test("EqualLinesSingleFile", Refactorability.OVERLAPS);
+    }
 
 	private void test(String name, Refactorability loc) {
 		System.out.println(name);
