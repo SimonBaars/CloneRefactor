@@ -81,6 +81,10 @@ public class CloneRelationTest extends Type1Test {
         test("SimpleClone", RelationType.NODIRECTSUPERCLASS);
     }
     
+    public void testNoIndirectSuperclass() {
+        test("NoIndirectSuperclass", RelationType.NOINDIRECTSUPERCLASS);
+    }
+    
 	private void test(String name, RelationType loc) {
 		DetectionResults r = testProject(name);
         Assert.assertEquals(loc, r.getMetrics().amountPerRelation.keySet().iterator().next());
