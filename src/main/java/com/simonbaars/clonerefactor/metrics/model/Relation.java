@@ -29,16 +29,11 @@ public class Relation {
 	}
 	
 	public void setRelationIfNotYetDetermined(RelationType type, Supplier<Optional<ClassOrInterfaceDeclaration>> fetchRelation) {
-		setRelationIfNotYetDetermined(type, fetchRelation, false);
-	}
-	
-	public void setRelationIfNotYetDetermined(RelationType type, Supplier<Optional<ClassOrInterfaceDeclaration>> fetchRelation, boolean replaceType) {
-		if((!replaceType && this.type == null) || (replaceType && this.type!=null)){
+		if(this.type == null){
 			Optional<ClassOrInterfaceDeclaration> result = fetchRelation.get();
 			if(result.isPresent()) {
 				this.type = type;
-				if(!replaceType)
-					this.intersectingClass = result.get();
+				this.intersectingClass = result.get();
 			}
 		}
 	}
