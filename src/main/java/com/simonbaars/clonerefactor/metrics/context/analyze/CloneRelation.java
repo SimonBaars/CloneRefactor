@@ -19,6 +19,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import com.github.javaparser.ast.Node;
+import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
@@ -31,6 +32,7 @@ import com.simonbaars.clonerefactor.model.Sequence;
 
 public class CloneRelation implements DeterminesMetric<Relation>, SeekClassHierarchy, SeekInterfaceHierarchy { 
 	
+	private static final String JAVA_OBJECT_CLASS_NAME = "Object";
 	private final Map<String, ClassOrInterfaceDeclaration> classes = new HashMap<>();
 	
 	public CloneRelation() {}
@@ -63,6 +65,26 @@ public class CloneRelation implements DeterminesMetric<Relation>, SeekClassHiera
 	}
 
 	private Optional<ClassOrInterfaceDeclaration> noIndirectSuperclass(ComparingClasses cc) {
+		if(cc.getClassOne().isInterface() || cc.getClassTwo().isInterface())
+			return Optional.empty();
+		Optional<ClassOrInterfaceDeclaration> withoutSuperclass = findWithoutSuperclass(cc.getClassOne());
+		if(withoutSuperclass.isPresent()) {
+			Optional<ClassOrInterfaceDeclaration> withoutSuperclass2 = findWithoutSuperclass(cc.getClassTwo());
+			if(withoutSuperclass2.isPresent())
+				return withoutSuperclass;
+		}
+		return Optional.empty();
+	}
+
+	private Optional<ClassOrInterfaceDeclaration> findWithoutSuperclass(ClassOrInterfaceDeclaration classDecl) {
+		NodeList<ClassOrInterfaceType> nodeList = classDecl.getExtendedTypes();
+		if(nodeList.isEmpty() || (nodeList.size() == 1 && nodeList.get(0).toString().equals(JAVA_OBJECT_CLASS_NAME)))
+			return Optional.of(classDecl);
+		for(ClassOrInterfaceType type : nodeList) {
+			String name = getFullyQualifiedName(type);
+			if(classes.containsKey(name))
+				return findWithoutSuperclass(classes.get(name));
+		}
 		return Optional.empty();
 	}
 
@@ -81,8 +103,8 @@ public class CloneRelation implements DeterminesMetric<Relation>, SeekClassHiera
 			return false;
 		ClassOrInterfaceType superclassC1 = cc.getClassOne().getExtendedTypes().get(0);
 		ClassOrInterfaceType superclassC2 = cc.getClassTwo().getExtendedTypes().get(0);
-		return !superclassC1.getNameAsString().equals("Object") && 
-			   !superclassC2.getNameAsString().equals("Object") && 
+		return !superclassC1.getNameAsString().equals(JAVA_OBJECT_CLASS_NAME) && 
+			   !superclassC2.getNameAsString().equals(JAVA_OBJECT_CLASS_NAME) && 
 				getFullyQualifiedName(superclassC1).equals(getFullyQualifiedName(superclassC2));
 	}
 
