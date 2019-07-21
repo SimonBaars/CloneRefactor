@@ -2,6 +2,7 @@ package com.simonbaars.clonerefactor.datatype.map;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,6 +35,15 @@ public class ListMap<K, V> extends HashMap<K, List<V>> {
 			l = super.get(key); 
 		} else l = new ArrayList<>();
 		l.add(value);
+        return super.put(key, l);
+    }
+	
+	public List<V> addTo(K key, V[] value) {
+		List<V> l;
+		if(super.containsKey(key)) {
+			l = super.get(key); 
+		} else l = new ArrayList<>();
+		Collections.addAll(l, value);
         return super.put(key, l);
     }
 	
