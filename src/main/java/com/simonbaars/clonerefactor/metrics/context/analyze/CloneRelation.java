@@ -82,10 +82,9 @@ public class CloneRelation implements DeterminesMetric<Relation>, SeekClassHiera
 	}
 
 	private Optional<ClassOrInterfaceDeclaration> findWithoutSuperclass(ClassOrInterfaceDeclaration classDecl) {
-		NodeList<ClassOrInterfaceType> nodeList = classDecl.getExtendedTypes();
-		if(nodeList.isEmpty() || (nodeList.size() == 1 && nodeList.get(0).toString().equals(JAVA_OBJECT_CLASS_NAME)))
+		if(noSuperclass(classDecl))
 			return Optional.of(classDecl);
-		for(ClassOrInterfaceType type : nodeList) {
+		for(ClassOrInterfaceType type : classDecl.getExtendedTypes()) {
 			String name = getFullyQualifiedName(type);
 			if(classes.containsKey(name))
 				return findWithoutSuperclass(classes.get(name));
@@ -97,8 +96,9 @@ public class CloneRelation implements DeterminesMetric<Relation>, SeekClassHiera
 		return noSuperclass(cc.getClassOne()) && noSuperclass(cc.getClassTwo()) ? Optional.of(cc.getClassOne()) : Optional.empty();
 	}
 
-	private boolean noSuperclass(ClassOrInterfaceDeclaration classOne) {
-		return classOne.getExtendedTypes().isEmpty() || (classOne.getExtendedTypes().size() == 1 && classOne.getExtendedTypes().get(0).asString().equals(JAVA_OBJECT_CLASS_NAME));
+	private boolean noSuperclass(ClassOrInterfaceDeclaration classDecl) {
+		NodeList<ClassOrInterfaceType> extendedTypes = classDecl.getExtendedTypes();
+		return extendedTypes.isEmpty() || (extendedTypes.size() == 1 && extendedTypes.get(0).asString().equals(JAVA_OBJECT_CLASS_NAME));
 	}
 
 	private Optional<ClassOrInterfaceDeclaration> isSameClass(ComparingClasses cc) {
