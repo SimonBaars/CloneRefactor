@@ -58,9 +58,9 @@ public class CloneRelation implements DeterminesMetric<Relation>, SeekClassHiera
 		relation.setRelationIfNotYetDetermined(SAMECLASS, () -> isSameClass(cc));
 		relation.setRelationIfNotYetDetermined(SUPERCLASS, () -> isSuperClass(cc));
 		relation.setRelationIfNotYetDetermined(SUPERCLASS, () -> isSuperClass(rev));
+		relation.setRelationIfNotYetDetermined(SIBLING, () -> isSibling(cc));
 		relation.setRelationIfNotYetDetermined(ANCESTOR, () -> isAncestor(cc));
 		relation.setRelationIfNotYetDetermined(ANCESTOR, () -> isAncestor(rev));
-		relation.setRelationIfNotYetDetermined(SIBLING, () -> isSibling(cc));
 		relation.setRelationIfNotYetDetermined(FIRSTCOUSIN, () -> isFirstCousin(cc));
 		relation.setRelationIfNotYetDetermined(COMMONHIERARCHY, () -> sameHierarchy(classes, cc));
 		relation.setRelationIfNotYetDetermined(SAMEINTERFACE, () -> sameInterface(classes, cc));

@@ -4,8 +4,8 @@ public enum RelationType { //Please note that the order of these enum constants 
 	SAMEMETHOD("Same Method"), // Refactor to same class as a private method
 	SAMECLASS("Same Class"), // Refactor to same class as a private method
 	SUPERCLASS("Superclass"), // Refactor to topmost class as a protected method
-	ANCESTOR("Ancestor"), // Refactor to common parent class as a protected method
 	SIBLING("Sibling"), // Refactor to common parent class as a protected method
+	ANCESTOR("Ancestor"), // Refactor to common parent class as a protected method
 	FIRSTCOUSIN("First Cousin"), // Refactor to common parent class as a protected method
 	COMMONHIERARCHY("Common Hierarchy"), // Refactor to common parent class as a protected method
 	SAMEINTERFACE("Same Interface"), // Refactor common interface as an default method
