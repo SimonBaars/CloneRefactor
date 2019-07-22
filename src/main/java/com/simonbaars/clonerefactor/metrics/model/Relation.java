@@ -1,39 +1,62 @@
 package com.simonbaars.clonerefactor.metrics.model;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
 
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.simonbaars.clonerefactor.metrics.context.enums.RelationType;
 
-public class Relation {
+public class Relation implements Comparable<Relation> {
 	private RelationType type;
-	private ClassOrInterfaceDeclaration intersectingClass;
+	private final List<ClassOrInterfaceDeclaration> intersectingClasses;
 	
 	public Relation() {
 		super();
+		intersectingClasses = new ArrayList<>();
 	}
 	
-	public Relation(RelationType type, ClassOrInterfaceDeclaration intersectingClass) {
+	public Relation(RelationType type, ClassOrInterfaceDeclaration...intersectingClass) {
 		super();
 		this.type = type;
-		this.intersectingClass = intersectingClass;
+		this.intersectingClasses = Arrays.asList(intersectingClass);
 	}
 
 	public RelationType getType() {
 		return type;
 	}
 	
-	public ClassOrInterfaceDeclaration getIntersectingClass() {
-		return intersectingClass;
+	public List<ClassOrInterfaceDeclaration> getIntersectingClasses() {
+		return intersectingClasses;
 	}
 	
-	public void setRelationIfNotYetDetermined(RelationType type, Supplier<Optional<ClassOrInterfaceDeclaration>> fetchRelation) {
+	public void setRelationIfNotYetDetermined(RelationType type, Supplier<Optional<ClassOrInterfaceDeclaration[]>> fetchRelation) {
 		if(this.type == null){
-			Optional<ClassOrInterfaceDeclaration> result = fetchRelation.get();
+			Optional<ClassOrInterfaceDeclaration[]> result = fetchRelation.get();
 			if(result.isPresent()) {
 				this.type = type;
-				this.intersectingClass = result.get();
+				Collections.addAll(intersectingClasses, result.get());
+			}
+		}
+	}
+	
+	public void merge(Relation p) {
+		if(compareTo(p)>0) {
+			intersectingClasses.clear();
+			type = p.type;
+		}
+		if(p.type == type) {
+			addAll(p);
+		}
+	}
+
+	private void addAll(Relation p) {
+		for(ClassOrInterfaceDeclaration c : p.intersectingClasses) {
+			if(intersectingClasses.stream().noneMatch(d -> c == d)) {
+				intersectingClasses.add(c);
 			}
 		}
 	}
@@ -44,7 +67,7 @@ public class Relation {
 
 	@Override
 	public String toString() {
-		return "Relation [type=" + type + ", intersectingClass=" + intersectingClass + "]";
+		return "Relation [type=" + type + ", intersectingClass=" + Arrays.toString(intersectingClasses.toArray()) + "]";
 	}
 
 	public boolean isSameClass() {
@@ -55,7 +78,10 @@ public class Relation {
 		return type == RelationType.UNRELATED || type == RelationType.EXTERNALSUPERCLASS || type == RelationType.NODIRECTSUPERCLASS || type == RelationType.NOINDIRECTSUPERCLASS;
 	}
 
-	public void setIntersectingClass(ClassOrInterfaceDeclaration addInterface) {
-		this.intersectingClass = addInterface;
+	@Override
+	public int compareTo(Relation o) {
+		return Integer.compare(type.ordinal(), o.type.ordinal());
 	}
+	
+	
 }
