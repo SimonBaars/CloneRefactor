@@ -9,13 +9,13 @@ import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.simonbaars.clonerefactor.metrics.model.ComparingClasses;
 
 public interface SeekClassHierarchy extends ParsesSuperclasses {
-	public default Optional<ClassOrInterfaceDeclaration> sameHierarchy(Map<String, ClassOrInterfaceDeclaration> classes, ComparingClasses cc) {
+	public default Optional<ClassOrInterfaceDeclaration[]> sameHierarchy(Map<String, ClassOrInterfaceDeclaration> classes, ComparingClasses cc) {
 		List<String> classesInHierarchy = new ArrayList<>();
 		collectSuperclasses(classes, cc.getClassOne(), classesInHierarchy);
 		return collectSuperclasses(classes, cc.getClassTwo(), classesInHierarchy);
 	}
 	
-	public default Optional<ClassOrInterfaceDeclaration> collectSuperclasses(Map<String, ClassOrInterfaceDeclaration> classes, ClassOrInterfaceDeclaration classDecl, List<String> classesInHierarchy) {
+	public default Optional<ClassOrInterfaceDeclaration[]> collectSuperclasses(Map<String, ClassOrInterfaceDeclaration> classes, ClassOrInterfaceDeclaration classDecl, List<String> classesInHierarchy) {
 		return collectSuperclasses(classes, classDecl, classesInHierarchy, classDecl::getExtendedTypes, this::collectSuperclasses, false);
 	}
 }
