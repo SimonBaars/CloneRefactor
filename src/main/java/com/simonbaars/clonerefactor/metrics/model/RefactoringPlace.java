@@ -5,7 +5,6 @@ import java.util.Collections;
 import java.util.List;
 
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
-import com.simonbaars.clonerefactor.datatype.map.ListMap;
 import com.simonbaars.clonerefactor.metrics.context.enums.RelationType;
 
 public class RefactoringPlace implements Comparable<RefactoringPlace>{
@@ -38,8 +37,17 @@ public class RefactoringPlace implements Comparable<RefactoringPlace>{
 			place.clear();
 			relation = p.relation;
 		}
-		if(p.relation == relation)
-			place.addAll(p.place);
+		if(p.relation == relation) {
+			addAll(p);
+		}
+	}
+
+	private void addAll(RefactoringPlace p) {
+		for(ClassOrInterfaceDeclaration c : p.place) {
+			if(place.stream().noneMatch(d -> c == d)) {
+				place.add(c);
+			}
+		}
 	}
 
 	@Override
