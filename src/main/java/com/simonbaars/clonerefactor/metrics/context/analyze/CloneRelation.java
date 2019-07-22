@@ -2,6 +2,8 @@ package com.simonbaars.clonerefactor.metrics.context.analyze;
 
 import static com.simonbaars.clonerefactor.metrics.context.enums.RelationType.ANCESTOR;
 import static com.simonbaars.clonerefactor.metrics.context.enums.RelationType.COMMONHIERARCHY;
+import static com.simonbaars.clonerefactor.metrics.context.enums.RelationType.EXTERNALANCESTOR;
+import static com.simonbaars.clonerefactor.metrics.context.enums.RelationType.EXTERNALSUPERCLASS;
 import static com.simonbaars.clonerefactor.metrics.context.enums.RelationType.FIRSTCOUSIN;
 import static com.simonbaars.clonerefactor.metrics.context.enums.RelationType.NODIRECTSUPERCLASS;
 import static com.simonbaars.clonerefactor.metrics.context.enums.RelationType.NOINDIRECTSUPERCLASS;
@@ -46,10 +48,7 @@ public class CloneRelation implements DeterminesMetric<Relation>, SeekClassHiera
 		
 		ComparingClasses cc = new ComparingClasses(class1.get(), class2.get());
 		ComparingClasses rev = cc.reverse();
-		final Relation relation = findRelation(n1, n2, cc, rev);
-		if(relation.getType() == null)
-			relation.unrelated(hasExternalSuperclass(cc));
-		return relation;
+		return findRelation(n1, n2, cc, rev);
 	}
 
 	private Relation findRelation(Node n1, Node n2, ComparingClasses cc, ComparingClasses rev) {
@@ -66,6 +65,8 @@ public class CloneRelation implements DeterminesMetric<Relation>, SeekClassHiera
 		relation.setRelationIfNotYetDetermined(SAMEINTERFACE, () -> sameInterface(classes, cc));
 		relation.setRelationIfNotYetDetermined(NODIRECTSUPERCLASS, () -> noSuperclass(cc));
 		relation.setRelationIfNotYetDetermined(NOINDIRECTSUPERCLASS, () -> noIndirectSuperclass(cc));
+		relation.setRelationIfNotYetDetermined(EXTERNALSUPERCLASS, () -> hasExternalSuperclass(cc));
+		relation.setRelationIfNotYetDetermined(EXTERNALANCESTOR, () -> Optional.of(cc.getClassOne()));
 		return relation;
 	}
 
@@ -107,14 +108,14 @@ public class CloneRelation implements DeterminesMetric<Relation>, SeekClassHiera
 		return Optional.empty();
 	}
 	
-	private boolean hasExternalSuperclass(ComparingClasses cc) {
+	private Optional<ClassOrInterfaceDeclaration> hasExternalSuperclass(ComparingClasses cc) {
 		if(!cc.hasExtendedTypes())
-			return false;
+			return Optional.empty();
 		ClassOrInterfaceType superclassC1 = cc.getClassOne().getExtendedTypes().get(0);
 		ClassOrInterfaceType superclassC2 = cc.getClassTwo().getExtendedTypes().get(0);
 		return !superclassC1.getNameAsString().equals(JAVA_OBJECT_CLASS_NAME) && 
 			   !superclassC2.getNameAsString().equals(JAVA_OBJECT_CLASS_NAME) && 
-				getFullyQualifiedName(superclassC1).equals(getFullyQualifiedName(superclassC2));
+				getFullyQualifiedName(superclassC1).equals(getFullyQualifiedName(superclassC2)) ? Optional.of(cc.getClassOne()) : Optional.empty();
 	}
 
 	public void registerNode(Node n) {
