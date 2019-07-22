@@ -1,11 +1,15 @@
 package com.simonbaars.clonerefactor.metrics.model;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.simonbaars.clonerefactor.datatype.map.ListMap;
 import com.simonbaars.clonerefactor.metrics.context.enums.RelationType;
 
 public class RefactoringPlace implements Comparable<RefactoringPlace>{
-	private final ListMap<ComparingClasses, ClassOrInterfaceDeclaration> place = new ListMap<>();
+	private final List<ClassOrInterfaceDeclaration> place = new ArrayList<>();
 	private RelationType relation;
 	
 	
@@ -14,9 +18,9 @@ public class RefactoringPlace implements Comparable<RefactoringPlace>{
 		this.relation = relation;
 	}
 	
-	public RefactoringPlace(ComparingClasses cc, ClassOrInterfaceDeclaration...decls) {
+	public RefactoringPlace(ClassOrInterfaceDeclaration...decls) {
 		super();
-		this.place.addTo(cc, decls);
+		Collections.addAll(this.place, decls);
 	}
 	
 	public RelationType getRelation() {
@@ -25,7 +29,7 @@ public class RefactoringPlace implements Comparable<RefactoringPlace>{
 	public void setRelation(RelationType relation) {
 		this.relation = relation;
 	}
-	public ListMap<ComparingClasses, ClassOrInterfaceDeclaration> getPlace() {
+	public List<ClassOrInterfaceDeclaration> getPlace() {
 		return place;
 	}
 	
@@ -35,7 +39,7 @@ public class RefactoringPlace implements Comparable<RefactoringPlace>{
 			relation = p.relation;
 		}
 		if(p.relation == relation)
-			place.putAll(p.place);
+			place.addAll(p.place);
 	}
 
 	@Override
