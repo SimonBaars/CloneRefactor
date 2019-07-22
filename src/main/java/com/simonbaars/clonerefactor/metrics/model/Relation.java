@@ -75,12 +75,20 @@ public class Relation implements Comparable<Relation> {
 	}
 
 	public boolean isEffectivelyUnrelated() {
-		return type == RelationType.UNRELATED || type == RelationType.EXTERNALSUPERCLASS || type == RelationType.NODIRECTSUPERCLASS || type == RelationType.NOINDIRECTSUPERCLASS;
+		return type == RelationType.EXTERNALANCESTOR || type == RelationType.EXTERNALSUPERCLASS || type == RelationType.NODIRECTSUPERCLASS || type == RelationType.NOINDIRECTSUPERCLASS;
 	}
 
 	@Override
 	public int compareTo(Relation o) {
 		return Integer.compare(type.ordinal(), o.type.ordinal());
+	}
+
+	public ClassOrInterfaceDeclaration getAny() {
+		return intersectingClasses.get(0);
+	}
+
+	public boolean isInterfaceRelation() {
+		return type == RelationType.SAMEINTERFACE || type == RelationType.EXTERNALANCESTOR || type == RelationType.EXTERNALSUPERCLASS;
 	}
 	
 	

@@ -32,7 +32,6 @@ import com.github.javaparser.ast.type.VoidType;
 import com.simonbaars.clonerefactor.ast.interfaces.RequiresNodeOperations;
 import com.simonbaars.clonerefactor.datatype.map.ListMap;
 import com.simonbaars.clonerefactor.metrics.context.enums.Refactorability;
-import com.simonbaars.clonerefactor.metrics.context.enums.RelationType;
 import com.simonbaars.clonerefactor.metrics.context.interfaces.RequiresNodeContext;
 import com.simonbaars.clonerefactor.metrics.model.Relation;
 import com.simonbaars.clonerefactor.model.Sequence;
@@ -71,13 +70,13 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 	private void placeMethodOnBasisOfRelation(Sequence s, MethodDeclaration decl) {
 		Relation relation = s.getRelation();
 		if(relation.isEffectivelyUnrelated())
-			createRelation(s, relation, relation.getType() != RelationType.NODIRECTSUPERCLASS);
-		new ExtractToClassOrInterface(relation.getIntersectingClass()).extract(decl);
+			createRelation(s, relation);
+		new ExtractToClassOrInterface(relation.getAny()).extract(decl);
 		addKeywords(decl, relation);
 	}
 
 	private void addKeywords(MethodDeclaration decl, Relation relation) {
-		if(relation.getIntersectingClass().isInterface()) {
+		if(relation.isInterfaceRelation()) {
 			decl.addModifier(Keyword.PUBLIC, Keyword.DEFAULT);
 		} else if(relation.isSameClass()) {
 			decl.addModifier(Keyword.PRIVATE);
@@ -86,13 +85,15 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 		}
 	}
 
-	private void createRelation(Sequence s, Relation relation, boolean createInterface) {
+	private void createRelation(Sequence s, Relation relation) {
+		boolean createInterface = relation.isInterfaceRelation();
+		String name = "CloneRefactor"+(x++);
+		ClassOrInterfaceType implementedType = new JavaParser().parseClassOrInterfaceType(name).getResult().get();
+		relation.getIntersectingClasses().forEach(c -> addType(c, createInterface).apply(implementedType));
 		Optional<PackageDeclaration> pack = getCompilationUnit(s.getAny().getFirstNode()).get().getPackageDeclaration();
 		CompilationUnit cu = pack.isPresent() ? new CompilationUnit(pack.get().getNameAsString()) : new CompilationUnit();
-		relation.setIntersectingClass(create(cu, createInterface).apply("CloneRefactor"+(x++), createInterface ? new Keyword[] {Keyword.PUBLIC} : new Keyword[] {Keyword.PUBLIC, Keyword.ABSTRACT}));
-		Set<ClassOrInterfaceDeclaration> classOrInterface = s.getLocations().stream().map(l -> getClass(l.getFirstNode()).get()).collect(Collectors.toSet());
-		ClassOrInterfaceType implementedType = new JavaParser().parseClassOrInterfaceType(relation.getIntersectingClass().getNameAsString()).getResult().get();
-		classOrInterface.stream().filter(c -> c.getImplementedTypes().stream().noneMatch(t -> t.getNameAsString().equals(implementedType.getNameAsString()))).forEach(c -> addType(c, createInterface).apply(implementedType));
+		relation.getIntersectingClasses().clear();
+		relation.getIntersectingClasses().add(create(cu, createInterface).apply(name, createInterface ? new Keyword[] {Keyword.PUBLIC} : new Keyword[] {Keyword.PUBLIC, Keyword.ABSTRACT}));
 	}
 	
 	public BiFunction<String, Keyword[], ClassOrInterfaceDeclaration> create(CompilationUnit cu, boolean createInterface) {
