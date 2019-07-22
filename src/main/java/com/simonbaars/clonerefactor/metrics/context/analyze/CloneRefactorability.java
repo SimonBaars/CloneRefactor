@@ -69,7 +69,8 @@ public class CloneRefactorability implements DeterminesMetric<Refactorability>, 
 		List<Node> breakAndContinueStatements = l.getContents().getNodes().stream().filter(n -> continueOrBreak(n)).collect(Collectors.toList());
 		for(Node breakOrContinue : breakAndContinueStatements) {
 			Optional<SimpleName> label = label(breakOrContinue);
-			if(!l.getContents().getNodes().contains(getLoop(breakOrContinue.getParentNode().get(), label, breakOrContinue instanceof ContinueStmt)))
+			Optional<Node> loop = getLoop(breakOrContinue.getParentNode().get(), label, breakOrContinue instanceof ContinueStmt);
+			if(loop.isPresent() && !l.getContents().getNodes().contains(loop.get()))
 				return false;
 		}
 		return true;
@@ -83,11 +84,13 @@ public class CloneRefactorability implements DeterminesMetric<Refactorability>, 
 		return canBeContinued(n) || n instanceof SwitchStmt;
 	}
 	
-	public Node getLoop(Node n, Optional<SimpleName> label, boolean isContinue) {
+	public Optional<Node> getLoop(Node n, Optional<SimpleName> label, boolean isContinue) {
 		if((isContinue ? canBeContinued(n) : canBeBroken(n)) && (!label.isPresent() || (n.getParentNode().get() instanceof LabeledStmt && ((LabeledStmt)n.getParentNode().get()).getLabel().equals(label.get())))) {
-			return n;
+			return Optional.of(n);
 		}
-		return getLoop(n.getParentNode().get(), label, isContinue);
+		if(n.getParentNode().isPresent())
+			return getLoop(n.getParentNode().get(), label, isContinue);
+		return Optional.empty();
 	}
 	
 	private Optional<SimpleName> label(Node breakOrContinue) {
