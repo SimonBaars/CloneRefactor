@@ -49,8 +49,8 @@ public class CloneRelationTest extends Type1Test {
         test("SingleFile", RelationType.SAMEMETHOD);
     }
     
-    public void testNoRelation() {
-        test("Unrelated", RelationType.UNRELATED);
+    public void testExternalAncestor() {
+        test("ExternalAncestor", RelationType.EXTERNALANCESTOR);
     }
     
     public void testSameClass() {
