@@ -44,7 +44,7 @@ public class CloneRelation implements DeterminesMetric<Relation>, SeekClassHiera
 		Optional<ClassOrInterfaceDeclaration> class2 = getClass(n2);
 		
 		if(!class1.isPresent() || !class2.isPresent())
-			return new Relation(UNRELATED, null);
+			return new Relation(UNRELATED);
 		
 		ComparingClasses cc = new ComparingClasses(class1.get(), class2.get());
 		ComparingClasses rev = cc.reverse();
@@ -66,18 +66,18 @@ public class CloneRelation implements DeterminesMetric<Relation>, SeekClassHiera
 		relation.setRelationIfNotYetDetermined(NODIRECTSUPERCLASS, () -> noSuperclass(cc));
 		relation.setRelationIfNotYetDetermined(NOINDIRECTSUPERCLASS, () -> noIndirectSuperclass(cc));
 		relation.setRelationIfNotYetDetermined(EXTERNALSUPERCLASS, () -> hasExternalSuperclass(cc));
-		relation.setRelationIfNotYetDetermined(EXTERNALANCESTOR, () -> Optional.of(cc.getClassOne()));
+		relation.setRelationIfNotYetDetermined(EXTERNALANCESTOR, () -> uses(cc));
 		return relation;
 	}
 
-	private Optional<ClassOrInterfaceDeclaration> noIndirectSuperclass(ComparingClasses cc) {
+	private Optional<ClassOrInterfaceDeclaration[]> noIndirectSuperclass(ComparingClasses cc) {
 		if(cc.getClassOne().isInterface() || cc.getClassTwo().isInterface())
 			return Optional.empty();
 		Optional<ClassOrInterfaceDeclaration> withoutSuperclass = findWithoutSuperclass(cc.getClassOne());
 		if(withoutSuperclass.isPresent()) {
 			Optional<ClassOrInterfaceDeclaration> withoutSuperclass2 = findWithoutSuperclass(cc.getClassTwo());
 			if(withoutSuperclass2.isPresent())
-				return withoutSuperclass;
+				return uses(withoutSuperclass.get(), withoutSuperclass2.get());
 		}
 		return Optional.empty();
 	}
@@ -93,8 +93,8 @@ public class CloneRelation implements DeterminesMetric<Relation>, SeekClassHiera
 		return Optional.empty();
 	}
 
-	private Optional<ClassOrInterfaceDeclaration> noSuperclass(ComparingClasses cc) {
-		return noSuperclass(cc.getClassOne()) && noSuperclass(cc.getClassTwo()) ? Optional.of(cc.getClassOne()) : Optional.empty();
+	private Optional<ClassOrInterfaceDeclaration[]> noSuperclass(ComparingClasses cc) {
+		return noSuperclass(cc.getClassOne()) && noSuperclass(cc.getClassTwo()) ? uses(cc) : Optional.empty();
 	}
 
 	private boolean noSuperclass(ClassOrInterfaceDeclaration classDecl) {
@@ -102,20 +102,20 @@ public class CloneRelation implements DeterminesMetric<Relation>, SeekClassHiera
 		return extendedTypes.isEmpty() || (extendedTypes.size() == 1 && extendedTypes.get(0).asString().equals(JAVA_OBJECT_CLASS_NAME));
 	}
 
-	private Optional<ClassOrInterfaceDeclaration> isSameClass(ComparingClasses cc) {
+	private Optional<ClassOrInterfaceDeclaration[]> isSameClass(ComparingClasses cc) {
 		if(cc.getClassOne()  == cc.getClassTwo())
-			return Optional.of(cc.getClassOne());
+			return uses(cc.getClassOne());
 		return Optional.empty();
 	}
 	
-	private Optional<ClassOrInterfaceDeclaration> hasExternalSuperclass(ComparingClasses cc) {
+	private Optional<ClassOrInterfaceDeclaration[]> hasExternalSuperclass(ComparingClasses cc) {
 		if(!cc.hasExtendedTypes())
 			return Optional.empty();
 		ClassOrInterfaceType superclassC1 = cc.getClassOne().getExtendedTypes().get(0);
 		ClassOrInterfaceType superclassC2 = cc.getClassTwo().getExtendedTypes().get(0);
 		return !superclassC1.getNameAsString().equals(JAVA_OBJECT_CLASS_NAME) && 
 			   !superclassC2.getNameAsString().equals(JAVA_OBJECT_CLASS_NAME) && 
-				getFullyQualifiedName(superclassC1).equals(getFullyQualifiedName(superclassC2)) ? Optional.of(cc.getClassOne()) : Optional.empty();
+				getFullyQualifiedName(superclassC1).equals(getFullyQualifiedName(superclassC2)) ? uses(cc) : Optional.empty();
 	}
 
 	public void registerNode(Node n) {
@@ -129,18 +129,18 @@ public class CloneRelation implements DeterminesMetric<Relation>, SeekClassHiera
 		classes.clear();
 	}
 	
-	private Optional<ClassOrInterfaceDeclaration> isSibling(ComparingClasses cc){
+	private Optional<ClassOrInterfaceDeclaration[]> isSibling(ComparingClasses cc){
 		return isSiblingOrCousin(cc, 1, 1);
 	}
 	
-	private Optional<ClassOrInterfaceDeclaration> isFirstCousin(ComparingClasses cc){
+	private Optional<ClassOrInterfaceDeclaration[]> isFirstCousin(ComparingClasses cc){
 		return isSiblingOrCousin(cc, 2, 2);
 	}
 
-	private Optional<ClassOrInterfaceDeclaration> isSiblingOrCousin(ComparingClasses cc, int c1GoUp, int c2GoUp) {
+	private Optional<ClassOrInterfaceDeclaration[]> isSiblingOrCousin(ComparingClasses cc, int c1GoUp, int c2GoUp) {
 		ClassOrInterfaceDeclaration parent1 = goUp(cc.getClassOne(), c1GoUp);
 		ClassOrInterfaceDeclaration parent2 = goUp(cc.getClassTwo(), c2GoUp);
-		return parent1 == parent2 ? Optional.of(parent1) : Optional.empty();
+		return parent1 == parent2 ? uses(parent1) : Optional.empty();
 	}
 	
 	private ClassOrInterfaceDeclaration goUp(ClassOrInterfaceDeclaration classDecl, int i) {
@@ -152,14 +152,14 @@ public class CloneRelation implements DeterminesMetric<Relation>, SeekClassHiera
 		return classDecl;
 	}
 
-	private Optional<ClassOrInterfaceDeclaration> isAncestor(ComparingClasses cc) {
+	private Optional<ClassOrInterfaceDeclaration[]> isAncestor(ComparingClasses cc) {
 		if(!cc.getClassOne().getExtendedTypes().isEmpty()) {
 			String fullyQualifiedName = getFullyQualifiedName(cc.getClassOne().getExtendedTypes(0));
 			if(!classes.containsKey(fullyQualifiedName))
 				return Optional.empty();
 			ComparingClasses superCC = new ComparingClasses(classes.get(fullyQualifiedName), cc.getClassTwo());
 			
-			Optional<ClassOrInterfaceDeclaration> superclass = isSuperClass(superCC);
+			Optional<ClassOrInterfaceDeclaration[]> superclass = isSuperClass(superCC);
 			if(superclass.isPresent())
 				return superclass;
 			else return isAncestor(superCC);
@@ -167,23 +167,23 @@ public class CloneRelation implements DeterminesMetric<Relation>, SeekClassHiera
 		return Optional.empty();
 	}
 
-	private Optional<ClassOrInterfaceDeclaration> isMethod(ComparingClasses cc, Node n1, Node n2) {
+	private Optional<ClassOrInterfaceDeclaration[]> isMethod(ComparingClasses cc, Node n1, Node n2) {
 		Optional<MethodDeclaration> m1 = getMethod(n1);
 		if(m1.isPresent()) {
 			Optional<MethodDeclaration> m2 = getMethod(n2);
 			if(m2.isPresent() && m1.get() == m2.get())
-				return Optional.of(cc.getClassOne());
+				return uses(cc.getClassOne());
 		}
 		return Optional.empty();
 	}
 
-	private Optional<ClassOrInterfaceDeclaration> isSuperClass(ComparingClasses cc) {
+	private Optional<ClassOrInterfaceDeclaration[]> isSuperClass(ComparingClasses cc) {
 		return cc.getClassOne().getExtendedTypes().stream().filter(e -> {
 			String fullyQualifiedName = getFullyQualifiedName(e);
 			if(!classes.containsKey(fullyQualifiedName))
 				return false;
 			return getFullyQualifiedName(cc.getClassTwo()).equals(fullyQualifiedName);
-		}).map(e -> cc.getClassTwo()).findAny();
+		}).map(e -> new ClassOrInterfaceDeclaration[] {cc.getClassTwo()}).findAny();
 	}
 
 	@Override
