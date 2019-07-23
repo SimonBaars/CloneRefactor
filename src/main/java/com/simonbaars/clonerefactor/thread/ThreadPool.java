@@ -11,7 +11,6 @@ import java.util.stream.Stream;
 
 import com.github.javaparser.symbolsolver.javaparsermodel.JavaParserFacade;
 import com.simonbaars.clonerefactor.metrics.Metrics;
-import com.simonbaars.clonerefactor.util.FileUtils;
 import com.simonbaars.clonerefactor.util.SavePaths;
 
 public class ThreadPool implements WritesErrors, CalculatesTimeIntervals {
@@ -92,8 +91,8 @@ public class ThreadPool implements WritesErrors, CalculatesTimeIntervals {
 		calculateGeneralMetrics(t);
 		fullMetrics.add(t.res.getMetrics());
 		try {
-			FileUtils.writeStringToFile(new File(OUTPUT_FOLDER.getAbsolutePath()+File.separator+t.getFile().getName()+"-"+t.res.getClones().size()+".txt"), t.res.toString());
-			FileUtils.writeStringToFile(FULL_METRICS, fullMetrics.toString());
+			writeStringToFile(new File(OUTPUT_FOLDER.getAbsolutePath()+File.separator+t.getFile().getName()+"-"+t.res.getClones().size()+".txt"), t.res.toString());
+			writeStringToFile(FULL_METRICS, fullMetrics.toString());
 		} catch (IOException e) {
 			writeProjectError(t.getFile().getName(), e);
 		}

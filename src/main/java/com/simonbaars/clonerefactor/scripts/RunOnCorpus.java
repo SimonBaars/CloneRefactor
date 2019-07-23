@@ -8,7 +8,6 @@ import com.simonbaars.clonerefactor.settings.Settings;
 import com.simonbaars.clonerefactor.thread.CalculatesTimeIntervals;
 import com.simonbaars.clonerefactor.thread.ThreadPool;
 import com.simonbaars.clonerefactor.thread.WritesErrors;
-import com.simonbaars.clonerefactor.util.FileUtils;
 import com.simonbaars.clonerefactor.util.SavePaths;
 
 public class RunOnCorpus implements WritesErrors, CalculatesTimeIntervals {
@@ -38,7 +37,7 @@ public class RunOnCorpus implements WritesErrors, CalculatesTimeIntervals {
 
 	private void writeSettings() {
 		try {
-			FileUtils.writeStringToFile(new File(SavePaths.getMyOutputFolder()+"settings.txt"), Settings.get().toString());
+			writeStringToFile(new File(SavePaths.getMyOutputFolder()+"settings.txt"), Settings.get().toString());
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

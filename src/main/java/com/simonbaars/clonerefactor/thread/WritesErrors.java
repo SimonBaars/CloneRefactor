@@ -7,10 +7,10 @@ import java.io.StringWriter;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.simonbaars.clonerefactor.util.FileUtils;
+import com.simonbaars.clonerefactor.util.DoesFileOperations;
 import com.simonbaars.clonerefactor.util.SavePaths;
 
-public interface WritesErrors {
+public interface WritesErrors extends DoesFileOperations {
 	public default void writeError(String path, Exception exception) {
 		try {
 			tryToWriteError(path, exception);
@@ -21,9 +21,9 @@ public interface WritesErrors {
 
 	public default void tryToWriteError(String path, Exception exception) throws IOException {
 		try {
-			FileUtils.writeStringToFile(new File(path+".txt"), exceptionToString(exception));
+			writeStringToFile(new File(path+".txt"), exceptionToString(exception));
 		} catch (NullPointerException e) {
-			FileUtils.writeStringToFile(new File(path+".txt"), exceptionToString(new IllegalStateException("No exception present")));
+			writeStringToFile(new File(path+".txt"), exceptionToString(new IllegalStateException("No exception present")));
 		}
 	}
 	

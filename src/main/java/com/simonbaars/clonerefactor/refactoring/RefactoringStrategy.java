@@ -12,4 +12,8 @@ public enum RefactoringStrategy {
 	public boolean originalLocation() {
 		return this == REPLACE || this == GITREPLACE;
 	}
+
+	public boolean copyAll() {
+		return this == COPYALL || this == GITCOPY;
+	}
 }

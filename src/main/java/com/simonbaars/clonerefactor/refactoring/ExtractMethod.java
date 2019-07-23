@@ -39,10 +39,10 @@ import com.simonbaars.clonerefactor.model.Sequence;
 import com.simonbaars.clonerefactor.model.location.Location;
 import com.simonbaars.clonerefactor.refactoring.target.ExtractToClassOrInterface;
 import com.simonbaars.clonerefactor.settings.Settings;
-import com.simonbaars.clonerefactor.util.FileUtils;
+import com.simonbaars.clonerefactor.util.DoesFileOperations;
 import com.simonbaars.clonerefactor.util.SavePaths;
 
-public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperations {
+public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperations, DoesFileOperations {
 	private final Map<Sequence, MethodDeclaration> refactoredSequences = new HashMap<>();
 	private final Path folder;
 	private int x = 0;
@@ -53,6 +53,8 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 	
 	public void tryToExtractMethod(Sequence s) {
 		if(s.getRefactorability() == Refactorability.CANBEEXTRACTED) {
+			if(Settings.get().getRefactoringStrategy().copyAll())
+				;
 			extractMethod(s);
 		}
 	}
@@ -110,7 +112,7 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 		saveNodes.addAll(methodcalls);
 		try {
 			for(CompilationUnit cu : getUniqueLocations(saveNodes))
-				FileUtils.writeStringToFile(SavePaths.createDirForFile(compilationUnitFilePath(cu)), cu.toString());
+				writeStringToFile(SavePaths.createDirForFile(compilationUnitFilePath(cu)), cu.toString());
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

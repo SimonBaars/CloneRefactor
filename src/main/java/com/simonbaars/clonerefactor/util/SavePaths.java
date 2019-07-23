@@ -25,18 +25,11 @@ public class SavePaths {
 	}
 
 	public static String getApplicationDataFolder() {
-		return getPathForOS() + File.separator + dataFolder + File.separator;
+		return System.getProperty("user.home") + File.separator + dataFolder + File.separator;
 	}
 	
 	public static String getOutputFolder() {
 		return getApplicationDataFolder() + "output" + File.separator;
-	}
-
-	private static String getPathForOS() {
-		switch(OperatingSystem.get()) {
-			case WINDOWS: return System.getenv("APPDATA");
-			default: return System.getProperty("user.home");
-		}
 	}
 
 	public static String getFullOutputFolder() {

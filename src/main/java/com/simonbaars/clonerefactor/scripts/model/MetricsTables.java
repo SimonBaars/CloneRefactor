@@ -6,7 +6,6 @@ import java.io.IOException;
 import com.simonbaars.clonerefactor.datatype.map.CountTable;
 import com.simonbaars.clonerefactor.metrics.Metrics;
 import com.simonbaars.clonerefactor.thread.WritesErrors;
-import com.simonbaars.clonerefactor.util.FileUtils;
 import com.simonbaars.clonerefactor.util.SavePaths;
 
 public class MetricsTables implements WritesErrors {
@@ -54,7 +53,7 @@ public class MetricsTables implements WritesErrors {
 		tableContents.append(amountPerTotalEffectiveLineVolume.toString());
 		tableContents.append(System.lineSeparator()+System.lineSeparator());
 		try {
-			FileUtils.writeStringToFile(new File(SavePaths.getMyOutputFolder()+"tables.txt"), tableContents.toString());
+			writeStringToFile(new File(SavePaths.getMyOutputFolder()+"tables.txt"), tableContents.toString());
 		} catch (IOException e) {
 			writeProjectError("0_tables", e);
 		}
