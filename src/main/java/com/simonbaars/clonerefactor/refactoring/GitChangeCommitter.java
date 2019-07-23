@@ -15,11 +15,11 @@ import com.simonbaars.clonerefactor.metrics.context.interfaces.RequiresNodeConte
 import com.simonbaars.clonerefactor.model.Sequence;
 import com.simonbaars.clonerefactor.settings.Settings;
 
-public class GitCommit implements RequiresNodeContext {
+public class GitChangeCommitter implements RequiresNodeContext {
 	private final Repository repo;
 	private final Git git;
 	
-	public GitCommit(Path path) {
+	public GitChangeCommitter(Path path) {
 		Optional<Repository> opt = createRepo(path);
 		if(!opt.isPresent()) {
 			Settings.get().setRefactoringStrategy(Settings.get().getRefactoringStrategy().revertToNonGit());
