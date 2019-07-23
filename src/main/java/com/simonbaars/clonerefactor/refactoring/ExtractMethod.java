@@ -3,6 +3,7 @@ package com.simonbaars.clonerefactor.refactoring;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -64,14 +65,14 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 		s.getAny().getContents().getNodes().forEach(node -> decl.getBody().get().addStatement((Statement)node));
 		
 		refactoredSequences.put(s, decl);
-		writeRefactoringsToFile(methodcalls, s, decl);
+		writeRefactoringsToFile(methodcalls, s.getRelation());
 	}
 
 	private void placeMethodOnBasisOfRelation(Sequence s, MethodDeclaration decl) {
 		Relation relation = s.getRelation();
 		if(relation.isEffectivelyUnrelated())
 			createRelation(s, relation);
-		new ExtractToClassOrInterface(relation.getAny()).extract(decl);
+		new ExtractToClassOrInterface(relation.getFirstClass()).extract(decl);
 		addKeywords(decl, relation);
 	}
 
@@ -92,8 +93,7 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 		relation.getIntersectingClasses().forEach(c -> addType(c, createInterface).apply(implementedType));
 		Optional<PackageDeclaration> pack = getCompilationUnit(s.getAny().getFirstNode()).get().getPackageDeclaration();
 		CompilationUnit cu = pack.isPresent() ? new CompilationUnit(pack.get().getNameAsString()) : new CompilationUnit();
-		relation.getIntersectingClasses().clear();
-		relation.getIntersectingClasses().add(create(cu, createInterface).apply(name, createInterface ? new Keyword[] {Keyword.PUBLIC} : new Keyword[] {Keyword.PUBLIC, Keyword.ABSTRACT}));
+		relation.getIntersectingClasses().add(0, create(cu, createInterface).apply(name, createInterface ? new Keyword[] {Keyword.PUBLIC} : new Keyword[] {Keyword.PUBLIC, Keyword.ABSTRACT}));
 	}
 	
 	public BiFunction<String, Keyword[], ClassOrInterfaceDeclaration> create(CompilationUnit cu, boolean createInterface) {
@@ -104,12 +104,12 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 		return createInterface ? c::addImplementedType : c::addExtendedType;
 	}
 
-	private void writeRefactoringsToFile(List<ExpressionStmt> methodcalls, Sequence s, MethodDeclaration decl) {
+	private void writeRefactoringsToFile(List<ExpressionStmt> methodcalls, Relation relation) {
+		List<Node> saveNodes = new ArrayList<Node>(relation.getIntersectingClasses());
+		saveNodes.addAll(methodcalls);
 		try {
-			for(CompilationUnit cu : getUniqueLocations(methodcalls))
+			for(CompilationUnit cu : getUniqueLocations(saveNodes))
 				FileUtils.writeStringToFile(SavePaths.createDirForFile(compilationUnitFilePath(cu)), cu.toString());
-			CompilationUnit unit = getCompilationUnit(decl).get();
-			FileUtils.writeStringToFile(new File(compilationUnitFilePath(unit)), unit.toString());
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -119,7 +119,7 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 		return SavePaths.getRefactorFolder() + folder.getFileName() + File.separator + packageToPath(unit) + getClassName(unit) + ".java";
 	}
 
-	private Set<CompilationUnit> getUniqueLocations(List<ExpressionStmt> methodcalls) {
+	private Set<CompilationUnit> getUniqueLocations(List<Node> methodcalls) {
 		return methodcalls.stream().map(e -> getCompilationUnit(e)).filter(e -> e.isPresent()).map(e -> e.get()).collect(Collectors.toSet());
 	}
 

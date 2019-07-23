@@ -83,7 +83,7 @@ public class Relation implements Comparable<Relation> {
 		return Integer.compare(type.ordinal(), o.type.ordinal());
 	}
 
-	public ClassOrInterfaceDeclaration getAny() {
+	public ClassOrInterfaceDeclaration getFirstClass() {
 		return intersectingClasses.get(0);
 	}
 
