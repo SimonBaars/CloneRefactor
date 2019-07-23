@@ -2,19 +2,15 @@ package com.simonbaars.clonerefactor.refactoring;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.List;
 import java.util.Optional;
 
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.lib.Repository;
-import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
-import com.github.javaparser.ast.expr.MethodCallExpr;
 import com.simonbaars.clonerefactor.metrics.context.interfaces.RequiresNodeContext;
-import com.simonbaars.clonerefactor.metrics.model.Relation;
 import com.simonbaars.clonerefactor.model.Sequence;
 import com.simonbaars.clonerefactor.settings.Settings;
 
@@ -52,7 +48,7 @@ public class GitCommit implements RequiresNodeContext {
 	public void commit(Sequence s, String methodName) {
 		try {
 			git.add().addFilepattern(".").call();
-			RevCommit rev = git.commit().setAuthor("CloneRefactor", "clonerefactor@gmail.com").setMessage("Created unified method in "+s.getRelation().getFirstClass().getNameAsString()+"\n\n"+generateDescription(s, methodName)).call();
+			git.commit().setAuthor("CloneRefactor", "clonerefactor@gmail.com").setMessage("Created unified method in "+s.getRelation().getFirstClass().getNameAsString()+"\n\n"+generateDescription(s, methodName)).call();
 		} catch (GitAPIException e) {
 			e.printStackTrace();
 		}
