@@ -1,5 +1,6 @@
 package com.simonbaars.clonerefactor.refactoring;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Optional;
@@ -35,12 +36,20 @@ public class GitCommit implements RequiresNodeContext {
 	}
 	
 	public Optional<Repository> createRepo(Path path) {
-		FileRepositoryBuilder repositoryBuilder = new FileRepositoryBuilder();
-		repositoryBuilder.setMustExist( true );
-		repositoryBuilder.setGitDir(path.toFile());
+		FileRepositoryBuilder repositoryBuilder = new FileRepositoryBuilder().setMustExist( true ).setGitDir(path.toFile());
 		try {
 			return Optional.of(repositoryBuilder.build());
 		} catch (IOException e) {
+			return createNewRepo(path);
+		}
+	}
+
+	private Optional<Repository> createNewRepo(Path path) {
+		try {
+			Repository rep = FileRepositoryBuilder.create(new File(path.toString()+File.separator+"clonerefactor.git"));
+			rep.create();
+			return Optional.of(rep);
+		} catch (IOException e1) {
 			return Optional.empty();
 		}
 	}
