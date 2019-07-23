@@ -47,7 +47,7 @@ public class Main {
     			.setStoreTokens(true)
     			.setSymbolResolver(new JavaSymbolSolver(combinedTypeSolver));
         SourceRoot root = new SourceRoot(sourceRoot);
-		return new CloneParser().parse(root, config);
+		return new CloneParser().parse(path, root, config);
 	}
 
 	private static void addLibrariesToTypeSolver(Path path, CombinedTypeSolver combinedTypeSolver) {

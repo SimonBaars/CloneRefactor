@@ -36,7 +36,7 @@ public class CloneParser implements SetsIfNotNull, RemovesDuplicates, WritesErro
 	private NodeParser astParser;
 	public final MetricCollector metricCollector = new MetricCollector();
 	
-	public DetectionResults parse(SourceRoot sourceRoot, ParserConfiguration config) {
+	public DetectionResults parse(Path path, SourceRoot sourceRoot, ParserConfiguration config) {
 		long beginTime = System.currentTimeMillis();
 		astParser = new NodeParser(metricCollector);
 		Location lastLoc = calculateLineReg(sourceRoot, config);
@@ -45,7 +45,7 @@ public class CloneParser implements SetsIfNotNull, RemovesDuplicates, WritesErro
 			doTypeSpecificTransformations(findChains);
 			metricCollector.getMetrics().generalStats.increment("Detection time", interval(beginTime));
 			DetectionResults res = new DetectionResults(metricCollector.reportClones(findChains), findChains);
-			if(Settings.get().getRefactoringStrategy() != RefactoringStrategy.DONOTREFACTOR) new ExtractMethod(sourceRoot.getRoot()).refactor(findChains);
+			if(Settings.get().getRefactoringStrategy() != RefactoringStrategy.DONOTREFACTOR) new ExtractMethod(path).refactor(findChains);
 			return res;
 		}
 		return new DetectionResults();
