@@ -68,9 +68,9 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 		String methodName = "cloneRefactor"+(x++);
 		MethodDeclaration decl = new MethodDeclaration(Modifier.createModifierList(), getReturnType(s.getAny()), methodName);
 		placeMethodOnBasisOfRelation(s, decl);
-		List<ExpressionStmt> methodcalls = removeLowestNodes(s, methodName);
+		List<ExpressionStmt> methodcalls = removeLowestNodes(s, decl);
 		
-		s.getAny().getContents().getNodes().forEach(node -> decl.getBody().get().addStatement((Statement)node));
+		//s.getAny().getContents().getNodes().forEach(node -> decl.getBody().get().addStatement((Statement)node));
 		
 		refactoredSequences.put(s, decl);
 		writeRefactoringsToFile(methodcalls, s.getRelation());
@@ -140,7 +140,7 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 		return unit.getChildNodes().stream().filter(e -> e instanceof ClassOrInterfaceDeclaration).map(e -> (ClassOrInterfaceDeclaration)e).findAny().get().getNameAsString();
 	}
 
-	private List<ExpressionStmt> removeLowestNodes(Sequence s, String methodName) {
+	private List<ExpressionStmt> removeLowestNodes(Sequence s, MethodDeclaration decl) {
 		ListMap<Location, Node> lowestNodes = new ListMap<>();
 		Map<Location, BlockStmt> insideBlock = new HashMap<>();
 		s.getLocations().forEach(e -> {
@@ -149,8 +149,9 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 			if(lowest.get(0).getParentNode().isPresent() && lowest.get(0).getParentNode().get() instanceof BlockStmt)
 				insideBlock.put(e, (BlockStmt)lowest.get(0).getParentNode().get());
 		});
+		lowestNodes.values().forEach(node -> decl.getBody().get().addStatement((Statement)node));
 		if(lowestNodes.size() == insideBlock.size())
-			return s.getLocations().stream().map(l -> removeLowestNodes(lowestNodes.get(l), insideBlock.get(l), methodName)).collect(Collectors.toList());
+			return s.getLocations().stream().map(l -> removeLowestNodes(lowestNodes.get(l), insideBlock.get(l), decl.getNameAsString())).collect(Collectors.toList());
 		return Collections.emptyList();
 	}
 
