@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
+import com.simonbaars.clonerefactor.refactoring.RefactoringStrategy;
+
 public class Settings {
 	
 	private static final String CLONEREFACTOR_PROPERTIES = "clonerefactor.properties";
@@ -33,6 +35,7 @@ public class Settings {
 	
 	// Transform the AST and refactor the code
 	private boolean applyRefactorings;
+	private RefactoringStrategy strategy;
 	
 	private Settings() {
 		try (InputStream input = Settings.class.getClassLoader().getResourceAsStream(CLONEREFACTOR_PROPERTIES)) {
@@ -51,6 +54,7 @@ public class Settings {
             unitSize = Integer.parseInt(prop.getProperty("max_methodlines"));
             unitInterfaceParameters = Integer.parseInt(prop.getProperty("max_interface_parameters"));
             setApplyRefactorings(prop.getProperty("apply_refactorings").equals("true"));
+            strategy = RefactoringStrategy.valueOf(prop.getProperty("refactoring_strategy"));
         } catch (IOException ex) {
             throw new IllegalStateException("Could not get settings! Please check for the existence of the properties file!");
         }
