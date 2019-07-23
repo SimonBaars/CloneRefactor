@@ -11,6 +11,7 @@ import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
+import com.github.javaparser.ast.body.MethodDeclaration;
 import com.simonbaars.clonerefactor.metrics.context.interfaces.RequiresNodeContext;
 import com.simonbaars.clonerefactor.model.Sequence;
 import com.simonbaars.clonerefactor.settings.Settings;
@@ -59,17 +60,17 @@ public class GitChangeCommitter implements RequiresNodeContext {
 		}
 	}
 	
-	public void commit(Sequence s, String methodName) {
+	public void commit(Sequence s, MethodDeclaration extractedMethod) {
 		try {
 			git.add().addFilepattern(".").call();
-			git.commit().setAuthor("CloneRefactor", "clonerefactor@gmail.com").setMessage("Created unified method in "+s.getRelation().getFirstClass().getNameAsString()+"\n\n"+generateDescription(s, methodName)).call();
+			git.commit().setAuthor("CloneRefactor", "clonerefactor@gmail.com").setMessage("Created unified method in "+s.getRelation().getFirstClass().getNameAsString()+"\n\n"+generateDescription(s, extractedMethod)).call();
 		} catch (GitAPIException e) {
 			e.printStackTrace();
 		}
 	}
 
-	private String generateDescription(Sequence s, String methodName) {
-		StringBuilder b = new StringBuilder("CloneRefactor refactored a clone class with "+s.size()+" clone instances. For the common code we created a new method and named this method \""+methodName+"\". These clone instances have an "+s.getRelation()+" relation with each other. ");
+	private String generateDescription(Sequence s, MethodDeclaration extractedMethod) {
+		StringBuilder b = new StringBuilder("CloneRefactor refactored a clone class with "+s.size()+" clone instances. For the common code we created a new method and named this method \""+extractedMethod.getNameAsString()+"\". These clone instances have an "+s.getRelation()+" relation with each other. ");
 		if(s.getRelation().isEffectivelyUnrelated()) {
 			b.append("Because there is no location we could place the generated method, as at least one clone instance is unrelated with the rest, we created a new "+whatIsIt(s.getRelation().getFirstClass())+". We named this "+whatIsIt(s.getRelation().getFirstClass()));
 		} else {

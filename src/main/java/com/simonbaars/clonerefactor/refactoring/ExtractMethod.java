@@ -58,11 +58,13 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 		if(s.getRefactorability() == Refactorability.CANBEEXTRACTED) {
 			if(Settings.get().getRefactoringStrategy().copyAll())
 				copyFolder(folder, Paths.get(refactoringSaveFolder()));
-			extractMethod(s);
+			MethodDeclaration extractedMethod = extractMethod(s);
+			if(gitCommit.doCommit())
+				gitCommit.commit(s, extractedMethod);
 		}
 	}
 
-	private void extractMethod(Sequence s) {
+	private MethodDeclaration extractMethod(Sequence s) {
 		String methodName = "cloneRefactor"+(x++);
 		MethodDeclaration decl = new MethodDeclaration(Modifier.createModifierList(), getReturnType(s.getAny()), methodName);
 		placeMethodOnBasisOfRelation(s, decl);
@@ -72,6 +74,7 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 		
 		refactoredSequences.put(s, decl);
 		writeRefactoringsToFile(methodcalls, s.getRelation());
+		return decl;
 	}
 
 	private void placeMethodOnBasisOfRelation(Sequence s, MethodDeclaration decl) {
