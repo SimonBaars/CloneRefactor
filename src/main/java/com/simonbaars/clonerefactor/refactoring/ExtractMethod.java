@@ -38,6 +38,7 @@ import com.simonbaars.clonerefactor.metrics.model.Relation;
 import com.simonbaars.clonerefactor.model.Sequence;
 import com.simonbaars.clonerefactor.model.location.Location;
 import com.simonbaars.clonerefactor.refactoring.target.ExtractToClassOrInterface;
+import com.simonbaars.clonerefactor.settings.Settings;
 import com.simonbaars.clonerefactor.util.FileUtils;
 import com.simonbaars.clonerefactor.util.SavePaths;
 
@@ -116,7 +117,11 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 	}
 
 	private String compilationUnitFilePath(CompilationUnit unit) {
-		return SavePaths.getRefactorFolder() + folder.getFileName() + File.separator + packageToPath(unit) + getClassName(unit) + ".java";
+		return refactoringSaveFolder() + File.separator + packageToPath(unit) + getClassName(unit) + ".java";
+	}
+	
+	private String refactoringSaveFolder() {
+		return Settings.get().getRefactoringStrategy().originalLocation() ? folder.toString() : (SavePaths.getRefactorFolder() + folder.getFileName());
 	}
 
 	private Set<CompilationUnit> getUniqueLocations(List<Node> methodcalls) {

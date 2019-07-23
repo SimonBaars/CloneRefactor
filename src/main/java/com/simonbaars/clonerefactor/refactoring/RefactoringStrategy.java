@@ -6,4 +6,9 @@ public enum RefactoringStrategy {
 	COPYALL, //Copies the entire project to a different location and applies the refactorings there.
 	GITREPLACE, //Replaces the refactorings in the original project, but creates a git commit after each change
 	GITCOPY //Copies the entire project to a new location and creates a git commit after each change
+;
+
+	public boolean originalLocation() {
+		return this == REPLACE || this == GITREPLACE;
+	}
 }
