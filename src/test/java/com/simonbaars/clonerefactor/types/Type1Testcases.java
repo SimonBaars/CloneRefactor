@@ -42,6 +42,13 @@ public class Type1Testcases extends Type1Test {
         return new TestSuite( Type1Testcases.class );
     }
     
+    public void testRef() {
+    	System.out.println("kryo-serializers");
+    	String path = "/Users/sbaars/git/kryo-serializers/";
+    	System.out.println(Settings.get());
+		System.out.println(Main.cloneDetection(Paths.get(path), Paths.get(path+"src/main/java/")).sorted());
+    }
+    
     public void testCustom() {
     	System.out.println("kryo-serializers");
     	String path = "/Users/sbaars/clone/git/kryo-serializers/";
