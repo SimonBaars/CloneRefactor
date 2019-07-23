@@ -3,6 +3,7 @@ package com.simonbaars.clonerefactor.refactoring;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -54,7 +55,7 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 	public void tryToExtractMethod(Sequence s) {
 		if(s.getRefactorability() == Refactorability.CANBEEXTRACTED) {
 			if(Settings.get().getRefactoringStrategy().copyAll())
-				;
+				copyFolder(folder, Paths.get(refactoringSaveFolder()));
 			extractMethod(s);
 		}
 	}
