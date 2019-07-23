@@ -14,6 +14,7 @@ import com.github.javaparser.ast.stmt.ForEachStmt;
 import com.github.javaparser.ast.stmt.ForStmt;
 import com.github.javaparser.ast.stmt.LabeledStmt;
 import com.github.javaparser.ast.stmt.ReturnStmt;
+import com.github.javaparser.ast.stmt.Statement;
 import com.github.javaparser.ast.stmt.SwitchStmt;
 import com.github.javaparser.ast.stmt.WhileStmt;
 import com.simonbaars.clonerefactor.ast.interfaces.RequiresNodeOperations;
@@ -30,6 +31,8 @@ public class CloneRefactorability implements DeterminesMetric<Refactorability>, 
 			return Refactorability.NOEXTRACTIONBYCONTENTTYPE;
 		else if (hasOverlap(sequence))
 			return Refactorability.OVERLAPS;
+		else if (!lowestNodesAllStatements(sequence))
+			return Refactorability.NOSTATEMENT;
 		else if(isPartialBlock(sequence))
 			return Refactorability.PARTIALBLOCK;
 		else if(hasComplexControlFlow(sequence))
@@ -37,6 +40,10 @@ public class CloneRefactorability implements DeterminesMetric<Refactorability>, 
 		return Refactorability.CANBEEXTRACTED;
 	}
 	
+	private boolean lowestNodesAllStatements(Sequence sequence) {
+		return lowestNodes(sequence.getAny().getContents().getNodes()).stream().allMatch(e -> e instanceof Statement);
+	}
+
 	private boolean hasOverlap(Sequence sequence) {
 		for(int i = 0; i<sequence.size(); i++) {
 			for(int j = i+1; j<sequence.size(); j++) {
