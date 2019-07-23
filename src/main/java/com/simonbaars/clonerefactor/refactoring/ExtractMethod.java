@@ -45,11 +45,13 @@ import com.simonbaars.clonerefactor.util.SavePaths;
 
 public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperations, DoesFileOperations {
 	private final Map<Sequence, MethodDeclaration> refactoredSequences = new HashMap<>();
+	private final GitChangeCommitter gitCommit;
 	private final Path folder;
 	private int x = 0;
 	
 	public ExtractMethod(Path path) {
 		this.folder = path;
+		gitCommit = Settings.get().getRefactoringStrategy().usesGit() ? new GitChangeCommitter(Paths.get(refactoringSaveFolder())) : new GitChangeCommitter();
 	}
 	
 	public void tryToExtractMethod(Sequence s) {

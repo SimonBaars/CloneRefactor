@@ -19,6 +19,11 @@ public class GitChangeCommitter implements RequiresNodeContext {
 	private final Repository repo;
 	private final Git git;
 	
+	public GitChangeCommitter() {
+		this.repo = null;
+		this.git = null;
+	}
+	
 	public GitChangeCommitter(Path path) {
 		Optional<Repository> opt = createRepo(path);
 		if(!opt.isPresent()) {
@@ -76,5 +81,9 @@ public class GitChangeCommitter implements RequiresNodeContext {
 
 	private String whatIsIt(ClassOrInterfaceDeclaration firstClass) {
 		return firstClass.isInterface() ? "interface" : "class";
+	}
+	
+	public boolean doCommit() {
+		return repo != null && git != null;
 	}
 }
