@@ -1,6 +1,9 @@
 package com.simonbaars.clonerefactor.metrics.context.interfaces;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;
@@ -38,5 +41,9 @@ public interface RequiresNodeContext {
 			} else return Optional.empty();
 		}
 		return Optional.of((T)n1);
+	}
+	
+	public default Set<CompilationUnit> getUniqueCompilationUnits(List<Node> nodes) {
+		return nodes.stream().map(e -> getCompilationUnit(e)).filter(e -> e.isPresent()).map(e -> e.get()).collect(Collectors.toSet());
 	}
 }

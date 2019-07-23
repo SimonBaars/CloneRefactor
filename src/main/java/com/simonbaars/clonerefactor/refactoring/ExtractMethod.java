@@ -112,7 +112,7 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 		List<Node> saveNodes = new ArrayList<Node>(relation.getIntersectingClasses());
 		saveNodes.addAll(methodcalls);
 		try {
-			for(CompilationUnit cu : getUniqueLocations(saveNodes))
+			for(CompilationUnit cu : getUniqueCompilationUnits(saveNodes))
 				writeStringToFile(SavePaths.createDirForFile(compilationUnitFilePath(cu)), cu.toString());
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -125,10 +125,6 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 	
 	private String refactoringSaveFolder() {
 		return Settings.get().getRefactoringStrategy().originalLocation() ? folder.toString() : (SavePaths.getRefactorFolder() + folder.getFileName());
-	}
-
-	private Set<CompilationUnit> getUniqueLocations(List<Node> methodcalls) {
-		return methodcalls.stream().map(e -> getCompilationUnit(e)).filter(e -> e.isPresent()).map(e -> e.get()).collect(Collectors.toSet());
 	}
 
 	private String packageToPath(CompilationUnit unit) {
