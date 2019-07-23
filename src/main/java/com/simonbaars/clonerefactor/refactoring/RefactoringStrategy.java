@@ -1,6 +1,7 @@
 package com.simonbaars.clonerefactor.refactoring;
 
 public enum RefactoringStrategy {
+	DONOTREFACTOR, //Does not do any refactoring
 	REPLACE, //Replaces original code with refactored code.
 	COPYONLYCHANGED,  //Copies only the files that were changed to a different location, not changing the original.
 	COPYALL, //Copies the entire project to a different location and applies the refactorings there.
