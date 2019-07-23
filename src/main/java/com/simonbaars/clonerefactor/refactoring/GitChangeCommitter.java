@@ -42,17 +42,18 @@ public class GitChangeCommitter implements RequiresNodeContext {
 	}
 	
 	public Optional<Repository> createRepo(Path path) {
-		FileRepositoryBuilder repositoryBuilder = new FileRepositoryBuilder().setMustExist( true ).setGitDir(path.toFile());
+		FileRepositoryBuilder repositoryBuilder = new FileRepositoryBuilder().setMustExist( true ).setGitDir(new File(path+File.separator+".git"));
 		try {
 			return Optional.of(repositoryBuilder.build());
 		} catch (IOException e) {
+			e.printStackTrace();
 			return createNewRepo(path);
 		}
 	}
 
 	private Optional<Repository> createNewRepo(Path path) {
 		try {
-			Repository rep = FileRepositoryBuilder.create(new File(path.toString()+File.separator+"clonerefactor.git"));
+			Repository rep = FileRepositoryBuilder.create(new File(path.toString()+File.separator+".git"));
 			rep.create();
 			return Optional.of(rep);
 		} catch (IOException e1) {

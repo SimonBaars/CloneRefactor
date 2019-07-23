@@ -51,13 +51,13 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 	
 	public ExtractMethod(Path path) {
 		this.folder = path;
+		if(Settings.get().getRefactoringStrategy().copyAll())
+			copyFolder(folder, Paths.get(refactoringSaveFolder()));
 		gitCommit = Settings.get().getRefactoringStrategy().usesGit() ? new GitChangeCommitter(Paths.get(refactoringSaveFolder())) : new GitChangeCommitter();
 	}
 	
 	public void tryToExtractMethod(Sequence s) {
 		if(s.getRefactorability() == Refactorability.CANBEEXTRACTED) {
-			if(Settings.get().getRefactoringStrategy().copyAll())
-				copyFolder(folder, Paths.get(refactoringSaveFolder()));
 			MethodDeclaration extractedMethod = extractMethod(s);
 			if(gitCommit.doCommit())
 				gitCommit.commit(s, extractedMethod);
