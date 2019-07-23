@@ -35,7 +35,7 @@ public class Settings {
 	
 	// Transform the AST and refactor the code
 	private boolean applyRefactorings;
-	private RefactoringStrategy strategy;
+	private RefactoringStrategy refactoringStrategy;
 	
 	private Settings() {
 		try (InputStream input = Settings.class.getClassLoader().getResourceAsStream(CLONEREFACTOR_PROPERTIES)) {
@@ -54,7 +54,7 @@ public class Settings {
             unitSize = Integer.parseInt(prop.getProperty("max_methodlines"));
             unitInterfaceParameters = Integer.parseInt(prop.getProperty("max_interface_parameters"));
             setApplyRefactorings(prop.getProperty("apply_refactorings").equals("true"));
-            strategy = RefactoringStrategy.valueOf(prop.getProperty("refactoring_strategy"));
+            refactoringStrategy = RefactoringStrategy.valueOf(prop.getProperty("refactoring_strategy"));
         } catch (IOException ex) {
             throw new IllegalStateException("Could not get settings! Please check for the existence of the properties file!");
         }
@@ -68,9 +68,17 @@ public class Settings {
 		return Float.parseFloat(property.endsWith("%") ? property.substring(0, property.length()-1) : property);
 	}
 
-	public static String getClonerefactorProperties() {
-		return CLONEREFACTOR_PROPERTIES;
+	@Override
+	public String toString() {
+		return String.format(
+				"Settings [cloneType=%s, scope=%s, minAmountOfLines=%s, minAmountOfTokens=%s, minAmountOfNodes=%s, useLiteratureTypeDefinitions=%s, type2VariabilityPercentage=%s, type3GapSize=%s, applyRefactorings=%s, refactoringStrategy=%s]",
+				cloneType, scope, minAmountOfLines, minAmountOfTokens, minAmountOfNodes, useLiteratureTypeDefinitions,
+				type2VariabilityPercentage, type3GapSize, applyRefactorings, refactoringStrategy);
 	}
+	
+	/*
+	 * Getters and setters
+	 */
 
 	public CloneType getCloneType() {
 		return cloneType;
@@ -160,14 +168,6 @@ public class Settings {
 		return settings;
 	}
 
-	@Override
-	public String toString() {
-		return String.format(
-				"Settings [cloneType=%s, scope=%s, minAmountOfLines=%s, minAmountOfTokens=%s, minAmountOfNodes=%s, useLiteratureTypeDefinitions=%s, type2VariabilityPercentage=%s, type3GapSize=%s, applyRefactorings=%s]",
-				cloneType, scope, minAmountOfLines, minAmountOfTokens, minAmountOfNodes, useLiteratureTypeDefinitions,
-				type2VariabilityPercentage, type3GapSize, applyRefactorings);
-	}
-
 	public Scope getScope() {
 		return scope;
 	}
@@ -182,5 +182,13 @@ public class Settings {
 
 	public void setApplyRefactorings(boolean applyRefactorings) {
 		this.applyRefactorings = applyRefactorings;
+	}
+
+	public RefactoringStrategy getRefactoringStrategy() {
+		return refactoringStrategy;
+	}
+
+	public void setRefactoringStrategy(RefactoringStrategy refactoringStrategy) {
+		this.refactoringStrategy = refactoringStrategy;
 	}
 }
