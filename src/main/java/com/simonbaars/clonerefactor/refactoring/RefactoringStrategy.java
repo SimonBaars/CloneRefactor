@@ -16,4 +16,16 @@ public enum RefactoringStrategy {
 	public boolean copyAll() {
 		return this == COPYALL || this == GITCOPY;
 	}
+	
+	public boolean usesGit() {
+		return this == GITREPLACE || this == GITCOPY;
+	}
+
+	public RefactoringStrategy revertToNonGit() {
+		if(this == GITREPLACE)
+			return REPLACE;
+		if(this == GITCOPY)
+			return COPYALL;
+		throw new IllegalStateException("Not using Git, so cannot revert!");
+	}
 }
