@@ -29,6 +29,7 @@ public interface DoesFileOperations {
 	
 	public default void copyFolder(Path src, Path dest) {
 		try {
+			dest.toFile().mkdirs();
 			Files.walk(src).forEach(source -> copy(source, dest.resolve(src.relativize(source))));
 		} catch (IOException e) {
 			e.printStackTrace();
