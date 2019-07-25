@@ -54,7 +54,7 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 		this.projectFolder = projectPath;
 		this.sourceFolder = sourceFolder;
 		if(Settings.get().getRefactoringStrategy().copyAll())
-			copyFolder(projectFolder, Paths.get(refactoringSaveFolder()));
+			copyFolder(projectFolder, Paths.get(refactoringSaveFolder(false)));
 		gitCommit = Settings.get().getRefactoringStrategy().usesGit() ? new GitChangeCommitter(Paths.get(refactoringSaveFolder())) : new GitChangeCommitter();
 	}
 	
@@ -123,11 +123,14 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 	}
 
 	private String compilationUnitFilePath(CompilationUnit unit) {
-		return refactoringSaveFolder() + File.separator + packageToPath(unit) + File.separator + getClassName(unit) + ".java";
+		return refactoringSaveFolder(true) + File.separator + packageToPath(unit) + File.separator + getClassName(unit) + ".java";
 	}
 	
-	private String refactoringSaveFolder() {
-		return Settings.get().getRefactoringStrategy().originalLocation() ? sourceFolder.toString() : (SavePaths.getRefactorFolder(sourceFolder.toString().replace(projectFolder.toString(), "")) + projectFolder.getFileName());
+	private String refactoringSaveFolder(boolean sources) {
+		return Settings.get().getRefactoringStrategy().originalLocation() ? (sources ? sourceFolder : projectFolder).toString() : 
+					(SavePaths.getRefactorFolder(
+							sources ? sourceFolder.toString().replace(projectßFolder.toString(), "") : ""
+					) + projectFolder.getFileName());
 	}
 
 	private String packageToPath(CompilationUnit unit) {
