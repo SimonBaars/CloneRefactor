@@ -46,13 +46,15 @@ import com.simonbaars.clonerefactor.util.SavePaths;
 public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperations, DoesFileOperations {
 	private final Map<Sequence, MethodDeclaration> refactoredSequences = new HashMap<>();
 	private final GitChangeCommitter gitCommit;
-	private final Path folder;
+	private final Path projectFolder;
 	private int x = 0;
+	private final Path sourceFolder;
 	
-	public ExtractMethod(Path path) {
-		this.folder = path;
+	public ExtractMethod(Path projectPath, Path sourceFolder) {
+		this.projectFolder = projectPath;
+		this.sourceFolder = sourceFolder;
 		if(Settings.get().getRefactoringStrategy().copyAll())
-			copyFolder(folder, Paths.get(refactoringSaveFolder()));
+			copyFolder(projectFolder, Paths.get(refactoringSaveFolder()));
 		gitCommit = Settings.get().getRefactoringStrategy().usesGit() ? new GitChangeCommitter(Paths.get(refactoringSaveFolder())) : new GitChangeCommitter();
 	}
 	
@@ -68,11 +70,7 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 		String methodName = "cloneRefactor"+(x++);
 		MethodDeclaration decl = new MethodDeclaration(Modifier.createModifierList(), getReturnType(s.getAny()), methodName);
 		placeMethodOnBasisOfRelation(s, decl);
-		List<ExpressionStmt> methodcalls = removeLowestNodes(s, decl);
-		
-		//s.getAny().getContents().getNodes().forEach(node -> decl.getBody().get().addStatement((Statement)node));
-		
-		refactoredSequences.put(s, decl);
+		List<ExpressionStmt> methodcalls = removeLowestNodes(s, decl);refactoredSequences.put(s, decl);
 		writeRefactoringsToFile(methodcalls, s.getRelation());
 		return decl;
 	}
@@ -129,7 +127,7 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 	}
 	
 	private String refactoringSaveFolder() {
-		return Settings.get().getRefactoringStrategy().originalLocation() ? folder.toString() : (SavePaths.getRefactorFolder() + folder.getFileName());
+		return Settings.get().getRefactoringStrategy().originalLocation() ? sourceFolder.toString() : (SavePaths.getRefactorFolder(sourceFolder.toString().replace(projectFolder.toString(), "")) + projectFolder.getFileName());
 	}
 
 	private String packageToPath(CompilationUnit unit) {
