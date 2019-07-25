@@ -125,7 +125,7 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 	}
 
 	private String compilationUnitFilePath(CompilationUnit unit) {
-		return refactoringSaveFolder() + File.separator + packageToPath(unit) + getClassName(unit) + ".java";
+		return refactoringSaveFolder() + File.separator + packageToPath(unit) + File.separator + getClassName(unit) + ".java";
 	}
 	
 	private String refactoringSaveFolder() {
