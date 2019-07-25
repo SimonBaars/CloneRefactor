@@ -63,7 +63,7 @@ public class SavePaths {
 	}
 
 	public static String getRefactorFolder(String sourceFolder) {
-		return getMyOutputFolder()+"refactor"+ sourceFolder + File.separator;
+		return getMyOutputFolder()+"refactor"+ sourceFolder;
 	}
 
 	public static File createDirForFile(String string) {
