@@ -34,7 +34,7 @@ public class GitChangeCommitter implements RequiresNodeContext {
 		if(opt.isPresent()) {
 			git = new Git(repo);
 			try {
-				git.branchCreate().setName("CloneRefactor").call();
+				git.checkout().setCreateBranch(true).setName("CloneRefactor").call();
 			} catch (GitAPIException e) {
 				e.printStackTrace();
 			}
