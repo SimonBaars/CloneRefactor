@@ -83,6 +83,7 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 		Relation relation = s.getRelation();
 		if(relation.isEffectivelyUnrelated())
 			createRelation(s, relation);
+		saveASTBeforeChange(getCompilationUnit(relation.getFirstClass()).get());
 		new ExtractToClassOrInterface(relation.getFirstClass()).extract(decl);
 		addKeywords(decl, relation);
 	}
