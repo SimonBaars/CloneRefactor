@@ -17,6 +17,9 @@ import com.simonbaars.clonerefactor.model.Sequence;
 import com.simonbaars.clonerefactor.settings.Settings;
 
 public class GitChangeCommitter implements RequiresNodeContext {
+	private static final String CLONEREFACTOR_BRANCH_NAME = "CloneRefactor";
+	private static final String CLONEREFACTOR_AUTHOR_NAME = "CloneRefactor";
+	private static final String CLONEREFACTOR_AUTHOR_EMAIL = "clonerefactor@gmail.com";
 	private final Repository repo;
 	private final Git git;
 	
@@ -34,7 +37,7 @@ public class GitChangeCommitter implements RequiresNodeContext {
 		if(opt.isPresent()) {
 			git = new Git(repo);
 			try {
-				git.checkout().setCreateBranch(true).setName("CloneRefactor").call();
+				git.checkout().setCreateBranch(true).setName(CLONEREFACTOR_BRANCH_NAME).call();
 			} catch (GitAPIException e) {
 				e.printStackTrace();
 			}
@@ -64,14 +67,14 @@ public class GitChangeCommitter implements RequiresNodeContext {
 	public void commit(Sequence s, MethodDeclaration extractedMethod) {
 		try {
 			git.add().addFilepattern(".").call();
-			git.commit().setAuthor("CloneRefactor", "clonerefactor@gmail.com").setMessage("Created unified method in "+s.getRelation().getFirstClass().getNameAsString()+"\n\n"+generateDescription(s, extractedMethod)).call();
+			git.commit().setAuthor(CLONEREFACTOR_AUTHOR_NAME, CLONEREFACTOR_AUTHOR_EMAIL).setMessage("Created unified method in "+s.getRelation().getFirstClass().getNameAsString()+"\n\n"+generateDescription(s, extractedMethod)).call();
 		} catch (GitAPIException e) {
 			e.printStackTrace();
 		}
 	}
 
 	private String generateDescription(Sequence s, MethodDeclaration extractedMethod) {
-		StringBuilder b = new StringBuilder("CloneRefactor refactored a clone class with "+s.size()+" clone instances. For the common code we created a new method and named this method \""+extractedMethod.getNameAsString()+"\". These clone instances have an "+s.getRelation()+" relation with each other. ");
+		StringBuilder b = new StringBuilder("CloneRefactor refactored a clone class with "+s.size()+" clone instances. For the common code we created a new method and named this method \""+extractedMethod.getNameAsString()+"\". These clone instances have an "+s.getRelation().getType()+" relation with each other. ");
 		if(s.getRelation().isEffectivelyUnrelated()) {
 			b.append("Because there is no location we could place the generated method, as at least one clone instance is unrelated with the rest, we created a new "+whatIsIt(s.getRelation().getFirstClass())+". We named this "+whatIsIt(s.getRelation().getFirstClass()));
 		} else {
