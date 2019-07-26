@@ -64,8 +64,8 @@ public class GitChangeCommitter implements RequiresNodeContext {
 		}
 	}
 	
-	public void commitFormat(ClassOrInterfaceDeclaration decl) {
-		commit("Formatted "+decl.getNameAsString());
+	public void commitFormat(String className) {
+		commit("Formatted "+className);
 	}
 	
 	public void commit(Sequence s, MethodDeclaration extractedMethod) {

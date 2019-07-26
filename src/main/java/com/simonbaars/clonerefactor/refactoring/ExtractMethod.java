@@ -7,6 +7,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -45,6 +46,7 @@ import com.simonbaars.clonerefactor.util.SavePaths;
 
 public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperations, DoesFileOperations {
 	private final Map<Sequence, MethodDeclaration> refactoredSequences = new HashMap<>();
+	private final Set<File> formatted = new HashSet<>();
 	private final GitChangeCommitter gitCommit;
 	private final Path projectFolder;
 	private int x = 0;
@@ -71,7 +73,8 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 		String methodName = "cloneRefactor"+(x++);
 		MethodDeclaration decl = new MethodDeclaration(Modifier.createModifierList(), getReturnType(s.getAny()), methodName);
 		placeMethodOnBasisOfRelation(s, decl);
-		List<ExpressionStmt> methodcalls = removeLowestNodes(s, decl);refactoredSequences.put(s, decl);
+		List<ExpressionStmt> methodcalls = removeLowestNodes(s, decl);
+		refactoredSequences.put(s, decl);
 		writeRefactoringsToFile(methodcalls, s.getRelation());
 		return decl;
 	}
@@ -161,15 +164,30 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 		});
 		lowestNodes.get(s.getAny()).forEach(node -> decl.getBody().get().addStatement((Statement)node));
 		if(lowestNodes.size() == insideBlock.size())
-			return s.getLocations().stream().map(l -> removeLowestNodes(lowestNodes.get(l), insideBlock.get(l), decl.getNameAsString())).collect(Collectors.toList());
+			return s.getLocations().stream().map(l -> 
+				removeLowestNodes(getCompilationUnit(insideBlock.get(l)).get(), lowestNodes.get(l), insideBlock.get(l), decl.getNameAsString())
+			).collect(Collectors.toList());
 		return Collections.emptyList();
 	}
 
-	private ExpressionStmt removeLowestNodes(List<Node> lowestNodes, BlockStmt inBlock, String methodName) {
+	private ExpressionStmt removeLowestNodes(CompilationUnit cu, List<Node> lowestNodes, BlockStmt inBlock, String methodName) {
 		ExpressionStmt methodcall = new ExpressionStmt(new MethodCallExpr(methodName));
+		saveASTBeforeChange(cu);
 		inBlock.getStatements().add(inBlock.getStatements().indexOf(lowestNodes.get(0)), methodcall);
 		lowestNodes.forEach(inBlock::remove);
 		return methodcall;
+	}
+
+	private void saveASTBeforeChange(CompilationUnit cu) {
+		File file = SavePaths.createDirForFile(compilationUnitFilePath(cu));
+		if(formatted.add(file) && file.exists()) {
+			try {
+				writeStringToFile(file, cu.toString());
+				gitCommit.commitFormat(getClassName(cu));
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 
 	private Type getReturnType(Location any) {
