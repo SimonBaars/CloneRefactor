@@ -64,10 +64,18 @@ public class GitChangeCommitter implements RequiresNodeContext {
 		}
 	}
 	
+	public void commitFormat(ClassOrInterfaceDeclaration decl) {
+		commit("Formatted "+decl.getNameAsString());
+	}
+	
 	public void commit(Sequence s, MethodDeclaration extractedMethod) {
+		commit("Created unified method in "+s.getRelation().getFirstClass().getNameAsString()+"\n\n"+generateDescription(s, extractedMethod));
+	}
+	
+	public void commit(String message) {
 		try {
 			git.add().addFilepattern(".").call();
-			git.commit().setAuthor(CLONEREFACTOR_AUTHOR_NAME, CLONEREFACTOR_AUTHOR_EMAIL).setMessage("Created unified method in "+s.getRelation().getFirstClass().getNameAsString()+"\n\n"+generateDescription(s, extractedMethod)).call();
+			git.commit().setAuthor(CLONEREFACTOR_AUTHOR_NAME, CLONEREFACTOR_AUTHOR_EMAIL).setMessage(message).call();
 		} catch (GitAPIException e) {
 			e.printStackTrace();
 		}
