@@ -48,7 +48,7 @@ public class CompareMethodCall extends Compare implements ResolvesSymbols {
 	private List<JavaToken> getPartsOfCall(MethodCallExpr methodCall2) {
 		List<JavaToken> tokens = new ArrayList<>();
 		for(JavaToken token : methodCall2.getTokenRange().get()) {
-			if(token.getCategory()==Category.SEPARATOR)
+			if(token.toString().equals("("))
 				return tokens;
 			tokens.add(token);
 		}
