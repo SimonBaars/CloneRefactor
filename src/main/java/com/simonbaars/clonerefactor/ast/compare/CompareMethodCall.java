@@ -6,7 +6,6 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import com.github.javaparser.JavaToken;
-import com.github.javaparser.JavaToken.Category;
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.expr.MethodCallExpr;
 import com.simonbaars.clonerefactor.ast.interfaces.HasCompareList;

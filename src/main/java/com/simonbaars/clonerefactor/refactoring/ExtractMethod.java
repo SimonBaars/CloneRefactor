@@ -73,7 +73,7 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 		String methodName = "cloneRefactor"+(x++);
 		MethodDeclaration decl = new MethodDeclaration(Modifier.createModifierList(), getReturnType(s.getAny()), methodName);
 		placeMethodOnBasisOfRelation(s, decl);
-		List<ExpressionStmt> methodcalls = removeLowestNodes(s, decl);
+		List<CompilationUnit> methodcalls = removeLowestNodes(s, decl);
 		refactoredSequences.put(s, decl);
 		writeRefactoringsToFile(methodcalls, s.getRelation());
 		return decl;
@@ -116,7 +116,7 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 		return createInterface ? c::addImplementedType : c::addExtendedType;
 	}
 
-	private void writeRefactoringsToFile(List<ExpressionStmt> methodcalls, Relation relation) {
+	private void writeRefactoringsToFile(List<CompilationUnit> methodcalls, Relation relation) {
 		List<Node> saveNodes = new ArrayList<>(relation.getIntersectingClasses());
 		saveNodes.addAll(methodcalls);
 		try {
@@ -154,7 +154,7 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 		return unit.getChildNodes().stream().filter(e -> e instanceof ClassOrInterfaceDeclaration).map(e -> (ClassOrInterfaceDeclaration)e).findAny().get().getNameAsString();
 	}
 
-	private List<ExpressionStmt> removeLowestNodes(Sequence s, MethodDeclaration decl) {
+	private List<CompilationUnit> removeLowestNodes(Sequence s, MethodDeclaration decl) {
 		ListMap<Location, Node> lowestNodes = new ListMap<>();
 		Map<Location, BlockStmt> insideBlock = new HashMap<>();
 		s.getLocations().forEach(e -> {
@@ -166,17 +166,19 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 		lowestNodes.get(s.getAny()).forEach(node -> decl.getBody().get().addStatement((Statement)node));
 		if(lowestNodes.size() == insideBlock.size())
 			return s.getLocations().stream().map(l -> 
-				removeLowestNodes(getCompilationUnit(insideBlock.get(l)).get(), lowestNodes.get(l), insideBlock.get(l), decl.getNameAsString())
+				removeLowestNodes(lowestNodes.get(l), insideBlock.get(l), decl)
 			).collect(Collectors.toList());
 		return Collections.emptyList();
 	}
 
-	private ExpressionStmt removeLowestNodes(CompilationUnit cu, List<Node> lowestNodes, BlockStmt inBlock, String methodName) {
-		ExpressionStmt methodcall = new ExpressionStmt(new MethodCallExpr(methodName));
+	private CompilationUnit removeLowestNodes(List<Node> lowestNodes, BlockStmt inBlock, MethodDeclaration decl) {
+		MethodCallExpr expressionStmt = new MethodCallExpr(decl.getNameAsString());
+		Statement methodcall = decl.getType().isVoidType() ? new ExpressionStmt(expressionStmt) : new ReturnStmt(expressionStmt);
+		CompilationUnit cu = getCompilationUnit(inBlock).get();
 		saveASTBeforeChange(cu);
 		inBlock.getStatements().add(inBlock.getStatements().indexOf(lowestNodes.get(0)), methodcall);
 		lowestNodes.forEach(inBlock::remove);
-		return methodcall;
+		return cu;
 	}
 
 	private void saveASTBeforeChange(CompilationUnit cu) {
