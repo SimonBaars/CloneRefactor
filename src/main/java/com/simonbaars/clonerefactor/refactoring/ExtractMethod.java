@@ -113,14 +113,19 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 	}
 
 	private void writeRefactoringsToFile(List<ExpressionStmt> methodcalls, Relation relation) {
-		List<Node> saveNodes = new ArrayList<Node>(relation.getIntersectingClasses());
+		List<Node> saveNodes = new ArrayList<>(relation.getIntersectingClasses());
 		saveNodes.addAll(methodcalls);
 		try {
 			for(CompilationUnit cu : getUniqueCompilationUnits(saveNodes))
-				writeStringToFile(SavePaths.createDirForFile(compilationUnitFilePath(cu)), cu.toString());
+				save(cu);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	private void save(CompilationUnit cu) throws IOException {
+		File file = SavePaths.createDirForFile(compilationUnitFilePath(cu));
+		writeStringToFile(file, cu.toString());
 	}
 
 	private String compilationUnitFilePath(CompilationUnit unit) {
@@ -128,8 +133,9 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 	}
 	
 	private String refactoringSaveFolder(boolean sources) {
-		return Settings.get().getRefactoringStrategy().originalLocation() ? (sources ? sourceFolder : projectFolder).toString() : 
-					SavePaths.getRefactorFolder(sources ? outputSourceFolder() : "");
+		if(Settings.get().getRefactoringStrategy().originalLocation())
+			return (sources ? sourceFolder : projectFolder).toString();
+		return SavePaths.getRefactorFolder(sources ? outputSourceFolder() : "");
 	}
 	
 	private String outputSourceFolder() {
