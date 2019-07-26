@@ -11,6 +11,7 @@ import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.ConstructorDeclaration;
 import com.github.javaparser.ast.body.EnumDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
+import com.github.javaparser.ast.stmt.TryStmt;
 
 public interface RequiresNodeContext {
 	public default Optional<MethodDeclaration> getMethod(Node n1) {
@@ -33,6 +34,10 @@ public interface RequiresNodeContext {
 		return getNode(EnumDeclaration.class, n1);
 	}
 	
+	public default Optional<TryStmt> getTryStatement(Node n1) {
+		return getNode(TryStmt.class, n1);
+	}
+	
 	@SuppressWarnings("unchecked")
 	public default<T extends Node> Optional<T> getNode(Class<T> type, Node n1) {
 		while (!n1.getClass().isAssignableFrom(type)) {
@@ -44,6 +49,6 @@ public interface RequiresNodeContext {
 	}
 	
 	public default Set<CompilationUnit> getUniqueCompilationUnits(List<Node> nodes) {
-		return nodes.stream().map(e -> getCompilationUnit(e)).filter(e -> e.isPresent()).map(e -> e.get()).collect(Collectors.toSet());
+		return nodes.stream().map(this::getCompilationUnit).filter(Optional::isPresent).map(Optional::get).collect(Collectors.toSet());
 	}
 }
