@@ -185,4 +185,9 @@ public class Type1Testcases extends Type1Test {
     	System.out.println("testEqualLinesDifferentLength");
     	System.out.println(testProject("EqualLinesDifferentLength"));
     }
+    
+    public void testThrowsMethod() {
+    	System.out.println("testThrowsMethod");
+    	System.out.println(testProject("ThrowsMethod"));
+    }
 }
