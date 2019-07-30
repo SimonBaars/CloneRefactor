@@ -10,12 +10,6 @@ public enum ContentsType{
 	FULLCLASS("Full Class"), 
 	FULLINTERFACE("Full Interface"),
 	FULLENUM("Full Enum"),
-	HASCLASSDECLARATION("Has Class Declaration"), 
-	HASINTERFACEDECLARATION("Has Interface Declaration"), 
-	HASENUMDECLARATION("Has Enum Declaration"), 
-	HASENUMFIELDS("Has Enum Fields"),
-	INCLUDESFIELDS("Includes Fields"),
-	INCLUDESCONSTRUCTOR("Includes Constructor"),
 	OTHER("Other");
 	
 	private final String name;
