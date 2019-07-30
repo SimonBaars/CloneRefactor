@@ -32,34 +32,19 @@ public class CloneContents implements DeterminesMetric<ContentsType>, RequiresNo
 		return get(sequence.getAny().getContents());
 	}
 
-	//TODO: This method must be refactored (it is horrible to look at, my eyes hurt)
 	public ContentsType get(LocationContents c) {
 		List<Node> nodes = c.getNodes();
 		Node lastNode = nodes.get(nodes.size()-1);
 		Node lastStatement = getLastStatement(nodes.get(0));
-		if(nodes.get(0) instanceof MethodDeclaration && lastNode == lastStatement) {
+		if(nodes.get(0) instanceof MethodDeclaration && lastNode == lastStatement)
 			return FULLMETHOD;
-		} 
-		
-		Optional<MethodDeclaration> method = getMethod(nodes.get(0));
-		if(method.isPresent() && !(nodes.get(0) instanceof MethodDeclaration)) {
-			Optional<MethodDeclaration> method2 = getMethod(lastNode);
-			if(method2.isPresent() && method.get() == method2.get())
-				return PARTIALMETHOD;
-		}
-
-		if(nodes.get(0) instanceof ConstructorDeclaration && lastNode == lastStatement) {
+		else if(isPartial(MethodDeclaration.class, nodes.get(0), lastNode))
+			return PARTIALMETHOD;
+		else if(nodes.get(0) instanceof ConstructorDeclaration && lastNode == lastStatement)
 			return FULLCONSTRUCTOR;
-		} 
-
-		Optional<ConstructorDeclaration> constructor = getConstructor(nodes.get(0));
-		if(constructor.isPresent()) {
-			Optional<ConstructorDeclaration> constructor2 = getConstructor(lastNode);
-			if(constructor2.isPresent() && constructor == constructor2) {
-				return PARTIALCONSTRUCTOR;
-			} 
-		}
-		if(nodes.stream().allMatch(e -> getMethod(e).isPresent())) {
+		else if(isPartial(ConstructorDeclaration.class, nodes.get(0), lastNode))
+			return PARTIALCONSTRUCTOR;
+		else if(nodes.stream().allMatch(e -> getMethod(e).isPresent())) {
 			return SEVERALMETHODS;
 		} else if(nodes.stream().allMatch(e -> e instanceof FieldDeclaration)) {
 			return ONLYFIELDS;
@@ -71,6 +56,17 @@ public class CloneContents implements DeterminesMetric<ContentsType>, RequiresNo
 			return FULLENUM;
 		}
 		return OTHER;
+	}
+	
+	private<T extends Node> boolean isPartial(Class<T> type, Node n1, Node n2) {
+		Optional<T> constructor = getNode(type, n1);
+		if(constructor.isPresent()) {
+			Optional<T> constructor2 = getNode(type, n2);
+			if(constructor2.isPresent() && constructor.get() == constructor2.get()) {
+				return true;
+			} 
+		}
+		return false;
 	}
 
 	private Node getLastStatement(Node n) {
