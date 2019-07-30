@@ -49,7 +49,7 @@ public class CloneContents implements DeterminesMetric<ContentsType>, RequiresNo
 		} 
 		
 		Optional<MethodDeclaration> method = getMethod(nodes.get(0));
-		if(method.isPresent()) {
+		if(method.isPresent() && !(nodes.get(0) instanceof MethodDeclaration)) {
 			Optional<MethodDeclaration> method2 = getMethod(lastNode);
 			if(method2.isPresent() && method.get() == method2.get())
 				return PARTIALMETHOD;
