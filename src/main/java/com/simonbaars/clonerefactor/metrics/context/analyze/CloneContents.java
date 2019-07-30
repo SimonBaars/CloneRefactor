@@ -34,27 +34,27 @@ public class CloneContents implements DeterminesMetric<ContentsType>, RequiresNo
 
 	public ContentsType get(LocationContents c) {
 		List<Node> nodes = c.getNodes();
+		Node firstNode = nodes.get(0);
 		Node lastNode = nodes.get(nodes.size()-1);
-		Node lastStatement = getLastStatement(nodes.get(0));
-		if(nodes.get(0) instanceof MethodDeclaration && lastNode == lastStatement)
+		Node lastStatement = getLastStatement(firstNode);
+		if(firstNode instanceof MethodDeclaration && lastNode == lastStatement)
 			return FULLMETHOD;
-		else if(isPartial(MethodDeclaration.class, nodes.get(0), lastNode))
+		else if(isPartial(MethodDeclaration.class, firstNode, lastNode))
 			return PARTIALMETHOD;
-		else if(nodes.get(0) instanceof ConstructorDeclaration && lastNode == lastStatement)
+		else if(firstNode instanceof ConstructorDeclaration && lastNode == lastStatement)
 			return FULLCONSTRUCTOR;
-		else if(isPartial(ConstructorDeclaration.class, nodes.get(0), lastNode))
+		else if(isPartial(ConstructorDeclaration.class, firstNode, lastNode))
 			return PARTIALCONSTRUCTOR;
-		else if(nodes.stream().allMatch(e -> getMethod(e).isPresent())) {
+		else if(nodes.stream().allMatch(e -> getMethod(e).isPresent()))
 			return SEVERALMETHODS;
-		} else if(nodes.stream().allMatch(e -> e instanceof FieldDeclaration)) {
+		else if(nodes.stream().allMatch(e -> e instanceof FieldDeclaration)) 
 			return ONLYFIELDS;
-		} else if(nodes.get(0) instanceof ClassOrInterfaceDeclaration && !((ClassOrInterfaceDeclaration)nodes.get(0)).isInterface() && nodes.get(nodes.size()-1) == getLastStatement(nodes.get(0))) {
+		else if(firstNode instanceof ClassOrInterfaceDeclaration && !((ClassOrInterfaceDeclaration)firstNode).isInterface() && lastNode == lastStatement)
 			return FULLCLASS;
-		} else if(nodes.get(0) instanceof ClassOrInterfaceDeclaration && ((ClassOrInterfaceDeclaration)nodes.get(0)).isInterface() && nodes.get(nodes.size()-1) == getLastStatement(nodes.get(0))) {
+		else if(firstNode instanceof ClassOrInterfaceDeclaration && ((ClassOrInterfaceDeclaration)firstNode).isInterface() && lastNode == lastStatement)
 			return FULLINTERFACE;
-		} else if(nodes.get(0) instanceof EnumDeclaration && nodes.get(nodes.size()-1) == getLastStatement(nodes.get(0))) {
+		else if(firstNode instanceof EnumDeclaration && lastNode == lastStatement)
 			return FULLENUM;
-		}
 		return OTHER;
 	}
 	
