@@ -19,9 +19,7 @@ public class TryType3Thresholds implements Runnable {
 		for(int i = 1; i<=100; i++) {
 			Settings.get().setType3GapSize(i*2);
 			Metrics metrics = new RunOnCorpus().startCorpusCloneDetection();
-			if(metrics != null)
-				metricsTables.collectMetrics(Integer.toString(i*2), metrics);
-			metricsTables.writeTables();
+			metricsTables.reportMetrics(Integer.toString(i), metrics);
 		}
 	}
 }

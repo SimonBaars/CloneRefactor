@@ -76,4 +76,10 @@ public class MetricsTables implements WritesErrors {
 		amountPerTotalEffectiveLineVolume.put(percentage, metrics.amountPerTotalEffectiveLineVolume);
 	}
 
+	public void reportMetrics(String percentage, Metrics metrics) {
+		if(metrics == null)
+			return;
+		collectMetrics(percentage, metrics);
+		writeTables();
+	}
 }
