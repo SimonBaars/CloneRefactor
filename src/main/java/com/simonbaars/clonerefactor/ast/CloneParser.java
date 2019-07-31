@@ -45,7 +45,8 @@ public class CloneParser implements SetsIfNotNull, RemovesDuplicates, WritesErro
 			doTypeSpecificTransformations(findChains);
 			metricCollector.getMetrics().generalStats.increment("Detection time", interval(beginTime));
 			DetectionResults res = new DetectionResults(metricCollector.reportClones(findChains), findChains);
-			if(Settings.get().getRefactoringStrategy() != RefactoringStrategy.DONOTREFACTOR) new ExtractMethod(projectRoot, sourceRoot.getRoot()).refactor(findChains);
+			if(Settings.get().getRefactoringStrategy() != RefactoringStrategy.DONOTREFACTOR) 
+				new ExtractMethod(projectRoot, sourceRoot.getRoot()).withMetricCollector(metricCollector).refactor(findChains);
 			return res;
 		}
 		return new DetectionResults();

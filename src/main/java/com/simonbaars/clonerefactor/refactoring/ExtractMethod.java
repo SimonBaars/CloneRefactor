@@ -34,6 +34,7 @@ import com.github.javaparser.ast.type.Type;
 import com.github.javaparser.ast.type.VoidType;
 import com.simonbaars.clonerefactor.ast.interfaces.RequiresNodeOperations;
 import com.simonbaars.clonerefactor.datatype.map.ListMap;
+import com.simonbaars.clonerefactor.metrics.MetricCollector;
 import com.simonbaars.clonerefactor.metrics.context.enums.Refactorability;
 import com.simonbaars.clonerefactor.metrics.context.interfaces.RequiresNodeContext;
 import com.simonbaars.clonerefactor.metrics.model.Relation;
@@ -51,6 +52,7 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 	private final Path projectFolder;
 	private int x = 0;
 	private final Path sourceFolder;
+	private MetricCollector metricCollector;
 	
 	public ExtractMethod(Path projectPath, Path sourceFolder) {
 		this.projectFolder = projectPath;
@@ -214,5 +216,10 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 
 	private boolean noOverlap(Set<Sequence> keySet, Sequence s) {
 		return keySet.stream().noneMatch(s::overlapsWith);
+	}
+
+	public ExtractMethod withMetricCollector(MetricCollector metricCollector) {
+		this.metricCollector = metricCollector;
+		return this;
 	}
 }
