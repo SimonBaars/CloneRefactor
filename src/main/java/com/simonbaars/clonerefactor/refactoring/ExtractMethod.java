@@ -26,6 +26,7 @@ import com.github.javaparser.ast.PackageDeclaration;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.expr.MethodCallExpr;
+import com.github.javaparser.ast.expr.NameExpr;
 import com.github.javaparser.ast.stmt.BlockStmt;
 import com.github.javaparser.ast.stmt.ExpressionStmt;
 import com.github.javaparser.ast.stmt.ReturnStmt;
@@ -189,6 +190,7 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 	private CompilationUnit removeLowestNodes(List<Node> lowestNodes, BlockStmt inBlock, MethodDeclaration decl) {
 		MethodCallExpr expressionStmt = new MethodCallExpr(decl.getNameAsString());
 		Statement methodcall = decl.getType().isVoidType() ? new ExpressionStmt(expressionStmt) : new ReturnStmt(expressionStmt);
+		decl.getParameters().forEach(p -> expressionStmt.addArgument(new NameExpr(p.getName())));
 		CompilationUnit cu = getCompilationUnit(inBlock).get();
 		saveASTBeforeChange(cu);
 		inBlock.getStatements().add(inBlock.getStatements().indexOf(lowestNodes.get(0)), methodcall);
