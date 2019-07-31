@@ -41,6 +41,8 @@ import com.simonbaars.clonerefactor.metrics.context.interfaces.RequiresNodeConte
 import com.simonbaars.clonerefactor.metrics.model.Relation;
 import com.simonbaars.clonerefactor.model.Sequence;
 import com.simonbaars.clonerefactor.model.location.Location;
+import com.simonbaars.clonerefactor.refactoring.populate.PopulateArguments;
+import com.simonbaars.clonerefactor.refactoring.populate.PopulateReturnValue;
 import com.simonbaars.clonerefactor.refactoring.populate.PopulateThrows;
 import com.simonbaars.clonerefactor.refactoring.populate.PopulatesExtractedMethod;
 import com.simonbaars.clonerefactor.refactoring.target.ExtractToClassOrInterface;
@@ -56,7 +58,7 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 	private int x = 0;
 	private final Path sourceFolder;
 	private MetricCollector metricCollector;
-	private PopulatesExtractedMethod[] populators = {new PopulateThrows()};
+	private PopulatesExtractedMethod[] populators = {new PopulateThrows(), new PopulateArguments(), new PopulateReturnValue()};
 	
 	public ExtractMethod(Path projectPath, Path sourceFolder) {
 		this.projectFolder = projectPath;
