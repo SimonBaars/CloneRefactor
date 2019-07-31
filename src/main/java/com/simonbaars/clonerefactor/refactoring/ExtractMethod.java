@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -41,6 +42,7 @@ import com.simonbaars.clonerefactor.metrics.model.Relation;
 import com.simonbaars.clonerefactor.model.Sequence;
 import com.simonbaars.clonerefactor.model.location.Location;
 import com.simonbaars.clonerefactor.refactoring.populate.PopulateThrows;
+import com.simonbaars.clonerefactor.refactoring.populate.PopulatesExtractedMethod;
 import com.simonbaars.clonerefactor.refactoring.target.ExtractToClassOrInterface;
 import com.simonbaars.clonerefactor.settings.Settings;
 import com.simonbaars.clonerefactor.util.DoesFileOperations;
@@ -54,6 +56,7 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 	private int x = 0;
 	private final Path sourceFolder;
 	private MetricCollector metricCollector;
+	private PopulatesExtractedMethod[] populators = {new PopulateThrows()};
 	
 	public ExtractMethod(Path projectPath, Path sourceFolder) {
 		this.projectFolder = projectPath;
@@ -79,7 +82,7 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 		MethodDeclaration decl = new MethodDeclaration(Modifier.createModifierList(), getReturnType(s.getAny()), methodName);
 		placeMethodOnBasisOfRelation(s, decl);
 		List<CompilationUnit> methodcalls = removeLowestNodes(s, decl);
-		new PopulateThrows(decl).execute(s.getAny());
+		Arrays.stream(populators).forEach(p -> p.execute(decl, s));
 		refactoredSequences.put(s, decl);
 		writeRefactoringsToFile(methodcalls, s.getRelation());
 		return decl;
