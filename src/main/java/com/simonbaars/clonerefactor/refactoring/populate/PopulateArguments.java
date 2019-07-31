@@ -20,7 +20,7 @@ public class PopulateArguments implements PopulatesTopLevel {
 		topLevelStatements.forEach(n -> n.accept(new VariableVisitor(), usedVariables));
 		for(Entry<NameExpr, ResolvedType> var : usedVariables.entrySet()) {
 			if(!declaresVariable(extractedMethod, var.getKey())) {
-				extractedMethod.addParameter(var.getValue().toString(), var.getKey().getNameAsString());
+				extractedMethod.addParameter(var.getValue().describe(), var.getKey().getNameAsString());
 			}
 		}
 	}
