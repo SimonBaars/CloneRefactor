@@ -40,6 +40,7 @@ import com.simonbaars.clonerefactor.metrics.context.interfaces.RequiresNodeConte
 import com.simonbaars.clonerefactor.metrics.model.Relation;
 import com.simonbaars.clonerefactor.model.Sequence;
 import com.simonbaars.clonerefactor.model.location.Location;
+import com.simonbaars.clonerefactor.refactoring.populate.PopulateThrows;
 import com.simonbaars.clonerefactor.refactoring.target.ExtractToClassOrInterface;
 import com.simonbaars.clonerefactor.settings.Settings;
 import com.simonbaars.clonerefactor.util.DoesFileOperations;
@@ -65,6 +66,8 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 	
 	public void tryToExtractMethod(Sequence s) {
 		if(s.getRefactorability() == Refactorability.CANBEEXTRACTED) {
+			if(s.getRelation().isEffectivelyUnrelated() && metricCollector != null)
+				s.getRelation().reassessRelation(metricCollector);
 			MethodDeclaration extractedMethod = extractMethod(s);
 			if(gitCommit.doCommit())
 				gitCommit.commit(s, extractedMethod);
@@ -76,7 +79,7 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 		MethodDeclaration decl = new MethodDeclaration(Modifier.createModifierList(), getReturnType(s.getAny()), methodName);
 		placeMethodOnBasisOfRelation(s, decl);
 		List<CompilationUnit> methodcalls = removeLowestNodes(s, decl);
-		//new PopulateThrows(decl).execute(s.getAny());
+		new PopulateThrows().execute(s.getAny());
 		refactoredSequences.put(s, decl);
 		writeRefactoringsToFile(methodcalls, s.getRelation());
 		return decl;
@@ -108,6 +111,7 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 		relation.getIntersectingClasses().forEach(c -> addType(c, createInterface).apply(implementedType));
 		Optional<PackageDeclaration> pack = getCompilationUnit(s.getAny().getFirstNode()).get().getPackageDeclaration();
 		CompilationUnit cu = pack.isPresent() ? new CompilationUnit(pack.get().getNameAsString()) : new CompilationUnit();
+		if(metricCollector!=null) metricCollector.
 		relation.getIntersectingClasses().add(0, create(cu, createInterface).apply(name, createInterface ? new Keyword[] {Keyword.PUBLIC} : new Keyword[] {Keyword.PUBLIC, Keyword.ABSTRACT}));
 	}
 	
