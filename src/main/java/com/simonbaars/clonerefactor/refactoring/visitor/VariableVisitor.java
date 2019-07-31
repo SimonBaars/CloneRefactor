@@ -5,7 +5,6 @@ import java.util.Optional;
 
 import com.github.javaparser.ast.expr.NameExpr;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
-import com.github.javaparser.resolution.declarations.ResolvedValueDeclaration;
 import com.github.javaparser.resolution.types.ResolvedType;
 import com.simonbaars.clonerefactor.ast.interfaces.ResolvesSymbols;
 
@@ -14,9 +13,9 @@ public class VariableVisitor extends VoidVisitorAdapter<Map<NameExpr, ResolvedTy
 	@Override
 	public void visit(NameExpr ne, Map<NameExpr, ResolvedType> arg) {
 		super.visit(ne, arg);
-		Optional<ResolvedValueDeclaration> mr = resolve(ne::resolve);
+		Optional<ResolvedType> mr = resolve(ne::calculateResolvedType);
 		if(mr.isPresent()) {
-			arg.put(ne, mr.get().getType());
+			arg.put(ne, mr.get());
 		}
 	}
 }
