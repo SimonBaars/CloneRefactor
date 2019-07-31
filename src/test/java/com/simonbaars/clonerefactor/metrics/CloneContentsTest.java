@@ -45,10 +45,6 @@ public class CloneContentsTest extends Type1Test {
         test("OnlyFields", ContentsType.ONLYFIELDS);
     }
     
-    public void testIncludesFields() {
-        test("IncludesFields", ContentsType.INCLUDESFIELDS);
-    }
-    
     public void testFullClass() {
         test("FullClass", ContentsType.FULLCLASS);
     }
@@ -59,22 +55,6 @@ public class CloneContentsTest extends Type1Test {
     
     public void testFullInterface() {
         test("FullInterface", ContentsType.FULLINTERFACE);
-    }
-    
-    public void testHasClassDeclaration() {
-        test("HasClassDeclaration", ContentsType.HASCLASSDECLARATION);
-    }
-    
-    public void testHasEnumDeclaration() {
-        test("HasEnumDeclaration", ContentsType.HASENUMDECLARATION);
-    }
-    
-    public void testHasInterfaceDeclaration() {
-        test("HasInterfaceDeclaration", ContentsType.HASINTERFACEDECLARATION);
-    }
-    
-    public void testHasEnumFields() {
-        test("EnumClone", ContentsType.HASENUMFIELDS);
     }
 
 	private void test(String name, ContentsType loc) {
