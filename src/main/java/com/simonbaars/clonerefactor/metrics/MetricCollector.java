@@ -7,6 +7,7 @@ import java.util.Set;
 import com.github.javaparser.JavaToken;
 import com.github.javaparser.Range;
 import com.github.javaparser.ast.Node;
+import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.simonbaars.clonerefactor.datatype.map.SetMap;
 import com.simonbaars.clonerefactor.metrics.context.Metric;
 import com.simonbaars.clonerefactor.metrics.context.StatType;
@@ -131,5 +132,9 @@ public class MetricCollector {
 
 	public Metrics getMetrics() {
 		return metrics;
+	}
+
+	public void reportClass(ClassOrInterfaceDeclaration firstClass) {
+		relationFinder.registerClass(firstClass);
 	}
 }

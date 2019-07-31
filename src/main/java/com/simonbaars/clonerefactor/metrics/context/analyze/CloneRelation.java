@@ -119,10 +119,12 @@ public class CloneRelation implements DeterminesMetric<Relation>, SeekClassHiera
 	}
 
 	public void registerNode(Node n) {
-		if(n instanceof ClassOrInterfaceDeclaration) {
-			ClassOrInterfaceDeclaration n2 = (ClassOrInterfaceDeclaration)n;
-			classes.put(getFullyQualifiedName(n2), n2);
-		}
+		if(n instanceof ClassOrInterfaceDeclaration)
+			registerClass((ClassOrInterfaceDeclaration)n);
+	}
+
+	public void registerClass(ClassOrInterfaceDeclaration n2) {
+		classes.put(getFullyQualifiedName(n2), n2);
 	}
 	
 	private Optional<ClassOrInterfaceDeclaration[]> isSibling(ComparingClasses cc){
