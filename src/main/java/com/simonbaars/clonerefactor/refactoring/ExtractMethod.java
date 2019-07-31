@@ -84,7 +84,7 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 		MethodDeclaration decl = new MethodDeclaration(Modifier.createModifierList(), getReturnType(s.getAny()), methodName);
 		placeMethodOnBasisOfRelation(s, decl);
 		List<CompilationUnit> methodcalls = removeLowestNodes(s, decl);
-		Arrays.stream(populators).forEach(p -> p.execute(decl, s));
+		Arrays.stream(populators).forEach(p -> p.execute(decl));
 		refactoredSequences.put(s, decl);
 		writeRefactoringsToFile(methodcalls, s.getRelation());
 		return decl;
