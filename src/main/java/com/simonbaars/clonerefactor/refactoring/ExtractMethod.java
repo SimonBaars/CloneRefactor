@@ -45,6 +45,7 @@ import com.simonbaars.clonerefactor.refactoring.populate.PopulateArguments;
 import com.simonbaars.clonerefactor.refactoring.populate.PopulateReturnValue;
 import com.simonbaars.clonerefactor.refactoring.populate.PopulateThrows;
 import com.simonbaars.clonerefactor.refactoring.populate.PopulatesExtractedMethod;
+import com.simonbaars.clonerefactor.refactoring.populate.PopulatesTopLevel;
 import com.simonbaars.clonerefactor.refactoring.target.ExtractToClassOrInterface;
 import com.simonbaars.clonerefactor.settings.Settings;
 import com.simonbaars.clonerefactor.util.DoesFileOperations;
@@ -58,7 +59,8 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 	private int x = 0;
 	private final Path sourceFolder;
 	private MetricCollector metricCollector;
-	private PopulatesExtractedMethod[] populators = {new PopulateThrows(), new PopulateArguments(), new PopulateReturnValue()};
+	private PopulatesTopLevel[] prePopulators = {new PopulateArguments()};
+	private PopulatesExtractedMethod[] postPopulators = {new PopulateThrows(), new PopulateReturnValue()};
 	
 	public ExtractMethod(Path projectPath, Path sourceFolder) {
 		this.projectFolder = projectPath;
@@ -84,7 +86,7 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 		MethodDeclaration decl = new MethodDeclaration(Modifier.createModifierList(), getReturnType(s.getAny()), methodName);
 		placeMethodOnBasisOfRelation(s, decl);
 		List<CompilationUnit> methodcalls = removeLowestNodes(s, decl);
-		Arrays.stream(populators).forEach(p -> p.execute(decl));
+		Arrays.stream(postPopulators).forEach(p -> p.execute(decl));
 		refactoredSequences.put(s, decl);
 		writeRefactoringsToFile(methodcalls, s.getRelation());
 		return decl;
@@ -176,6 +178,7 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 				insideBlock.put(e, (BlockStmt)lowest.get(0).getParentNode().get());
 		});
 		lowestNodes.get(s.getAny()).forEach(node -> decl.getBody().get().addStatement((Statement)node));
+		Arrays.stream(prePopulators).forEach(p -> p.execute(decl, lowestNodes.get(s.getAny())));
 		if(lowestNodes.size() == insideBlock.size())
 			return s.getLocations().stream().map(l -> 
 				removeLowestNodes(lowestNodes.get(l), insideBlock.get(l), decl)
