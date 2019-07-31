@@ -72,7 +72,6 @@ public class MetricCollector {
 		metrics.averages.addTo("Amount of clone classes", clones.size());
 		for(Sequence clone : clones)
 			reportClone(clone);
-		relationFinder.clearClasses();
 		return metrics;
 	}
 

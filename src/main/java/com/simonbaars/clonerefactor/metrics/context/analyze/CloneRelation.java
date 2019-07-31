@@ -125,10 +125,6 @@ public class CloneRelation implements DeterminesMetric<Relation>, SeekClassHiera
 		}
 	}
 	
-	public void clearClasses() {
-		classes.clear();
-	}
-	
 	private Optional<ClassOrInterfaceDeclaration[]> isSibling(ComparingClasses cc){
 		return isSiblingOrCousin(cc, 1, 1);
 	}
