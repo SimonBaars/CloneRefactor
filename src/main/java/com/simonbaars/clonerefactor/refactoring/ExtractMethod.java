@@ -177,8 +177,8 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 			if(lowest.get(0).getParentNode().isPresent() && lowest.get(0).getParentNode().get() instanceof BlockStmt)
 				insideBlock.put(e, (BlockStmt)lowest.get(0).getParentNode().get());
 		});
-		lowestNodes.get(s.getAny()).forEach(node -> decl.getBody().get().addStatement((Statement)node));
 		Arrays.stream(prePopulators).forEach(p -> p.execute(decl, lowestNodes.get(s.getAny())));
+		lowestNodes.get(s.getAny()).forEach(node -> decl.getBody().get().addStatement((Statement)node));
 		if(lowestNodes.size() == insideBlock.size())
 			return s.getLocations().stream().map(l -> 
 				removeLowestNodes(lowestNodes.get(l), insideBlock.get(l), decl)
