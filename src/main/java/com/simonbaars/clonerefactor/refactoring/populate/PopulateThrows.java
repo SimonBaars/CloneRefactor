@@ -7,6 +7,7 @@ import com.github.javaparser.JavaParser;
 import com.github.javaparser.ParseResult;
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.NodeList;
+import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.expr.Expression;
 import com.github.javaparser.ast.stmt.ThrowStmt;
 import com.github.javaparser.ast.stmt.TryStmt;
@@ -20,34 +21,36 @@ import com.simonbaars.clonerefactor.model.location.Location;
 
 public class PopulateThrows implements RequiresNodeContext, ResolvesSymbols {
 
-	public PopulateThrows() {}
+	private MethodDeclaration decl;
 
-	public NodeList<ReferenceType> execute(Location loc) {
-		NodeList<ReferenceType> nl = new NodeList<>();
+	public PopulateThrows(MethodDeclaration decl) {
+		this.decl = decl;
+	}
+
+	public void execute(Location loc) {
 		List<Node> nodes = loc.getContents().getNodes();
 		for(Node n : nodes) {
 			if(n instanceof ThrowStmt && !hasCatch(nodes, (ThrowStmt)n)) {
-					addThrowsToNodeList(nl, n);
+				addThrowsToNodeList(n);
 			}
 		}
-		return nl;
 	}
 
-	private void addThrowsToNodeList(NodeList<ReferenceType> nl, Node n) {
+	private void addThrowsToNodeList(Node n) {
 		Expression expr = ((ThrowStmt)n).getExpression();
 		Optional<ResolvedType> rt = resolve(() -> expr.calculateResolvedType());
 		if(rt.isPresent() && rt.get().isReference()) {
-			parseReferenceType(nl, rt);
+			parseReferenceType(rt);
 		}
 	}
 
-	private void parseReferenceType(NodeList<ReferenceType> nl, Optional<ResolvedType> rt) {
+	private void parseReferenceType(Optional<ResolvedType> rt) {
 		ResolvedReferenceType rrt = rt.get().asReferenceType();
 		ParseResult<Type> pr = new JavaParser().parseType(rrt.getQualifiedName());
 		if(pr.getResult().isPresent()) {
 			Type t = pr.getResult().get();
 			if(t.isReferenceType()) {
-				nl.add((ReferenceType)t);
+				decl.addThrownException((ReferenceType)t);
 			}
 		}
 	}
