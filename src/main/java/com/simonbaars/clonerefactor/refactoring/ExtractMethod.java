@@ -67,7 +67,7 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 	public void tryToExtractMethod(Sequence s) {
 		if(s.getRefactorability() == Refactorability.CANBEEXTRACTED) {
 			if(s.getRelation().isEffectivelyUnrelated() && metricCollector != null)
-				s.getRelation().reassessRelation(metricCollector);
+				metricCollector.reassessRelation(s);
 			MethodDeclaration extractedMethod = extractMethod(s);
 			if(gitCommit.doCommit())
 				gitCommit.commit(s, extractedMethod);

@@ -109,8 +109,12 @@ public class Sequence implements Comparable<Sequence> {
 	}
 	
 	public void setMetrics(CloneRelation relation, CloneRefactorability r) {
-		this.relation = relation.get(this);
+		setRelation(relation);
 		this.refactorability = r.get(this);
+	}
+	
+	public void setRelation(CloneRelation relation) {
+		this.relation = relation.get(this);
 	}
 	
 	public RelationType getRelationType() {

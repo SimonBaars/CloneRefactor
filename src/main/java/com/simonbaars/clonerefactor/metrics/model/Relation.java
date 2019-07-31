@@ -8,7 +8,6 @@ import java.util.Optional;
 import java.util.function.Supplier;
 
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
-import com.simonbaars.clonerefactor.metrics.MetricCollector;
 import com.simonbaars.clonerefactor.metrics.context.enums.RelationType;
 
 public class Relation implements Comparable<Relation> {
@@ -91,10 +90,5 @@ public class Relation implements Comparable<Relation> {
 	public boolean isInterfaceRelation() {
 		return type == RelationType.SAMEINTERFACE || type == RelationType.EXTERNALANCESTOR || type == RelationType.EXTERNALSUPERCLASS;
 	}
-
-	public void reassessRelation(MetricCollector metricCollector) {
-		metricCollect
-	}
-	
 	
 }

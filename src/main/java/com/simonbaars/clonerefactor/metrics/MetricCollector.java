@@ -91,6 +91,10 @@ public class MetricCollector {
 		for(Location l : clone.getLocations())
 			reportClonedLocation(l);
 	}
+	
+	public void reassessRelation(Sequence clone) {
+		clone.setRelation(relationFinder);
+	}
 
 	private void reportClonedLocation(Location l) {
 		metrics.averages.addTo("Clone nodes", l.getAmountOfNodes());
