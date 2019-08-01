@@ -22,7 +22,6 @@ import com.simonbaars.clonerefactor.metrics.collectors.UnitSizeCalculator;
 import com.simonbaars.clonerefactor.model.Sequence;
 import com.simonbaars.clonerefactor.model.location.Location;
 import com.simonbaars.clonerefactor.model.location.LocationContents;
-import com.simonbaars.clonerefactor.settings.Settings;
 
 public class NodeParser implements SetsIfNotNull, DeterminesNodeTokens {
 	final Map<LocationContents, Location> lineReg = new HashMap<>();
@@ -58,14 +57,10 @@ public class NodeParser implements SetsIfNotNull, DeterminesNodeTokens {
 		int cc = new CyclomaticComplexityCalculator().calculate(n);
 		int methodSize = new UnitSizeCalculator().calculate(n);
 		int parameters = new NumberOfParametersCalculator().calculate(n);
-		if(cc >= Settings.get().getCyclomaticComplexity()) 
-			seqObservable.sendUpdate(ProblemType.UNITCOMPLEXITY, sequence, cc);
-		if(methodSize >= Settings.get().getUnitSize())
-			seqObservable.sendUpdate(ProblemType.UNITVOLUME, sequence, methodSize);
-		if(parameters >= Settings.get().getUnitInterfaceParameters()) {
-			sequence = new Sequence(Collections.singletonList(new Location(l).setRange(getRange(n))));
-			seqObservable.sendUpdate(ProblemType.UNITINTERFACESIZE, sequence, parameters);
-		}
+		seqObservable.sendUpdate(ProblemType.UNITCOMPLEXITY, sequence, cc);
+		seqObservable.sendUpdate(ProblemType.UNITVOLUME, sequence, methodSize);
+		sequence = new Sequence(Collections.singletonList(new Location(l).setRange(getRange(n))));
+		seqObservable.sendUpdate(ProblemType.UNITINTERFACESIZE, sequence, parameters);
 	}
 
 	public Location parseToken(Location prevLocation, CompilationUnit cu, Node n) {
