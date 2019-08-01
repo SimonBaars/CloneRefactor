@@ -11,6 +11,7 @@ import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.ConstructorDeclaration;
 import com.github.javaparser.ast.body.EnumDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
+import com.github.javaparser.ast.stmt.Statement;
 import com.github.javaparser.ast.stmt.TryStmt;
 
 public interface RequiresNodeContext {
@@ -36,6 +37,10 @@ public interface RequiresNodeContext {
 	
 	public default Optional<TryStmt> getTryStatement(Node n1) {
 		return getNode(TryStmt.class, n1);
+	}
+	
+	public default Optional<Statement> getParentStatement(Node n1) {
+		return getNode(Statement.class, n1);
 	}
 	
 	@SuppressWarnings("unchecked")
