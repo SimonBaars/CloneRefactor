@@ -7,10 +7,12 @@ import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.body.VariableDeclarator;
+import com.github.javaparser.ast.expr.AssignExpr;
 import com.github.javaparser.ast.expr.Expression;
 import com.github.javaparser.ast.expr.MethodCallExpr;
 import com.github.javaparser.ast.expr.NameExpr;
 import com.github.javaparser.ast.expr.VariableDeclarationExpr;
+import com.github.javaparser.ast.expr.AssignExpr.Operator;
 import com.github.javaparser.ast.stmt.ExpressionStmt;
 import com.github.javaparser.ast.stmt.ReturnStmt;
 import com.github.javaparser.ast.stmt.Statement;
@@ -44,11 +46,10 @@ public class PopulateReturnValue implements PopulatesExtractedMethod {
 
 	@Override
 	public Optional<Statement> modifyMethodCall(MethodCallExpr expr) {
-		if(type!=null && name!=null) {
-			
-		} else if(name!=null) {
-			
-		}
+		if(type!=null && name!=null)
+			return Optional.of(new ExpressionStmt(new VariableDeclarationExpr(new VariableDeclarator(type, name.getNameAsString(), expr))));
+		else if(name!=null)
+			return Optional.of(new ExpressionStmt(new AssignExpr(name, expr, Operator.ASSIGN)));
 		return Optional.empty();
 	}
 
