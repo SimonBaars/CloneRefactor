@@ -26,6 +26,10 @@ public class PopulateReturnValue implements PopulatesExtractedMethod {
 
 	@Override
 	public void prePopulate(MethodDeclaration extractedMethod, List<Node> topLevel) {
+		populateIfSingleDeclarator(extractedMethod);
+	}
+
+	private void populateIfSingleDeclarator(MethodDeclaration extractedMethod) {
 		NodeList<Statement> statements = extractedMethod.getBody().get().getStatements();
 		if(statements.size() == 1 && statements.get(0) instanceof ExpressionStmt) {
 			ExpressionStmt exprStmt = (ExpressionStmt)statements.get(0);
