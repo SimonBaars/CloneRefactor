@@ -18,7 +18,7 @@ import com.simonbaars.clonerefactor.metrics.MetricCollector;
 import com.simonbaars.clonerefactor.metrics.ProblemType;
 import com.simonbaars.clonerefactor.metrics.collectors.CyclomaticComplexityCalculator;
 import com.simonbaars.clonerefactor.metrics.collectors.NumberOfParametersCalculator;
-import com.simonbaars.clonerefactor.metrics.collectors.UnitSizeCalculator;
+import com.simonbaars.clonerefactor.metrics.collectors.UnitLineSizeCalculator;
 import com.simonbaars.clonerefactor.model.Sequence;
 import com.simonbaars.clonerefactor.model.location.Location;
 import com.simonbaars.clonerefactor.model.location.LocationContents;
@@ -55,7 +55,7 @@ public class NodeParser implements SetsIfNotNull, DeterminesNodeTokens {
 		l.getContents().setTokens(n.getTokenRange().get());
 		
 		int cc = new CyclomaticComplexityCalculator().calculate(n);
-		int methodSize = new UnitSizeCalculator().calculate(n);
+		int methodSize = new UnitLineSizeCalculator().calculate(n);
 		int parameters = new NumberOfParametersCalculator().calculate(n);
 		seqObservable.sendUpdate(ProblemType.UNITCOMPLEXITY, sequence, cc);
 		seqObservable.sendUpdate(ProblemType.UNITVOLUME, sequence, methodSize);
