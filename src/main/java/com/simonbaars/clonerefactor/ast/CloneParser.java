@@ -56,10 +56,10 @@ public class CloneParser implements SetsIfNotNull, RemovesDuplicates, WritesErro
 	}
 	
 	public DetectionResults parse(Collection<File> files) {
-		astParser = new NodeParser(metricCollector);
+		astParser = new NodeParser(metricCollector, seqObservable);
 		Location lastLoc = calculateLineReg(files);
 		if(lastLoc!=null) {
-			List<Sequence> findChains = new CloneDetection().findChains(lastLoc);
+			List<Sequence> findChains = new CloneDetection(seqObservable).findChains(lastLoc);
 			doTypeSpecificTransformations(findChains);
 			return new DetectionResults(metricCollector.reportClones(findChains), findChains);
 		}
