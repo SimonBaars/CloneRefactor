@@ -2,6 +2,7 @@ package com.simonbaars.clonerefactor.refactoring.populate;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 
 import com.github.javaparser.ast.Node;
@@ -13,11 +14,12 @@ import com.simonbaars.clonerefactor.refactoring.visitor.DeclaresVariableVisitor;
 import com.simonbaars.clonerefactor.refactoring.visitor.VariableVisitor;
 
 public class PopulateArguments implements PopulatesExtractedMethod {
+	final Map<NameExpr, ResolvedType> usedVariables = new HashMap<>();
+	
 	public PopulateArguments() {}
 	
 	@Override
 	public void prePopulate(MethodDeclaration extractedMethod, List<Node> topLevel) {
-		HashMap<NameExpr, ResolvedType> usedVariables = new HashMap<>();
 		topLevel.forEach(n -> n.accept(new VariableVisitor(), usedVariables));
 		for(Entry<NameExpr, ResolvedType> var : usedVariables.entrySet()) {
 			if(!declaresVariable(extractedMethod, var.getKey())) {
@@ -28,12 +30,12 @@ public class PopulateArguments implements PopulatesExtractedMethod {
 
 	@Override
 	public void modifyMethodCall(MethodCallExpr expr) {
-		// Does not modify method call
+		usedVariables.keySet().forEach(v -> expr.addArgument(v));
 	}
 
 	@Override
 	public void postPopulate(MethodDeclaration extractedMethod) {
-		// Does not post populate
+		usedVariables.clear();
 	}
 
 	private boolean declaresVariable(MethodDeclaration extractedMethod, NameExpr varName) {
