@@ -46,7 +46,6 @@ import com.simonbaars.clonerefactor.refactoring.populate.PopulateArguments;
 import com.simonbaars.clonerefactor.refactoring.populate.PopulateReturnValue;
 import com.simonbaars.clonerefactor.refactoring.populate.PopulateThrows;
 import com.simonbaars.clonerefactor.refactoring.populate.PopulatesExtractedMethod;
-import com.simonbaars.clonerefactor.refactoring.populate.PopulatesTopLevel;
 import com.simonbaars.clonerefactor.refactoring.target.ExtractToClassOrInterface;
 import com.simonbaars.clonerefactor.settings.Settings;
 import com.simonbaars.clonerefactor.util.DoesFileOperations;
@@ -60,8 +59,7 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 	private int x = 0;
 	private final Path sourceFolder;
 	private MetricCollector metricCollector;
-	private PopulatesTopLevel[] prePopulators = {new PopulateArguments()};
-	private PopulatesExtractedMethod[] postPopulators = {new PopulateThrows(), new PopulateReturnValue()};
+	private PopulatesExtractedMethod[] populators = {new PopulateThrows(), new PopulateArguments(), new PopulateReturnValue()};
 	
 	public ExtractMethod(Path projectPath, Path sourceFolder) {
 		this.projectFolder = projectPath;
@@ -87,7 +85,7 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 		MethodDeclaration decl = new MethodDeclaration(Modifier.createModifierList(), getReturnType(s.getAny()), methodName);
 		placeMethodOnBasisOfRelation(s, decl);
 		List<CompilationUnit> methodcalls = removeLowestNodes(s, decl);
-		Arrays.stream(postPopulators).forEach(p -> p.execute(decl));
+		Arrays.stream(populators).forEach(p -> p.postPopulate(decl));
 		refactoredSequences.put(s, decl);
 		writeRefactoringsToFile(methodcalls, s.getRelation());
 		return decl;
@@ -178,7 +176,7 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 			if(lowest.get(0).getParentNode().isPresent() && lowest.get(0).getParentNode().get() instanceof BlockStmt)
 				insideBlock.put(e, (BlockStmt)lowest.get(0).getParentNode().get());
 		});
-		Arrays.stream(prePopulators).forEach(p -> p.execute(decl, lowestNodes.get(s.getAny())));
+		Arrays.stream(populators).forEach(p -> p.prePopulate(decl, lowestNodes.get(s.getAny())));
 		lowestNodes.get(s.getAny()).forEach(node -> decl.getBody().get().addStatement((Statement)node));
 		if(lowestNodes.size() == insideBlock.size())
 			return s.getLocations().stream().map(l -> 
@@ -190,6 +188,7 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 	private CompilationUnit removeLowestNodes(List<Node> lowestNodes, BlockStmt inBlock, MethodDeclaration decl) {
 		MethodCallExpr expressionStmt = new MethodCallExpr(decl.getNameAsString());
 		Statement methodcall = decl.getType().isVoidType() ? new ExpressionStmt(expressionStmt) : new ReturnStmt(expressionStmt);
+		Arrays.stream(populators).forEach(p -> p.modifyMethodCall(expressionStmt));
 		decl.getParameters().forEach(p -> expressionStmt.addArgument(new NameExpr(p.getName())));
 		CompilationUnit cu = getCompilationUnit(inBlock).get();
 		saveASTBeforeChange(cu);

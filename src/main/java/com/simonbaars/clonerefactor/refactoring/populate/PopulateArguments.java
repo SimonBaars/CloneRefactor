@@ -11,7 +11,7 @@ import com.github.javaparser.resolution.types.ResolvedType;
 import com.simonbaars.clonerefactor.refactoring.visitor.DeclaresVariableVisitor;
 import com.simonbaars.clonerefactor.refactoring.visitor.VariableVisitor;
 
-public class PopulateArguments implements PopulatesTopLevel {
+public class PopulateArguments implements PopulatesExtractedMethod {
 	public PopulateArguments() {}
 
 	@Override
