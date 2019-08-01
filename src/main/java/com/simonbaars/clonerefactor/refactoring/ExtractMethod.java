@@ -49,14 +49,16 @@ import com.simonbaars.clonerefactor.util.DoesFileOperations;
 import com.simonbaars.clonerefactor.util.SavePaths;
 
 public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperations, DoesFileOperations {
+	private final PopulatesExtractedMethod[] populators = {new PopulateThrows(), new PopulateArguments(), new PopulateReturnValue()};
+	
 	private final Map<Sequence, MethodDeclaration> refactoredSequences = new HashMap<>();
 	private final Set<File> formatted = new HashSet<>();
 	private final GitChangeCommitter gitCommit;
 	private final Path projectFolder;
+	
 	private int x = 0;
 	private final Path sourceFolder;
 	private MetricCollector metricCollector;
-	private PopulatesExtractedMethod[] populators = {new PopulateThrows(), new PopulateArguments(), new PopulateReturnValue()};
 	
 	public ExtractMethod(Path projectPath, Path sourceFolder) {
 		this.projectFolder = projectPath;
