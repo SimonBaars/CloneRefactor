@@ -6,6 +6,7 @@ import java.util.Optional;
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.expr.MethodCallExpr;
+import com.github.javaparser.ast.stmt.Statement;
 import com.simonbaars.clonerefactor.refactoring.visitor.ThrowsVisitor;
 
 public class PopulateThrows implements PopulatesExtractedMethod {
@@ -16,7 +17,7 @@ public class PopulateThrows implements PopulatesExtractedMethod {
 
 	@Override
 	public Optional<Statement> modifyMethodCall(MethodCallExpr expr) {
-		return Optional<T>.empty();
+		return Optional.empty();
 	}
 
 	@Override

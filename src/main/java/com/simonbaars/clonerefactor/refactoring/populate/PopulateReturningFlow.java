@@ -13,24 +13,30 @@ import com.simonbaars.clonerefactor.metrics.context.interfaces.RequiresNodeConte
 public class PopulateReturningFlow implements PopulatesExtractedMethod, RequiresNodeContext {
 	public PopulateReturningFlow() {}
 	
+	private boolean returns = false;
+	
 	@Override
 	public void prePopulate(MethodDeclaration extractedMethod, List<Node> topLevel) {
 		Node lastNode = topLevel.get(topLevel.size()-1);
 		if(lastNode instanceof ReturnStmt) {
 			Optional<MethodDeclaration> d = getMethod(lastNode);
-			if(d.isPresent())
+			if(d.isPresent()) {
 				extractedMethod.setType(d.get().getType());
+				returns = true;
+			}
 		}
 	}
 
 	@Override
 	public Optional<Statement> modifyMethodCall(MethodCallExpr expr) {
+		if(returns)
+			return Optional.of(new ReturnStmt(expr));
 		return Optional.empty();
 	}
 
 	@Override
 	public void postPopulate(MethodDeclaration extractedMethod) {
-		// No post population required
+		returns = false;
 	}
 
 }
