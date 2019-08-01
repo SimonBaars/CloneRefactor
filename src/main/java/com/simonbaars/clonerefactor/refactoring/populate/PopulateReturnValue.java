@@ -21,19 +21,26 @@ import com.github.javaparser.ast.stmt.Statement;
 import com.github.javaparser.ast.type.Type;
 import com.simonbaars.clonerefactor.refactoring.visitor.ReturnVariablesCollector;
 
-public class PopulateReturnValue implements PopulatesExtractedMethod {
-	public PopulateReturnValue() {}
-	
+public class PopulateReturnValue implements PopulatesExtractedMethod {	
 	private NameExpr name;
 	private Type type;
 	private ReturnStmt retStmt;
-	private boolean wipe = false;
+	private boolean wipe;
+	
+	public PopulateReturnValue() {
+		reset();
+	}
 
 	@Override
 	public void prePopulate(MethodDeclaration extractedMethod, List<Node> topLevel) {
 		populateIfSingleDeclarator(extractedMethod);
 		final List<SimpleName> usedVariables = new ArrayList<>();
 		topLevel.forEach(n -> n.accept(new ReturnVariablesCollector(topLevel), usedVariables));
+		if(usedVariables.size() == 1) {
+			NameExpr name = new NameExpr(usedVariables.get(0));
+			createReturn(name, null /*TODO*/, name, false);
+		}
+			
 	}
 
 	private void populateIfSingleDeclarator(MethodDeclaration extractedMethod) {
@@ -48,14 +55,19 @@ public class PopulateReturnValue implements PopulatesExtractedMethod {
 	private void convertVariableDeclarationToReturn(MethodDeclaration extractedMethod, ExpressionStmt exprStmt) {
 		NodeList<VariableDeclarator> variables = ((VariableDeclarationExpr)exprStmt.getExpression()).getVariables();
 		if(variables.size() == 1) {
-			Optional<Expression> initializer = variables.get(0).getInitializer();
+			VariableDeclarator variableDeclarator = variables.get(0);
+			Optional<Expression> initializer = variableDeclarator.getInitializer();
 			if(initializer.isPresent()) {
-				retStmt = new ReturnStmt(initializer.get());
-				wipe = true;
-				name = variables.get(0).getNameAsExpression();
-				type = variables.get(0).getType();
+				createReturn(variableDeclarator.getNameAsExpression(), variableDeclarator.getType(), initializer.get(), true);
 			}
 		}
+	}
+
+	private void createReturn(NameExpr name, Type type, Expression initializer, boolean wipe) {
+		this.retStmt = new ReturnStmt(initializer);
+		this.wipe = wipe;
+		this.name = name;
+		this.type = type;
 	}
 
 	@Override
