@@ -1,4 +1,5 @@
 package com.simonbaars.clonerefactor.metrics.collectors;
+
 import java.util.stream.Collectors;
 
 import com.github.javaparser.ast.body.MethodDeclaration;

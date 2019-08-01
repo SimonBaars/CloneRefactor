@@ -1,4 +1,5 @@
 package com.simonbaars.clonerefactor.metrics.collectors;
+
 import static com.github.javaparser.ast.expr.BinaryExpr.Operator.AND;
 import static com.github.javaparser.ast.expr.BinaryExpr.Operator.OR;
 
