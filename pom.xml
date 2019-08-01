@@ -36,6 +36,11 @@
 			<artifactId>org.eclipse.jgit</artifactId>
 			<version>${jgit.version}</version>
 		</dependency>
+		<dependency>
+  <groupId>org.eclipse.che.plugin</groupId>
+  <artifactId>org.eclipse.jdt.ui</artifactId>
+  <version>6.12.2</version>
+</dependency>
 	</dependencies>
 
 	<build>
