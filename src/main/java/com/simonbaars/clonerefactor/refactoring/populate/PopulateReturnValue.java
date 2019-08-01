@@ -35,17 +35,21 @@ public class PopulateReturnValue implements PopulatesExtractedMethod {
 
 	@Override
 	public void prePopulate(MethodDeclaration extractedMethod, List<Node> topLevel) {
-		populateIfSingleDeclarator(extractedMethod);
+		returnDirectlyIfSingleDeclarator(extractedMethod);
+		collectAllReturners(topLevel);
+			
+	}
+
+	private void collectAllReturners(List<Node> topLevel) {
 		final Map<SimpleName, Type> usedVariables = new HashMap<>();
 		topLevel.forEach(n -> n.accept(new ReturnVariablesCollector(topLevel), usedVariables));
 		if(usedVariables.size() == 1) {
 			Entry<SimpleName, Type> e = usedVariables.entrySet().iterator().next();
 			createReturn(new NameExpr(e.getKey()), e.getValue(), name, false);
 		}
-			
 	}
 
-	private void populateIfSingleDeclarator(MethodDeclaration extractedMethod) {
+	private void returnDirectlyIfSingleDeclarator(MethodDeclaration extractedMethod) {
 		NodeList<Statement> statements = extractedMethod.getBody().get().getStatements();
 		if(statements.size() == 1 && statements.get(0) instanceof ExpressionStmt) {
 			ExpressionStmt exprStmt = (ExpressionStmt)statements.get(0);
