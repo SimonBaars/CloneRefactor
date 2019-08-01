@@ -2,6 +2,7 @@ package com.simonbaars.clonerefactor.model;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -19,7 +20,17 @@ public interface FiltersTokens {
 		return StreamSupport.stream(tokens.spliterator(), false).filter(this::isComparableToken);
 	}
 	
+	public default Stream<JavaToken> getEffectiveTokens(Optional<TokenRange> tokens) {
+		if(!tokens.isPresent())
+			return Stream.empty();
+		return getEffectiveTokens(tokens.get());
+	}
+	
 	public default List<JavaToken> getEffectiveTokenList(TokenRange tokens){
+		return getEffectiveTokens(tokens).collect(Collectors.toList());
+	}
+	
+	public default List<JavaToken> getEffectiveTokenList(Optional<TokenRange> tokens){
 		return getEffectiveTokens(tokens).collect(Collectors.toList());
 	}
 	
