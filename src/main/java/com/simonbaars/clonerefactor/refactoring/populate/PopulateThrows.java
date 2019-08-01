@@ -1,6 +1,7 @@
 package com.simonbaars.clonerefactor.refactoring.populate;
 
 import java.util.List;
+import java.util.Optional;
 
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.MethodDeclaration;
@@ -14,8 +15,8 @@ public class PopulateThrows implements PopulatesExtractedMethod {
 	}
 
 	@Override
-	public void modifyMethodCall(MethodCallExpr expr) {
-		// Does not modify method call
+	public Optional<Statement> modifyMethodCall(MethodCallExpr expr) {
+		return Optional<T>.empty();
 	}
 
 	@Override

@@ -26,13 +26,10 @@ import com.github.javaparser.ast.PackageDeclaration;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.expr.MethodCallExpr;
-import com.github.javaparser.ast.expr.NameExpr;
 import com.github.javaparser.ast.stmt.BlockStmt;
 import com.github.javaparser.ast.stmt.ExpressionStmt;
-import com.github.javaparser.ast.stmt.ReturnStmt;
 import com.github.javaparser.ast.stmt.Statement;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
-import com.github.javaparser.ast.type.Type;
 import com.github.javaparser.ast.type.VoidType;
 import com.simonbaars.clonerefactor.ast.interfaces.RequiresNodeOperations;
 import com.simonbaars.clonerefactor.datatype.map.ListMap;
@@ -82,7 +79,7 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 
 	private MethodDeclaration extractMethod(Sequence s) {
 		String methodName = "cloneRefactor"+(x++);
-		MethodDeclaration decl = new MethodDeclaration(Modifier.createModifierList(), getReturnType(s.getAny()), methodName);
+		MethodDeclaration decl = new MethodDeclaration(Modifier.createModifierList(), new VoidType(), methodName);
 		placeMethodOnBasisOfRelation(s, decl);
 		List<CompilationUnit> methodcalls = removeLowestNodes(s, decl);
 		Arrays.stream(populators).forEach(p -> p.postPopulate(decl));
@@ -186,13 +183,11 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 	}
 
 	private CompilationUnit removeLowestNodes(List<Node> lowestNodes, BlockStmt inBlock, MethodDeclaration decl) {
-		MethodCallExpr expressionStmt = new MethodCallExpr(decl.getNameAsString());
-		Statement methodcall = decl.getType().isVoidType() ? new ExpressionStmt(expressionStmt) : new ReturnStmt(expressionStmt);
-		Arrays.stream(populators).forEach(p -> p.modifyMethodCall(expressionStmt));
-		decl.getParameters().forEach(p -> expressionStmt.addArgument(new NameExpr(p.getName())));
+		MethodCallExpr methodCallExpr = new MethodCallExpr(decl.getNameAsString());
+		Statement methodCallStmt = Arrays.stream(populators).map(p -> p.modifyMethodCall(methodCallExpr)).filter(Optional::isPresent).map(Optional::get).findAny().orElse(new ExpressionStmt(methodCallExpr));
 		CompilationUnit cu = getCompilationUnit(inBlock).get();
 		saveASTBeforeChange(cu);
-		inBlock.getStatements().add(inBlock.getStatements().indexOf(lowestNodes.get(0)), methodcall);
+		inBlock.getStatements().add(inBlock.getStatements().indexOf(lowestNodes.get(0)), methodCallStmt);
 		lowestNodes.forEach(inBlock::remove);
 		return cu;
 	}
@@ -207,16 +202,6 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 				e.printStackTrace();
 			}
 		}
-	}
-
-	private Type getReturnType(Location any) {
-		Node lastNode = any.getContents().getNodes().get(any.getContents().getNodes().size()-1);
-		if(lastNode instanceof ReturnStmt) {
-			Optional<MethodDeclaration> d = getMethod(lastNode);
-			if(d.isPresent())
-				return d.get().getType();
-		}
-		return new VoidType();
 	}
 
 	public void refactor(List<Sequence> findChains) {

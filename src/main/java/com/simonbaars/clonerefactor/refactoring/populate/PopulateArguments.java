@@ -4,11 +4,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.expr.MethodCallExpr;
 import com.github.javaparser.ast.expr.NameExpr;
+import com.github.javaparser.ast.stmt.Statement;
 import com.github.javaparser.resolution.types.ResolvedType;
 import com.simonbaars.clonerefactor.refactoring.visitor.DeclaresVariableVisitor;
 import com.simonbaars.clonerefactor.refactoring.visitor.VariableVisitor;
@@ -29,8 +31,9 @@ public class PopulateArguments implements PopulatesExtractedMethod {
 	}
 
 	@Override
-	public void modifyMethodCall(MethodCallExpr expr) {
+	public Optional<Statement> modifyMethodCall(MethodCallExpr expr) {
 		usedVariables.keySet().forEach(v -> expr.addArgument(v));
+		return Optional.empty();
 	}
 
 	@Override
