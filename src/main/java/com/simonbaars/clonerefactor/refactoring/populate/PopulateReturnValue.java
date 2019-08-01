@@ -9,27 +9,21 @@ import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.body.VariableDeclarator;
 import com.github.javaparser.ast.expr.Expression;
 import com.github.javaparser.ast.expr.MethodCallExpr;
+import com.github.javaparser.ast.expr.NameExpr;
 import com.github.javaparser.ast.expr.VariableDeclarationExpr;
 import com.github.javaparser.ast.stmt.ExpressionStmt;
 import com.github.javaparser.ast.stmt.ReturnStmt;
 import com.github.javaparser.ast.stmt.Statement;
+import com.github.javaparser.ast.type.Type;
 
 public class PopulateReturnValue implements PopulatesExtractedMethod {
 	public PopulateReturnValue() {}
+	
+	private NameExpr name;
+	private Type type;
 
 	@Override
 	public void prePopulate(MethodDeclaration extractedMethod, List<Node> topLevel) {
-		// Does not pre populate
-		
-	}
-
-	@Override
-	public void modifyMethodCall(MethodCallExpr expr) {
-		// Does not modify method call
-	}
-
-	@Override
-	public void postPopulate(MethodDeclaration extractedMethod) {
 		NodeList<Statement> statements = extractedMethod.getBody().get().getStatements();
 		if(statements.size() == 1 && statements.get(0) instanceof ExpressionStmt) {
 			ExpressionStmt exprStmt = (ExpressionStmt)statements.get(0);
@@ -40,11 +34,28 @@ public class PopulateReturnValue implements PopulatesExtractedMethod {
 					if(initializer.isPresent()) {
 						statements.clear();
 						statements.add(new ReturnStmt(initializer.get()));
+						name = variables.get(0).getNameAsExpression();
+						type = variables.get(0).getType();
 					}
 				}
 			}
+		}
+	}
+
+	@Override
+	public Optional<Statement> modifyMethodCall(MethodCallExpr expr) {
+		if(type!=null && name!=null) {
+			
+		} else if(name!=null) {
 			
 		}
+		return Optional.empty();
+	}
+
+	@Override
+	public void postPopulate(MethodDeclaration extractedMethod) {
+		name = null;
+		type = null;
 	}
 
 }
