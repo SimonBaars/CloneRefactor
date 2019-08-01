@@ -1,7 +1,9 @@
 package com.simonbaars.clonerefactor.refactoring.populate;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
 
 import com.github.javaparser.ast.Node;
@@ -34,11 +36,11 @@ public class PopulateReturnValue implements PopulatesExtractedMethod {
 	@Override
 	public void prePopulate(MethodDeclaration extractedMethod, List<Node> topLevel) {
 		populateIfSingleDeclarator(extractedMethod);
-		final List<SimpleName> usedVariables = new ArrayList<>();
+		final Map<SimpleName, Type> usedVariables = new HashMap<>();
 		topLevel.forEach(n -> n.accept(new ReturnVariablesCollector(topLevel), usedVariables));
 		if(usedVariables.size() == 1) {
-			NameExpr name = new NameExpr(usedVariables.get(0));
-			createReturn(name, null /*TODO*/, name, false);
+			Entry<SimpleName, Type> e = usedVariables.entrySet().iterator().next();
+			createReturn(new NameExpr(e.getKey()), e.getValue(), name, false);
 		}
 			
 	}
