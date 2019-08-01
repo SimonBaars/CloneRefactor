@@ -18,8 +18,11 @@ import com.simonbaars.clonerefactor.model.location.Location;
 
 public class CloneDetection implements ChecksThresholds, RemovesDuplicates, DeterminesNodeTokens {
 	final List<Sequence> clones = new ArrayList<>();
+	private SequenceObservable seqObservable;
 
-	public CloneDetection() {}
+	public CloneDetection(SequenceObservable seqObservable) {
+		this.seqObservable = seqObservable;
+	}
 
 	public List<Sequence> findChains(Location lastLoc) {
 		for(Sequence buildingChains = new Sequence(); lastLoc!=null; lastLoc = lastLoc.getPrev()) {
@@ -82,7 +85,7 @@ public class CloneDetection implements ChecksThresholds, RemovesDuplicates, Dete
 					clones.remove(i);
 			}
 			clones.add(newSequence.isValid());
-			SequenceObservable.get().sendUpdate(ProblemType.DUPLICATION, newSequence, newSequence.getTotalNodeVolume());
+			seqObservable.sendUpdate(ProblemType.DUPLICATION, newSequence, newSequence.getTotalNodeVolume());
 		}
 	}
 

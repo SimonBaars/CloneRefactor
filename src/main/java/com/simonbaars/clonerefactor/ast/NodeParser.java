@@ -27,15 +27,17 @@ import com.simonbaars.clonerefactor.settings.Settings;
 public class NodeParser implements SetsIfNotNull, DeterminesNodeTokens {
 	final Map<LocationContents, Location> lineReg = new HashMap<>();
 	private final MetricCollector metricCollector;
+	private final SequenceObservable seqObservable;
 	
-	public NodeParser(MetricCollector metricCollector) {
+	public NodeParser(MetricCollector metricCollector, SequenceObservable seqObservable) {
 		this.metricCollector = metricCollector;
+		this.seqObservable = seqObservable;
 	}
 
 	public Location extractLinesFromAST(Location prevLocation, CompilationUnit cu, Node n) {
 		if(n instanceof ImportDeclaration || n instanceof PackageDeclaration || isExcluded(n))
 			return prevLocation;
-		if(n instanceof MethodDeclaration && SequenceObservable.get().isActive()) {
+		if(n instanceof MethodDeclaration && seqObservable.isActive()) {
 			collectAlternateMetrics((MethodDeclaration)n, cu);
 		}
 		if(!(n instanceof CompilationUnit || n instanceof BlockStmt || n instanceof LocalClassDeclarationStmt))
@@ -57,12 +59,12 @@ public class NodeParser implements SetsIfNotNull, DeterminesNodeTokens {
 		int methodSize = new UnitSizeCalculator().calculate(n);
 		int parameters = new NumberOfParametersCalculator().calculate(n);
 		if(cc >= Settings.get().getCyclomaticComplexity()) 
-			SequenceObservable.get().sendUpdate(ProblemType.UNITCOMPLEXITY, sequence, cc);
+			seqObservable.sendUpdate(ProblemType.UNITCOMPLEXITY, sequence, cc);
 		if(methodSize >= Settings.get().getUnitSize())
-			SequenceObservable.get().sendUpdate(ProblemType.UNITVOLUME, sequence, methodSize);
+			seqObservable.sendUpdate(ProblemType.UNITVOLUME, sequence, methodSize);
 		if(parameters >= Settings.get().getUnitInterfaceParameters()) {
 			sequence = new Sequence(Collections.singletonList(new Location(l).setRange(getRange(n))));
-			SequenceObservable.get().sendUpdate(ProblemType.UNITINTERFACESIZE, sequence, parameters);
+			seqObservable.sendUpdate(ProblemType.UNITINTERFACESIZE, sequence, parameters);
 		}
 	}
 

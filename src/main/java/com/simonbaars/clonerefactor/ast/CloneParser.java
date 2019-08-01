@@ -14,6 +14,7 @@ import com.github.javaparser.ParserConfiguration;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.utils.SourceRoot;
 import com.github.javaparser.utils.SourceRoot.Callback.Result;
+import com.simonbaars.clonerefactor.SequenceObservable;
 import com.simonbaars.clonerefactor.ast.interfaces.SetsIfNotNull;
 import com.simonbaars.clonerefactor.detection.CloneDetection;
 import com.simonbaars.clonerefactor.detection.interfaces.RemovesDuplicates;
@@ -34,14 +35,16 @@ import com.simonbaars.clonerefactor.thread.WritesErrors;
 public class CloneParser implements SetsIfNotNull, RemovesDuplicates, WritesErrors, CalculatesTimeIntervals {
 
 	private NodeParser astParser;
-	public final MetricCollector metricCollector = new MetricCollector();
+	private final MetricCollector metricCollector = new MetricCollector();
+	private final SequenceObservable seqObservable = new SequenceObservable(); 
 	
 	public DetectionResults parse(Path projectRoot, SourceRoot sourceRoot, ParserConfiguration config) {
 		long beginTime = System.currentTimeMillis();
-		astParser = new NodeParser(metricCollector);
+		seqObservable.subscribe(new MetricObserver(metricCollector));
+		astParser = new NodeParser(metricCollector, seqObservable);
 		Location lastLoc = calculateLineReg(sourceRoot, config);
 		if(lastLoc!=null) {
-			List<Sequence> findChains = new CloneDetection().findChains(lastLoc);
+			List<Sequence> findChains = new CloneDetection(seqObservable).findChains(lastLoc);
 			doTypeSpecificTransformations(findChains);
 			metricCollector.getMetrics().generalStats.increment("Detection time", interval(beginTime));
 			DetectionResults res = new DetectionResults(metricCollector.reportClones(findChains), findChains);
