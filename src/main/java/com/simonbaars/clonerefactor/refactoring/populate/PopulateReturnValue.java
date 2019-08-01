@@ -1,11 +1,14 @@
 package com.simonbaars.clonerefactor.refactoring.populate;
 
+import java.util.List;
 import java.util.Optional;
 
+import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.body.VariableDeclarator;
 import com.github.javaparser.ast.expr.Expression;
+import com.github.javaparser.ast.expr.MethodCallExpr;
 import com.github.javaparser.ast.expr.VariableDeclarationExpr;
 import com.github.javaparser.ast.stmt.ExpressionStmt;
 import com.github.javaparser.ast.stmt.ReturnStmt;
@@ -15,7 +18,18 @@ public class PopulateReturnValue implements PopulatesExtractedMethod {
 	public PopulateReturnValue() {}
 
 	@Override
-	public void execute(MethodDeclaration extractedMethod) {
+	public void prePopulate(MethodDeclaration extractedMethod, List<Node> topLevel) {
+		// Does not pre populate
+		
+	}
+
+	@Override
+	public void modifyMethodCall(MethodCallExpr expr) {
+		// Does not modify method call
+	}
+
+	@Override
+	public void postPopulate(MethodDeclaration extractedMethod) {
 		NodeList<Statement> statements = extractedMethod.getBody().get().getStatements();
 		if(statements.size() == 1 && statements.get(0) instanceof ExpressionStmt) {
 			ExpressionStmt exprStmt = (ExpressionStmt)statements.get(0);
