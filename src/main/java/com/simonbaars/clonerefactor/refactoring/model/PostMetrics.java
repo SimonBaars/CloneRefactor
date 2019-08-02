@@ -4,20 +4,23 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
 
+import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.stmt.Statement;
 import com.simonbaars.clonerefactor.metrics.collectors.CyclomaticComplexityCalculator;
 import com.simonbaars.clonerefactor.metrics.context.interfaces.RequiresNodeContext;
 import com.simonbaars.clonerefactor.model.FiltersTokens;
-import com.simonbaars.clonerefactor.model.Sequence;
 
 public class PostMetrics implements RequiresNodeContext, FiltersTokens {
 	private final Map<MethodDeclaration, Integer> cc = new HashMap<>();
 	private final Map<MethodDeclaration, Integer> size = new HashMap<>();
 	
 	private final int addedTokenVolume;
+	private final int addedLineVolume;
+	private final int addedNodeVolume;
 	
 	public PostMetrics(MethodDeclaration newMethod, Optional<ClassOrInterfaceDeclaration> classOrInterface, List<Statement> methodcalls) {
 		for(Statement methodcall : methodcalls) {
@@ -27,18 +30,23 @@ public class PostMetrics implements RequiresNodeContext, FiltersTokens {
 				size.put(locationMethod.get(), new CyclomaticComplexityCalculator().calculate(locationMethod.get()));
 			}
 		}
-		addedTokenVolume = calculateAddedVolume(classOrInterface, newMethod, methodcalls);
+		addedTokenVolume = calculateAddedTokenVolume(classOrInterface, newMethod, methodcalls);
 	}
 	
-	private int calculateAddedVolume(Optional<ClassOrInterfaceDeclaration> classOrInterface,
+	private int calculateAddedTokenVolume(Optional<ClassOrInterfaceDeclaration> classOrInterface,
+			MethodDeclaration newMethod, List<Statement> methodcalls) {
+		return calculateAddedVolume(this::countTokens, classOrInterface, newMethod, methodcalls);
+	}
+	
+	private int calculateAddedVolume(Function<Node, Integer> calculateMetric, Optional<ClassOrInterfaceDeclaration> classOrInterface,
 			MethodDeclaration newMethod, List<Statement> methodcalls) {
 		int total = 0;
 		if(classOrInterface.isPresent()) {
-			total += countTokens(classOrInterface.get());
+			total += calculateMetric.apply(classOrInterface.get());
 		} else {
-			total += Math.toIntExact(getEffectiveTokens(newMethod).count());
+			total += calculateMetric.apply(newMethod);
 		}
-		total += methodcalls.stream().mapToInt(n -> countTokens(n)).sum();
+		total += methodcalls.stream().mapToInt(calculateMetric::apply).sum();
 		return total;
 	}
 
