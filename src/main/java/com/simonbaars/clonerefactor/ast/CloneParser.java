@@ -1,15 +1,11 @@
 package com.simonbaars.clonerefactor.ast;
 
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.stream.IntStream;
 
-import com.github.javaparser.JavaParser;
 import com.github.javaparser.ParseResult;
 import com.github.javaparser.ParserConfiguration;
 import com.github.javaparser.ast.CompilationUnit;
@@ -58,17 +54,6 @@ public class CloneParser implements SetsIfNotNull, RemovesDuplicates, WritesErro
 		}
 		
 	}
-	
-	public DetectionResults parse(Collection<File> files) {
-		astParser = new NodeParser(metricCollector, seqObservable);
-		Location lastLoc = calculateLineReg(files);
-		if(lastLoc!=null) {
-			List<Sequence> findChains = new CloneDetection(seqObservable).findChains(lastLoc);
-			doTypeSpecificTransformations(findChains);
-			return new DetectionResults(metricCollector.reportClones(findChains), findChains);
-		}
-		return new DetectionResults();
-	}
 
 	private void doTypeSpecificTransformations(List<Sequence> findChains) {
 		doType2Transformations(findChains); 
@@ -103,23 +88,5 @@ public class CloneParser implements SetsIfNotNull, RemovesDuplicates, WritesErro
 			throw new IllegalStateException(e);
 		}
 		return lh.getLocation();
-	}
-	
-	private final Location calculateLineReg(Collection<File> files) {
-		Location l = null;
-		for(File file : files) {
-			ParseResult<CompilationUnit> compilationUnitNode;
-			try {
-				compilationUnitNode = new JavaParser().parse(file);
-				if(compilationUnitNode.getResult().isPresent()) {
-					CompilationUnit cu = compilationUnitNode.getResult().get();
-					compilationUnits.add(cu);
-					l = setIfNotNull(l, astParser.extractLinesFromAST(l, cu, cu));
-				}
-			} catch (FileNotFoundException e) {
-				writeProjectError(file.getName(), e);
-			}
-		}
-		return l;
 	}
 }
