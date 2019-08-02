@@ -9,6 +9,6 @@ public class UnitLineSizeCalculator implements Calculator<MethodDeclaration>, Fi
     
 	@Override
     public int calculate(MethodDeclaration method) {
-    	return getEffectiveTokens(method.getTokenRange()).map(t -> t.getRange()).filter(r -> r.isPresent()).map(r -> r.get().begin.line).collect(Collectors.toSet()).size();
+    	return getEffectiveTokens(method).map(t -> t.getRange()).filter(r -> r.isPresent()).map(r -> r.get().begin.line).collect(Collectors.toSet()).size();
     }
 }
