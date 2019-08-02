@@ -14,9 +14,6 @@ import com.simonbaars.clonerefactor.ast.interfaces.CalculatesLineSize;
 import com.simonbaars.clonerefactor.metrics.context.interfaces.RequiresNodeContext;
 
 public class PostMetrics implements RequiresNodeContext, CalculatesLineSize {
-	private final Map<MethodDeclaration, Integer> cc = new HashMap<>();
-	private final Map<MethodDeclaration, Integer> size = new HashMap<>();
-	
 	private final int addedTokenVolume;
 	private final int addedLineVolume;
 	private final int addedNodeVolume;

@@ -34,7 +34,6 @@ public class CloneParser implements SetsIfNotNull, RemovesDuplicates, WritesErro
 	private final SequenceObservable seqObservable = new SequenceObservable(); 
 
 	public DetectionResults parse(Path projectRoot, SourceRoot sourceRoot, ParserConfiguration config) {
-		long beginTime = System.currentTimeMillis();
 		MetricCollector metricCollector = new MetricCollector();
 		
 		int nGenerated = 0;
@@ -43,11 +42,12 @@ public class CloneParser implements SetsIfNotNull, RemovesDuplicates, WritesErro
 		if(compilationUnits.isEmpty())
 			throw new IllegalStateException("Project has no sources!");
 				
-		return parseProject(projectRoot, sourceRoot, beginTime, metricCollector, nGenerated, compilationUnits);
+		return parseProject(projectRoot, sourceRoot, metricCollector, nGenerated, compilationUnits);
 	}
 
-	private DetectionResults parseProject(Path projectRoot, SourceRoot sourceRoot, long beginTime, MetricCollector metricCollector,
+	private DetectionResults parseProject(Path projectRoot, SourceRoot sourceRoot, MetricCollector metricCollector,
 			int nGenerated, final List<CompilationUnit> compilationUnits) {
+		long beginTime = System.currentTimeMillis();
 		seqObservable.subscribe(new MetricObserver(metricCollector));
 		astParser = new NodeParser(metricCollector, seqObservable);
 		Location lastLoc = calculateLineReg(compilationUnits);
@@ -59,7 +59,7 @@ public class CloneParser implements SetsIfNotNull, RemovesDuplicates, WritesErro
 			if(Settings.get().getRefactoringStrategy() != RefactoringStrategy.DONOTREFACTOR) {
 				int nGen = new ExtractMethod(projectRoot, sourceRoot.getRoot(), compilationUnits, metricCollector).refactor(findChains);
 				if(nGen!=nGenerated)
-					res.setChild(parseProject(projectRoot, sourceRoot, beginTime, new MetricCollector(), nGen, compilationUnits));
+					res.setChild(parseProject(projectRoot, sourceRoot, new MetricCollector(), nGen, compilationUnits));
 			} 
 			return res;
 		} else throw new IllegalStateException("Project has no usable sources!");
