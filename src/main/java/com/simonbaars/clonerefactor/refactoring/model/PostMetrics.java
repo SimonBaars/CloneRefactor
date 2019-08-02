@@ -1,8 +1,6 @@
 package com.simonbaars.clonerefactor.refactoring.model;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 
@@ -56,14 +54,6 @@ public class PostMetrics implements RequiresNodeContext, CalculatesLineSize {
 		}
 		total += methodcalls.stream().mapToInt(calculateMetric::apply).sum();
 		return total;
-	}
-
-	public Map<MethodDeclaration, Integer> getCc() {
-		return cc;
-	}
-	
-	public Map<MethodDeclaration, Integer> getSize() {
-		return size;
 	}
 
 	public int getAddedTokenVolume() {

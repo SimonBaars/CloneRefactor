@@ -57,6 +57,10 @@ public class DetectionResults {
 	public void setChild(DetectionResults results) {
 		child = Optional.of(results);
 	}
+
+	public Optional<DetectionResults> getChild() {
+		return child;
+	}
 	
 	
 }
