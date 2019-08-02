@@ -11,7 +11,6 @@ import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.stmt.Statement;
 import com.simonbaars.clonerefactor.ast.interfaces.CalculatesLineSize;
-import com.simonbaars.clonerefactor.metrics.collectors.CyclomaticComplexityCalculator;
 import com.simonbaars.clonerefactor.metrics.context.interfaces.RequiresNodeContext;
 
 public class PostMetrics implements RequiresNodeContext, CalculatesLineSize {
@@ -25,13 +24,6 @@ public class PostMetrics implements RequiresNodeContext, CalculatesLineSize {
 	private final int unitInterfaceSize;
 	
 	public PostMetrics(MethodDeclaration newMethod, Optional<ClassOrInterfaceDeclaration> classOrInterface, List<Statement> methodcalls) {
-		for(Statement methodcall : methodcalls) {
-			Optional<MethodDeclaration> locationMethod = getMethod(methodcall);
-			if(locationMethod.isPresent()) {
-				cc.put(locationMethod.get(), new CyclomaticComplexityCalculator().calculate(locationMethod.get()));
-				size.put(locationMethod.get(), new CyclomaticComplexityCalculator().calculate(locationMethod.get()));
-			}
-		}
 		addedTokenVolume = calculateAddedTokenVolume(classOrInterface, newMethod, methodcalls);
 		addedLineVolume = calculateAddedLineVolume(classOrInterface, newMethod, methodcalls);
 		addedNodeVolume = calculateAddedNodeVolume(classOrInterface, newMethod, methodcalls);
