@@ -56,7 +56,7 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 	private final GitChangeCommitter gitCommit;
 	private final Path projectFolder;
 	
-	private int x = 0;
+	private int nGeneratedDeclarations = 0;
 	private final Path sourceFolder;
 	private MetricCollector metricCollector;
 	
@@ -80,7 +80,7 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 	}
 
 	private MethodDeclaration extractMethod(Sequence s) {
-		String methodName = "cloneRefactor"+(x++);
+		String methodName = "cloneRefactor"+(nGeneratedDeclarations++);
 		MethodDeclaration decl = new MethodDeclaration(Modifier.createModifierList(), new VoidType(), methodName);
 		placeMethodOnBasisOfRelation(s, decl);
 		List<CompilationUnit> methodcalls = removeLowestNodes(s, decl);
@@ -111,7 +111,7 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 
 	private void createRelation(Sequence s, Relation relation) {
 		boolean createInterface = relation.isInterfaceRelation();
-		String name = "CloneRefactor"+(x++);
+		String name = "CloneRefactor"+(nGeneratedDeclarations++);
 		ClassOrInterfaceType implementedType = new JavaParser().parseClassOrInterfaceType(name).getResult().get();
 		relation.getIntersectingClasses().forEach(c -> addType(c, createInterface).apply(implementedType));
 		Optional<PackageDeclaration> pack = getCompilationUnit(s.getAny().getFirstNode()).get().getPackageDeclaration();
@@ -206,12 +206,13 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 		}
 	}
 
-	public void refactor(List<Sequence> findChains) {
+	public int refactor(List<Sequence> findChains) {
 		for(Sequence s : findChains) {
 			if(noOverlap(refactoredSequences.keySet(), s)) {
 				tryToExtractMethod(s);
 			}
 		}
+		return nGeneratedDeclarations;
 	}
 
 	private boolean noOverlap(Set<Sequence> keySet, Sequence s) {

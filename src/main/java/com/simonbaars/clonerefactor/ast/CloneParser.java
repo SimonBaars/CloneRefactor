@@ -35,24 +35,30 @@ public class CloneParser implements SetsIfNotNull, RemovesDuplicates, WritesErro
 	private final MetricCollector metricCollector = new MetricCollector();
 	private final SequenceObservable seqObservable = new SequenceObservable(); 
 	private final List<CompilationUnit> compilationUnits = new ArrayList<>();
-	
+
 	public DetectionResults parse(Path projectRoot, SourceRoot sourceRoot, ParserConfiguration config) {
 		long beginTime = System.currentTimeMillis();
 		seqObservable.subscribe(new MetricObserver(metricCollector));
 		astParser = new NodeParser(metricCollector, seqObservable);
+		int nGenerated = 0;
 		while(true) {
-		Location lastLoc = calculateLineReg(sourceRoot, config);
-		if(lastLoc!=null) {
-			List<Sequence> findChains = new CloneDetection(seqObservable).findChains(lastLoc);
-			doTypeSpecificTransformations(findChains);
-			metricCollector.getMetrics().generalStats.increment("Detection time", interval(beginTime));
-			DetectionResults res = new DetectionResults(metricCollector.reportClones(findChains), findChains);
-			if(Settings.get().getRefactoringStrategy() != RefactoringStrategy.DONOTREFACTOR) 
-				new ExtractMethod(projectRoot, sourceRoot.getRoot()).withMetricCollector(metricCollector).refactor(findChains);
-			return res;
-		} else return new DetectionResults();
+			Location lastLoc = calculateLineReg(sourceRoot, config);
+			if(lastLoc!=null) {
+				List<Sequence> findChains = new CloneDetection(seqObservable).findChains(lastLoc);
+				doTypeSpecificTransformations(findChains);
+				metricCollector.getMetrics().generalStats.increment("Detection time", interval(beginTime));
+				DetectionResults res = new DetectionResults(metricCollector.reportClones(findChains), findChains);
+				if(Settings.get().getRefactoringStrategy() != RefactoringStrategy.DONOTREFACTOR) {
+					int nGen = new ExtractMethod(projectRoot, sourceRoot.getRoot()).withMetricCollector(metricCollector).refactor(findChains);
+					if(nGen!=nGenerated) {
+						nGenerated = nGen;
+						continue;
+					}
+				} 
+				return res;
+			} else return new DetectionResults();
 		}
-		
+
 	}
 
 	private void doTypeSpecificTransformations(List<Sequence> findChains) {
