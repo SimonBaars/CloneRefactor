@@ -217,13 +217,18 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 		}
 	}
 
-	public int refactor(List<Sequence> findChains) {
-		for(Sequence s : findChains) {
-			if(noOverlap(refactoredSequences.keySet(), s)) {
+	public int refactor(List<Sequence> foundCloneClasses) {
+		for(Sequence s : foundCloneClasses) {
+			if(noOverlap(refactoredSequences.keySet(), s) && isNotGenerated(s)) {
 				tryToExtractMethod(s);
 			}
 		}
 		return nGeneratedDeclarations;
+	}
+
+	private boolean isNotGenerated(Sequence s) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 	private boolean noOverlap(Set<Sequence> keySet, Sequence s) {
