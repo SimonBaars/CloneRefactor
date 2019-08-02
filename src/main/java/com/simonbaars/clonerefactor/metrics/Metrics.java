@@ -10,10 +10,9 @@ import com.simonbaars.clonerefactor.metrics.context.enums.ContentsType;
 import com.simonbaars.clonerefactor.metrics.context.enums.LocationType;
 import com.simonbaars.clonerefactor.metrics.context.enums.Refactorability;
 import com.simonbaars.clonerefactor.metrics.context.enums.RelationType;
-import com.simonbaars.clonerefactor.model.DetectionResults;
 
 public class Metrics {
-	private Optional<DetectionResults> child = Optional.empty(); 
+	private Optional<Metrics> child = Optional.empty(); 
 	
 	public final CountMap<String> generalStats = new CountMap<>();
 	public final AverageMap<String> averages = new AverageMap<>();
@@ -64,11 +63,11 @@ public class Metrics {
 		generalStats.increment(generalStat, amount);
 	}
 	
-	public void setChild(DetectionResults results) {
+	public void setChild(Metrics results) {
 		child = Optional.of(results);
 	}
 
-	public Optional<DetectionResults> getChild() {
+	public Optional<Metrics> getChild() {
 		return child;
 	}
 }
