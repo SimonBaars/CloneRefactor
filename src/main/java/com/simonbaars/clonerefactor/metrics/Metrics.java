@@ -1,5 +1,7 @@
 package com.simonbaars.clonerefactor.metrics;
 
+import java.util.Optional;
+
 import com.simonbaars.clonerefactor.datatype.map.AverageMap;
 import com.simonbaars.clonerefactor.datatype.map.CountMap;
 import com.simonbaars.clonerefactor.metrics.context.Metric;
@@ -8,8 +10,11 @@ import com.simonbaars.clonerefactor.metrics.context.enums.ContentsType;
 import com.simonbaars.clonerefactor.metrics.context.enums.LocationType;
 import com.simonbaars.clonerefactor.metrics.context.enums.Refactorability;
 import com.simonbaars.clonerefactor.metrics.context.enums.RelationType;
+import com.simonbaars.clonerefactor.model.DetectionResults;
 
 public class Metrics {
+	private Optional<DetectionResults> child = Optional.empty(); 
+	
 	public final CountMap<String> generalStats = new CountMap<>();
 	public final AverageMap<String> averages = new AverageMap<>();
 
@@ -57,5 +62,13 @@ public class Metrics {
 	
 	public void incrementGeneralStatistic(String generalStat, int amount) {
 		generalStats.increment(generalStat, amount);
+	}
+	
+	public void setChild(DetectionResults results) {
+		child = Optional.of(results);
+	}
+
+	public Optional<DetectionResults> getChild() {
+		return child;
 	}
 }
