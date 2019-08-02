@@ -22,6 +22,8 @@ public class PostMetrics implements RequiresNodeContext, CalculatesLineSize {
 	private final int addedLineVolume;
 	private final int addedNodeVolume;
 	
+	private final int unitInterfaceSize;
+	
 	public PostMetrics(MethodDeclaration newMethod, Optional<ClassOrInterfaceDeclaration> classOrInterface, List<Statement> methodcalls) {
 		for(Statement methodcall : methodcalls) {
 			Optional<MethodDeclaration> locationMethod = getMethod(methodcall);
@@ -33,6 +35,7 @@ public class PostMetrics implements RequiresNodeContext, CalculatesLineSize {
 		addedTokenVolume = calculateAddedTokenVolume(classOrInterface, newMethod, methodcalls);
 		addedLineVolume = calculateAddedLineVolume(classOrInterface, newMethod, methodcalls);
 		addedNodeVolume = calculateAddedNodeVolume(classOrInterface, newMethod, methodcalls);
+		unitInterfaceSize = newMethod.getParameters().size();
 	}
 	
 	private int calculateAddedTokenVolume(Optional<ClassOrInterfaceDeclaration> classOrInterface,
@@ -84,5 +87,9 @@ public class PostMetrics implements RequiresNodeContext, CalculatesLineSize {
 
 	public int getAddedNodeVolume() {
 		return addedNodeVolume;
+	}
+
+	public int getUnitInterfaceSize() {
+		return unitInterfaceSize;
 	}
 }
