@@ -31,33 +31,37 @@ import com.simonbaars.clonerefactor.thread.WritesErrors;
 public class CloneParser implements SetsIfNotNull, RemovesDuplicates, WritesErrors, CalculatesTimeIntervals {
 
 	private NodeParser astParser;
-	private final MetricCollector metricCollector = new MetricCollector();
 	private final SequenceObservable seqObservable = new SequenceObservable(); 
 
 	public DetectionResults parse(Path projectRoot, SourceRoot sourceRoot, ParserConfiguration config) {
 		long beginTime = System.currentTimeMillis();
-		seqObservable.subscribe(new MetricObserver(metricCollector));
-		astParser = new NodeParser(metricCollector, seqObservable);
+		MetricCollector metricCollector = new MetricCollector();
+		
 		int nGenerated = 0;
 		final List<CompilationUnit> compilationUnits = createAST(sourceRoot, config);
-		while(!compilationUnits.isEmpty()) {
-			Location lastLoc = calculateLineReg(compilationUnits);
-			if(lastLoc!=null) {
-				List<Sequence> findChains = new CloneDetection(seqObservable).findChains(lastLoc);
-				doTypeSpecificTransformations(findChains);
-				metricCollector.getMetrics().generalStats.increment("Detection time", interval(beginTime));
-				DetectionResults res = new DetectionResults(metricCollector.reportClones(findChains), findChains);
-				if(Settings.get().getRefactoringStrategy() != RefactoringStrategy.DONOTREFACTOR) {
-					int nGen = new ExtractMethod(projectRoot, sourceRoot.getRoot(), compilationUnits, metricCollector).refactor(findChains);
-					if(nGen!=nGenerated) {
-						nGenerated = nGen;
-						continue;
-					}
-				} 
-				return res;
-			} else throw new IllegalStateException("Project has no sources!");
-		}
-		return new DetectionResults();
+		
+		if(compilationUnits.isEmpty())
+			throw new IllegalStateException("Project has no sources!");
+				
+		return parseProject(projectRoot, sourceRoot, beginTime, metricCollector, nGenerated, compilationUnits);
+	}
+
+	private DetectionResults parseProject(Path projectRoot, SourceRoot sourceRoot, long beginTime, MetricCollector metricCollector,
+			int nGenerated, final List<CompilationUnit> compilationUnits) {
+		seqObservable.subscribe(new MetricObserver(metricCollector));
+		astParser = new NodeParser(metricCollector, seqObservable);
+		Location lastLoc = calculateLineReg(compilationUnits);
+		if(lastLoc!=null) {
+			List<Sequence> findChains = new CloneDetection(seqObservable).findChains(lastLoc);
+			doTypeSpecificTransformations(findChains);
+			metricCollector.getMetrics().generalStats.increment("Detection time", interval(beginTime));
+			DetectionResults res = new DetectionResults(metricCollector.reportClones(findChains), findChains);
+			if(Settings.get().getRefactoringStrategy() != RefactoringStrategy.DONOTREFACTOR) {
+				int nGen = new ExtractMethod(projectRoot, sourceRoot.getRoot(), compilationUnits, metricCollector).refactor(findChains);
+			} 
+			return res;
+		} else throw new IllegalStateException("Project has no usable sources!");
+		
 	}
 
 	private void doTypeSpecificTransformations(List<Sequence> findChains) {
