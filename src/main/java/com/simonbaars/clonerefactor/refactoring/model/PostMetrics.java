@@ -25,8 +25,8 @@ public class PostMetrics implements RequiresNodeContext {
 	}
 	
 	public void determine(MethodDeclaration newMethod, Optional<ClassOrInterfaceDeclaration> classOrInterface, List<Statement> methodcalls, Sequence s) {
-		for(Location location : s.getLocations()) {
-			Optional<MethodDeclaration> locationMethod = getMethod(location.getFirstNode());
+		for(Statement methodcall : methodcalls) {
+			Optional<MethodDeclaration> locationMethod = getMethod(methodcall);
 			if(locationMethod.isPresent()) {
 				cc.put(locationMethod.get(), new CyclomaticComplexityCalculator().calculate(locationMethod.get()));
 				size.put(locationMethod.get(), new CyclomaticComplexityCalculator().calculate(locationMethod.get()));
