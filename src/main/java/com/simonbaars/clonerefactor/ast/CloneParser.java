@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.IntStream;
@@ -37,11 +38,13 @@ public class CloneParser implements SetsIfNotNull, RemovesDuplicates, WritesErro
 	private NodeParser astParser;
 	private final MetricCollector metricCollector = new MetricCollector();
 	private final SequenceObservable seqObservable = new SequenceObservable(); 
+	private final List<CompilationUnit> compilationUnits = new ArrayList<>();
 	
 	public DetectionResults parse(Path projectRoot, SourceRoot sourceRoot, ParserConfiguration config) {
 		long beginTime = System.currentTimeMillis();
 		seqObservable.subscribe(new MetricObserver(metricCollector));
 		astParser = new NodeParser(metricCollector, seqObservable);
+		while(true) {
 		Location lastLoc = calculateLineReg(sourceRoot, config);
 		if(lastLoc!=null) {
 			List<Sequence> findChains = new CloneDetection(seqObservable).findChains(lastLoc);
@@ -51,8 +54,9 @@ public class CloneParser implements SetsIfNotNull, RemovesDuplicates, WritesErro
 			if(Settings.get().getRefactoringStrategy() != RefactoringStrategy.DONOTREFACTOR) 
 				new ExtractMethod(projectRoot, sourceRoot.getRoot()).withMetricCollector(metricCollector).refactor(findChains);
 			return res;
+		} else return new DetectionResults();
 		}
-		return new DetectionResults();
+		
 	}
 	
 	public DetectionResults parse(Collection<File> files) {
@@ -90,6 +94,7 @@ public class CloneParser implements SetsIfNotNull, RemovesDuplicates, WritesErro
 			sourceRoot.parse("", config, (Path localPath, Path absolutePath, ParseResult<CompilationUnit> result) -> {
 				if(result.getResult().isPresent()) {
 					CompilationUnit cu = result.getResult().get();
+					compilationUnits.add(cu);
 					lh.setLocation(astParser.extractLinesFromAST(lh.getLocation(), cu, cu));
 				}
 				return Result.DONT_SAVE;
@@ -108,6 +113,7 @@ public class CloneParser implements SetsIfNotNull, RemovesDuplicates, WritesErro
 				compilationUnitNode = new JavaParser().parse(file);
 				if(compilationUnitNode.getResult().isPresent()) {
 					CompilationUnit cu = compilationUnitNode.getResult().get();
+					compilationUnits.add(cu);
 					l = setIfNotNull(l, astParser.extractLinesFromAST(l, cu, cu));
 				}
 			} catch (FileNotFoundException e) {
