@@ -54,21 +54,30 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 	private final Map<Sequence, MethodDeclaration> refactoredSequences = new HashMap<>();
 	private final Set<File> formatted = new HashSet<>();
 	private final GitChangeCommitter gitCommit;
+	
 	private final Path projectFolder;
+	private final Path sourceFolder;
 	
 	private int nGeneratedDeclarations = 0;
-	private final Path sourceFolder;
-	private MetricCollector metricCollector;
+	private final MetricCollector metricCollector;
+
+	private final List<CompilationUnit> compilationUnits;
 	
 	public ExtractMethod(Path projectPath, Path sourceFolder) {
-		this.projectFolder = projectPath;
-		this.sourceFolder = sourceFolder;
+		this(projectPath, sourceFolder, new ArrayList<>(), null);
+	}
+	
+	public ExtractMethod(Path projectRoot, Path root, List<CompilationUnit> compilationUnits, MetricCollector metricCollector) {
+		this.projectFolder = projectRoot;
+		this.sourceFolder = root;
 		Path saveFolder = Paths.get(refactoringSaveFolder(false));
 		if(Settings.get().getRefactoringStrategy().copyAll())
 			copyFolder(projectFolder, saveFolder);
 		gitCommit = Settings.get().getRefactoringStrategy().usesGit() ? new GitChangeCommitter(saveFolder) : new GitChangeCommitter();
+		this.compilationUnits = compilationUnits;
+		this.metricCollector = metricCollector;
 	}
-	
+
 	public void tryToExtractMethod(Sequence s) {
 		if(s.getRefactorability() == Refactorability.CANBEEXTRACTED) {
 			if(s.getRelation().isEffectivelyUnrelated() && metricCollector != null)
@@ -86,7 +95,8 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 		List<CompilationUnit> methodcalls = removeLowestNodes(s, decl);
 		Arrays.stream(populators).forEach(p -> p.postPopulate(decl));
 		refactoredSequences.put(s, decl);
-		writeRefactoringsToFile(methodcalls, s.getRelation());
+		if(Settings.get().getRefactoringStrategy().savesFiles())
+			writeRefactoringsToFile(methodcalls, s.getRelation());
 		return decl;
 	}
 
@@ -94,7 +104,6 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 		Relation relation = s.getRelation();
 		if(relation.isEffectivelyUnrelated())
 			createRelation(s, relation);
-		saveASTBeforeChange(getCompilationUnit(relation.getFirstClass()).get());
 		new ExtractToClassOrInterface(relation.getFirstClass()).extract(decl);
 		addKeywords(decl, relation);
 	}
@@ -116,6 +125,7 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 		relation.getIntersectingClasses().forEach(c -> addType(c, createInterface).apply(implementedType));
 		Optional<PackageDeclaration> pack = getCompilationUnit(s.getAny().getFirstNode()).get().getPackageDeclaration();
 		CompilationUnit cu = pack.isPresent() ? new CompilationUnit(pack.get().getNameAsString()) : new CompilationUnit();
+		compilationUnits.add(cu);
 		relation.getIntersectingClasses().add(0, create(cu, createInterface).apply(name, createInterface ? new Keyword[] {Keyword.PUBLIC} : new Keyword[] {Keyword.PUBLIC, Keyword.ABSTRACT}));
 		if(metricCollector!=null) metricCollector.reportClass(relation.getFirstClass());
 	}
@@ -188,7 +198,8 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 		MethodCallExpr methodCallExpr = new MethodCallExpr(decl.getNameAsString());
 		Statement methodCallStmt = Arrays.stream(populators).map(p -> p.modifyMethodCall(methodCallExpr)).filter(Optional::isPresent).map(Optional::get).findAny().orElse(new ExpressionStmt(methodCallExpr));
 		CompilationUnit cu = getCompilationUnit(inBlock).get();
-		saveASTBeforeChange(cu);
+		if(Settings.get().getRefactoringStrategy().savesFiles())
+			saveASTBeforeChange(cu);
 		inBlock.getStatements().add(inBlock.getStatements().indexOf(lowestNodes.get(0)), methodCallStmt);
 		lowestNodes.forEach(inBlock::remove);
 		return cu;
@@ -217,10 +228,5 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 
 	private boolean noOverlap(Set<Sequence> keySet, Sequence s) {
 		return keySet.stream().noneMatch(s::overlapsWith);
-	}
-
-	public ExtractMethod withMetricCollector(MetricCollector metricCollector) {
-		this.metricCollector = metricCollector;
-		return this;
 	}
 }
