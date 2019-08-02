@@ -58,6 +58,8 @@ public class CloneParser implements SetsIfNotNull, RemovesDuplicates, WritesErro
 			DetectionResults res = new DetectionResults(metricCollector.reportClones(findChains), findChains);
 			if(Settings.get().getRefactoringStrategy() != RefactoringStrategy.DONOTREFACTOR) {
 				int nGen = new ExtractMethod(projectRoot, sourceRoot.getRoot(), compilationUnits, metricCollector).refactor(findChains);
+				if(nGen!=nGenerated)
+					res.setChild(parseProject(projectRoot, sourceRoot, beginTime, new MetricCollector(), nGen, compilationUnits));
 			} 
 			return res;
 		} else throw new IllegalStateException("Project has no usable sources!");
