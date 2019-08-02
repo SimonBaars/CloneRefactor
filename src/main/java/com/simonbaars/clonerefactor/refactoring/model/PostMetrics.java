@@ -32,6 +32,7 @@ public class PostMetrics implements RequiresNodeContext, CalculatesLineSize {
 		}
 		addedTokenVolume = calculateAddedTokenVolume(classOrInterface, newMethod, methodcalls);
 		addedLineVolume = calculateAddedLineVolume(classOrInterface, newMethod, methodcalls);
+		addedNodeVolume = calculateAddedNodeVolume(classOrInterface, newMethod, methodcalls);
 	}
 	
 	private int calculateAddedTokenVolume(Optional<ClassOrInterfaceDeclaration> classOrInterface,
@@ -42,6 +43,15 @@ public class PostMetrics implements RequiresNodeContext, CalculatesLineSize {
 	private int calculateAddedLineVolume(Optional<ClassOrInterfaceDeclaration> classOrInterface,
 			MethodDeclaration newMethod, List<Statement> methodcalls) {
 		return calculateAddedVolume(this::lineSize, classOrInterface, newMethod, methodcalls);
+	}
+	
+	private int calculateAddedNodeVolume(Optional<ClassOrInterfaceDeclaration> classOrInterface,
+			MethodDeclaration newMethod, List<Statement> methodcalls) {
+		return calculateAddedVolume(this::amountOfNodes, classOrInterface, newMethod, methodcalls);
+	}
+	
+	public int amountOfNodes(Node n) {
+		return 1;
 	}
 	
 	private int calculateAddedVolume(Function<Node, Integer> calculateMetric, Optional<ClassOrInterfaceDeclaration> classOrInterface,
@@ -62,5 +72,17 @@ public class PostMetrics implements RequiresNodeContext, CalculatesLineSize {
 	
 	public Map<MethodDeclaration, Integer> getSize() {
 		return size;
+	}
+
+	public int getAddedTokenVolume() {
+		return addedTokenVolume;
+	}
+
+	public int getAddedLineVolume() {
+		return addedLineVolume;
+	}
+
+	public int getAddedNodeVolume() {
+		return addedNodeVolume;
 	}
 }
