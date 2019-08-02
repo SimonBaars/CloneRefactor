@@ -21,7 +21,6 @@ import com.simonbaars.clonerefactor.metrics.MetricCollector;
 import com.simonbaars.clonerefactor.model.DetectionResults;
 import com.simonbaars.clonerefactor.model.Sequence;
 import com.simonbaars.clonerefactor.model.location.Location;
-import com.simonbaars.clonerefactor.model.location.LocationHolder;
 import com.simonbaars.clonerefactor.refactoring.ExtractMethod;
 import com.simonbaars.clonerefactor.refactoring.RefactoringStrategy;
 import com.simonbaars.clonerefactor.settings.CloneType;
@@ -34,15 +33,15 @@ public class CloneParser implements SetsIfNotNull, RemovesDuplicates, WritesErro
 	private NodeParser astParser;
 	private final MetricCollector metricCollector = new MetricCollector();
 	private final SequenceObservable seqObservable = new SequenceObservable(); 
-	private final List<CompilationUnit> compilationUnits = new ArrayList<>();
 
 	public DetectionResults parse(Path projectRoot, SourceRoot sourceRoot, ParserConfiguration config) {
 		long beginTime = System.currentTimeMillis();
 		seqObservable.subscribe(new MetricObserver(metricCollector));
 		astParser = new NodeParser(metricCollector, seqObservable);
 		int nGenerated = 0;
-		while(true) {
-			Location lastLoc = calculateLineReg(sourceRoot, config);
+		final List<CompilationUnit> compilationUnits = createAST(sourceRoot, config);
+		while(!compilationUnits.isEmpty()) {
+			Location lastLoc = calculateLineReg(compilationUnits);
 			if(lastLoc!=null) {
 				List<Sequence> findChains = new CloneDetection(seqObservable).findChains(lastLoc);
 				doTypeSpecificTransformations(findChains);
@@ -56,9 +55,9 @@ public class CloneParser implements SetsIfNotNull, RemovesDuplicates, WritesErro
 					}
 				} 
 				return res;
-			} else return new DetectionResults();
+			} else throw new IllegalStateException("Project has no sources!");
 		}
-
+		return new DetectionResults();
 	}
 
 	private void doTypeSpecificTransformations(List<Sequence> findChains) {
@@ -79,20 +78,25 @@ public class CloneParser implements SetsIfNotNull, RemovesDuplicates, WritesErro
 		}
 	}
 
-	private final Location calculateLineReg(SourceRoot sourceRoot, ParserConfiguration config) {
-		final LocationHolder lh = new LocationHolder();
+	private final Location calculateLineReg(List<CompilationUnit> compilationUnits) {
+		Location l = null;
+		for(CompilationUnit cu : compilationUnits)
+			l = astParser.extractLinesFromAST(l, cu, cu);
+		return l;
+	}
+
+	private List<CompilationUnit> createAST(SourceRoot sourceRoot, ParserConfiguration config) {
+		final List<CompilationUnit> compilationUnits = new ArrayList<>();
 		try {
 			sourceRoot.parse("", config, (Path localPath, Path absolutePath, ParseResult<CompilationUnit> result) -> {
 				if(result.getResult().isPresent()) {
-					CompilationUnit cu = result.getResult().get();
-					compilationUnits.add(cu);
-					lh.setLocation(astParser.extractLinesFromAST(lh.getLocation(), cu, cu));
+					compilationUnits.add(result.getResult().get());
 				}
 				return Result.DONT_SAVE;
 			});
 		} catch (IOException e) {
 			throw new IllegalStateException(e);
 		}
-		return lh.getLocation();
+		return compilationUnits;
 	}
 }
