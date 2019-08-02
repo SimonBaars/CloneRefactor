@@ -10,11 +10,11 @@ import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.stmt.Statement;
+import com.simonbaars.clonerefactor.ast.interfaces.CalculatesLineSize;
 import com.simonbaars.clonerefactor.metrics.collectors.CyclomaticComplexityCalculator;
 import com.simonbaars.clonerefactor.metrics.context.interfaces.RequiresNodeContext;
-import com.simonbaars.clonerefactor.model.FiltersTokens;
 
-public class PostMetrics implements RequiresNodeContext, FiltersTokens {
+public class PostMetrics implements RequiresNodeContext, CalculatesLineSize {
 	private final Map<MethodDeclaration, Integer> cc = new HashMap<>();
 	private final Map<MethodDeclaration, Integer> size = new HashMap<>();
 	
@@ -31,11 +31,17 @@ public class PostMetrics implements RequiresNodeContext, FiltersTokens {
 			}
 		}
 		addedTokenVolume = calculateAddedTokenVolume(classOrInterface, newMethod, methodcalls);
+		addedLineVolume = calculateAddedLineVolume(classOrInterface, newMethod, methodcalls);
 	}
 	
 	private int calculateAddedTokenVolume(Optional<ClassOrInterfaceDeclaration> classOrInterface,
 			MethodDeclaration newMethod, List<Statement> methodcalls) {
 		return calculateAddedVolume(this::countTokens, classOrInterface, newMethod, methodcalls);
+	}
+	
+	private int calculateAddedLineVolume(Optional<ClassOrInterfaceDeclaration> classOrInterface,
+			MethodDeclaration newMethod, List<Statement> methodcalls) {
+		return calculateAddedVolume(this::lineSize, classOrInterface, newMethod, methodcalls);
 	}
 	
 	private int calculateAddedVolume(Function<Node, Integer> calculateMetric, Optional<ClassOrInterfaceDeclaration> classOrInterface,
