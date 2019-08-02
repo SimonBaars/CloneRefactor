@@ -21,6 +21,10 @@ public enum RefactoringStrategy {
 	public boolean usesGit() {
 		return this == GITREPLACE || this == GITCOPY;
 	}
+	
+	public boolean savesFiles() {
+		return this != SIMULATE;
+	}
 
 	public RefactoringStrategy revertToNonGit() {
 		if(this == GITREPLACE)
