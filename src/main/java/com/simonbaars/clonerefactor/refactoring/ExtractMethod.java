@@ -39,6 +39,8 @@ import com.simonbaars.clonerefactor.metrics.context.interfaces.RequiresNodeConte
 import com.simonbaars.clonerefactor.metrics.model.Relation;
 import com.simonbaars.clonerefactor.model.Sequence;
 import com.simonbaars.clonerefactor.model.location.Location;
+import com.simonbaars.clonerefactor.refactoring.model.PostMetrics;
+import com.simonbaars.clonerefactor.refactoring.model.PreMetrics;
 import com.simonbaars.clonerefactor.refactoring.populate.PopulateArguments;
 import com.simonbaars.clonerefactor.refactoring.populate.PopulateReturnValue;
 import com.simonbaars.clonerefactor.refactoring.populate.PopulateThrows;
@@ -93,9 +95,10 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 		String methodName = METHOD_NAME+(nGeneratedDeclarations++);
 		MethodDeclaration decl = new MethodDeclaration(Modifier.createModifierList(), new VoidType(), methodName);
 		placeMethodOnBasisOfRelation(s, decl);
-		List<CompilationUnit> methodcalls = removeLowestNodes(s, decl);
+		List<Statement> methodcalls = removeLowestNodes(s, decl);
 		Arrays.stream(populators).forEach(p -> p.postPopulate(decl));
 		refactoredSequences.put(s, decl);
+		new PostMetrics(decl, s.getRelation().isEffectivelyUnrelated() ? getClass(decl) : Optional.empty(), methodcalls).combine(new PreMetrics(s)).save(metricCollector);
 		if(Settings.get().getRefactoringStrategy().savesFiles())
 			writeRefactoringsToFile(methodcalls, s.getRelation());
 		return decl;
@@ -139,7 +142,7 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 		return createInterface ? c::addImplementedType : c::addExtendedType;
 	}
 
-	private void writeRefactoringsToFile(List<CompilationUnit> methodcalls, Relation relation) {
+	private void writeRefactoringsToFile(List<Statement> methodcalls, Relation relation) {
 		List<Node> saveNodes = new ArrayList<>(relation.getIntersectingClasses());
 		saveNodes.addAll(methodcalls);
 		try {
@@ -177,7 +180,7 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 		return unit.getChildNodes().stream().filter(e -> e instanceof ClassOrInterfaceDeclaration).map(e -> (ClassOrInterfaceDeclaration)e).findAny().get().getNameAsString();
 	}
 
-	private List<CompilationUnit> removeLowestNodes(Sequence s, MethodDeclaration decl) {
+	private List<Statement> removeLowestNodes(Sequence s, MethodDeclaration decl) {
 		ListMap<Location, Node> lowestNodes = new ListMap<>();
 		Map<Location, BlockStmt> insideBlock = new HashMap<>();
 		s.getLocations().forEach(e -> {
@@ -195,15 +198,14 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 		return Collections.emptyList();
 	}
 
-	private CompilationUnit removeLowestNodes(List<Node> lowestNodes, BlockStmt inBlock, MethodDeclaration decl) {
+	private Statement removeLowestNodes(List<Node> lowestNodes, BlockStmt inBlock, MethodDeclaration decl) {
 		MethodCallExpr methodCallExpr = new MethodCallExpr(decl.getNameAsString());
 		Statement methodCallStmt = Arrays.stream(populators).map(p -> p.modifyMethodCall(methodCallExpr)).filter(Optional::isPresent).map(Optional::get).findAny().orElse(new ExpressionStmt(methodCallExpr));
-		CompilationUnit cu = getCompilationUnit(inBlock).get();
 		if(Settings.get().getRefactoringStrategy().savesFiles())
-			saveASTBeforeChange(cu);
+			saveASTBeforeChange(getCompilationUnit(inBlock).get());
 		inBlock.getStatements().add(inBlock.getStatements().indexOf(lowestNodes.get(0)), methodCallStmt);
 		lowestNodes.forEach(inBlock::remove);
-		return cu;
+		return methodCallStmt;
 	}
 
 	private void saveASTBeforeChange(CompilationUnit cu) {
