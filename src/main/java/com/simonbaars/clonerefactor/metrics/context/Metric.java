@@ -1,7 +1,7 @@
 package com.simonbaars.clonerefactor.metrics.context;
 
 public enum Metric {
-	LINES ("Lines"), EFFECTIVELINES("Effective Lines"), NODES("Nodes"), TOKENS("Tokens");
+	LINES ("Lines"), NODES("Nodes"), TOKENS("Tokens");
 	
 	private String name;
 	

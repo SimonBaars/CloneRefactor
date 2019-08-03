@@ -19,7 +19,6 @@ import com.simonbaars.clonerefactor.model.Sequence;
 import com.simonbaars.clonerefactor.model.location.Location;
 
 public class MetricCollector {
-	private final SetMap<Path, Integer> parsedEffectiveLines = new SetMap<>();
 	private final SetMap<Path, Integer> parsedLines = new SetMap<>();
 	private final SetMap<Path, Range> parsedTokens = new SetMap<>();
 	private final SetMap<Path, Range> parsedNodes = new SetMap<>();
@@ -32,28 +31,15 @@ public class MetricCollector {
 	public MetricCollector() {}
 	
 	public void reportFoundNode(Location l) {
-		metrics.incrementGeneralStatistic(Metric.LINES, StatType.TOTAL, getUnparsedLines(l, false));
 		metrics.incrementGeneralStatistic(Metric.NODES, StatType.TOTAL, l.getAmountOfNodes());
 		metrics.incrementGeneralStatistic(Metric.TOKENS, StatType.TOTAL, l.getAmountOfTokens());
-		metrics.incrementGeneralStatistic(Metric.EFFECTIVELINES, StatType.TOTAL, getUnparsedEffectiveLines(l, false));
+		metrics.incrementGeneralStatistic(Metric.LINES, StatType.TOTAL, getUnparsedLines(l, false));
 		l.getContents().getNodes().forEach(relationFinder::registerNode);
-	}
-	
-	private int getUnparsedEffectiveLines(Location l, boolean countOverlap) {
-		int amountOfLines = 0;
-		for(Integer i : l.getContents().effectiveLines()) {
-			Set<Integer> lines = parsedEffectiveLines.get(l.getFile());
-			if(!lines.contains(i)) {
-				amountOfLines++;
-				lines.add(i);
-			} else if(countOverlap) metrics.incrementGeneralStatistic(Metric.EFFECTIVELINES, StatType.OVERLAPPING, 1);
-		}
-		return amountOfLines;
 	}
 	
 	private int getUnparsedLines(Location l, boolean countOverlap) {
 		int amountOfLines = 0;
-		for(int i = l.getRange().begin.line; i<=l.getRange().end.line; i++) {
+		for(Integer i : l.getContents().effectiveLines()) {
 			Set<Integer> lines = parsedLines.get(l.getFile());
 			if(!lines.contains(i)) {
 				amountOfLines++;
@@ -65,7 +51,6 @@ public class MetricCollector {
 	
 	public Metrics reportClones(List<Sequence> clones) {
 		parsedLines.clear();
-		parsedEffectiveLines.clear();
 		parsedTokens.clear();
 		if(clones.isEmpty())
 			metrics.generalStats.increment("Projects without clone classes");
@@ -100,10 +85,9 @@ public class MetricCollector {
 		metrics.averages.addTo("Clone nodes", l.getAmountOfNodes());
 		metrics.averages.addTo("Clone tokens", l.getAmountOfTokens());
 		metrics.averages.addTo("Clone effective lines", l.getEffectiveLines());
-		metrics.incrementGeneralStatistic(Metric.LINES, StatType.CLONED, getUnparsedLines(l, true));
 		metrics.incrementGeneralStatistic(Metric.TOKENS, StatType.CLONED, getUnparsedTokens(l, true));
 		metrics.incrementGeneralStatistic(Metric.NODES, StatType.CLONED, getUnparsedNodes(l, true));
-		metrics.incrementGeneralStatistic(Metric.EFFECTIVELINES, StatType.CLONED, getUnparsedEffectiveLines(l, true));
+		metrics.incrementGeneralStatistic(Metric.LINES, StatType.CLONED, getUnparsedLines(l, true));
 		l.setMetrics(locationFinder);
 		l.getContents().setMetrics(contentsFinder);
 		metrics.amountPerLocation.increment(l.getLocationType());
