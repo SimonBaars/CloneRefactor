@@ -2,6 +2,7 @@ package com.simonbaars.clonerefactor.metrics.calculators;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.expr.BinaryExpr;
@@ -48,6 +49,10 @@ public interface CalculatesCyclomaticComplexity {
 	}
 
 	public default int calculateCCIncrease(List<Node> nodes) {
-		return nodes.stream().mapToInt(this::calculateCCIncreace).sum();
+		return calculateCCIncrease(nodes.stream());
+	}
+	
+	public default int calculateCCIncrease(Stream<Node> nodes) {
+		return nodes.mapToInt(this::calculateCCIncreace).sum();
 	}
 }

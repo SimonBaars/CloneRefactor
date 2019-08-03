@@ -1,28 +1,35 @@
 package com.simonbaars.clonerefactor.refactoring.model;
 
+import com.simonbaars.clonerefactor.metrics.calculators.CalculatesCyclomaticComplexity;
 import com.simonbaars.clonerefactor.metrics.context.interfaces.RequiresNodeContext;
 import com.simonbaars.clonerefactor.model.Sequence;
 
-public class PreMetrics implements RequiresNodeContext {
-	private final int totalTokens;
-	private final int totalNodes;
-	private final int totalLines;
+public class PreMetrics implements RequiresNodeContext, CalculatesCyclomaticComplexity {
+	private final int tokens;
+	private final int nodes;
+	private final int lines;
+	private final int cc;
 	
 	public PreMetrics(Sequence s) {
-		this.totalTokens = s.getTotalTokenVolume();
-		this.totalNodes = s.getTotalNodeVolume();
-		this.totalLines = s.getTotalEffectiveLineVolume();
-	}
-	
-	public int getTotalTokens() {
-		return totalTokens;
+		this.tokens = s.getTotalTokenVolume();
+		this.nodes = s.getTotalNodeVolume();
+		this.lines = s.getTotalEffectiveLineVolume();
+		this.cc = calculateCCIncrease(s.getLocations().stream().flatMap(l -> l.getContents().getTopLevelNodes().stream()));
 	}
 
-	public int getTotalNodes() {
-		return totalNodes;
+	public int getTokens() {
+		return tokens;
 	}
 
-	public int getTotalLines() {
-		return totalLines;
+	public int getNodes() {
+		return nodes;
+	}
+
+	public int getLines() {
+		return lines;
+	}
+
+	public int getCc() {
+		return cc;
 	}
 }
