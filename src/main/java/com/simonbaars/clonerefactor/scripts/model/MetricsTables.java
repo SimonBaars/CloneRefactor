@@ -25,7 +25,7 @@ public class MetricsTables implements WritesErrors {
 	private final CountTable amountPerEffectiveLines = new CountTable("Amount per Effective Lines");
 	private final CountTable amountPerTotalEffectiveLineVolume = new CountTable("Amount per Total Effective Line Volume");
 	
-	public void writeTables() {
+	private void saveToDisk() {
 		StringBuilder tableContents = new StringBuilder();
 		tableContents.append(generalStats.toString());
 		tableContents.append(System.lineSeparator()+System.lineSeparator());
@@ -59,7 +59,7 @@ public class MetricsTables implements WritesErrors {
 		}
 	}
 
-	public void collectMetrics(String percentage, Metrics metrics) {
+	private void collectMetrics(String percentage, Metrics metrics) {
 		generalStats.put(percentage, metrics.generalStats);
 		averages.put(percentage, metrics.averages);
 		
@@ -82,6 +82,6 @@ public class MetricsTables implements WritesErrors {
 			collectMetrics(percentage + (appendNumber ? " P"+i : ""), metrics);
 			metrics = metrics.getChild().orElse(null);
 		}
-		writeTables();
+		saveToDisk();
 	}
 }

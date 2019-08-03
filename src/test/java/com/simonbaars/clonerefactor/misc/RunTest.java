@@ -10,8 +10,6 @@ public class RunTest extends TestCase {
 	public void testMetricTables() {
 		MetricsTables metricsTables = new MetricsTables();
 		Metrics metrics = new RunOnCorpus().startCorpusCloneDetection();
-		if(metrics != null)
-			metricsTables.collectMetrics("testcolumn", metrics);
-		metricsTables.writeTables();
+		metricsTables.reportMetrics("testcolumn", metrics);
 	}
 }
