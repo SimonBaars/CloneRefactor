@@ -5,6 +5,7 @@ import java.nio.file.Paths;
 
 import com.simonbaars.clonerefactor.Main;
 import com.simonbaars.clonerefactor.helper.Type1Test;
+import com.simonbaars.clonerefactor.scripts.model.MetricsTables;
 import com.simonbaars.clonerefactor.settings.Scope;
 import com.simonbaars.clonerefactor.settings.Settings;
 import com.simonbaars.clonerefactor.thread.CorpusThread;
@@ -40,6 +41,14 @@ public class Type1Testcases extends Type1Test {
      */
     public static Test suite() {
         return new TestSuite( Type1Testcases.class );
+    }
+    
+    public void testMetricTables() {
+    	MetricsTables tables = new MetricsTables();
+    	System.out.println("kryo-serializers");
+    	String path = "/Users/sbaars/git/kryo-serializers/";
+    	System.out.println(Settings.get());
+		tables.reportMetrics("Kryo", Main.cloneDetection(Paths.get(path), Paths.get(path+"src/main/java/")).getMetrics());
     }
     
     public void testRef() {
