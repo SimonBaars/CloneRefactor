@@ -16,6 +16,7 @@ import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import com.github.javaparser.JavaParser;
 import com.github.javaparser.JavaToken;
@@ -263,12 +264,9 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 		if(!tr.isPresent())
 			return null;
 		JavaToken firstToken = tr.get().getBegin();
-		for(JavaToken token : tokenRange) {
-			if(token == firstToken) {
-				return token.getRange().get().begin; 
-			}
-		}
-		return null;
+		return StreamSupport.stream(tr.get().spliterator(), false)
+				.filter(token -> token == firstToken).map(token -> token.getRange())
+				.filter(e -> e.isPresent()).map(e -> e.get().begin).findAny().orElse(null);
 	}
 
 	private Position determineTokenRanges(Position currentPosition, TokenRange tokenRange) {
