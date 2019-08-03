@@ -50,6 +50,7 @@ import com.simonbaars.clonerefactor.util.SavePaths;
 
 public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperations, DoesFileOperations {
 	private final PopulatesExtractedMethod[] populators = {new PopulateThrows(), new PopulateArguments(), new PopulateReturnValue()};
+	private static final String METHOD_NAME = "cloneRefactor";
 	
 	private final Map<Sequence, MethodDeclaration> refactoredSequences = new HashMap<>();
 	private final Set<File> formatted = new HashSet<>();
@@ -89,7 +90,7 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 	}
 
 	private MethodDeclaration extractMethod(Sequence s) {
-		String methodName = "cloneRefactor"+(nGeneratedDeclarations++);
+		String methodName = METHOD_NAME+(nGeneratedDeclarations++);
 		MethodDeclaration decl = new MethodDeclaration(Modifier.createModifierList(), new VoidType(), methodName);
 		placeMethodOnBasisOfRelation(s, decl);
 		List<CompilationUnit> methodcalls = removeLowestNodes(s, decl);
@@ -219,16 +220,15 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 
 	public int refactor(List<Sequence> foundCloneClasses) {
 		for(Sequence s : foundCloneClasses) {
-			if(noOverlap(refactoredSequences.keySet(), s) && isNotGenerated(s)) {
+			if(noOverlap(refactoredSequences.keySet(), s) && !isGenerated(s)) {
 				tryToExtractMethod(s);
 			}
 		}
 		return nGeneratedDeclarations;
 	}
 
-	private boolean isNotGenerated(Sequence s) {
-		// TODO Auto-generated method stub
-		return false;
+	private boolean isGenerated(Sequence s) {
+		return s.getNodeSize() == 1 && s.getLocations().stream().allMatch(l -> l.getContents().getTokens().stream().anyMatch(t -> t.asString().equals(METHOD_NAME)));
 	}
 
 	private boolean noOverlap(Set<Sequence> keySet, Sequence s) {

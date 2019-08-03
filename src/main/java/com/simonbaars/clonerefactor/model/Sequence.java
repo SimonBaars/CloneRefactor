@@ -41,7 +41,7 @@ public class Sequence implements Comparable<Sequence> {
 	
 	public Sequence add(Location l) {
 		locations.add(l);
-		return this; //For method chaining
+		return this;
 	}
 
 	public int size() {
@@ -74,11 +74,11 @@ public class Sequence implements Comparable<Sequence> {
 	}
 
 	public int getNodeSize() {
-		return locations.isEmpty() ? 0 : locations.get(0).getAmountOfNodes();
+		return locations.isEmpty() ? 0 : getAny().getAmountOfNodes();
 	}
 	
 	public int getEffectiveLineSize() {
-		return locations.isEmpty() ? 0 : locations.get(0).getEffectiveLines();
+		return locations.isEmpty() ? 0 : getAny().getEffectiveLines();
 	}
 	
 	public int getTotalNodeVolume() {
