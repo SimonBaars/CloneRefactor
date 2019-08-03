@@ -63,4 +63,8 @@ public class PostMetrics implements RequiresNodeContext, CalculatesLineSize, Cal
 	public int getCc() {
 		return cc;
 	}
+	
+	public CombinedMetrics combine(PreMetrics metrics) {
+		return new CombinedMetrics(getCc()-metrics.getCc(), getAddedLineVolume()-metrics.getLines(), getAddedTokenVolume()-metrics.getTokens(), getAddedNodeVolume()-metrics.getNodes(), getUnitInterfaceSize());
+	}
 }
