@@ -17,10 +17,7 @@ public class RunAllConfigurations {
 		configureSettings(cloneTypes, scopes);
 		MetricsTables table = new MetricsTables();
 		
-		do {
-			table.collectMetrics("T"+Settings.get().getCloneType().getTypeAsNumber()+(Settings.get().isUseLiteratureTypeDefinitions() ? "" : "R")+" "+Settings.get().getScope(), new RunOnCorpus().startCorpusCloneDetection());
-			table.writeTables();
-		}
+		do table.reportMetrics("T"+Settings.get().getCloneType().getTypeAsNumber()+(Settings.get().isUseLiteratureTypeDefinitions() ? "" : "R")+" "+Settings.get().getScope(), new RunOnCorpus().startCorpusCloneDetection());
 		while (rotate(cloneTypes, scopes));
 	}
 
