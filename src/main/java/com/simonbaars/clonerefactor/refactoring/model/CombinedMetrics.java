@@ -1,5 +1,7 @@
 package com.simonbaars.clonerefactor.refactoring.model;
 
+import com.simonbaars.clonerefactor.metrics.MetricCollector;
+
 public class CombinedMetrics {
 	private final int ccIncrease;
 	private final int lineSizeIncrease;
@@ -35,5 +37,13 @@ public class CombinedMetrics {
 
 	public int getUnitInterfaceSizeIncrease() {
 		return unitInterfaceSizeIncrease;
+	}
+	
+	public void save(MetricCollector collector) {
+		collector.getMetrics().incrementGeneralStatistic("CC Increase", ccIncrease);
+		collector.getMetrics().incrementGeneralStatistic("Lines Increase", lineSizeIncrease);
+		collector.getMetrics().incrementGeneralStatistic("Tokens Increase", tokenSizeIncrease);
+		collector.getMetrics().incrementGeneralStatistic("Nodes Increase", nodeSizeIncrease);
+		collector.getMetrics().incrementGeneralStatistic("Unit Size Increase", unitInterfaceSizeIncrease);
 	}
 }
