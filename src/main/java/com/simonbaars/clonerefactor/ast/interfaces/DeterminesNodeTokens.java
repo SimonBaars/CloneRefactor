@@ -28,7 +28,10 @@ public interface DeterminesNodeTokens extends FiltersTokens, RequiresNodeOperati
 	}
 	
 	public default Range getValidRange(Node n) {
-		Range nodeRange = n.getRange().get();
+		Optional<Range> rangeOptional = n.getRange();
+		if(!rangeOptional.isPresent())
+			throw new IllegalStateException("Node has no Range: "+n);
+		Range nodeRange = rangeOptional.get();
 		for(ListIterator<Node> it = n.getChildNodes().listIterator(n.getChildNodes().size()); it.hasPrevious(); ) {
 			Node node = it.previous();
 			if(!isExcluded(node) && node.getRange().isPresent()) {
