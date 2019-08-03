@@ -18,6 +18,11 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import com.github.javaparser.JavaParser;
+import com.github.javaparser.JavaToken;
+import com.github.javaparser.JavaToken.Category;
+import com.github.javaparser.Position;
+import com.github.javaparser.Range;
+import com.github.javaparser.TokenRange;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Modifier;
 import com.github.javaparser.ast.Modifier.Keyword;
@@ -235,5 +240,45 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 
 	private boolean noOverlap(Set<Sequence> keySet, Sequence s) {
 		return keySet.stream().noneMatch(s::overlapsWith);
+	}
+	
+	public void determineRanges(CompilationUnit cu) {
+		determineRanges(cu, new Position(1, 1));
+	}
+	
+	private Position determineRanges(Node node, Position currentPosition) {
+		Optional<TokenRange> tr = node.getTokenRange();
+		if(!tr.isPresent() || currentPosition == null)
+			return null;
+		Position end = determineTokenRanges(currentPosition, tr.get());
+		node.setRange(new Range(currentPosition, end));
+		for(Node childNode : node.getChildNodes()) {
+			currentPosition = determineRanges(childNode, determineStartPosition(node, tr.get(), currentPosition));
+		}
+		return currentPosition;
+	}
+
+	private Position determineStartPosition(Node node, TokenRange tokenRange, Position currentPosition) {
+		Optional<TokenRange> tr = node.getTokenRange();
+		if(!tr.isPresent())
+			return null;
+		JavaToken firstToken = tr.get().getBegin();
+		for(JavaToken token : tokenRange) {
+			if(token == firstToken) {
+				return token.getRange().get().begin; 
+			}
+		}
+		return null;
+	}
+
+	private Position determineTokenRanges(Position currentPosition, TokenRange tokenRange) {
+		for(JavaToken token : tokenRange) {
+			Position end = token.getCategory() == Category.EOL ? 
+					new Position(currentPosition.line + 1, 1) :
+					new Position(currentPosition.line, currentPosition.column + token.toString().length());
+			token.setRange(new Range(currentPosition, end));
+			currentPosition = end;
+		}
+		return currentPosition;
 	}
 }
