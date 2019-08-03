@@ -1,4 +1,4 @@
-package com.simonbaars.clonerefactor.metrics.collectors;
+package com.simonbaars.clonerefactor.metrics.calculators;
 
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.simonbaars.clonerefactor.ast.interfaces.CalculatesLineSize;
