@@ -105,6 +105,7 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 		Arrays.stream(populators).forEach(p -> p.postPopulate(decl));
 		refactoredSequences.put(s, decl);
 		new PostMetrics(decl, s.getRelation().isEffectivelyUnrelated() ? getClass(decl) : Optional.empty(), methodcalls).combine(new PreMetrics(s)).save(metricCollector);
+		methodcalls.stream().map(m -> getCompilationUnit(m)).filter(o -> o.isPresent()).map(o -> o.get()).forEach(this::determineRanges);
 		if(Settings.get().getRefactoringStrategy().savesFiles())
 			writeRefactoringsToFile(methodcalls, s.getRelation());
 		return decl;
@@ -244,39 +245,39 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 	}
 	
 	public void determineRanges(CompilationUnit cu) {
-		determineRanges(cu, new Position(1, 1));
+		determineRanges(cu, Position.HOME);
 	}
 	
-	private Position determineRanges(Node node, Position currentPosition) {
+	private Position determineRanges(Node node, Position cursor) {
 		Optional<TokenRange> tr = node.getTokenRange();
-		if(!tr.isPresent() || currentPosition == null)
+		if(!tr.isPresent() || cursor == null)
 			return null;
-		Position end = determineTokenRanges(currentPosition, tr.get());
-		node.setRange(new Range(currentPosition, end));
+		Position end = determineTokenRanges(cursor, tr.get());
+		node.setRange(new Range(cursor, end));
 		for(Node childNode : node.getChildNodes()) {
-			currentPosition = determineRanges(childNode, determineStartPosition(node, tr.get(), currentPosition));
+			cursor = determineRanges(childNode, determineStartPosition(node, tr.get()));
 		}
-		return currentPosition;
+		return cursor;
 	}
 
-	private Position determineStartPosition(Node node, TokenRange tokenRange, Position currentPosition) {
+	private Position determineStartPosition(Node node, TokenRange tokenRange) {
 		Optional<TokenRange> tr = node.getTokenRange();
 		if(!tr.isPresent())
 			return null;
 		JavaToken firstToken = tr.get().getBegin();
+		StreamSupport.stream(tr.get().spliterator(), false)
+		.filter(token -> token == firstToken).forEach(e -> System.out.println("found token in child "+e));
 		return StreamSupport.stream(tr.get().spliterator(), false)
 				.filter(token -> token == firstToken).map(token -> token.getRange())
 				.filter(e -> e.isPresent()).map(e -> e.get().begin).findAny().orElse(null);
 	}
 
-	private Position determineTokenRanges(Position currentPosition, TokenRange tokenRange) {
+	private Position determineTokenRanges(Position cursor, TokenRange tokenRange) {
 		for(JavaToken token : tokenRange) {
-			Position end = token.getCategory() == Category.EOL ? 
-					new Position(currentPosition.line + 1, 1) :
-					new Position(currentPosition.line, currentPosition.column + token.toString().length());
-			token.setRange(new Range(currentPosition, end));
-			currentPosition = end;
+			Position end = token.getCategory().isEndOfLine() ? cursor.nextLine() : cursor.right(token.getText().length()-1);
+			token.setRange(new Range(cursor, end));
+			cursor = end;
 		}
-		return currentPosition;
+		return cursor;
 	}
 }
