@@ -20,7 +20,6 @@ import java.util.stream.StreamSupport;
 
 import com.github.javaparser.JavaParser;
 import com.github.javaparser.JavaToken;
-import com.github.javaparser.JavaToken.Category;
 import com.github.javaparser.Position;
 import com.github.javaparser.Range;
 import com.github.javaparser.TokenRange;
@@ -265,8 +264,6 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 		if(!tr.isPresent())
 			return null;
 		JavaToken firstToken = tr.get().getBegin();
-		StreamSupport.stream(tr.get().spliterator(), false)
-		.filter(token -> token == firstToken).forEach(e -> System.out.println("found token in child "+e));
 		return StreamSupport.stream(tr.get().spliterator(), false)
 				.filter(token -> token == firstToken).map(token -> token.getRange())
 				.filter(e -> e.isPresent()).map(e -> e.get().begin).findAny().orElse(null);
