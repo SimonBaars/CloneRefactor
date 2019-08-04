@@ -73,13 +73,13 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 	private final List<CompilationUnit> compilationUnits;
 	
 	public ExtractMethod(Path projectPath, Path sourceFolder) {
-		this(projectPath, sourceFolder, new ArrayList<>(), null);
+		this(projectPath, sourceFolder, new ArrayList<>(), null, 0);
 	}
 	
 	public ExtractMethod(Path projectRoot, Path root, List<CompilationUnit> compilationUnits, MetricCollector metricCollector, int nGenerated) {
 		this.projectFolder = projectRoot;
 		this.sourceFolder = root;
-		this.nGeneratedDeclarations = nGeneratedDeclarations;
+		this.nGeneratedDeclarations = nGenerated;
 		Path saveFolder = Paths.get(refactoringSaveFolder(false));
 		if(Settings.get().getRefactoringStrategy().copyAll())
 			copyFolder(projectFolder, saveFolder);
