@@ -20,6 +20,7 @@ import java.util.stream.StreamSupport;
 
 import com.github.javaparser.JavaParser;
 import com.github.javaparser.JavaToken;
+import com.github.javaparser.ParseResult;
 import com.github.javaparser.Position;
 import com.github.javaparser.Range;
 import com.github.javaparser.TokenRange;
@@ -276,5 +277,12 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 			cursor = end;
 		}
 		return cursor;
+	}
+	
+	public CompilationUnit makeValidAfterChanges(CompilationUnit cu) {
+		ParseResult<CompilationUnit> pr = new JavaParser().parse(cu.toString());
+		if(pr.isSuccessful())
+			return pr.getResult().get();
+		return cu;
 	}
 }
