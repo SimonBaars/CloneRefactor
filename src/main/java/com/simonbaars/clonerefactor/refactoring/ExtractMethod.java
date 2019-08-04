@@ -104,12 +104,17 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 		List<Statement> methodcalls = removeLowestNodes(s, decl);
 		Arrays.stream(populators).forEach(p -> p.postPopulate(decl));
 		refactoredSequences.put(s, decl);
-		Optional<ClassOrInterfaceDeclaration> newClass = s.getRelation().isEffectivelyUnrelated() ? getClass(decl) : Optional.empty();
-		new PostMetrics(decl, newClass, methodcalls).combine(new PreMetrics(s)).save(metricCollector);
-		newClass.ifPresent(e -> compilationUnits.add(makeValidAfterChanges(getCompilationUnit(e).get())));
+		new PostMetrics(decl, s.getRelation().isEffectivelyUnrelated() ? getClass(decl) : Optional.empty(), methodcalls).combine(new PreMetrics(s)).save(metricCollector);
+		methodcalls.stream().map(m -> getCompilationUnit(m)).filter(o -> o.isPresent()).map(o -> o.get()).forEach(this::makeValid);
+		getCompilationUnit(decl).ifPresent(this::makeValid);
 		if(Settings.get().getRefactoringStrategy().savesFiles())
 			writeRefactoringsToFile(methodcalls, s.getRelation());
 		return decl;
+	}
+
+	private void makeValid(CompilationUnit cu) {
+		compilationUnits.remove(cu);
+		compilationUnits.add(makeValidAfterChanges(cu));
 	}
 
 	private void placeMethodOnBasisOfRelation(Sequence s, MethodDeclaration decl) {
@@ -137,7 +142,7 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 		relation.getIntersectingClasses().forEach(c -> addType(c, createInterface).apply(implementedType));
 		Optional<PackageDeclaration> pack = getCompilationUnit(s.getAny().getFirstNode()).get().getPackageDeclaration();
 		CompilationUnit cu = pack.isPresent() ? new CompilationUnit(pack.get().getNameAsString()) : new CompilationUnit();
-		//compilationUnits.add(cu);
+		compilationUnits.add(cu);
 		relation.getIntersectingClasses().add(0, create(cu, createInterface).apply(name, createInterface ? new Keyword[] {Keyword.PUBLIC} : new Keyword[] {Keyword.PUBLIC, Keyword.ABSTRACT}));
 		if(metricCollector!=null) metricCollector.reportClass(relation.getFirstClass());
 	}
@@ -286,12 +291,4 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 			return pr.getResult().get();
 		return cu;
 	}
-	
-	//public<T extends Node> T makeValidAfterChanges(T node) {
-	//	ParseResult<CompilationUnit> pr = new JavaParser().parse(getCompilationUnit(node).toString());
-		//if(pr.isSuccessful())
-		//	return pr.getResult().get();
-		//return cu;
-	//	return null;
-	//}
 }
