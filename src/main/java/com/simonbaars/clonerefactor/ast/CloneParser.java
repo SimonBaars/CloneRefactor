@@ -36,13 +36,12 @@ public class CloneParser implements SetsIfNotNull, RemovesDuplicates, WritesErro
 	public DetectionResults parse(Path projectRoot, SourceRoot sourceRoot, ParserConfiguration config) {
 		MetricCollector metricCollector = new MetricCollector();
 		
-		int nGenerated = 0;
 		final List<CompilationUnit> compilationUnits = createAST(sourceRoot, config);
 		
 		if(compilationUnits.isEmpty())
 			throw new IllegalStateException("Project has no sources!");
 				
-		return parseProject(projectRoot, sourceRoot, metricCollector, nGenerated, compilationUnits);
+		return parseProject(projectRoot, sourceRoot, metricCollector, 0, compilationUnits);
 	}
 
 	private DetectionResults parseProject(Path projectRoot, SourceRoot sourceRoot, MetricCollector metricCollector,
@@ -57,7 +56,7 @@ public class CloneParser implements SetsIfNotNull, RemovesDuplicates, WritesErro
 			metricCollector.getMetrics().generalStats.increment("Detection time", interval(beginTime));
 			DetectionResults res = new DetectionResults(metricCollector.reportClones(findChains), findChains);
 			if(Settings.get().getRefactoringStrategy() != RefactoringStrategy.DONOTREFACTOR) {
-				int nGen = new ExtractMethod(projectRoot, sourceRoot.getRoot(), compilationUnits, metricCollector).refactor(findChains);
+				int nGen = new ExtractMethod(projectRoot, sourceRoot.getRoot(), compilationUnits, metricCollector, nGenerated).refactor(findChains);
 				if(nGen!=nGenerated)
 					res.getMetrics().setChild(parseProject(projectRoot, sourceRoot, new MetricCollector(), nGen, compilationUnits).getMetrics());
 			} 
