@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 
+import com.github.javaparser.JavaParser;
+import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
@@ -21,6 +23,15 @@ public class PostMetrics implements RequiresNodeContext, CalculatesLineSize, Cal
 	private final int cc;
 	
 	public PostMetrics(MethodDeclaration newMethod, Optional<ClassOrInterfaceDeclaration> classOrInterface, List<Statement> methodcalls) {
+		if(classOrInterface.isPresent()) {
+			System.out.println("PRESENT");
+			CompilationUnit cu = new JavaParser().parse(getCompilationUnit(classOrInterface.get()).toString()).getResult().get();
+			
+			if(cu.getTokenRange().isPresent()) {
+				System.out.println(cu.getTokenRange().get().toString());
+			}
+		}
+		
 		addedTokenVolume = calculateAddedVolume(this::countTokens, classOrInterface, newMethod, methodcalls);
 		addedLineVolume = calculateAddedVolume(this::lineSize, classOrInterface, newMethod, methodcalls);
 		addedNodeVolume = calculateAddedVolume(this::amountOfNodes, classOrInterface, newMethod, methodcalls);
