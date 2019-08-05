@@ -304,8 +304,8 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 	public CompilationUnit makeValidAfterChanges(CompilationUnit cu) {
 		ParseResult<CompilationUnit> pr = new JavaParser().parse(cu.toString());
 		if(pr.isSuccessful()) {
+			pr.getResult().get().setStorage(cu.getStorage().get().getPath());
 			cu = pr.getResult().get();
-			cu.setStorage(Paths.get(refactoringSaveFolder(true)));
 		} else throw new IllegalStateException("Failed to parse "+cu);
 		return cu;
 	}
