@@ -107,7 +107,9 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 		refactoredSequences.put(s, decl);
 		new PostMetrics(decl, s.getRelation().isEffectivelyUnrelated() ? getClass(decl) : Optional.empty(), methodcalls).combine(new PreMetrics(s)).save(metricCollector);
 		methodcalls.stream().map(m -> getCompilationUnit(m)).filter(o -> o.isPresent()).map(o -> o.get()).forEach(this::makeValid);
+		System.out.println(methodcalls.stream().map(e -> e.toString()).collect(Collectors.joining(", ")));
 		getCompilationUnit(decl).ifPresent(this::makeValid);
+		System.out.println(decl.getNameAsString()+" in "+getClass(decl).get().getNameAsString());
 		if(Settings.get().getRefactoringStrategy().savesFiles())
 			writeRefactoringsToFile(methodcalls, s.getRelation());
 		return decl;
@@ -171,6 +173,7 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 	private void save(CompilationUnit cu) throws IOException {
 		File file = SavePaths.createDirForFile(compilationUnitFilePath(cu));
 		writeStringToFile(file, cu.toString());
+		System.out.println("Saved "+cu.getChildNodes().stream().filter(e -> e instanceof ClassOrInterfaceDeclaration).map(e -> ((ClassOrInterfaceDeclaration)e).getNameAsString()).collect(Collectors.joining())+" to "+file );
 	}
 
 	private String compilationUnitFilePath(CompilationUnit unit) {

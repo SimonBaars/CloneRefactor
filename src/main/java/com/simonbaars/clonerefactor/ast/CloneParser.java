@@ -65,6 +65,7 @@ public class CloneParser implements SetsIfNotNull, RemovesDuplicates, WritesErro
 			DetectionResults res) {
 		if(Settings.get().getRefactoringStrategy() != RefactoringStrategy.DONOTREFACTOR) {
 			int nGen = new ExtractMethod(projectRoot, sourceRoot.getRoot(), compilationUnits, metricCollector, nGenerated).refactor(findChains);
+			System.out.println("Gen "+nGenerated+" of "+nGen);
 			if(nGen!=nGenerated)
 				res.getMetrics().setChild(parseProject(projectRoot, sourceRoot, new MetricCollector(), nGen, compilationUnits).getMetrics());
 		}
