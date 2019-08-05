@@ -50,4 +50,16 @@ public class PreMetrics implements RequiresNodeContext, CalculatesCyclomaticComp
 	public int getCc() {
 		return cc;
 	}
+
+	public Map<MethodDeclaration, Integer> getMethodCC() {
+		return methodCC;
+	}
+
+	public Map<MethodDeclaration, Integer> getMethodLineSize() {
+		return methodLineSize;
+	}
+
+	public Map<MethodDeclaration, Integer> getMethodTokenSize() {
+		return methodTokenSize;
+	}
 }
