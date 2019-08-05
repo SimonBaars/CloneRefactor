@@ -1,6 +1,8 @@
 package com.simonbaars.clonerefactor.refactoring.model;
 
+import com.simonbaars.clonerefactor.ast.MetricObserver;
 import com.simonbaars.clonerefactor.metrics.MetricCollector;
+import com.simonbaars.clonerefactor.metrics.ProblemType;
 
 public class CombinedMetrics {
 	private final int ccIncrease;
@@ -46,25 +48,24 @@ public class CombinedMetrics {
 		collector.getMetrics().incrementGeneralStatistic("Nodes Increase", nodeSizeIncrease);
 		collector.getMetrics().incrementGeneralStatistic("Unit Size Increase", unitInterfaceSizeIncrease);
 	}
-	
-	
-	public String createString(PreMetrics pre, PostMetrics post) {
+
+	public String createString(MetricCollector collector) {
 		return "This refactoring has the following effects on system quality metrics:"+System.lineSeparator()+
-				tellWhatHappened("Total Cyclomatic Complexity", pre.getCc(), post.getCc()) +
-				tellWhatHappened("Total Lines", pre.getLines(), post.getAddedLineVolume());
+				tellWhatHappened("Total Cyclomatic Complexity", collector.getMetrics().generalStats.get(MetricObserver.metricTotalSize(ProblemType.UNITCOMPLEXITY)), ccIncrease) +
+				tellWhatHappened("Total Unit Interface Size",collector.getMetrics().generalStats.get(MetricObserver.metricTotalSize(ProblemType.UNITINTERFACESIZE)), unitInterfaceSizeIncrease);
 	}
 	
-	private String tellWhatHappened(String metric, int oldValue, int newValue) {
+	private String tellWhatHappened(String metric, int total, int increase) {
 		StringBuilder stringBuilder = new StringBuilder(metric+" ");
-		if(oldValue == newValue) {
-			stringBuilder.append("did not change and is still "+oldValue);
+		if(increase == 0) {
+			stringBuilder.append("did not change and is still "+total);
 		} else {
-			if(oldValue>newValue) {
+			if(increase>0) {
 				stringBuilder.append("increased");
 			} else {
 				stringBuilder.append("decreased");
 			}
-			stringBuilder.append(" by "+Math.abs(newValue - oldValue)+" from "+oldValue+" to "+newValue+".");
+			stringBuilder.append(" by "+Math.abs(increase)+" from "+total+" to "+(total+increase)+".");
 		}
 		stringBuilder.append("."+System.lineSeparator());
 		return stringBuilder.toString();

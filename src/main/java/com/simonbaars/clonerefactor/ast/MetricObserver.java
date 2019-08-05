@@ -17,8 +17,12 @@ public class MetricObserver implements SequenceObserver {
 	@Override
 	public void update(ProblemType problem, Sequence sequence, int problemSize) {
 		collector.getMetrics().incrementGeneralStatistic(problem+" Amount", 1);
-		collector.getMetrics().incrementGeneralStatistic(problem+" Total Size", problemSize);
+		collector.getMetrics().incrementGeneralStatistic(metricTotalSize(problem), problemSize);
 		collector.getMetrics().averages.addTo(problem.toString(), problemSize);
+	}
+
+	public static String metricTotalSize(ProblemType problem) {
+		return problem+" Total Size";
 	}
 
 }
