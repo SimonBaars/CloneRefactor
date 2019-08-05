@@ -11,11 +11,14 @@ import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.stmt.Statement;
+import com.github.javaparser.utils.Pair;
 import com.simonbaars.clonerefactor.ast.interfaces.CalculatesLineSize;
+import com.simonbaars.clonerefactor.metrics.ProblemType;
 import com.simonbaars.clonerefactor.metrics.calculators.CalculatesCyclomaticComplexity;
 import com.simonbaars.clonerefactor.metrics.calculators.CyclomaticComplexityCalculator;
 import com.simonbaars.clonerefactor.metrics.calculators.UnitLineSizeCalculator;
 import com.simonbaars.clonerefactor.metrics.calculators.UnitTokenSizeCalculator;
+import com.simonbaars.clonerefactor.metrics.context.enums.Risk;
 import com.simonbaars.clonerefactor.metrics.context.interfaces.RequiresNodeContext;
 
 public class PostMetrics implements RequiresNodeContext, CalculatesLineSize, CalculatesCyclomaticComplexity {
@@ -81,6 +84,21 @@ public class PostMetrics implements RequiresNodeContext, CalculatesLineSize, Cal
 	}
 	
 	public CombinedMetrics combine(PreMetrics metrics) {
+		calculateRisk(ProblemType.UNITCOMPLEXITY, metrics.getMethodCC());
 		return new CombinedMetrics(getCc()-metrics.getCc(), getAddedLineVolume()-metrics.getLines(), getAddedTokenVolume()-metrics.getTokens(), getAddedNodeVolume()-metrics.getNodes(), getUnitInterfaceSize(), metrics.getNodes(), metrics.getTokens(), metrics.getLines());
+	}
+
+	private RiskProfile calculateRisk(ProblemType problemType, Map<MethodDeclaration, Integer> methodCC3) {
+		RiskProfile riskProfile = new RiskProfile(problemType);
+		methodCC.entrySet().forEach(e -> {
+			if(methodCC3.containsKey(e.getKey())) {
+				Integer preRiskAmount = methodCC3.get(e.getKey());
+				Risk preRisk = problemType.getRisk(preRiskAmount);
+				Risk afterRisk = problemType.getRisk(e.getValue());
+				riskProfile.getBucketChange().increment(new Pair<Risk, Risk>(preRisk, afterRisk));
+				riskProfile.getRiskCC().put(preRisk, e.getValue() - preRiskAmount);
+			}
+		});
+		return riskProfile;
 	}
 }
