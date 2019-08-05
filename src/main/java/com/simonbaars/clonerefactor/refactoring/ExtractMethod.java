@@ -153,7 +153,6 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 		CompilationUnit cu = pack.isPresent() ? new CompilationUnit(pack.get().getNameAsString()) : new CompilationUnit();
 		compilationUnits.add(cu);
 		relation.getIntersectingClasses().add(0, create(cu, createInterface).apply(name, createInterface ? new Keyword[] {Keyword.PUBLIC} : new Keyword[] {Keyword.PUBLIC, Keyword.ABSTRACT}));
-		System.out.println("Set path "+Paths.get(compilationUnitFilePath(cu)));
 		cu.setStorage(Paths.get(compilationUnitFilePath(cu)));
 		if(metricCollector!=null) metricCollector.reportClass(relation.getFirstClass());
 	}
@@ -242,19 +241,10 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 		Collections.sort(foundCloneClasses);
 		for(Sequence s : foundCloneClasses) {
 			if(noOverlap(refactoredSequences.keySet(), s) && !isGenerated(s)) {
-				System.out.println("Refactor "+s);
 				tryToExtractMethod(s);
 			}
 		}
 		newComps.entrySet().forEach(e -> {
-			/*if(!compilationUnits.contains(e.getKey())) {
-				for() {
-					if(cu.getPackageDeclaration().equals(e.getKey().getPackageDeclaration()) && cu.getChildNodes().stream().filter(f -> f instanceof ClassOrInterfaceDeclaration).map(f -> ((ClassOrInterfaceDeclaration)f).getNameAsString()).collect(Collectors.toList()).equals(e.getKey().getChildNodes().stream().filter(f -> f instanceof ClassOrInterfaceDeclaration).map(f -> ((ClassOrInterfaceDeclaration)f).getNameAsString()).collect(Collectors.toList())))
-						System.out.println("Same but not equal "+ cu+ ", "+e.getKey());
-					if(cu.getStorage().get().getSourceRoot().equals(e.getKey().getStorage().get().getSourceRoot()))
-						compilationUnits.remove(i);
-				throw new IllegalStateException("Could not remove!! "+e.getKey());
-				}}*/
 			if(!compilationUnits.removeIf(cu -> cu.getStorage().get().getSourceRoot().equals(e.getKey().getStorage().get().getSourceRoot())))
 				throw new IllegalStateException("Could not remove!! "+e.getKey());
 			compilationUnits.add(e.getValue());
