@@ -245,7 +245,7 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 			}
 		}
 		newComps.entrySet().forEach(e -> {
-			if(!compilationUnits.removeIf(cu -> cu.getStorage().get().getSourceRoot().equals(e.getKey().getStorage().get().getSourceRoot())))
+			if(!compilationUnits.removeIf(cu -> cu.getStorage().get().getPath().equals(e.getKey().getStorage().get().getPath())))
 				throw new IllegalStateException("Could not remove!! "+e.getKey());
 			compilationUnits.add(e.getValue());
 		});
