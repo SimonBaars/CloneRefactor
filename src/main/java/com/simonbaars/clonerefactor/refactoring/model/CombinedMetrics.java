@@ -11,14 +11,22 @@ public class CombinedMetrics {
 	private final int nodeSizeIncrease;
 	private final int unitInterfaceSizeIncrease;
 	
+	private final int duplicateNodesIncrease;
+	private final int duplicateTokensIncrease;
+	private final int duplicateLinesIncrease;
+	
 	public CombinedMetrics(int ccIncrease, int lineSizeIncrease, int tokenSizeIncrease, int nodeSizeIncrease,
-			int unitInterfaceSizeIncrease) {
+			int unitInterfaceSizeIncrease, int nodes, int tokens, int lines) {
 		super();
 		this.ccIncrease = ccIncrease;
 		this.lineSizeIncrease = lineSizeIncrease;
 		this.tokenSizeIncrease = tokenSizeIncrease;
 		this.nodeSizeIncrease = nodeSizeIncrease;
 		this.unitInterfaceSizeIncrease = unitInterfaceSizeIncrease;
+		
+		this.duplicateNodesIncrease = -nodes;
+		this.duplicateTokensIncrease = -tokens;
+		this.duplicateLinesIncrease = -lines;
 	}
 
 	public int getCcIncrease() {
@@ -56,7 +64,10 @@ public class CombinedMetrics {
 				tellWhatHappened("Total Unit Interface Size",collector.getMetrics().generalStats.get(MetricObserver.metricTotalSize(ProblemType.UNITINTERFACESIZE)), unitInterfaceSizeIncrease) +
 				tellWhatHappened("Total Unit Line Size",collector.getMetrics().generalStats.get(MetricObserver.metricTotalSize(ProblemType.LINEVOLUME)), lineSizeIncrease) +
 				tellWhatHappened("Total Unit Token Size",collector.getMetrics().generalStats.get(MetricObserver.metricTotalSize(ProblemType.TOKENVOLUME)), tokenSizeIncrease) +
-				tellWhatHappened("Total Unit Interface Size",collector.getMetrics().generalStats.get("Total Nodes"), nodeSizeIncrease);
+				tellWhatHappened("Total Nodes",collector.getMetrics().generalStats.get("Total Nodes"), nodeSizeIncrease) + System.lineSeparator() +
+				tellWhatHappened("Duplicated Nodes",collector.getMetrics().generalStats.get("Cloned Nodes"), duplicateNodesIncrease) +
+				tellWhatHappened("Duplicated Tokens",collector.getMetrics().generalStats.get("Cloned Tokens"), duplicateTokensIncrease) +
+				tellWhatHappened("Duplicated Lines",collector.getMetrics().generalStats.get("Cloned Lines"), duplicateLinesIncrease);
 	}
 	
 	private String tellWhatHappened(String metric, int total, int increase) {
