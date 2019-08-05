@@ -153,7 +153,7 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 	}
 	
 	public Function<ClassOrInterfaceType, ClassOrInterfaceDeclaration> addType(ClassOrInterfaceDeclaration c, boolean createInterface){
-		return createInterface ? c::addImplementedType : c::addExtendedType;
+		return createInterface && !c.isInterface() ? c::addImplementedType : c::addExtendedType;
 	}
 
 	private void writeRefactoringsToFile(List<Statement> methodcalls, Relation relation) {
