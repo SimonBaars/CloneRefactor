@@ -15,13 +15,13 @@ import com.simonbaars.clonerefactor.ast.interfaces.CalculatesLineSize;
 import com.simonbaars.clonerefactor.metrics.calculators.CalculatesCyclomaticComplexity;
 import com.simonbaars.clonerefactor.metrics.calculators.CyclomaticComplexityCalculator;
 import com.simonbaars.clonerefactor.metrics.calculators.UnitLineSizeCalculator;
+import com.simonbaars.clonerefactor.metrics.calculators.UnitTokenSizeCalculator;
 import com.simonbaars.clonerefactor.metrics.context.interfaces.RequiresNodeContext;
 
 public class PostMetrics implements RequiresNodeContext, CalculatesLineSize, CalculatesCyclomaticComplexity {
 	private final Map<MethodDeclaration, Integer> methodCC = new HashMap<>();
 	private final Map<MethodDeclaration, Integer> methodLineSize = new HashMap<>();
 	private final Map<MethodDeclaration, Integer> methodTokenSize = new HashMap<>();
-	private final Map<MethodDeclaration, Integer> methodUnitInterfaceSize = new HashMap<>();
 	
 	private final int addedTokenVolume;
 	private final int addedLineVolume;
@@ -32,9 +32,9 @@ public class PostMetrics implements RequiresNodeContext, CalculatesLineSize, Cal
 	
 	public PostMetrics(MethodDeclaration newMethod, Optional<ClassOrInterfaceDeclaration> classOrInterface, List<Statement> methodcalls) {
 		methodcalls.stream().map(m -> getMethod(m)).filter(e -> e.isPresent()).map(o -> o.get()).collect(Collectors.toSet()).forEach(m -> {
-				methodCC.put(m, new CyclomaticComplexityCalculator().calculate(m));
-				methodLineSize.put(m, new UnitLineSizeCalculator().calculate(m));
-				methodLineSize.put(m, new CyclomaticComplexityCalculator().calculate(m));
+			methodCC.put(m, new CyclomaticComplexityCalculator().calculate(m));
+			methodLineSize.put(m, new UnitLineSizeCalculator().calculate(m));
+			methodTokenSize.put(m, new UnitTokenSizeCalculator().calculate(m));
 		});
 		
 		addedTokenVolume = calculateAddedVolume(this::countTokens, classOrInterface, newMethod, methodcalls);
