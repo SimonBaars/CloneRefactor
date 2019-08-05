@@ -55,6 +55,9 @@ public class CombinedMetrics {
 		collector.getMetrics().incrementGeneralStatistic("Tokens Increase", tokenSizeIncrease);
 		collector.getMetrics().incrementGeneralStatistic("Nodes Increase", nodeSizeIncrease);
 		collector.getMetrics().incrementGeneralStatistic("Unit Size Increase", unitInterfaceSizeIncrease);
+		collector.getMetrics().incrementGeneralStatistic("Duplicate Nodes Increase", duplicateNodesIncrease);
+		collector.getMetrics().incrementGeneralStatistic("Duplicate Token Increase", duplicateTokensIncrease);
+		collector.getMetrics().incrementGeneralStatistic("Duplicate Lines Increase", duplicateLinesIncrease);
 		return createString(collector);
 	}
 
