@@ -4,7 +4,8 @@ public enum ProblemType {
 	DUPLICATION("Duplication"),
 	UNITINTERFACESIZE("Unit Interface Size"),
 	UNITCOMPLEXITY("Unit Complexity"),
-	UNITVOLUME("Unit Volume");
+	LINEVOLUME("Line Volume"),
+	TOKENVOLUME("Token Volume");
 	
 	private final String name;
 	
