@@ -244,7 +244,7 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 	}
 
 	private boolean isGenerated(Sequence s) {
-		return s.getNodeSize() == 1 && s.getLocations().stream().allMatch(l -> l.getContents().getTokens().stream().anyMatch(t -> t.asString().equals(METHOD_NAME)));
+		return s.getNodeSize() == 1 && s.getLocations().stream().allMatch(l -> l.getContents().getTokens().stream().anyMatch(t -> t.asString().startsWith(METHOD_NAME)));
 	}
 
 	private boolean noOverlap(Set<Sequence> keySet, Sequence s) {
