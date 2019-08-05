@@ -6,14 +6,12 @@ import java.nio.file.Path;
 import java.util.Optional;
 
 import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.api.Status;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 
-import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
-import com.github.javaparser.ast.body.MethodDeclaration;
 import com.simonbaars.clonerefactor.metrics.context.interfaces.RequiresNodeContext;
-import com.simonbaars.clonerefactor.model.Sequence;
 import com.simonbaars.clonerefactor.settings.Settings;
 
 public class GitChangeCommitter implements RequiresNodeContext {
@@ -68,10 +66,6 @@ public class GitChangeCommitter implements RequiresNodeContext {
 		commit("Formatted "+className);
 	}
 	
-	public void commit(Sequence s, MethodDeclaration extractedMethod) {
-		commit("Created unified method in "+s.getRelation().getFirstClass().getNameAsString()+"\n\n"+generateDescription(s, extractedMethod));
-	}
-	
 	public void commit(String message) {
 		try {
 			Status status = git.status().call();
@@ -82,21 +76,6 @@ public class GitChangeCommitter implements RequiresNodeContext {
 		} catch (GitAPIException e) {
 			e.printStackTrace();
 		}
-	}
-
-	private String generateDescription(Sequence s, MethodDeclaration extractedMethod) {
-		StringBuilder b = new StringBuilder("CloneRefactor refactored a clone class with "+s.size()+" clone instances. For the common code we created a new method and named this method \""+extractedMethod.getNameAsString()+"\". These clone instances have an "+s.getRelation().getType()+" relation with each other. ");
-		if(s.getRelation().isEffectivelyUnrelated()) {
-			b.append("Because there is no location we could place the generated method, as at least one clone instance is unrelated with the rest, we created a new "+whatIsIt(s.getRelation().getFirstClass())+". We named this "+whatIsIt(s.getRelation().getFirstClass()));
-		} else {
-			b.append("The newly created method has been placed in");
-		}
-		b.append(" "+s.getRelation().getFirstClass().getNameAsString()+". Each duplicated fragment has been replaced with a call to this method.");
-		return b.toString();
-	}
-
-	private String whatIsIt(ClassOrInterfaceDeclaration firstClass) {
-		return firstClass.isInterface() ? "interface" : "class";
 	}
 	
 	public boolean doCommit() {
