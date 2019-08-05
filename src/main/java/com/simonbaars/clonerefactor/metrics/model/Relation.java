@@ -20,9 +20,12 @@ public class Relation implements Comparable<Relation> {
 	}
 	
 	public Relation(RelationType type, ClassOrInterfaceDeclaration...intersectingClass) {
-		super();
+		this(type, Arrays.asList(intersectingClass));
+	}
+
+	public Relation(RelationType type, List<ClassOrInterfaceDeclaration> intersectingClasses) {
 		this.type = type;
-		this.intersectingClasses = Arrays.asList(intersectingClass);
+		this.intersectingClasses = intersectingClasses;
 	}
 
 	public RelationType getType() {

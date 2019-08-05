@@ -19,6 +19,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.NodeList;
@@ -196,6 +198,8 @@ public class CloneRelation implements DeterminesMetric<Relation>, SeekClassHiera
 				}
 			}
 		}
-		return locations.stream().reduce((first, second) -> first.getType().compareTo(second.getType()) < 0 ? first : second).get();
+		Relation r = locations.stream().reduce((first, second) -> first.getType().compareTo(second.getType()) < 0 ? first : second).get();
+		Set<ClassOrInterfaceDeclaration> intersectingClasses = locations.stream().filter(l -> l.getType().equals(r.getType())).flatMap(l -> l.getIntersectingClasses().stream()).collect(Collectors.toSet());
+		return new Relation(r.getType(), new ArrayList<>(intersectingClasses));
 	}
 }
