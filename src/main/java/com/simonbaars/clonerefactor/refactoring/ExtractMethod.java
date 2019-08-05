@@ -291,7 +291,7 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 		if(pr.isSuccessful()) {
 			cu = pr.getResult().get();
 			cu.setStorage(Paths.get(refactoringSaveFolder(true)));
-		}
+		} else throw new IllegalStateException("Failed to parse "+cu);
 		return cu;
 	}
 }
