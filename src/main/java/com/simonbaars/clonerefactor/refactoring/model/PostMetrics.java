@@ -1,8 +1,11 @@
 package com.simonbaars.clonerefactor.refactoring.model;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
@@ -10,9 +13,16 @@ import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.stmt.Statement;
 import com.simonbaars.clonerefactor.ast.interfaces.CalculatesLineSize;
 import com.simonbaars.clonerefactor.metrics.calculators.CalculatesCyclomaticComplexity;
+import com.simonbaars.clonerefactor.metrics.calculators.CyclomaticComplexityCalculator;
+import com.simonbaars.clonerefactor.metrics.calculators.UnitLineSizeCalculator;
 import com.simonbaars.clonerefactor.metrics.context.interfaces.RequiresNodeContext;
 
 public class PostMetrics implements RequiresNodeContext, CalculatesLineSize, CalculatesCyclomaticComplexity {
+	private final Map<MethodDeclaration, Integer> methodCC = new HashMap<>();
+	private final Map<MethodDeclaration, Integer> methodLineSize = new HashMap<>();
+	private final Map<MethodDeclaration, Integer> methodTokenSize = new HashMap<>();
+	private final Map<MethodDeclaration, Integer> methodUnitInterfaceSize = new HashMap<>();
+	
 	private final int addedTokenVolume;
 	private final int addedLineVolume;
 	private final int addedNodeVolume;
@@ -21,6 +31,12 @@ public class PostMetrics implements RequiresNodeContext, CalculatesLineSize, Cal
 	private final int cc;
 	
 	public PostMetrics(MethodDeclaration newMethod, Optional<ClassOrInterfaceDeclaration> classOrInterface, List<Statement> methodcalls) {
+		methodcalls.stream().map(m -> getMethod(m)).filter(e -> e.isPresent()).map(o -> o.get()).collect(Collectors.toSet()).forEach(m -> {
+				methodCC.put(m, new CyclomaticComplexityCalculator().calculate(m));
+				methodLineSize.put(m, new UnitLineSizeCalculator().calculate(m));
+				methodLineSize.put(m, new CyclomaticComplexityCalculator().calculate(m));
+		});
+		
 		addedTokenVolume = calculateAddedVolume(this::countTokens, classOrInterface, newMethod, methodcalls);
 		addedLineVolume = calculateAddedVolume(this::lineSize, classOrInterface, newMethod, methodcalls);
 		addedNodeVolume = calculateAddedVolume(this::amountOfNodes, classOrInterface, newMethod, methodcalls);
