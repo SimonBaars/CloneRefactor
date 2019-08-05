@@ -81,7 +81,7 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 		this.sourceFolder = root;
 		this.nGeneratedDeclarations = nGenerated;
 		Path saveFolder = Paths.get(refactoringSaveFolder(false));
-		if(Settings.get().getRefactoringStrategy().copyAll())
+		if(Settings.get().getRefactoringStrategy().copyAll() && !saveFolder.toFile().exists())
 			copyFolder(projectFolder, saveFolder);
 		gitCommit = Settings.get().getRefactoringStrategy().usesGit() ? new GitChangeCommitter(saveFolder) : new GitChangeCommitter();
 		this.compilationUnits = compilationUnits;
