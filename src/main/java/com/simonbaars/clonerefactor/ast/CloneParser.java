@@ -54,15 +54,20 @@ public class CloneParser implements SetsIfNotNull, RemovesDuplicates, WritesErro
 			doTypeSpecificTransformations(findChains);
 			metricCollector.getMetrics().generalStats.increment("Detection time", interval(beginTime));
 			DetectionResults res = new DetectionResults(metricCollector.reportClones(findChains), findChains);
-			if(Settings.get().getRefactoringStrategy() != RefactoringStrategy.DONOTREFACTOR) {
-				int nGen = new ExtractMethod(projectRoot, sourceRoot.getRoot(), compilationUnits, metricCollector, nGenerated).refactor(findChains);
-				System.out.println("Gen "+nGenerated+" of "+nGen);
-				if(nGen!=nGenerated)
-					res.getMetrics().setChild(parseProject(projectRoot, sourceRoot, new MetricCollector(), nGen, compilationUnits).getMetrics());
-			} 
+			refactorClones(projectRoot, sourceRoot, metricCollector, nGenerated, compilationUnits, findChains, res); 
 			return res;
 		} else throw new IllegalStateException("Project has no usable sources!");
 		
+	}
+
+	private void refactorClones(Path projectRoot, SourceRoot sourceRoot, MetricCollector metricCollector,
+			int nGenerated, final List<CompilationUnit> compilationUnits, List<Sequence> findChains,
+			DetectionResults res) {
+		if(Settings.get().getRefactoringStrategy() != RefactoringStrategy.DONOTREFACTOR) {
+			int nGen = new ExtractMethod(projectRoot, sourceRoot.getRoot(), compilationUnits, metricCollector, nGenerated).refactor(findChains);
+			if(nGen!=nGenerated)
+				res.getMetrics().setChild(parseProject(projectRoot, sourceRoot, new MetricCollector(), nGen, compilationUnits).getMetrics());
+		}
 	}
 
 	private void doTypeSpecificTransformations(List<Sequence> findChains) {

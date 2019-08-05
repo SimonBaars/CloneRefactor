@@ -24,7 +24,7 @@ import com.simonbaars.clonerefactor.model.location.Location;
 import com.simonbaars.clonerefactor.model.location.LocationContents;
 
 public class NodeParser implements SetsIfNotNull, DeterminesNodeTokens {
-	final Map<LocationContents, Location> lineReg = new HashMap<>();
+	private final Map<LocationContents, Location> lineReg = new HashMap<>();
 	private final MetricCollector metricCollector;
 	private final SequenceObservable seqObservable;
 	
