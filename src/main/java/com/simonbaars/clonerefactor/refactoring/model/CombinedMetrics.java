@@ -17,7 +17,7 @@ public class CombinedMetrics {
 	private final int duplicateLinesIncrease;
 	
 	public CombinedMetrics(int ccIncrease, int lineSizeIncrease, int tokenSizeIncrease, int nodeSizeIncrease,
-			int unitInterfaceSizeIncrease, int nodes, int tokens, int lines) {
+			int unitInterfaceSizeIncrease, int nodes, int tokens, int lines, RiskProfile riskProfile, RiskProfile riskProfile2, RiskProfile riskProfile3) {
 		super();
 		this.ccIncrease = ccIncrease;
 		this.lineSizeIncrease = lineSizeIncrease;

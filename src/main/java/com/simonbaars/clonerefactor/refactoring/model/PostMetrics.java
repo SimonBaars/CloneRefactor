@@ -84,13 +84,13 @@ public class PostMetrics implements RequiresNodeContext, CalculatesLineSize, Cal
 	}
 	
 	public CombinedMetrics combine(PreMetrics metrics) {
-		calculateRisk(ProblemType.UNITCOMPLEXITY, metrics.getMethodCC());
-		return new CombinedMetrics(getCc()-metrics.getCc(), getAddedLineVolume()-metrics.getLines(), getAddedTokenVolume()-metrics.getTokens(), getAddedNodeVolume()-metrics.getNodes(), getUnitInterfaceSize(), metrics.getNodes(), metrics.getTokens(), metrics.getLines());
+		return new CombinedMetrics(getCc()-metrics.getCc(), getAddedLineVolume()-metrics.getLines(), getAddedTokenVolume()-metrics.getTokens(), getAddedNodeVolume()-metrics.getNodes(), getUnitInterfaceSize(), metrics.getNodes(), metrics.getTokens(), metrics.getLines(),
+				calculateRisk(ProblemType.UNITCOMPLEXITY, methodCC, metrics.getMethodCC()), calculateRisk(ProblemType.LINEVOLUME, methodLineSize, metrics.getMethodLineSize()), calculateRisk(ProblemType.TOKENVOLUME, methodTokenSize, metrics.getMethodTokenSize()));
 	}
 
-	private RiskProfile calculateRisk(ProblemType problemType, Map<MethodDeclaration, Integer> methodCC3) {
+	private RiskProfile calculateRisk(ProblemType problemType, Map<MethodDeclaration, Integer> methodCC2, Map<MethodDeclaration, Integer> methodCC3) {
 		RiskProfile riskProfile = new RiskProfile(problemType);
-		methodCC.entrySet().forEach(e -> {
+		methodCC2.entrySet().forEach(e -> {
 			if(methodCC3.containsKey(e.getKey())) {
 				Integer preRiskAmount = methodCC3.get(e.getKey());
 				Risk preRisk = problemType.getRisk(preRiskAmount);
