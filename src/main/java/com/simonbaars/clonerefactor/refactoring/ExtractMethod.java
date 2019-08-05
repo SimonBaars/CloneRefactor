@@ -45,6 +45,7 @@ import com.simonbaars.clonerefactor.metrics.context.interfaces.RequiresNodeConte
 import com.simonbaars.clonerefactor.metrics.model.Relation;
 import com.simonbaars.clonerefactor.model.Sequence;
 import com.simonbaars.clonerefactor.model.location.Location;
+import com.simonbaars.clonerefactor.refactoring.model.CombinedMetrics;
 import com.simonbaars.clonerefactor.refactoring.model.PostMetrics;
 import com.simonbaars.clonerefactor.refactoring.model.PreMetrics;
 import com.simonbaars.clonerefactor.refactoring.populate.PopulateArguments;
@@ -94,22 +95,38 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 		if(s.getRefactorability() == Refactorability.CANBEEXTRACTED) {
 			if(s.getRelation().isEffectivelyUnrelated() && metricCollector != null)
 				metricCollector.reassessRelation(s);
-			MethodDeclaration extractedMethod = extractMethod(s);
+			String extractedMethod = extractMethod(s);
 			if(gitCommit.doCommit())
-				gitCommit.commit(s, extractedMethod);
+				gitCommit.commit(extractedMethod);
 		}
 	}
 
-	private MethodDeclaration extractMethod(Sequence s) {
+	private String extractMethod(Sequence s) {
 		String methodName = METHOD_NAME+(nGeneratedDeclarations++);
 		MethodDeclaration decl = new MethodDeclaration(Modifier.createModifierList(), new VoidType(), methodName);
 		placeMethodOnBasisOfRelation(s, decl);
 		List<Statement> methodcalls = removeLowestNodes(s, decl);
 		Arrays.stream(populators).forEach(p -> p.postPopulate(decl));
 		refactoredSequences.put(s, decl);
-		new PostMetrics(decl, s.getRelation().isEffectivelyUnrelated() ? getClass(decl) : Optional.empty(), methodcalls).combine(new PreMetrics(s)).save(metricCollector);
+		CombinedMetrics combine = new PostMetrics(decl, s.getRelation().isEffectivelyUnrelated() ? getClass(decl) : Optional.empty(), methodcalls).combine(new PreMetrics(s));
+		combine.save(metricCollector);
 		storeChanges(s, decl, methodcalls);
-		return decl;
+		return generateDescription(s, decl) + combine.save(metricCollector);
+	}
+	
+	private String generateDescription(Sequence s, MethodDeclaration extractedMethod) {
+		StringBuilder b = new StringBuilder("Created unified method in "+s.getRelation().getFirstClass().getNameAsString()+"\n\nCloneRefactor refactored a clone class with "+s.size()+" clone instances. For the common code we created a new method and named this method \""+extractedMethod.getNameAsString()+"\". These clone instances have an "+s.getRelation().getType()+" relation with each other. ");
+		if(s.getRelation().isEffectivelyUnrelated()) {
+			b.append("Because there is no location we could place the generated method, as at least one clone instance is unrelated with the rest, we created a new "+whatIsIt(s.getRelation().getFirstClass())+". We named this "+whatIsIt(s.getRelation().getFirstClass()));
+		} else {
+			b.append("The newly created method has been placed in");
+		}
+		b.append(" "+s.getRelation().getFirstClass().getNameAsString()+". Each duplicated fragment has been replaced with a call to this method.\n\n");
+		return b.toString();
+	}
+	
+	private String whatIsIt(ClassOrInterfaceDeclaration firstClass) {
+		return firstClass.isInterface() ? "interface" : "class";
 	}
 
 	private void storeChanges(Sequence s, MethodDeclaration decl, List<Statement> methodcalls) {
