@@ -120,6 +120,7 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 
 	private void placeMethodOnBasisOfRelation(Sequence s, MethodDeclaration decl) {
 		Relation relation = s.getRelation();
+		s.getRelation().getIntersectingClasses().forEach(c -> saveASTBeforeChange(getCompilationUnit(c).get()));
 		if(relation.isEffectivelyUnrelated())
 			createRelation(s, relation);
 		new ExtractToClassOrInterface(relation.getFirstClass()).extract(decl);
