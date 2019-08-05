@@ -49,8 +49,9 @@ public class CombinedMetrics {
 	
 	
 	public String createString(PreMetrics pre, PostMetrics post) {
-		return "This refactoring has the following effects on system quality metrics:\n"+
-				tellWhatHappened("Total Cyclomatic Complexity", pre.getCc(), post.getCc());
+		return "This refactoring has the following effects on system quality metrics:"+System.lineSeparator()+
+				tellWhatHappened("Total Cyclomatic Complexity", pre.getCc(), post.getCc()) +
+				tellWhatHappened("Total Lines", pre.getLines(), post.getAddedLineVolume());
 	}
 	
 	private String tellWhatHappened(String metric, int oldValue, int newValue) {
@@ -65,7 +66,7 @@ public class CombinedMetrics {
 			}
 			stringBuilder.append(" by "+Math.abs(newValue - oldValue)+" from "+oldValue+" to "+newValue+".");
 		}
-		stringBuilder.append(".");
+		stringBuilder.append("."+System.lineSeparator());
 		return stringBuilder.toString();
 	}
 }
