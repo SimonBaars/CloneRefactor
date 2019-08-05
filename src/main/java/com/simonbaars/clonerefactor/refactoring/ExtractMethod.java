@@ -37,9 +37,12 @@ import com.github.javaparser.ast.stmt.ExpressionStmt;
 import com.github.javaparser.ast.stmt.Statement;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import com.github.javaparser.ast.type.VoidType;
+import com.simonbaars.clonerefactor.ast.MetricObserver;
 import com.simonbaars.clonerefactor.ast.interfaces.RequiresNodeOperations;
+import com.simonbaars.clonerefactor.datatype.map.CountMap;
 import com.simonbaars.clonerefactor.datatype.map.ListMap;
 import com.simonbaars.clonerefactor.metrics.MetricCollector;
+import com.simonbaars.clonerefactor.metrics.ProblemType;
 import com.simonbaars.clonerefactor.metrics.context.enums.Refactorability;
 import com.simonbaars.clonerefactor.metrics.context.interfaces.RequiresNodeContext;
 import com.simonbaars.clonerefactor.metrics.model.Relation;
@@ -74,6 +77,7 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 
 	private final List<CompilationUnit> compilationUnits;
 	private final Map<CompilationUnit, CompilationUnit> newComps = new HashMap<>();
+	private final CountMap<String> metrics = new CountMap<>();
 	
 	public ExtractMethod(Path projectPath, Path sourceFolder) {
 		this(projectPath, sourceFolder, new ArrayList<>(), null, 0);
@@ -89,6 +93,17 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 		gitCommit = Settings.get().getRefactoringStrategy().usesGit() ? new GitChangeCommitter(saveFolder) : new GitChangeCommitter();
 		this.compilationUnits = compilationUnits;
 		this.metricCollector = metricCollector;
+		
+		if(metricCollector!=null) {
+			metrics.put(MetricObserver.metricTotalSize(ProblemType.UNITCOMPLEXITY), metricCollector.getMetrics().generalStats.get(MetricObserver.metricTotalSize(ProblemType.UNITCOMPLEXITY)));
+			metrics.put(MetricObserver.metricTotalSize(ProblemType.UNITINTERFACESIZE), metricCollector.getMetrics().generalStats.get(MetricObserver.metricTotalSize(ProblemType.UNITINTERFACESIZE)));
+			metrics.put(MetricObserver.metricTotalSize(ProblemType.LINEVOLUME), metricCollector.getMetrics().generalStats.get(MetricObserver.metricTotalSize(ProblemType.LINEVOLUME)));
+			metrics.put(MetricObserver.metricTotalSize(ProblemType.TOKENVOLUME), metricCollector.getMetrics().generalStats.get(MetricObserver.metricTotalSize(ProblemType.TOKENVOLUME)));
+			metrics.put("Total Nodes", metricCollector.getMetrics().generalStats.get("Total Nodes"));
+			metrics.put("Cloned Nodes", metricCollector.getMetrics().generalStats.get("Cloned Nodes"));
+			metrics.put("Cloned Tokens", metricCollector.getMetrics().generalStats.get("Cloned Tokens"));
+			metrics.put("Cloned Lines", metricCollector.getMetrics().generalStats.get("Cloned Lines"));
+		}
 	}
 
 	public void tryToExtractMethod(Sequence s) {
@@ -109,9 +124,8 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 		Arrays.stream(populators).forEach(p -> p.postPopulate(decl));
 		refactoredSequences.put(s, decl);
 		CombinedMetrics combine = new PostMetrics(decl, s.getRelation().isEffectivelyUnrelated() ? getClass(decl) : Optional.empty(), methodcalls).combine(new PreMetrics(s));
-		combine.save(metricCollector);
 		storeChanges(s, decl, methodcalls);
-		return generateDescription(s, decl) + combine.save(metricCollector);
+		return generateDescription(s, decl) + combine.save(metricCollector, metrics);
 	}
 	
 	private String generateDescription(Sequence s, MethodDeclaration extractedMethod) {
@@ -261,12 +275,16 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 				tryToExtractMethod(s);
 			}
 		}
+		saveCUs();
+		return nGeneratedDeclarations;
+	}
+
+	private void saveCUs() {
 		newComps.entrySet().forEach(e -> {
 			if(!compilationUnits.removeIf(cu -> cu.getStorage().get().getPath().equals(e.getKey().getStorage().get().getPath())))
 				throw new IllegalStateException("Could not remove!! "+e.getKey());
 			compilationUnits.add(e.getValue());
 		});
-		return nGeneratedDeclarations;
 	}
 
 	private boolean isGenerated(Sequence s) {
