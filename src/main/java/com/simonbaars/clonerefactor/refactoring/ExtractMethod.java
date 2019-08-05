@@ -72,6 +72,7 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 	private final MetricCollector metricCollector;
 
 	private final List<CompilationUnit> compilationUnits;
+	private final Map<CompilationUnit, CompilationUnit> newComps = new HashMap<>();
 	
 	public ExtractMethod(Path projectPath, Path sourceFolder) {
 		this(projectPath, sourceFolder, new ArrayList<>(), null, 0);
@@ -121,8 +122,7 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 	}
 
 	private void makeValid(CompilationUnit cu) {
-		compilationUnits.remove(cu);
-		compilationUnits.add(makeValidAfterChanges(cu));
+		newComps.put(cu, makeValidAfterChanges(cu));
 	}
 
 	private void placeMethodOnBasisOfRelation(Sequence s, MethodDeclaration decl) {
@@ -237,11 +237,16 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 	}
 
 	public int refactor(List<Sequence> foundCloneClasses) {
+		Collections.sort(foundCloneClasses);
 		for(Sequence s : foundCloneClasses) {
 			if(noOverlap(refactoredSequences.keySet(), s) && !isGenerated(s)) {
 				tryToExtractMethod(s);
 			}
 		}
+		newComps.entrySet().forEach(e -> {
+			compilationUnits.remove(e.getKey());
+			compilationUnits.add(e.getValue());
+		});
 		return nGeneratedDeclarations;
 	}
 
