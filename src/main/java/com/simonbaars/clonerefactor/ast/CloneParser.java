@@ -47,8 +47,7 @@ public class CloneParser implements SetsIfNotNull, RemovesDuplicates, WritesErro
 			int nGenerated, final List<CompilationUnit> compilationUnits) {
 		long beginTime = System.currentTimeMillis();
 		seqObservable.subscribe(new MetricObserver(metricCollector));
-		NodeParser astParser = new NodeParser(metricCollector, seqObservable);
-		Location lastLoc = calculateLineReg(astParser, compilationUnits);
+		Location lastLoc = calculateLineReg(metricCollector, compilationUnits);
 		if(lastLoc!=null) {
 			List<Sequence> findChains = new CloneDetection(seqObservable).findChains(lastLoc);
 			doTypeSpecificTransformations(findChains);
@@ -57,7 +56,6 @@ public class CloneParser implements SetsIfNotNull, RemovesDuplicates, WritesErro
 			refactorClones(projectRoot, sourceRoot, metricCollector, nGenerated, compilationUnits, findChains, res); 
 			return res;
 		} else throw new IllegalStateException("Project has no usable sources!");
-		
 	}
 
 	private void refactorClones(Path projectRoot, SourceRoot sourceRoot, MetricCollector metricCollector,
@@ -88,7 +86,8 @@ public class CloneParser implements SetsIfNotNull, RemovesDuplicates, WritesErro
 		}
 	}
 
-	private final Location calculateLineReg(NodeParser astParser, List<CompilationUnit> compilationUnits) {
+	private final Location calculateLineReg(MetricCollector metricCollector, List<CompilationUnit> compilationUnits) {
+		NodeParser astParser = new NodeParser(metricCollector, seqObservable);
 		Location l = null;
 		for(CompilationUnit cu : compilationUnits)
 			l = astParser.extractLinesFromAST(l, cu, cu);
