@@ -1,5 +1,7 @@
 package com.simonbaars.clonerefactor.metrics;
 
+import com.simonbaars.clonerefactor.metrics.context.enums.Risk;
+
 public enum ProblemType {
 	DUPLICATION("Duplication", 2, 4, 6),
 	UNITINTERFACESIZE("Unit Interface Size", 2, 4, 6),
@@ -26,5 +28,16 @@ public enum ProblemType {
 	@Override
 	public String toString() {
 		return getName();
+	}
+	
+	public Risk getRisk(int score) {
+		if(score<=low) {
+			return Risk.LOW;
+		} else if(score<=mid) {
+			return Risk.MODERATE;
+		} else if(score<=high) {
+			return Risk.HIGH;
+		}
+		return Risk.VERYHIGH;
 	}
 }
