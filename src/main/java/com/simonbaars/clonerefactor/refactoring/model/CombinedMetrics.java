@@ -46,4 +46,26 @@ public class CombinedMetrics {
 		collector.getMetrics().incrementGeneralStatistic("Nodes Increase", nodeSizeIncrease);
 		collector.getMetrics().incrementGeneralStatistic("Unit Size Increase", unitInterfaceSizeIncrease);
 	}
+	
+	
+	public String createString(PreMetrics pre, PostMetrics post) {
+		return "This refactoring has the following effects on system quality metrics:\n"+
+				tellWhatHappened("Total Cyclomatic Complexity", pre.getCc(), post.getCc());
+	}
+	
+	private String tellWhatHappened(String metric, int oldValue, int newValue) {
+		StringBuilder stringBuilder = new StringBuilder(metric+" ");
+		if(oldValue == newValue) {
+			stringBuilder.append("did not change and is still "+oldValue);
+		} else {
+			if(oldValue>newValue) {
+				stringBuilder.append("increased");
+			} else {
+				stringBuilder.append("decreased");
+			}
+			stringBuilder.append(" by "+Math.abs(newValue - oldValue)+" from "+oldValue+" to "+newValue+".");
+		}
+		stringBuilder.append(".");
+		return stringBuilder.toString();
+	}
 }
