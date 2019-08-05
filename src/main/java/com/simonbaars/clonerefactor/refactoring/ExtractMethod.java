@@ -153,6 +153,7 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 		CompilationUnit cu = pack.isPresent() ? new CompilationUnit(pack.get().getNameAsString()) : new CompilationUnit();
 		compilationUnits.add(cu);
 		relation.getIntersectingClasses().add(0, create(cu, createInterface).apply(name, createInterface ? new Keyword[] {Keyword.PUBLIC} : new Keyword[] {Keyword.PUBLIC, Keyword.ABSTRACT}));
+		cu.setStorage(Paths.get(compilationUnitFilePath(cu)));
 		if(metricCollector!=null) metricCollector.reportClass(relation.getFirstClass());
 	}
 	
