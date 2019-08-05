@@ -240,10 +240,17 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 		Collections.sort(foundCloneClasses);
 		for(Sequence s : foundCloneClasses) {
 			if(noOverlap(refactoredSequences.keySet(), s) && !isGenerated(s)) {
+				System.out.println("Refactor "+s);
 				tryToExtractMethod(s);
 			}
 		}
 		newComps.entrySet().forEach(e -> {
+			if(!compilationUnits.contains(e.getKey())) {
+				for(CompilationUnit cu: compilationUnits)
+					if(cu.getPackageDeclaration().equals(e.getKey().getPackageDeclaration()) && cu.getChildNodes().stream().filter(f -> f instanceof ClassOrInterfaceDeclaration).map(f -> ((ClassOrInterfaceDeclaration)f).getNameAsString()).collect(Collectors.toList()).equals(e.getKey().getChildNodes().stream().filter(f -> f instanceof ClassOrInterfaceDeclaration).map(f -> ((ClassOrInterfaceDeclaration)f).getNameAsString()).collect(Collectors.toList())))
+						System.out.println("Same but not equal");
+				throw new IllegalStateException("Could not remove!! "+e.getKey());
+			}
 			compilationUnits.remove(e.getKey());
 			compilationUnits.add(e.getValue());
 		});
