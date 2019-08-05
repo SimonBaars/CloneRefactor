@@ -49,6 +49,7 @@ import com.simonbaars.clonerefactor.refactoring.model.PostMetrics;
 import com.simonbaars.clonerefactor.refactoring.model.PreMetrics;
 import com.simonbaars.clonerefactor.refactoring.populate.PopulateArguments;
 import com.simonbaars.clonerefactor.refactoring.populate.PopulateReturnValue;
+import com.simonbaars.clonerefactor.refactoring.populate.PopulateReturningFlow;
 import com.simonbaars.clonerefactor.refactoring.populate.PopulateThrows;
 import com.simonbaars.clonerefactor.refactoring.populate.PopulatesExtractedMethod;
 import com.simonbaars.clonerefactor.refactoring.target.ExtractToClassOrInterface;
@@ -57,7 +58,7 @@ import com.simonbaars.clonerefactor.util.DoesFileOperations;
 import com.simonbaars.clonerefactor.util.SavePaths;
 
 public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperations, DoesFileOperations {
-	private final PopulatesExtractedMethod[] populators = {new PopulateThrows(), new PopulateArguments(), new PopulateReturnValue()};
+	private final PopulatesExtractedMethod[] populators = {new PopulateThrows(), new PopulateArguments(), new PopulateReturnValue(), new PopulateReturningFlow()};
 	private static final String METHOD_NAME = "cloneRefactor";
 	
 	private final Map<Sequence, MethodDeclaration> refactoredSequences = new HashMap<>();
