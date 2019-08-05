@@ -1,6 +1,7 @@
 package com.simonbaars.clonerefactor.refactoring.model;
 
 import com.simonbaars.clonerefactor.ast.MetricObserver;
+import com.simonbaars.clonerefactor.datatype.map.CountMap;
 import com.simonbaars.clonerefactor.metrics.MetricCollector;
 import com.simonbaars.clonerefactor.metrics.ProblemType;
 
@@ -49,7 +50,7 @@ public class CombinedMetrics {
 		return unitInterfaceSizeIncrease;
 	}
 	
-	public String save(MetricCollector collector) {
+	public String save(MetricCollector collector, CountMap<String> metrics) {
 		collector.getMetrics().incrementGeneralStatistic("CC Increase", ccIncrease);
 		collector.getMetrics().incrementGeneralStatistic("Lines Increase", lineSizeIncrease);
 		collector.getMetrics().incrementGeneralStatistic("Tokens Increase", tokenSizeIncrease);
@@ -58,19 +59,28 @@ public class CombinedMetrics {
 		collector.getMetrics().incrementGeneralStatistic("Duplicate Nodes Increase", duplicateNodesIncrease);
 		collector.getMetrics().incrementGeneralStatistic("Duplicate Token Increase", duplicateTokensIncrease);
 		collector.getMetrics().incrementGeneralStatistic("Duplicate Lines Increase", duplicateLinesIncrease);
-		return createString(collector);
+		
+		metrics.increment(MetricObserver.metricTotalSize(ProblemType.UNITCOMPLEXITY), ccIncrease);
+		metrics.increment(MetricObserver.metricTotalSize(ProblemType.TOKENVOLUME), tokenSizeIncrease);
+		metrics.increment(MetricObserver.metricTotalSize(ProblemType.LINEVOLUME), lineSizeIncrease);
+		metrics.increment(MetricObserver.metricTotalSize(ProblemType.UNITINTERFACESIZE), unitInterfaceSizeIncrease);
+		metrics.increment("Total Nodes", nodeSizeIncrease);
+		metrics.increment("Cloned Nodes", nodeSizeIncrease);
+		metrics.increment("Cloned Tokens", nodeSizeIncrease);
+		metrics.increment("Cloned Lines", nodeSizeIncrease);
+		return createString(collector, metrics);
 	}
 
-	public String createString(MetricCollector collector) {
+	public String createString(MetricCollector collector, CountMap<String> metrics) {
 		return "This refactoring has the following effects on system quality metrics:"+System.lineSeparator()+
-				tellWhatHappened("Total Cyclomatic Complexity", collector.getMetrics().generalStats.get(MetricObserver.metricTotalSize(ProblemType.UNITCOMPLEXITY)), ccIncrease) +
-				tellWhatHappened("Total Unit Interface Size",collector.getMetrics().generalStats.get(MetricObserver.metricTotalSize(ProblemType.UNITINTERFACESIZE)), unitInterfaceSizeIncrease) +
-				tellWhatHappened("Total Unit Line Size",collector.getMetrics().generalStats.get(MetricObserver.metricTotalSize(ProblemType.LINEVOLUME)), lineSizeIncrease) +
-				tellWhatHappened("Total Unit Token Size",collector.getMetrics().generalStats.get(MetricObserver.metricTotalSize(ProblemType.TOKENVOLUME)), tokenSizeIncrease) +
-				tellWhatHappened("Total Nodes",collector.getMetrics().generalStats.get("Total Nodes"), nodeSizeIncrease) + System.lineSeparator() +
-				tellWhatHappened("Duplicated Nodes",collector.getMetrics().generalStats.get("Cloned Nodes"), duplicateNodesIncrease) +
-				tellWhatHappened("Duplicated Tokens",collector.getMetrics().generalStats.get("Cloned Tokens"), duplicateTokensIncrease) +
-				tellWhatHappened("Duplicated Lines",collector.getMetrics().generalStats.get("Cloned Lines"), duplicateLinesIncrease);
+				tellWhatHappened("Total Cyclomatic Complexity", metrics.get(MetricObserver.metricTotalSize(ProblemType.UNITCOMPLEXITY)), ccIncrease) +
+				tellWhatHappened("Total Unit Interface Size",metrics.get(MetricObserver.metricTotalSize(ProblemType.UNITINTERFACESIZE)), unitInterfaceSizeIncrease) +
+				tellWhatHappened("Total Unit Line Size",metrics.get(MetricObserver.metricTotalSize(ProblemType.LINEVOLUME)), lineSizeIncrease) +
+				tellWhatHappened("Total Unit Token Size",metrics.get(MetricObserver.metricTotalSize(ProblemType.TOKENVOLUME)), tokenSizeIncrease) +
+				tellWhatHappened("Total Nodes",metrics.get("Total Nodes"), nodeSizeIncrease) + System.lineSeparator() +
+				tellWhatHappened("Duplicated Nodes",metrics.get("Cloned Nodes"), duplicateNodesIncrease) +
+				tellWhatHappened("Duplicated Tokens",metrics.get("Cloned Tokens"), duplicateTokensIncrease) +
+				tellWhatHappened("Duplicated Lines",metrics.get("Cloned Lines"), duplicateLinesIncrease);
 	}
 	
 	private String tellWhatHappened(String metric, int total, int increase) {
@@ -83,7 +93,7 @@ public class CombinedMetrics {
 			} else {
 				stringBuilder.append("decreased");
 			}
-			stringBuilder.append(" by "+Math.abs(increase)+" from "+total+" to "+(total+increase));
+			stringBuilder.append(" by "+Math.abs(increase)+" from "+(total-increase)+" to "+total);
 		}
 		stringBuilder.append("."+System.lineSeparator());
 		return stringBuilder.toString();
