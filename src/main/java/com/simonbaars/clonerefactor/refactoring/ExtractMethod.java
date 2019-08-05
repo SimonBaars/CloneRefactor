@@ -107,11 +107,17 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 		Arrays.stream(populators).forEach(p -> p.postPopulate(decl));
 		refactoredSequences.put(s, decl);
 		new PostMetrics(decl, s.getRelation().isEffectivelyUnrelated() ? getClass(decl) : Optional.empty(), methodcalls).combine(new PreMetrics(s)).save(metricCollector);
-		methodcalls.stream().map(m -> getCompilationUnit(m)).filter(o -> o.isPresent()).map(o -> o.get()).forEach(this::makeValid);
-		getCompilationUnit(decl).ifPresent(this::makeValid);
-		if(Settings.get().getRefactoringStrategy().savesFiles())
-			writeRefactoringsToFile(methodcalls, s.getRelation());
+		storeChanges(s, decl, methodcalls);
 		return decl;
+	}
+
+	private void storeChanges(Sequence s, MethodDeclaration decl, List<Statement> methodcalls) {
+		List<Node> saveNodes = new ArrayList<>(s.getRelation().getIntersectingClasses());
+		saveNodes.addAll(methodcalls);
+		Set<CompilationUnit> cus = getUniqueCompilationUnits(saveNodes);
+		cus.forEach(this::makeValid);
+		if(Settings.get().getRefactoringStrategy().savesFiles())
+			cus.forEach(this::save);
 	}
 
 	private void makeValid(CompilationUnit cu) {
@@ -158,20 +164,14 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 		return createInterface && !c.isInterface() ? c::addImplementedType : c::addExtendedType;
 	}
 
-	private void writeRefactoringsToFile(List<Statement> methodcalls, Relation relation) {
-		List<Node> saveNodes = new ArrayList<>(relation.getIntersectingClasses());
-		saveNodes.addAll(methodcalls);
+
+	private void save(CompilationUnit cu) {
+		File file = SavePaths.createDirForFile(compilationUnitFilePath(cu));
 		try {
-			for(CompilationUnit cu : getUniqueCompilationUnits(saveNodes))
-				save(cu);
+			writeStringToFile(file, cu.toString());
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-	}
-
-	private void save(CompilationUnit cu) throws IOException {
-		File file = SavePaths.createDirForFile(compilationUnitFilePath(cu));
-		writeStringToFile(file, cu.toString());
 	}
 
 	private String compilationUnitFilePath(CompilationUnit unit) {
