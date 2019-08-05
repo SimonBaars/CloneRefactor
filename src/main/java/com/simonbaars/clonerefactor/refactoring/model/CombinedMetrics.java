@@ -52,7 +52,10 @@ public class CombinedMetrics {
 	public String createString(MetricCollector collector) {
 		return "This refactoring has the following effects on system quality metrics:"+System.lineSeparator()+
 				tellWhatHappened("Total Cyclomatic Complexity", collector.getMetrics().generalStats.get(MetricObserver.metricTotalSize(ProblemType.UNITCOMPLEXITY)), ccIncrease) +
-				tellWhatHappened("Total Unit Interface Size",collector.getMetrics().generalStats.get(MetricObserver.metricTotalSize(ProblemType.UNITINTERFACESIZE)), unitInterfaceSizeIncrease);
+				tellWhatHappened("Total Unit Interface Size",collector.getMetrics().generalStats.get(MetricObserver.metricTotalSize(ProblemType.UNITINTERFACESIZE)), unitInterfaceSizeIncrease) +
+				tellWhatHappened("Total Unit Line Size",collector.getMetrics().generalStats.get(MetricObserver.metricTotalSize(ProblemType.LINEVOLUME)), lineSizeIncrease) +
+				tellWhatHappened("Total Unit Token Size",collector.getMetrics().generalStats.get(MetricObserver.metricTotalSize(ProblemType.TOKENVOLUME)), tokenSizeIncrease) +
+				tellWhatHappened("Total Unit Interface Size",collector.getMetrics().generalStats.get("Total Nodes"), nodeSizeIncrease);
 	}
 	
 	private String tellWhatHappened(String metric, int total, int increase) {
@@ -65,7 +68,7 @@ public class CombinedMetrics {
 			} else {
 				stringBuilder.append("decreased");
 			}
-			stringBuilder.append(" by "+Math.abs(increase)+" from "+total+" to "+(total+increase)+".");
+			stringBuilder.append(" by "+Math.abs(increase)+" from "+total+" to "+(total+increase));
 		}
 		stringBuilder.append("."+System.lineSeparator());
 		return stringBuilder.toString();
