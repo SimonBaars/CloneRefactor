@@ -41,12 +41,13 @@ public class CombinedMetrics {
 		return unitInterfaceSizeIncrease;
 	}
 	
-	public void save(MetricCollector collector) {
+	public String save(MetricCollector collector) {
 		collector.getMetrics().incrementGeneralStatistic("CC Increase", ccIncrease);
 		collector.getMetrics().incrementGeneralStatistic("Lines Increase", lineSizeIncrease);
 		collector.getMetrics().incrementGeneralStatistic("Tokens Increase", tokenSizeIncrease);
 		collector.getMetrics().incrementGeneralStatistic("Nodes Increase", nodeSizeIncrease);
 		collector.getMetrics().incrementGeneralStatistic("Unit Size Increase", unitInterfaceSizeIncrease);
+		return createString(collector);
 	}
 
 	public String createString(MetricCollector collector) {
