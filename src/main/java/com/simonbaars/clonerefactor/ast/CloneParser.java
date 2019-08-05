@@ -30,7 +30,6 @@ import com.simonbaars.clonerefactor.thread.WritesErrors;
 
 public class CloneParser implements SetsIfNotNull, RemovesDuplicates, WritesErrors, CalculatesTimeIntervals {
 
-	private NodeParser astParser;
 	private final SequenceObservable seqObservable = new SequenceObservable(); 
 
 	public DetectionResults parse(Path projectRoot, SourceRoot sourceRoot, ParserConfiguration config) {
@@ -48,8 +47,8 @@ public class CloneParser implements SetsIfNotNull, RemovesDuplicates, WritesErro
 			int nGenerated, final List<CompilationUnit> compilationUnits) {
 		long beginTime = System.currentTimeMillis();
 		seqObservable.subscribe(new MetricObserver(metricCollector));
-		astParser = new NodeParser(metricCollector, seqObservable);
-		Location lastLoc = calculateLineReg(compilationUnits);
+		NodeParser astParser = new NodeParser(metricCollector, seqObservable);
+		Location lastLoc = calculateLineReg(astParser, compilationUnits);
 		if(lastLoc!=null) {
 			List<Sequence> findChains = new CloneDetection(seqObservable).findChains(lastLoc);
 			doTypeSpecificTransformations(findChains);
@@ -57,6 +56,7 @@ public class CloneParser implements SetsIfNotNull, RemovesDuplicates, WritesErro
 			DetectionResults res = new DetectionResults(metricCollector.reportClones(findChains), findChains);
 			if(Settings.get().getRefactoringStrategy() != RefactoringStrategy.DONOTREFACTOR) {
 				int nGen = new ExtractMethod(projectRoot, sourceRoot.getRoot(), compilationUnits, metricCollector, nGenerated).refactor(findChains);
+				System.out.println("Gen "+nGenerated+" of "+nGen);
 				if(nGen!=nGenerated)
 					res.getMetrics().setChild(parseProject(projectRoot, sourceRoot, new MetricCollector(), nGen, compilationUnits).getMetrics());
 			} 
@@ -83,7 +83,7 @@ public class CloneParser implements SetsIfNotNull, RemovesDuplicates, WritesErro
 		}
 	}
 
-	private final Location calculateLineReg(List<CompilationUnit> compilationUnits) {
+	private final Location calculateLineReg(NodeParser astParser, List<CompilationUnit> compilationUnits) {
 		Location l = null;
 		for(CompilationUnit cu : compilationUnits)
 			l = astParser.extractLinesFromAST(l, cu, cu);
