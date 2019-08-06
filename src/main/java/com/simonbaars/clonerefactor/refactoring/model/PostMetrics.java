@@ -11,6 +11,7 @@ import com.github.javaparser.JavaParser;
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
+import com.github.javaparser.ast.body.TypeDeclaration;
 import com.github.javaparser.ast.stmt.Statement;
 import com.simonbaars.clonerefactor.ast.interfaces.CalculatesLineSize;
 import com.simonbaars.clonerefactor.metrics.ProblemType;
@@ -43,9 +44,13 @@ public class PostMetrics implements RequiresNodeContext, CalculatesLineSize, Cal
 			methodTokenSize.put(m, new UnitTokenSizeCalculator().calculate(m));
 		});
 		
-		addedTokenVolume = calculateAddedVolume(this::countTokens, classOrInterface, newMethod, methodcalls);
-		addedLineVolume = calculateAddedVolume(this::lineSize, classOrInterface, newMethod, methodcalls);
-		addedNodeVolume = calculateAddedVolume(this::amountOfNodes, classOrInterface, newMethod, methodcalls);
+		newMethod = (MethodDeclaration)new JavaParser().parseBodyDeclaration(newMethod.toString()).getResult().get();
+		methodcalls = methodcalls.stream().map(e -> new JavaParser().parseStatement(e.toString())).filter(e -> e.isSuccessful()).map(e -> e.getResult().get()).collect(Collectors.toList());
+		Optional<TypeDeclaration<?>> c = classOrInterface.isPresent() ? Optional.of(new JavaParser().parseTypeDeclaration(classOrInterface.get().toString()).getResult().get()) : Optional.empty();
+		
+		addedTokenVolume = calculateAddedVolume(this::countTokens, c, newMethod, methodcalls);
+		addedLineVolume = methodcalls.size() + (classOrInterface.isPresent() ? 2 : 0) + lineSize(newMethod);
+		addedNodeVolume = addedLineVolume - 2;
 		unitInterfaceSize = newMethod.getParameters().size();
 		cc = calculateCC(newMethod);
 		
@@ -57,7 +62,7 @@ public class PostMetrics implements RequiresNodeContext, CalculatesLineSize, Cal
 		return 1;
 	}
 	
-	private int calculateAddedVolume(Function<Node, Integer> calculateMetric, Optional<ClassOrInterfaceDeclaration> classOrInterface,
+	private int calculateAddedVolume(Function<Node, Integer> calculateMetric, Optional<? extends Node> classOrInterface,
 			MethodDeclaration newMethod, List<Statement> methodcalls) {
 		int total = 0;
 		if(classOrInterface.isPresent()) {
