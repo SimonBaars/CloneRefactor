@@ -81,7 +81,7 @@ public class CombinedMetrics implements CalculatesPercentages {
 	}
 
 	public String createString(MetricCollector collector, CountMap<String> metrics) {
-		return "This refactoring has the following effects on system quality metrics:"+System.lineSeparator()+
+		return "== System Quality Metrics =="+System.lineSeparator()+
 				tellWhatHappened("Total Cyclomatic Complexity", metrics.get(MetricObserver.metricTotalSize(ProblemType.UNITCOMPLEXITY)), ccIncrease) +
 				tellWhatHappened("Total Unit Interface Size",metrics.get(MetricObserver.metricTotalSize(ProblemType.UNITINTERFACESIZE)), unitInterfaceSizeIncrease) +
 				tellWhatHappened("Total Unit Line Size",metrics.get(MetricObserver.metricTotalSize(ProblemType.LINEVOLUME)), lineSizeIncrease) +
@@ -90,7 +90,7 @@ public class CombinedMetrics implements CalculatesPercentages {
 				tellWhatHappened("Duplicated Nodes",metrics.get("Cloned Nodes"), duplicateNodesIncrease) +
 				tellWhatHappened("Duplicated Tokens",metrics.get("Cloned Tokens"), duplicateTokensIncrease) +
 				tellWhatHappened("Duplicated Lines",metrics.get("Cloned Lines"), duplicateLinesIncrease) + System.lineSeparator() +
-				"== System Quality Metrics =="+ System.lineSeparator() + 
+				"== Risk Profiles =="+ System.lineSeparator() + 
 				complexity + lineVolume + tokenVolume + 
 				"The new method has a "+ProblemType.UNITINTERFACESIZE+" of "+ProblemType.UNITINTERFACESIZE.getRisk(unitInterfaceSizeIncrease).lowercase()+" risk."+System.lineSeparator() + System.lineSeparator() +
 				getDuplicationRiskProfile(metrics.get("Total Nodes")-nodeSizeIncrease, metrics.get("Cloned Nodes")-duplicateNodesIncrease, metrics.get("Total Nodes"), metrics.get("Cloned Nodes"));
