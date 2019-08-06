@@ -35,8 +35,9 @@ public class GitChangeCommitter implements RequiresNodeContext {
 		if(opt.isPresent()) {
 			git = new Git(repo);
 			try {
-				git.checkout().setCreateBranch(true).setName(CLONEREFACTOR_BRANCH_NAME).call();
-			} catch (GitAPIException e) {
+				if(!repo.getFullBranch().endsWith(CLONEREFACTOR_BRANCH_NAME))
+					git.checkout().setCreateBranch(true).setName(CLONEREFACTOR_BRANCH_NAME).call();
+			} catch (GitAPIException | IOException e) {
 				e.printStackTrace();
 			}
 		} else git = null;
