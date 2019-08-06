@@ -19,8 +19,8 @@ public class VariableVisitor extends VoidVisitorAdapter<Map<NameExpr, ResolvedTy
 			try { // GOES WRONG WAY TOO OFTEN! TODO TODO TODO	
 				arg.put(ne, mr.get().getType());
 			} catch (Exception e) {
-				e.printStackTrace();
+				//e.printStackTrace(); TODO TODO
 			}
-		} else System.out.println("not "+ne);
+		}
 	}
 }
