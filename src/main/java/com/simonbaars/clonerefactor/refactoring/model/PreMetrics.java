@@ -31,7 +31,7 @@ public class PreMetrics implements RequiresNodeContext, CalculatesCyclomaticComp
 		
 		this.tokens = s.getTotalTokenVolume();
 		this.nodes = s.getTotalNodeVolume();
-		this.lines = s.getTotalEffectiveLineVolume();
+		this.lines = s.getTotalLineVolume();
 		this.cc = calculateCCIncrease(s.getLocations().stream().flatMap(l -> l.getContents().getTopLevelNodes().stream()));
 	}
 

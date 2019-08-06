@@ -78,7 +78,7 @@ public class Sequence implements Comparable<Sequence> {
 	}
 	
 	public int getEffectiveLineSize() {
-		return locations.isEmpty() ? 0 : getAny().getEffectiveLines();
+		return locations.isEmpty() ? 0 : getAny().getAmountOfLines();
 	}
 	
 	public int getTotalNodeVolume() {
@@ -89,8 +89,8 @@ public class Sequence implements Comparable<Sequence> {
 		return getTotalVolume(Location::getAmountOfTokens);
 	}
 	
-	public int getTotalEffectiveLineVolume() {
-		return getTotalVolume(Location::getEffectiveLines);
+	public int getTotalLineVolume() {
+		return getTotalVolume(Location::getAmountOfLines);
 	}
 	
 	public int getTotalVolume(ToIntFunction<? super Location> mapper) {

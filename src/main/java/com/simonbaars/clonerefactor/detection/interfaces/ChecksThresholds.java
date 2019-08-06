@@ -13,7 +13,7 @@ public interface ChecksThresholds {
 	}
 	
 	public default boolean compareLinesThreshold(Sequence s) {
-		return s.getAny().getEffectiveLines() >= Settings.get().getMinAmountOfLines();
+		return s.getAny().getAmountOfLines() >= Settings.get().getMinAmountOfLines();
 	}
 	
 	public default boolean compareTokensThreshold(Sequence s) {

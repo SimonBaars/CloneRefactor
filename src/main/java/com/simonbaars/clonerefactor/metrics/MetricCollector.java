@@ -45,7 +45,7 @@ public class MetricCollector {
 		metrics.amountPerNodes.increment(clone.getNodeSize());
 		metrics.amountPerTotalNodeVolume.increment(clone.getTotalNodeVolume());
 		metrics.amountPerEffectiveLines.increment(clone.getEffectiveLineSize());
-		metrics.amountPerTotalEffectiveLineVolume.increment(clone.getTotalEffectiveLineVolume());
+		metrics.amountPerTotalEffectiveLineVolume.increment(clone.getTotalLineVolume());
 		clone.setMetrics(relationFinder, extractFinder);
 		metrics.amountPerRelation.increment(clone.getRelationType());
 		metrics.amountPerExtract.increment(clone.getRefactorability());
