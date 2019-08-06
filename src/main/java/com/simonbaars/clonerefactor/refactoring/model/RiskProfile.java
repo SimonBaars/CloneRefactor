@@ -39,13 +39,13 @@ public class RiskProfile {
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder(type+System.lineSeparator());
-		builder.append("Created a new method with a "+type.getRisk(newMethodProblemSize)+" risk "+type+" of "+newMethodProblemSize+"." + System.lineSeparator());
+		builder.append("Created a new method with a "+type.getRisk(newMethodProblemSize).lowercase()+" risk "+type+" of "+newMethodProblemSize+"." + System.lineSeparator());
 		builder.append("Removing duplicate blocks changed "+changedProblemSize.size()+" methods." +System.lineSeparator());
 		for(Entry<MethodDeclaration, Pair<Integer, Integer>> e : changedProblemSize.entrySet()) {
 			builder.append("The method named \""+e.getKey().getNameAsString()+"\" went from "+e.getValue().a+" "+type+" to "+e.getValue().b+" "+type+". ");
-			builder.append(riskChange(type.getRisk(e.getValue().a), type.getRisk(e.getValue().b)));
+			builder.append(riskChange(type.getRisk(e.getValue().a), type.getRisk(e.getValue().b))+System.lineSeparator());
 		}
-		builder.append(System.lineSeparator()+System.lineSeparator());
+		builder.append(System.lineSeparator());
 		return builder.toString();
 	}
 
