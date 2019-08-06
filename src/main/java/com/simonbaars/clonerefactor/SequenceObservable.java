@@ -17,8 +17,9 @@ public class SequenceObservable {
 		return !observers.isEmpty();
 	}
 
-	public void subscribe(SequenceObserver observer) {
+	public SequenceObservable subscribe(SequenceObserver observer) {
 		observers.add(observer);
+		return this;
 	}
 
 	public void unsubscribe(SequenceObserver observer) {

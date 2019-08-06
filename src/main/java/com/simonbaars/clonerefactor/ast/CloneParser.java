@@ -30,8 +30,6 @@ import com.simonbaars.clonerefactor.thread.WritesErrors;
 
 public class CloneParser implements SetsIfNotNull, RemovesDuplicates, WritesErrors, CalculatesTimeIntervals {
 
-	private final SequenceObservable seqObservable = new SequenceObservable(); 
-
 	public DetectionResults parse(Path projectRoot, SourceRoot sourceRoot, ParserConfiguration config) {
 		MetricCollector metricCollector = new MetricCollector();
 		
@@ -46,8 +44,8 @@ public class CloneParser implements SetsIfNotNull, RemovesDuplicates, WritesErro
 	private DetectionResults parseProject(Path projectRoot, SourceRoot sourceRoot, MetricCollector metricCollector,
 			int nGenerated, final List<CompilationUnit> compilationUnits) {
 		long beginTime = System.currentTimeMillis();
-		seqObservable.subscribe(new MetricObserver(metricCollector));
-		Location lastLoc = calculateLineReg(metricCollector, compilationUnits);
+		SequenceObservable seqObservable = new SequenceObservable().subscribe(new MetricObserver(metricCollector));
+		Location lastLoc = calculateLineReg(metricCollector, compilationUnits, seqObservable);
 		if(lastLoc!=null) {
 			List<Sequence> findChains = new CloneDetection(seqObservable).findChains(lastLoc);
 			doTypeSpecificTransformations(findChains);
@@ -86,7 +84,7 @@ public class CloneParser implements SetsIfNotNull, RemovesDuplicates, WritesErro
 		}
 	}
 
-	private final Location calculateLineReg(MetricCollector metricCollector, List<CompilationUnit> compilationUnits) {
+	private final Location calculateLineReg(MetricCollector metricCollector, List<CompilationUnit> compilationUnits, SequenceObservable seqObservable) {
 		NodeParser astParser = new NodeParser(metricCollector, seqObservable);
 		Location l = null;
 		for(CompilationUnit cu : compilationUnits)
