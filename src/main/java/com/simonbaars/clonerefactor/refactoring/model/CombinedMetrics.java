@@ -2,10 +2,11 @@ package com.simonbaars.clonerefactor.refactoring.model;
 
 import com.simonbaars.clonerefactor.ast.MetricObserver;
 import com.simonbaars.clonerefactor.datatype.map.CountMap;
+import com.simonbaars.clonerefactor.detection.interfaces.CalculatesPercentages;
 import com.simonbaars.clonerefactor.metrics.MetricCollector;
 import com.simonbaars.clonerefactor.metrics.ProblemType;
 
-public class CombinedMetrics {
+public class CombinedMetrics implements CalculatesPercentages {
 	private final int ccIncrease;
 	private final int lineSizeIncrease;
 	private final int tokenSizeIncrease;
@@ -90,9 +91,16 @@ public class CombinedMetrics {
 				tellWhatHappened("Duplicated Tokens",metrics.get("Cloned Tokens"), duplicateTokensIncrease) +
 				tellWhatHappened("Duplicated Lines",metrics.get("Cloned Lines"), duplicateLinesIncrease) + System.lineSeparator() +
 				"== System Quality Metrics =="+ System.lineSeparator() + 
-				complexity + lineVolume + tokenVolume;
+				complexity + lineVolume + tokenVolume +
+				getDuplicationRiskProfile(metrics.get("Total Nodes")-nodeSizeIncrease, metrics.get("Cloned Nodes")-duplicateNodesIncrease, metrics.get("Total Nodes"), metrics.get("Cloned Nodes"));
 	}
 	
+	private String getDuplicationRiskProfile(int totalBefore, int clonedBefore, int totalAfter, int clonedAfter) {
+		double percBefore = calcPercentage(totalBefore, clonedBefore);
+		double percAfter = calcPercentage(totalAfter, clonedAfter);
+		return "Duplication went from "+String.format("%.2f", percBefore)+"% to "+String.format("%.2f", percAfter)+"%. "+RiskProfile.riskChange(ProblemType.DUPLICATION.getRisk(Math.toIntExact(Math.round(percBefore))), ProblemType.DUPLICATION.getRisk(Math.toIntExact(Math.round(percAfter))));
+	}
+
 	private String tellWhatHappened(String metric, int total, int increase) {
 		StringBuilder stringBuilder = new StringBuilder(metric+" ");
 		if(increase == 0) {

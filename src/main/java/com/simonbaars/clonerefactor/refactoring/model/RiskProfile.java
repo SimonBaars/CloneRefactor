@@ -49,7 +49,7 @@ public class RiskProfile {
 		return builder.toString();
 	}
 
-	private String riskChange(Risk risk, Risk risk2) {
+	public static String riskChange(Risk risk, Risk risk2) {
 		if(risk == risk2)
 			return "This did not influence the risk category of this method, it is still "+risk.lowercase()+" risk.";
 		else if(risk.ordinal() > risk2.ordinal())
