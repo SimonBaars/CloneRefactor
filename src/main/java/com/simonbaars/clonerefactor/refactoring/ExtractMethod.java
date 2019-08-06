@@ -121,13 +121,12 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 		PreMetrics preMetrics = new PreMetrics(s);
 		MethodDeclaration decl = new MethodDeclaration(Modifier.createModifierList(), new VoidType(), methodName);
 		placeMethodOnBasisOfRelation(s, decl);
-		List<Statement> methodcalls = removeLowestNodes(s, decl);
-		Optional<ClassOrInterfaceDeclaration> classOrInterface = s.getRelation().isEffectivelyUnrelated() ? getClass(decl) : Optional.empty();
-		if(classOrInterface.isPresent() && classOrInterface.get().isInterface() && !s.getRelation().isInterfaceRelation())
+		List<Statement> methodcalls = removeLowestNodes(s, decl);;
+		if(getClass(decl).get().isInterface() && !s.getRelation().isInterfaceRelation())
 			decl.setModifiers(Keyword.PUBLIC, Keyword.DEFAULT);
 		Arrays.stream(populators).forEach(p -> p.postPopulate(decl));
 		refactoredSequences.put(s, decl);
-		CombinedMetrics combine = new PostMetrics(decl, classOrInterface, methodcalls).combine(preMetrics);
+		CombinedMetrics combine = new PostMetrics(decl, s.getRelation().isEffectivelyUnrelated() ? getClass(decl) : Optional.empty(), methodcalls).combine(preMetrics);
 		storeChanges(s, decl, methodcalls);
 		return generateDescription(s, decl) + combine.save(metricCollector, metrics);
 	}
