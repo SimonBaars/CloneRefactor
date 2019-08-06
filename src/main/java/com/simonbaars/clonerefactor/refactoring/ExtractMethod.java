@@ -105,6 +105,7 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 			if(s.getRelation().isEffectivelyUnrelated())
 				metricCollector.reassessRelation(s);
 			String extractedMethod = extractMethod(s);
+			metricCollector.getMetrics().generalStats.increment("Amount Refactored");
 			if(gitCommit.doCommit())
 				gitCommit.commit(extractedMethod);
 		}

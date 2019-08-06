@@ -38,7 +38,18 @@ public class CloneParser implements SetsIfNotNull, RemovesDuplicates, WritesErro
 		if(compilationUnits.isEmpty())
 			throw new IllegalStateException("Project has no sources!");
 				
-		return parseProject(projectRoot, sourceRoot, metricCollector, 0, compilationUnits);
+		DetectionResults d = null, prev = null;
+		int oldRefactored, refactored = 0;
+		do {
+			oldRefactored = refactored;
+			DetectionResults res = parseProject(projectRoot, sourceRoot, metricCollector, 0, compilationUnits);
+			if(d == null)
+				d = res;
+			else prev.getMetrics().setChild(res.getMetrics());
+			prev = res;
+			refactored = res.getMetrics().generalStats.get("Amount Refactored");
+		} while(oldRefactored != refactored);
+		return d;
 	}
 
 	private DetectionResults parseProject(Path projectRoot, SourceRoot sourceRoot, MetricCollector metricCollector,
@@ -51,19 +62,10 @@ public class CloneParser implements SetsIfNotNull, RemovesDuplicates, WritesErro
 			doTypeSpecificTransformations(findChains);
 			metricCollector.getMetrics().generalStats.increment("Detection time", interval(beginTime));
 			DetectionResults res = new DetectionResults(metricCollector.reportClones(findChains), findChains);
-			refactorClones(projectRoot, sourceRoot, metricCollector, nGenerated, compilationUnits, findChains, res); 
+			if(Settings.get().getRefactoringStrategy() != RefactoringStrategy.DONOTREFACTOR)
+				new ExtractMethod(projectRoot, sourceRoot.getRoot(), compilationUnits, metricCollector, nGenerated).refactor(findChains);
 			return res;
 		} else throw new IllegalStateException("Project has no usable sources!");
-	}
-
-	private void refactorClones(Path projectRoot, SourceRoot sourceRoot, MetricCollector metricCollector,
-			int nGenerated, final List<CompilationUnit> compilationUnits, List<Sequence> findChains,
-			DetectionResults res) {
-		if(Settings.get().getRefactoringStrategy() != RefactoringStrategy.DONOTREFACTOR) {
-			int nGen = new ExtractMethod(projectRoot, sourceRoot.getRoot(), compilationUnits, metricCollector, nGenerated).refactor(findChains);
-			if(nGen!=nGenerated)
-				res.getMetrics().setChild(parseProject(projectRoot, sourceRoot, new MetricCollector(), nGen, compilationUnits).getMetrics());
-		}
 	}
 
 	private void doTypeSpecificTransformations(List<Sequence> findChains) {
