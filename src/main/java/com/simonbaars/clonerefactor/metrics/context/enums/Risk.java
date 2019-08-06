@@ -16,4 +16,8 @@ public enum Risk {
 	public String toString() {
 		return name;
 	}
+
+	public String lowercase() {
+		return toString().toLowerCase();
+	}
 }
