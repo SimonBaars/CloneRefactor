@@ -118,12 +118,13 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 
 	private String extractMethod(Sequence s) {
 		String methodName = METHOD_NAME+(nGeneratedDeclarations++);
+		PreMetrics preMetrics = new PreMetrics(s);
 		MethodDeclaration decl = new MethodDeclaration(Modifier.createModifierList(), new VoidType(), methodName);
 		placeMethodOnBasisOfRelation(s, decl);
 		List<Statement> methodcalls = removeLowestNodes(s, decl);
 		Arrays.stream(populators).forEach(p -> p.postPopulate(decl));
 		refactoredSequences.put(s, decl);
-		CombinedMetrics combine = new PostMetrics(decl, s.getRelation().isEffectivelyUnrelated() ? getClass(decl) : Optional.empty(), methodcalls).combine(new PreMetrics(s));
+		CombinedMetrics combine = new PostMetrics(decl, s.getRelation().isEffectivelyUnrelated() ? getClass(decl) : Optional.empty(), methodcalls).combine(preMetrics);
 		storeChanges(s, decl, methodcalls);
 		return generateDescription(s, decl) + combine.save(metricCollector, metrics);
 	}
