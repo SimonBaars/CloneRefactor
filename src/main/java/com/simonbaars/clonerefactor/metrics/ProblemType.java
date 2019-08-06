@@ -3,7 +3,7 @@ package com.simonbaars.clonerefactor.metrics;
 import com.simonbaars.clonerefactor.metrics.context.enums.Risk;
 
 public enum ProblemType {
-	DUPLICATION("Duplication", 2, 4, 6),
+	DUPLICATION("Duplication", 5, 10, 20),
 	UNITINTERFACESIZE("Unit Interface Size", 2, 4, 6),
 	UNITCOMPLEXITY("Unit Complexity", 10, 20, 50),
 	LINEVOLUME("Line Volume", 15, 30, 60),
