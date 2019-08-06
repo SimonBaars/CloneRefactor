@@ -19,16 +19,17 @@ import com.simonbaars.clonerefactor.ast.compare.CompareMethodCall;
 import com.simonbaars.clonerefactor.ast.compare.CompareOutOfScope;
 import com.simonbaars.clonerefactor.ast.compare.CompareTokens;
 import com.simonbaars.clonerefactor.ast.compare.CompareVariable;
+import com.simonbaars.clonerefactor.ast.interfaces.CalculatesLineSize;
 import com.simonbaars.clonerefactor.ast.interfaces.HasCompareList;
 import com.simonbaars.clonerefactor.datatype.map.ListMap;
 import com.simonbaars.clonerefactor.metrics.context.analyze.CloneContents;
 import com.simonbaars.clonerefactor.metrics.context.enums.ContentsType;
 import com.simonbaars.clonerefactor.metrics.context.interfaces.RequiresNodeContext;
-import com.simonbaars.clonerefactor.model.FiltersTokens;
 import com.simonbaars.clonerefactor.settings.Scope;
 import com.simonbaars.clonerefactor.settings.Settings;
 
-public class LocationContents implements FiltersTokens, HasRange, HasCompareList, RequiresNodeContext {
+public class LocationContents implements HasRange, HasCompareList, RequiresNodeContext, CalculatesLineSize
+{
 	private Range range;
 	private final List<Node> nodes;
 	private final List<JavaToken> tokens;
@@ -199,5 +200,9 @@ public class LocationContents implements FiltersTokens, HasRange, HasCompareList
 
 	public void determineRange() {
 		this.setRange(getRange(this.getTokens()));
+	}
+
+	public int getAmountOfLines() {
+		return lineSize(tokens);
 	}
 }

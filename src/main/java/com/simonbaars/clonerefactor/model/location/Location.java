@@ -85,11 +85,7 @@ public class Location implements Comparable<Location>, HasRange {
 	}
 	
 	public int getAmountOfLines() {
-		return range.end.line-range.begin.line+1;
-	}
-	
-	public int getEffectiveLines() {
-		return getContents().effectiveLines().size();
+		return getContents().getAmountOfLines();
 	}
 
 	public boolean isSame(Location other) {

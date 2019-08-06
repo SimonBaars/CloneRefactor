@@ -1,14 +1,8 @@
 package com.simonbaars.clonerefactor.metrics;
 
-import java.nio.file.Path;
 import java.util.List;
-import java.util.Set;
 
-import com.github.javaparser.JavaToken;
-import com.github.javaparser.Range;
-import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
-import com.simonbaars.clonerefactor.datatype.map.SetMap;
 import com.simonbaars.clonerefactor.metrics.context.Metric;
 import com.simonbaars.clonerefactor.metrics.context.StatType;
 import com.simonbaars.clonerefactor.metrics.context.analyze.CloneContents;
@@ -19,9 +13,6 @@ import com.simonbaars.clonerefactor.model.Sequence;
 import com.simonbaars.clonerefactor.model.location.Location;
 
 public class MetricCollector {
-	private final SetMap<Path, Integer> parsedLines = new SetMap<>();
-	private final SetMap<Path, Range> parsedTokens = new SetMap<>();
-	private final SetMap<Path, Range> parsedNodes = new SetMap<>();
 	private final Metrics metrics = new Metrics();
 	private final CloneRelation relationFinder = new CloneRelation();
 	private final CloneLocation locationFinder = new CloneLocation();
@@ -31,27 +22,13 @@ public class MetricCollector {
 	public MetricCollector() {}
 	
 	public void reportFoundNode(Location l) {
-		metrics.incrementGeneralStatistic(Metric.NODES, StatType.TOTAL, l.getAmountOfNodes());
+		metrics.incrementGeneralStatistic(Metric.NODES, StatType.TOTAL, 1);
 		metrics.incrementGeneralStatistic(Metric.TOKENS, StatType.TOTAL, l.getAmountOfTokens());
-		metrics.incrementGeneralStatistic(Metric.LINES, StatType.TOTAL, getUnparsedLines(l, false));
+		metrics.incrementGeneralStatistic(Metric.LINES, StatType.TOTAL, l.getAmountOfLines();
 		l.getContents().getNodes().forEach(relationFinder::registerNode);
 	}
-	
-	private int getUnparsedLines(Location l, boolean countOverlap) {
-		int amountOfLines = 0;
-		for(Integer i : l.getContents().effectiveLines()) {
-			Set<Integer> lines = parsedLines.get(l.getFile());
-			if(!lines.contains(i)) {
-				amountOfLines++;
-				lines.add(i);
-			} else if(countOverlap) metrics.incrementGeneralStatistic(Metric.LINES, StatType.OVERLAPPING, 1);
-		}
-		return amountOfLines;
-	}
-	
+
 	public Metrics reportClones(List<Sequence> clones) {
-		parsedLines.clear();
-		parsedTokens.clear();
 		if(clones.isEmpty())
 			metrics.generalStats.increment("Projects without clone classes");
 		metrics.generalStats.increment("Clone classes", clones.size());
@@ -82,40 +59,16 @@ public class MetricCollector {
 	}
 
 	private void reportClonedLocation(Location l) {
-		metrics.averages.addTo("Clone nodes", l.getAmountOfNodes());
-		metrics.averages.addTo("Clone tokens", l.getAmountOfTokens());
-		metrics.averages.addTo("Clone effective lines", l.getEffectiveLines());
-		metrics.incrementGeneralStatistic(Metric.TOKENS, StatType.CLONED, getUnparsedTokens(l, true));
-		metrics.incrementGeneralStatistic(Metric.NODES, StatType.CLONED, getUnparsedNodes(l, true));
-		metrics.incrementGeneralStatistic(Metric.LINES, StatType.CLONED, getUnparsedLines(l, true));
+		metrics.averages.addTo("Cloned nodes", l.getAmountOfNodes());
+		metrics.averages.addTo("Cloned tokens", l.getAmountOfTokens());
+		metrics.averages.addTo("Cloned lines", l.getAmountOfLines());
+		metrics.incrementGeneralStatistic(Metric.TOKENS, StatType.CLONED, l.getAmountOfTokens());
+		metrics.incrementGeneralStatistic(Metric.NODES, StatType.CLONED, l.getAmountOfNodes());
+		metrics.incrementGeneralStatistic(Metric.LINES, StatType.CLONED, l.getAmountOfLines());
 		l.setMetrics(locationFinder);
 		l.getContents().setMetrics(contentsFinder);
 		metrics.amountPerLocation.increment(l.getLocationType());
 		metrics.amountPerContents.increment(l.getContents().getContentsType());
-	}
-
-	private int getUnparsedTokens(Location l, boolean countOverlap) {
-		int amount = 0;
-		for(JavaToken n : l.getContents().getTokens()) {
-			Range r = n.getRange().get();
-			if(!parsedTokens.get(l.getFile()).contains(r)) {
-				parsedTokens.addTo(l.getFile(), r);
-				amount++;
-			} else if(countOverlap) metrics.incrementGeneralStatistic(Metric.TOKENS, StatType.OVERLAPPING, 1);
-		}
-		return amount;
-	}
-
-	private int getUnparsedNodes(Location l, boolean countOverlap) {
-		int amount = 0;
-		for(Node n : l.getContents().getNodes()) {
-			Range r = n.getRange().get();
-			if(!parsedNodes.get(l.getFile()).contains(r)) {
-				parsedNodes.addTo(l.getFile(), r);
-				amount++;
-			} else if(countOverlap) metrics.incrementGeneralStatistic(Metric.NODES, StatType.OVERLAPPING, 1);
-		}
-		return amount;
 	}
 
 	public Metrics getMetrics() {
