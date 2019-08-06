@@ -122,9 +122,12 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 		MethodDeclaration decl = new MethodDeclaration(Modifier.createModifierList(), new VoidType(), methodName);
 		placeMethodOnBasisOfRelation(s, decl);
 		List<Statement> methodcalls = removeLowestNodes(s, decl);
+		Optional<ClassOrInterfaceDeclaration> classOrInterface = s.getRelation().isEffectivelyUnrelated() ? getClass(decl) : Optional.empty();
+		if(classOrInterface.isPresent() && classOrInterface.get().isInterface() && !s.getRelation().isInterfaceRelation())
+			decl.setModifiers(Keyword.PUBLIC, Keyword.DEFAULT);
 		Arrays.stream(populators).forEach(p -> p.postPopulate(decl));
 		refactoredSequences.put(s, decl);
-		CombinedMetrics combine = new PostMetrics(decl, s.getRelation().isEffectivelyUnrelated() ? getClass(decl) : Optional.empty(), methodcalls).combine(preMetrics);
+		CombinedMetrics combine = new PostMetrics(decl, classOrInterface, methodcalls).combine(preMetrics);
 		storeChanges(s, decl, methodcalls);
 		return generateDescription(s, decl) + combine.save(metricCollector, metrics);
 	}
@@ -159,7 +162,7 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 
 	private void placeMethodOnBasisOfRelation(Sequence s, MethodDeclaration decl) {
 		Relation relation = s.getRelation();
-		s.getRelation().getIntersectingClasses().forEach(c -> saveASTBeforeChange(getCompilationUnit(c).get()));
+		relation.getIntersectingClasses().forEach(c -> saveASTBeforeChange(getCompilationUnit(c).get()));
 		if(relation.isEffectivelyUnrelated())
 			createRelation(s, relation);
 		new ExtractToClassOrInterface(relation.getFirstClass()).extract(decl);
@@ -336,7 +339,7 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 		if(pr.isSuccessful()) {
 			pr.getResult().get().setStorage(cu.getStorage().get().getPath());
 			cu = pr.getResult().get();
-		} else throw new IllegalStateException("Failed to parse "+cu);
+		} else throw new IllegalStateException("Failed to parse "+cu+": "+Arrays.toString(pr.getProblems().toArray()));
 		return cu;
 	}
 }
