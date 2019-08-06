@@ -24,7 +24,7 @@ public class MetricCollector {
 	public void reportFoundNode(Location l) {
 		metrics.incrementGeneralStatistic(Metric.NODES, StatType.TOTAL, 1);
 		metrics.incrementGeneralStatistic(Metric.TOKENS, StatType.TOTAL, l.getAmountOfTokens());
-		metrics.incrementGeneralStatistic(Metric.LINES, StatType.TOTAL, l.getAmountOfLines();
+		metrics.incrementGeneralStatistic(Metric.LINES, StatType.TOTAL, l.getAmountOfLines());
 		l.getContents().getNodes().forEach(relationFinder::registerNode);
 	}
 
