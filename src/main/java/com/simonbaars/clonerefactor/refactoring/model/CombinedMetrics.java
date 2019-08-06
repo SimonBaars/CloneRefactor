@@ -16,8 +16,12 @@ public class CombinedMetrics {
 	private final int duplicateTokensIncrease;
 	private final int duplicateLinesIncrease;
 	
+	private final RiskProfile complexity;
+	private final RiskProfile lineVolume;
+	private final RiskProfile tokenVolume;
+	
 	public CombinedMetrics(int ccIncrease, int lineSizeIncrease, int tokenSizeIncrease, int nodeSizeIncrease,
-			int unitInterfaceSizeIncrease, int nodes, int tokens, int lines, RiskProfile riskProfile, RiskProfile riskProfile2, RiskProfile riskProfile3) {
+			int unitInterfaceSizeIncrease, int nodes, int tokens, int lines, RiskProfile complexity, RiskProfile lineVolume, RiskProfile tokenVolume) {
 		super();
 		this.ccIncrease = ccIncrease;
 		this.lineSizeIncrease = lineSizeIncrease;
@@ -28,6 +32,10 @@ public class CombinedMetrics {
 		this.duplicateNodesIncrease = -nodes;
 		this.duplicateTokensIncrease = -tokens;
 		this.duplicateLinesIncrease = -lines;
+		
+		this.complexity = complexity;
+		this.lineVolume = lineVolume;
+		this.tokenVolume = tokenVolume;
 	}
 
 	public int getCcIncrease() {
@@ -80,7 +88,9 @@ public class CombinedMetrics {
 				tellWhatHappened("Total Nodes",metrics.get("Total Nodes"), nodeSizeIncrease) + System.lineSeparator() +
 				tellWhatHappened("Duplicated Nodes",metrics.get("Cloned Nodes"), duplicateNodesIncrease) +
 				tellWhatHappened("Duplicated Tokens",metrics.get("Cloned Tokens"), duplicateTokensIncrease) +
-				tellWhatHappened("Duplicated Lines",metrics.get("Cloned Lines"), duplicateLinesIncrease);
+				tellWhatHappened("Duplicated Lines",metrics.get("Cloned Lines"), duplicateLinesIncrease) + System.lineSeparator() +
+				"== System Quality Metrics =="+ System.lineSeparator() + 
+				complexity + lineVolume + tokenVolume;
 	}
 	
 	private String tellWhatHappened(String metric, int total, int increase) {
