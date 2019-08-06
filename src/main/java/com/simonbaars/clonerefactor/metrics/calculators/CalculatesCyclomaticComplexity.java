@@ -44,14 +44,7 @@ public interface CalculatesCyclomaticComplexity {
 				ternaryExprs.size() +
 				andExprs.size() +
 				orExprs.size() +
-				foreachStmts.size() +
-				checkOwnType(node);
-	}
-
-	public default int checkOwnType(Node node) {
-		if(node instanceof IfStmt || node instanceof ForStmt || node instanceof WhileStmt || node instanceof DoStmt || node instanceof SwitchEntry || node instanceof ForEachStmt)
-			return 1;
-		return 0;
+				foreachStmts.size();
 	}
 
 	public default int calculateLocationCCIncrease(Location l) {
