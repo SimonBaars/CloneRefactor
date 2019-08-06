@@ -2,6 +2,7 @@ package com.simonbaars.clonerefactor.detection.type2.model;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.IntStream;
@@ -9,6 +10,7 @@ import java.util.stream.IntStream;
 import com.github.javaparser.ast.Node;
 import com.simonbaars.clonerefactor.ast.interfaces.DeterminesNodeTokens;
 import com.simonbaars.clonerefactor.datatype.IndexRange;
+import com.simonbaars.clonerefactor.detection.type2.Type2RLocation;
 import com.simonbaars.clonerefactor.model.Sequence;
 import com.simonbaars.clonerefactor.model.location.Location;
 
@@ -120,12 +122,30 @@ public class Type2Location implements DeterminesNodeTokens, Comparable<Type2Loca
 		return statementIndices.size();
 	}
 	
-	public Location convertToLocation(Sequence sequence) {
-		return convertToLocation(sequence.getLocations().get(locationIndex));
+	public Location convertToLocation(Sequence sequence, Type2Sequence seq) {
+		return convertToLocation(sequence.getLocations().get(locationIndex), seq);
 	}
 
-	private Location convertToLocation(Location location) {
-		return new Location(location.getFile(), statementIndices.stream().boxed().map(i -> location.getContents().getNodes().get(i)).toArray(Node[]::new));
+	private Location convertToLocation(Location location, Type2Sequence seq) {
+		Type2RLocation t2Location = new Type2RLocation(location.getFile(), statementIndices.stream().boxed().map(i -> location.getContents().getNodes().get(i)).toArray(Node[]::new));
+		for(int i = 0; i<contents.size(); i++) {
+			for(Type2Location s : seq.getSequence()) {
+				if(contents.size() == s.contents.size() && contents.get(i).getContents().length == s.getContents().get(i).getContents().length)
+					t2Location.getDiffIndices().addAll(diffIndices(contents.get(i).getContents(), s.getContents().get(i).getContents()));
+			}
+		}
+		return t2Location;
+	}
+	
+	private Collection<Integer> diffIndices(int[] a, int[] b) {
+		assert a.length == b.length;
+		List<Integer> diffIndices = new ArrayList<>();
+		for(int i = 0; i<a.length; i++) {
+			if(a[i]!=b[i] && a[i]>0 && b[i]>0) {
+				diffIndices.add(i);
+			}
+		}
+		return diffIndices;
 	}
 	
 	public Type2Location getLast() {
