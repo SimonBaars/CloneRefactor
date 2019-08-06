@@ -79,10 +79,6 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 	private final Map<CompilationUnit, CompilationUnit> newComps = new HashMap<>();
 	private final CountMap<String> metrics = new CountMap<>();
 	
-	public ExtractMethod(Path projectPath, Path sourceFolder) {
-		this(projectPath, sourceFolder, new ArrayList<>(), null, 0);
-	}
-	
 	public ExtractMethod(Path projectRoot, Path root, List<CompilationUnit> compilationUnits, MetricCollector metricCollector, int nGenerated) {
 		this.projectFolder = projectRoot;
 		this.sourceFolder = root;
@@ -93,22 +89,20 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 		gitCommit = Settings.get().getRefactoringStrategy().usesGit() ? new GitChangeCommitter(saveFolder) : new GitChangeCommitter();
 		this.compilationUnits = compilationUnits;
 		this.metricCollector = metricCollector;
-		
-		if(metricCollector!=null) {
-			metrics.put(MetricObserver.metricTotalSize(ProblemType.UNITCOMPLEXITY), metricCollector.getMetrics().generalStats.get(MetricObserver.metricTotalSize(ProblemType.UNITCOMPLEXITY)));
-			metrics.put(MetricObserver.metricTotalSize(ProblemType.UNITINTERFACESIZE), metricCollector.getMetrics().generalStats.get(MetricObserver.metricTotalSize(ProblemType.UNITINTERFACESIZE)));
-			metrics.put(MetricObserver.metricTotalSize(ProblemType.LINEVOLUME), metricCollector.getMetrics().generalStats.get(MetricObserver.metricTotalSize(ProblemType.LINEVOLUME)));
-			metrics.put(MetricObserver.metricTotalSize(ProblemType.TOKENVOLUME), metricCollector.getMetrics().generalStats.get(MetricObserver.metricTotalSize(ProblemType.TOKENVOLUME)));
-			metrics.put("Total Nodes", metricCollector.getMetrics().generalStats.get("Total Nodes"));
-			metrics.put("Cloned Nodes", metricCollector.getMetrics().generalStats.get("Cloned Nodes"));
-			metrics.put("Cloned Tokens", metricCollector.getMetrics().generalStats.get("Cloned Tokens"));
-			metrics.put("Cloned Lines", metricCollector.getMetrics().generalStats.get("Cloned Lines"));
-		}
+
+		metrics.put(MetricObserver.metricTotalSize(ProblemType.UNITCOMPLEXITY), metricCollector.getMetrics().generalStats.get(MetricObserver.metricTotalSize(ProblemType.UNITCOMPLEXITY)));
+		metrics.put(MetricObserver.metricTotalSize(ProblemType.UNITINTERFACESIZE), metricCollector.getMetrics().generalStats.get(MetricObserver.metricTotalSize(ProblemType.UNITINTERFACESIZE)));
+		metrics.put(MetricObserver.metricTotalSize(ProblemType.LINEVOLUME), metricCollector.getMetrics().generalStats.get(MetricObserver.metricTotalSize(ProblemType.LINEVOLUME)));
+		metrics.put(MetricObserver.metricTotalSize(ProblemType.TOKENVOLUME), metricCollector.getMetrics().generalStats.get(MetricObserver.metricTotalSize(ProblemType.TOKENVOLUME)));
+		metrics.put("Total Nodes", metricCollector.getMetrics().generalStats.get("Total Nodes"));
+		metrics.put("Cloned Nodes", metricCollector.getMetrics().generalStats.get("Cloned Nodes"));
+		metrics.put("Cloned Tokens", metricCollector.getMetrics().generalStats.get("Cloned Tokens"));
+		metrics.put("Cloned Lines", metricCollector.getMetrics().generalStats.get("Cloned Lines"));
 	}
 
 	public void tryToExtractMethod(Sequence s) {
 		if(s.getRefactorability() == Refactorability.CANBEEXTRACTED) {
-			if(s.getRelation().isEffectivelyUnrelated() && metricCollector != null)
+			if(s.getRelation().isEffectivelyUnrelated())
 				metricCollector.reassessRelation(s);
 			String extractedMethod = extractMethod(s);
 			if(gitCommit.doCommit())
