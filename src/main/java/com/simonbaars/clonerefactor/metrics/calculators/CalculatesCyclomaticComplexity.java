@@ -9,6 +9,7 @@ import com.github.javaparser.ast.expr.BinaryExpr;
 import com.github.javaparser.ast.expr.BinaryExpr.Operator;
 import com.github.javaparser.ast.expr.ConditionalExpr;
 import com.github.javaparser.ast.stmt.DoStmt;
+import com.github.javaparser.ast.stmt.ForEachStmt;
 import com.github.javaparser.ast.stmt.ForStmt;
 import com.github.javaparser.ast.stmt.IfStmt;
 import com.github.javaparser.ast.stmt.SwitchEntry;
@@ -23,6 +24,7 @@ public interface CalculatesCyclomaticComplexity {
 	public default int calculateCCIncreace(Node node) {
 		List<IfStmt> ifStmts = node.findAll(IfStmt.class);
 		List<ForStmt> forStmts = node.findAll(ForStmt.class);
+		List<ForEachStmt> foreachStmts = node.findAll(ForEachStmt.class);
 		List<WhileStmt> whileStmts = node.findAll(WhileStmt.class);
 		List<DoStmt> doStmts = node.findAll(DoStmt.class);
 		List<SwitchEntry> catchStmts = node.findAll(SwitchEntry.class).stream().
@@ -41,11 +43,13 @@ public interface CalculatesCyclomaticComplexity {
 				catchStmts.size() +
 				ternaryExprs.size() +
 				andExprs.size() +
-				orExprs.size() + checkOwnType(node);
+				orExprs.size() +
+				foreachStmts.size() +
+				checkOwnType(node);
 	}
 
 	public default int checkOwnType(Node node) {
-		if(node instanceof IfStmt || node instanceof ForStmt || node instanceof WhileStmt || node instanceof DoStmt || node instanceof SwitchEntry)
+		if(node instanceof IfStmt || node instanceof ForStmt || node instanceof WhileStmt || node instanceof DoStmt || node instanceof SwitchEntry || node instanceof ForEachStmt)
 			return 1;
 		return 0;
 	}
