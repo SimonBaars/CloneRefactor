@@ -35,4 +35,25 @@ public class RiskProfile {
 		});
 		return this;
 	}
+	
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder(type+System.lineSeparator());
+		builder.append("Created a new method with a "+type.getRisk(newMethodProblemSize)+" risk "+type+" of "+newMethodProblemSize+"." + System.lineSeparator());
+		builder.append("Removing duplicate blocks changed "+changedProblemSize.size()+" methods." +System.lineSeparator());
+		for(Entry<MethodDeclaration, Pair<Integer, Integer>> e : changedProblemSize.entrySet()) {
+			builder.append("The method named \""+e.getKey().getNameAsString()+"\" went from "+e.getValue().a+" "+type+" to "+e.getValue().b+" "+type+". ");
+			builder.append(riskChange(type.getRisk(e.getValue().a), type.getRisk(e.getValue().b)));
+		}
+		builder.append(System.lineSeparator()+System.lineSeparator());
+		return builder.toString();
+	}
+
+	private String riskChange(Risk risk, Risk risk2) {
+		if(risk == risk2)
+			return "This did not influence the risk category of this method, it is still "+risk.lowercase()+" risk.";
+		else if(risk.ordinal() > risk2.ordinal())
+			return "This increased the risk category of this method from "+risk.lowercase()+" to "+risk2.lowercase();
+		return "This decreased the risk category of this method from "+risk.lowercase()+" to "+risk2.lowercase();
+	}
 }
