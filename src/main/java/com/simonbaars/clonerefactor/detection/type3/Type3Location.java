@@ -9,6 +9,7 @@ import com.simonbaars.clonerefactor.model.location.LocationContents;
 public class Type3Location extends Location implements Type3Calculation{
 	private LocationContents diffContents;
 	private LocationContents combinedContents;
+	private int addedComplexity = 1;
 
 	public Type3Location(Location clonedLocation, Range r) {
 		super(clonedLocation, r);
@@ -17,7 +18,6 @@ public class Type3Location extends Location implements Type3Calculation{
 	public Type3Location(Location clonedLocation) {
 		super(clonedLocation);
 	}
-
 
 	public Type3Location(Path file, Range range) {
 		super(file, range);
@@ -28,11 +28,14 @@ public class Type3Location extends Location implements Type3Calculation{
 		if(location.getRange().isBefore(location2.getRange().begin))
 			mergeLocations(location, location2);
 		else mergeLocations(location2, location);
+		mergeDiffIfType3(location); 
+		mergeDiffIfType3(location2);
+	}
+
+	private void mergeDiffIfType3(Location location) {
 		if(location instanceof Type3Location) {
 			diffContents.merge(((Type3Location)location).getDiffContents());
-		} 
-		if(location2 instanceof Type3Location) {
-			diffContents.merge(((Type3Location)location2).getDiffContents());
+			addedComplexity+=((Type3Location)location).addedComplexity;
 		}
 	}
 
@@ -66,5 +69,9 @@ public class Type3Location extends Location implements Type3Calculation{
 	public String toString() {
 		String s = super.toString();
 		return new StringBuilder(s).insert(s.length()-1, ", type3range="+diffContents.getRange()+", type3nodes="+diffContents.size()).toString();
+	}
+	
+	public int getAddedComplexity() {
+		return addedComplexity;
 	}
 }
