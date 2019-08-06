@@ -31,8 +31,8 @@ public class RiskProfile {
 
 	public RiskProfile calculateRisk(Map<MethodDeclaration, Integer> post, Map<MethodDeclaration, Integer> pre) {
 		pre.entrySet().forEach(e -> {
-			getMetricChanges(post, e.getKey()).ifPresent(nPre -> {
-				changedProblemSize.put(e.getKey(), new Pair<Integer, Integer>(nPre, e.getValue()));
+			getMetricChanges(post, e.getKey()).ifPresent(nPost -> {
+				changedProblemSize.put(e.getKey(), new Pair<Integer, Integer>(e.getValue(), nPost));
 			});
 		});
 		return this;
