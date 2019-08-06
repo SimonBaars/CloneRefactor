@@ -57,6 +57,6 @@ public class Type2Contents {
 
 	@Override
 	public String toString() {
-		return "Type2Location [contents=" + Arrays.toString(contents) + "]";
+		return "Type2RLocation [contents=" + Arrays.toString(contents) + "]";
 	}
 }
