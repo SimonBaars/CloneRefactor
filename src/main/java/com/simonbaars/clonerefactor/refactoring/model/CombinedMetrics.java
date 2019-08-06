@@ -91,7 +91,8 @@ public class CombinedMetrics implements CalculatesPercentages {
 				tellWhatHappened("Duplicated Tokens",metrics.get("Cloned Tokens"), duplicateTokensIncrease) +
 				tellWhatHappened("Duplicated Lines",metrics.get("Cloned Lines"), duplicateLinesIncrease) + System.lineSeparator() +
 				"== System Quality Metrics =="+ System.lineSeparator() + 
-				complexity + lineVolume + tokenVolume +
+				complexity + lineVolume + tokenVolume + 
+				"The new method has a "+ProblemType.UNITINTERFACESIZE+" of "+ProblemType.UNITINTERFACESIZE.getRisk(unitInterfaceSizeIncrease).lowercase()+" risk."+System.lineSeparator() + System.lineSeparator() +
 				getDuplicationRiskProfile(metrics.get("Total Nodes")-nodeSizeIncrease, metrics.get("Cloned Nodes")-duplicateNodesIncrease, metrics.get("Total Nodes"), metrics.get("Cloned Nodes"));
 	}
 	
