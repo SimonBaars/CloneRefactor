@@ -97,8 +97,8 @@ public class CombinedMetrics implements CalculatesPercentages {
 	}
 	
 	private String getDuplicationRiskProfile(int totalBefore, int clonedBefore, int totalAfter, int clonedAfter) {
-		double percBefore = calcPercentage(totalBefore, clonedBefore);
-		double percAfter = calcPercentage(totalAfter, clonedAfter);
+		double percBefore = calcPercentage(clonedBefore, totalBefore);
+		double percAfter = calcPercentage(clonedAfter, totalAfter);
 		return "Duplication went from "+String.format("%.2f", percBefore)+"% to "+String.format("%.2f", percAfter)+"%. "+RiskProfile.riskChange(ProblemType.DUPLICATION.getRisk(Math.toIntExact(Math.round(percBefore))), ProblemType.DUPLICATION.getRisk(Math.toIntExact(Math.round(percAfter))));
 	}
 
