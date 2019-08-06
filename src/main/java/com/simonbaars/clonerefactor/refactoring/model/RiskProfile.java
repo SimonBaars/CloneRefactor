@@ -3,6 +3,7 @@ package com.simonbaars.clonerefactor.refactoring.model;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.utils.Pair;
@@ -28,12 +29,19 @@ public class RiskProfile {
 		return newMethodProblemSize;
 	}
 
-	public RiskProfile calculateRisk(Map<MethodDeclaration, Integer> methodCC2, Map<MethodDeclaration, Integer> methodCC3) {
-		methodCC2.entrySet().forEach(e -> {
-			if(methodCC3.containsKey(e.getKey()))
-				changedProblemSize.put(e.getKey(), new Pair<Integer, Integer>(methodCC3.get(e.getKey()), e.getValue()));
+	public RiskProfile calculateRisk(Map<MethodDeclaration, Integer> post, Map<MethodDeclaration, Integer> pre) {
+		post.entrySet().forEach(e -> {
+			getMetricChanges(pre, e.getKey()).ifPresent(nPre -> {
+				changedProblemSize.put(e.getKey(), new Pair<Integer, Integer>(nPre, e.getValue()));
+			});
 		});
 		return this;
+	}
+	
+	public Optional<Integer> getMetricChanges(Map<MethodDeclaration, Integer> map, MethodDeclaration key){
+		if(map.containsKey(key))
+			return Optional.of(map.get(key));
+		return Optional.empty();
 	}
 	
 	@Override
@@ -42,7 +50,7 @@ public class RiskProfile {
 		builder.append("Created a new method with a "+type.getRisk(newMethodProblemSize).lowercase()+" risk "+type+" of "+newMethodProblemSize+"." + System.lineSeparator());
 		builder.append("Removing duplicate blocks changed "+changedProblemSize.size()+" methods." +System.lineSeparator());
 		for(Entry<MethodDeclaration, Pair<Integer, Integer>> e : changedProblemSize.entrySet()) {
-			builder.append("The method named \""+e.getKey().getNameAsString()+"\" went from "+e.getValue().a+" "+type+" to "+e.getValue().b+" "+type+". ");
+			builder.append("The method \""+e.getKey().getSignature().asString()+"\" went from "+e.getValue().a+" to "+e.getValue().b+" "+type+". ");
 			builder.append(riskChange(type.getRisk(e.getValue().a), type.getRisk(e.getValue().b))+System.lineSeparator());
 		}
 		builder.append(System.lineSeparator());

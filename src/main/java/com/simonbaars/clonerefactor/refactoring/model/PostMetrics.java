@@ -7,6 +7,7 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import com.github.javaparser.JavaParser;
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
@@ -36,7 +37,7 @@ public class PostMetrics implements RequiresNodeContext, CalculatesLineSize, Cal
 	
 	
 	public PostMetrics(MethodDeclaration newMethod, Optional<ClassOrInterfaceDeclaration> classOrInterface, List<Statement> methodcalls) {
-		methodcalls.stream().map(m -> getMethod(m)).filter(e -> e.isPresent()).map(o -> o.get()).collect(Collectors.toSet()).forEach(m -> {
+		methodcalls.stream().map(m -> getMethod(m)).filter(e -> e.isPresent()).map(o -> new JavaParser().parseBodyDeclaration(o.get().toString())).filter(o -> o.isSuccessful() && o.getResult().get() instanceof MethodDeclaration).map(o -> (MethodDeclaration)o.getResult().get()).collect(Collectors.toSet()).forEach(m -> {
 			methodCC.put(m, new CyclomaticComplexityCalculator().calculate(m));
 			methodLineSize.put(m, new UnitLineSizeCalculator().calculate(m));
 			methodTokenSize.put(m, new UnitTokenSizeCalculator().calculate(m));

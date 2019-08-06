@@ -92,7 +92,7 @@ public class CombinedMetrics implements CalculatesPercentages {
 				tellWhatHappened("Duplicated Lines",metrics.get("Cloned Lines"), duplicateLinesIncrease) + System.lineSeparator() +
 				"== Risk Profiles =="+ System.lineSeparator() + 
 				complexity + lineVolume + tokenVolume + 
-				"The new method has a "+ProblemType.UNITINTERFACESIZE+" of "+ProblemType.UNITINTERFACESIZE.getRisk(unitInterfaceSizeIncrease).lowercase()+" risk."+System.lineSeparator() + System.lineSeparator() +
+				"The new method has a "+ProblemType.UNITINTERFACESIZE.getRisk(unitInterfaceSizeIncrease).lowercase()+" risk "+ProblemType.UNITINTERFACESIZE+" of "+unitInterfaceSizeIncrease+"."+System.lineSeparator() + System.lineSeparator() +
 				getDuplicationRiskProfile(metrics.get("Total Nodes")-nodeSizeIncrease, metrics.get("Cloned Nodes")-duplicateNodesIncrease, metrics.get("Total Nodes"), metrics.get("Cloned Nodes"));
 	}
 	
