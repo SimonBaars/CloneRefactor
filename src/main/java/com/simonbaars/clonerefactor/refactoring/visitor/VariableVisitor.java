@@ -9,7 +9,10 @@ import com.github.javaparser.ast.body.FieldDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.body.Parameter;
 import com.github.javaparser.ast.body.VariableDeclarator;
+import com.github.javaparser.ast.expr.FieldAccessExpr;
 import com.github.javaparser.ast.expr.NameExpr;
+import com.github.javaparser.ast.expr.SimpleName;
+import com.github.javaparser.ast.expr.ThisExpr;
 import com.github.javaparser.ast.expr.VariableDeclarationExpr;
 import com.github.javaparser.ast.nodeTypes.NodeWithSimpleName;
 import com.github.javaparser.ast.nodeTypes.NodeWithType;
@@ -36,38 +39,55 @@ public class VariableVisitor extends VoidVisitorAdapter<Map<NameExpr, ResolvedTy
 		}
 	}
 	
-	public Optional<ResolvedVariable> findDeclaration(NameExpr variable) {
-		Optional<ResolvedVariable> seekParents = seekParents(variable);
+	public Optional<ResolvedVariable> findDeclaration(SimpleName variable) {
+		if(variable.getParentNode().isPresent() && variable.getParentNode().get() instanceof FieldAccessExpr) {
+			FieldAccessExpr fieldAccess = (FieldAccessExpr)variable.getParentNode().get();
+			if(fieldAccess.getScope() instanceof ThisExpr && getDeclaratorOfVariableForClass(variable, getClass())) {
+				
+			}
+		}
+		Optional<ResolvedVariable> seekParents = seekParents(variable, variable);
 		return seekParents;
 	}
 
-	private Optional<ResolvedVariable> seekParents(NameExpr variable) {
-		if(variable.getParentNode().isPresent()) {
-			Node parent = variable.getParentNode().get();
+	private Optional<ResolvedVariable> seekParents(SimpleName variable, Node node) {
+		if(node.getParentNode().isPresent()) {
+			Node parent = node.getParentNode().get();
 			if(parent instanceof MethodDeclaration) {
-				Optional<Parameter> declaration = ((MethodDeclaration)parent).getParameters().stream().filter(parameter -> parameter.getName().equals(variable.getName())).findAny();
+				Optional<Parameter> declaration = ((MethodDeclaration)parent).getParameters().stream().filter(parameter -> parameter.getName().equals(variable)).findAny();
 				if(declaration.isPresent())
 					return createResolvedVariable(declaration.get()); 
 			}
-			if(parent instanceof BlockStmt) {
+			else if(parent instanceof BlockStmt) {
 				for(Node child : parent.getChildNodes()) {
 					if(child instanceof ExpressionStmt && ((ExpressionStmt)child).getExpression() instanceof VariableDeclarationExpr) {
 						VariableDeclarationExpr dec = (VariableDeclarationExpr)((ExpressionStmt)child).getExpression();
 						for(VariableDeclarator decl : dec.getVariables()) {
-							if(decl.getName().equals(variable.getName()))
+							if(decl.getName().equals(variable))
 								return createResolvedVariable(decl); 
 						}
 					}
 				}
 			}
-			if(parent instanceof ClassOrInterfaceDeclaration && !((ClassOrInterfaceDeclaration)parent).isInterface()) {
+			else if(parent instanceof ClassOrInterfaceDeclaration && !((ClassOrInterfaceDeclaration)parent).isInterface()) {
 				ClassOrInterfaceDeclaration classDecl = (ClassOrInterfaceDeclaration)parent;
-				Optional<VariableDeclarator> declaration = classDecl.getMembers().stream().filter(e -> e instanceof FieldDeclaration).flatMap(e -> ((FieldDeclaration)e).getVariables().stream()).filter(e -> e.getName().equals(variable.getName())).findAny();
+				Optional<VariableDeclarator> declaration = getDeclaratorOfVariableForClass(variable, classDecl);
 				if(declaration.isPresent()) 
 					return createResolvedVariable(declaration.get());
 			}
+			seekParents(variable, parent);
 		}
 		return Optional.empty();
+	}
+	
+	private Optional<ResolvedVariable> findVariableInSuperclass(Map<String, ClassOrInterfaceDeclaration> classes, SimpleName variable){
+		
+		return Optional.empty();
+	}
+
+	private Optional<VariableDeclarator> getDeclaratorOfVariableForClass(SimpleName variable,
+			ClassOrInterfaceDeclaration classDecl) {
+		return classDecl.getMembers().stream().filter(e -> e instanceof FieldDeclaration).flatMap(e -> ((FieldDeclaration)e).getVariables().stream()).filter(e -> e.getName().equals(variable)).findAny();
 	}
 
 	private<T extends Node & NodeWithType & NodeWithSimpleName> Optional<ResolvedVariable> createResolvedVariable(T decl) {
