@@ -3,18 +3,20 @@ package com.simonbaars.clonerefactor.ast.compare;
 import java.util.Optional;
 
 import com.github.javaparser.ast.expr.NameExpr;
-import com.github.javaparser.resolution.types.ResolvedType;
+import com.simonbaars.clonerefactor.ast.ASTHolder;
 import com.simonbaars.clonerefactor.ast.interfaces.ResolvesSymbols;
+import com.simonbaars.clonerefactor.ast.resolution.ResolveVariable;
+import com.simonbaars.clonerefactor.ast.resolution.ResolvedVariable;
 import com.simonbaars.clonerefactor.settings.CloneType;
 
 public class CompareVariable extends Compare implements ResolvesSymbols {
 	private final NameExpr variableName;
-	private final Optional<ResolvedType> type;
+	private final Optional<ResolvedVariable> type;
 	
 	public CompareVariable(NameExpr t) {
 		super(t.getRange().get());
 		variableName = t;
-		type = resolve(t::calculateResolvedType);
+		type = new ResolveVariable(ASTHolder.getClasses(), t.getName()).findDeclaration();
 	}
 	
 	@Override

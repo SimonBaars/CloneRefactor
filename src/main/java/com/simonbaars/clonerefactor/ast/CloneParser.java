@@ -57,19 +57,25 @@ public class CloneParser implements SetsIfNotNull, RemovesDuplicates, WritesErro
 
 	private DetectionResults parseProject(Path projectRoot, SourceRoot sourceRoot, int nGenerated, final List<CompilationUnit> compilationUnits) {
 		final Map<String, ClassOrInterfaceDeclaration> classes = determineClasses(compilationUnits);
-		MetricCollector metricCollector = new MetricCollector(classes);
-		long beginTime = System.currentTimeMillis();
-		SequenceObservable seqObservable = new SequenceObservable().subscribe(new MetricObserver(metricCollector));
-		Location lastLoc = calculateLineReg(metricCollector, compilationUnits, seqObservable);
-		if(lastLoc!=null) {
-			List<Sequence> findChains = new CloneDetection(seqObservable).findChains(lastLoc);
-			doTypeSpecificTransformations(findChains);
-			metricCollector.getMetrics().generalStats.increment("Detection time", interval(beginTime));
-			DetectionResults res = new DetectionResults(metricCollector.reportClones(findChains), findChains);
-			if(Settings.get().getRefactoringStrategy() != RefactoringStrategy.DONOTREFACTOR)
-				new ExtractMethod(projectRoot, sourceRoot.getRoot(), compilationUnits, metricCollector, nGenerated, classes).refactor(findChains);
-			return res;
-		} else throw new IllegalStateException("Project has no usable sources!");
+		ASTHolder.setClasses(classes);
+		try {
+			MetricCollector metricCollector = new MetricCollector(classes);
+			long beginTime = System.currentTimeMillis();
+			SequenceObservable seqObservable = new SequenceObservable().subscribe(new MetricObserver(metricCollector));
+			Location lastLoc = calculateLineReg(metricCollector, compilationUnits, seqObservable);
+			
+			if(lastLoc!=null) {
+				List<Sequence> findChains = new CloneDetection(seqObservable).findChains(lastLoc);
+				doTypeSpecificTransformations(findChains);
+				metricCollector.getMetrics().generalStats.increment("Detection time", interval(beginTime));
+				DetectionResults res = new DetectionResults(metricCollector.reportClones(findChains), findChains);
+				if(Settings.get().getRefactoringStrategy() != RefactoringStrategy.DONOTREFACTOR)
+					new ExtractMethod(projectRoot, sourceRoot.getRoot(), compilationUnits, metricCollector, nGenerated, classes).refactor(findChains);
+				return res;
+			} else throw new IllegalStateException("Project has no usable sources!");
+		} finally {
+			ASTHolder.removeClasses();
+		}
 	}
 
 	private Map<String, ClassOrInterfaceDeclaration> determineClasses(List<CompilationUnit> compilationUnits) {
