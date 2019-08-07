@@ -40,6 +40,7 @@ import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import com.github.javaparser.ast.type.VoidType;
 import com.simonbaars.clonerefactor.ast.MetricObserver;
 import com.simonbaars.clonerefactor.ast.interfaces.RequiresNodeOperations;
+import com.simonbaars.clonerefactor.ast.interfaces.ResolvesSymbols;
 import com.simonbaars.clonerefactor.datatype.map.CountMap;
 import com.simonbaars.clonerefactor.datatype.map.ListMap;
 import com.simonbaars.clonerefactor.metrics.MetricCollector;
@@ -62,7 +63,7 @@ import com.simonbaars.clonerefactor.settings.Settings;
 import com.simonbaars.clonerefactor.util.DoesFileOperations;
 import com.simonbaars.clonerefactor.util.SavePaths;
 
-public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperations, DoesFileOperations {
+public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperations, DoesFileOperations, ResolvesSymbols {
 	private final PopulatesExtractedMethod[] populators = {new PopulateThrows(), new PopulateArguments(), new PopulateReturnValue(), new PopulateReturningFlow()};
 	private static final String METHOD_NAME = "cloneRefactor";
 	
@@ -79,6 +80,7 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 	private final List<CompilationUnit> compilationUnits;
 	private final Map<CompilationUnit, CompilationUnit> newComps = new HashMap<>();
 	private final CountMap<String> metrics = new CountMap<>();
+	private final Map<String, ClassOrInterfaceDeclaration> classes;
 	
 	public ExtractMethod(Path projectRoot, Path root, List<CompilationUnit> compilationUnits, MetricCollector metricCollector, int nGenerated, Map<String, ClassOrInterfaceDeclaration> classes) {
 		this.projectFolder = projectRoot;
@@ -90,6 +92,7 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 		gitCommit = Settings.get().getRefactoringStrategy().usesGit() ? new GitChangeCommitter(saveFolder) : new GitChangeCommitter();
 		this.compilationUnits = compilationUnits;
 		this.metricCollector = metricCollector;
+		this.classes = classes;
 		IntStream.range(0, populators.length).filter(i -> populators[i] instanceof PopulateArguments).forEach(i -> ((PopulateArguments)populators[i]).setClasses(classes));
 
 		metrics.put(MetricObserver.metricTotalSize(ProblemType.UNITCOMPLEXITY), metricCollector.getMetrics().generalStats.get(MetricObserver.metricTotalSize(ProblemType.UNITCOMPLEXITY)));
@@ -187,7 +190,7 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 		compilationUnits.add(cu);
 		relation.getIntersectingClasses().add(0, create(cu, createInterface).apply(name, createInterface ? new Keyword[] {Keyword.PUBLIC} : new Keyword[] {Keyword.PUBLIC, Keyword.ABSTRACT}));
 		cu.setStorage(Paths.get(compilationUnitFilePath(cu)));
-		if(metricCollector!=null) metricCollector.reportClass(relation.getFirstClass());
+		resolve(relation.getFirstClass()::resolve).ifPresent(type -> classes.put(type.getQualifiedName(), relation.getFirstClass()));
 	}
 	
 	public BiFunction<String, Keyword[], ClassOrInterfaceDeclaration> create(CompilationUnit cu, boolean createInterface) {

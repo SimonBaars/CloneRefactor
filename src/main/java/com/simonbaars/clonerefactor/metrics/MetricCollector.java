@@ -76,8 +76,4 @@ public class MetricCollector {
 	public Metrics getMetrics() {
 		return metrics;
 	}
-
-	public void reportClass(ClassOrInterfaceDeclaration firstClass) {
-		relationFinder.registerClass(firstClass);
-	}
 }
