@@ -1,10 +1,14 @@
 package com.simonbaars.clonerefactor.ast.resolution;
 
+import java.util.Optional;
+
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.expr.SimpleName;
 import com.github.javaparser.ast.type.Type;
+import com.github.javaparser.resolution.types.ResolvedType;
+import com.simonbaars.clonerefactor.ast.interfaces.ResolvesSymbols;
 
-public class ResolvedVariable {
+public class ResolvedVariable implements ResolvesSymbols {
 	public enum VariableType{
 		CLASSFIELD, SUPERCLASSFIELD, LOCAL, METHODPARAMETER;
 	}
@@ -36,5 +40,15 @@ public class ResolvedVariable {
 	
 	public VariableType getVariableType() {
 		return variableType;
+	}
+
+	@Override
+	public String toString() {
+		return "ResolvedVariable [type=" + type + ", name=" + name + ", node=" + node + ", variableType=" + variableType
+				+ "]";
+	}
+	
+	public Optional<ResolvedType> resolveType() {
+		return resolve(type::resolve);
 	}
 }
