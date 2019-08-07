@@ -36,8 +36,6 @@ import com.simonbaars.clonerefactor.thread.WritesErrors;
 public class CloneParser implements SetsIfNotNull, RemovesDuplicates, WritesErrors, CalculatesTimeIntervals, ResolvesSymbols {
 	
 	public DetectionResults parse(Path projectRoot, SourceRoot sourceRoot, ParserConfiguration config) {
-		MetricCollector metricCollector = new MetricCollector();
-		
 		final List<CompilationUnit> compilationUnits = createAST(sourceRoot, config);
 		
 		if(compilationUnits.isEmpty())
@@ -47,7 +45,7 @@ public class CloneParser implements SetsIfNotNull, RemovesDuplicates, WritesErro
 		int oldRefactored, refactored = 0;
 		do {
 			oldRefactored = refactored;
-			DetectionResults res = parseProject(projectRoot, sourceRoot, metricCollector, 0, compilationUnits);
+			DetectionResults res = parseProject(projectRoot, sourceRoot, prev == null ? 0 : prev.getMetrics().generalStats.get("Generated Declarations"), compilationUnits);
 			if(d == null)
 				d = res;
 			else prev.getMetrics().setChild(res.getMetrics());
@@ -57,8 +55,8 @@ public class CloneParser implements SetsIfNotNull, RemovesDuplicates, WritesErro
 		return d;
 	}
 
-	private DetectionResults parseProject(Path projectRoot, SourceRoot sourceRoot, MetricCollector metricCollector,
-			int nGenerated, final List<CompilationUnit> compilationUnits) {
+	private DetectionResults parseProject(Path projectRoot, SourceRoot sourceRoot, int nGenerated, final List<CompilationUnit> compilationUnits) {
+		MetricCollector metricCollector = new MetricCollector();
 		final Map<String, ClassOrInterfaceDeclaration> classes = determineClasses(compilationUnits);
 		long beginTime = System.currentTimeMillis();
 		SequenceObservable seqObservable = new SequenceObservable().subscribe(new MetricObserver(metricCollector));

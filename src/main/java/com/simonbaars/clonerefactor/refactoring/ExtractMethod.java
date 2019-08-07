@@ -114,6 +114,7 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 	}
 
 	private String extractMethod(Sequence s) {
+		metricCollector.getMetrics().generalStats.increment("Generated Declarations");
 		String methodName = METHOD_NAME+(nGeneratedDeclarations++);
 		PreMetrics preMetrics = new PreMetrics(s);
 		MethodDeclaration decl = new MethodDeclaration(Modifier.createModifierList(), new VoidType(), methodName);
@@ -177,6 +178,7 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 
 	private void createRelation(Sequence s, Relation relation) {
 		boolean createInterface = relation.isInterfaceRelation();
+		metricCollector.getMetrics().generalStats.increment("Generated Declarations");
 		String name = "CloneRefactor"+(nGeneratedDeclarations++);
 		ClassOrInterfaceType implementedType = new JavaParser().parseClassOrInterfaceType(name).getResult().get();
 		relation.getIntersectingClasses().forEach(c -> addType(c, createInterface).apply(implementedType));
@@ -268,7 +270,7 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 		}
 	}
 
-	public int refactor(List<Sequence> foundCloneClasses) {
+	public void refactor(List<Sequence> foundCloneClasses) {
 		Collections.sort(foundCloneClasses);
 		for(Sequence s : foundCloneClasses) {
 			if(noOverlap(refactoredSequences.keySet(), s) && !isGenerated(s)) {
@@ -276,7 +278,6 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 			}
 		}
 		saveCUs();
-		return nGeneratedDeclarations;
 	}
 
 	private void saveCUs() {
