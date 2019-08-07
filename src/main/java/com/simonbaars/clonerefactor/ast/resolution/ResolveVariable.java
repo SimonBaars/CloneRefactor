@@ -37,56 +37,73 @@ public class ResolveVariable implements ResolvesSymbols {
 	public Optional<ResolvedVariable> findDeclaration() {
 		if(variable.getParentNode().isPresent() && variable.getParentNode().get() instanceof FieldAccessExpr) {
 			FieldAccessExpr fieldAccess = (FieldAccessExpr)variable.getParentNode().get();
-			if(fieldAccess.getScope() instanceof ThisExpr && getDeclaratorOfVariableForClass(getClass())) {
-				
+			if(fieldAccess.getScope() instanceof ThisExpr) {
+				return seekParents(variable, true);
 			}
 		}
-		Optional<ResolvedVariable> seekParents = seekParents(variable);
-		return seekParents;
+		return seekParents(variable, false);
 	}
 
-	private Optional<ResolvedVariable> seekParents(Node node) {
+	private Optional<ResolvedVariable> seekParents(Node node, boolean onlyGlobal) {
+		Optional<ResolvedVariable> result;
 		if(node.getParentNode().isPresent()) {
 			Node parent = node.getParentNode().get();
-			if(parent instanceof MethodDeclaration) {
-				Optional<Parameter> declaration = ((MethodDeclaration)parent).getParameters().stream().filter(parameter -> parameter.getName().equals(variable)).findAny();
-				if(declaration.isPresent())
-					return createResolvedVariable(declaration.get()); 
+			if(!onlyGlobal) {
+				if((result = findInMethodDeclaration(parent)).isPresent()) return result;
+				if((result = findInBlockStmt(parent)).isPresent()) return result;
 			}
-			else if(parent instanceof BlockStmt) {
-				for(Node child : parent.getChildNodes()) {
-					if(child instanceof ExpressionStmt && ((ExpressionStmt)child).getExpression() instanceof VariableDeclarationExpr) {
-						VariableDeclarationExpr dec = (VariableDeclarationExpr)((ExpressionStmt)child).getExpression();
-						for(VariableDeclarator decl : dec.getVariables()) {
-							if(decl.getName().equals(variable))
-								return createResolvedVariable(decl); 
-						}
+			if((result = findInClassDeclaration(parent)).isPresent()) return result;
+			seekParents(parent, onlyGlobal);
+		}
+		return Optional.empty();
+	}
+
+	private Optional<ResolvedVariable> findInClassDeclaration(Node parent) {
+		if(parent instanceof ClassOrInterfaceDeclaration && !((ClassOrInterfaceDeclaration)parent).isInterface()) {
+			Optional<ResolvedVariable> resolved = findVariableInSuperclass((ClassOrInterfaceDeclaration)parent, false);
+			if(resolved.isPresent())
+				return resolved;
+		}
+		return Optional.empty();
+	}
+
+	private Optional<ResolvedVariable> findInMethodDeclaration(Node parent) {
+		if(parent instanceof MethodDeclaration) {
+			Optional<Parameter> declaration = ((MethodDeclaration)parent).getParameters().stream().filter(parameter -> parameter.getName().equals(variable)).findAny();
+			if(declaration.isPresent())
+				return createResolvedVariable(declaration.get(), VariableType.METHODPARAMETER); 
+		}
+		return Optional.empty();
+	}
+
+	private Optional<ResolvedVariable> findInBlockStmt(Node parent) {
+		if(parent instanceof BlockStmt) {
+			for(Node child : parent.getChildNodes()) {
+				if(child instanceof ExpressionStmt && ((ExpressionStmt)child).getExpression() instanceof VariableDeclarationExpr) {
+					VariableDeclarationExpr dec = (VariableDeclarationExpr)((ExpressionStmt)child).getExpression();
+					for(VariableDeclarator decl : dec.getVariables()) {
+						if(decl.getName().equals(variable) && (decl.getRange().get().begin.isBefore(variable.getRange().get().begin)|| decl.getRange().get().begin.equals(variable.getRange().get().begin)))
+							return createResolvedVariable(decl, VariableType.LOCAL); 
 					}
 				}
 			}
-			else if(parent instanceof ClassOrInterfaceDeclaration && !((ClassOrInterfaceDeclaration)parent).isInterface()) {
-				Optional<ResolvedVariable> resolved = findVariableInSuperclass((ClassOrInterfaceDeclaration)parent);
-				if(resolved.isPresent())
-					return resolved;
-			}
-			seekParents(parent);
 		}
 		return Optional.empty();
 	}
 	
-	private Optional<ResolvedVariable> findVariableInSuperclass(ClassOrInterfaceDeclaration classDecl){
+	private Optional<ResolvedVariable> findVariableInSuperclass(ClassOrInterfaceDeclaration classDecl, boolean isSuperclass){
 		Optional<VariableDeclarator> declaration = getDeclaratorOfVariableForClass(classDecl);
 		if(declaration.isPresent()) 
-			return createResolvedVariable(declaration.get());
+			return createResolvedVariable(declaration.get(), isSuperclass ? VariableType.SUPERCLASSFIELD : VariableType.CLASSFIELD);
 		return classDecl.getExtendedTypes().stream().map(e -> resolve(e::resolve)).filter(Optional::isPresent).map(Optional::get).map(ResolvedReferenceType::getQualifiedName)
-				.filter(e -> classes.containsKey(e)).map(classes::get).map(this::findVariableInSuperclass).filter(Optional::isPresent).map(Optional::get).findAny();
+				.filter(e -> classes.containsKey(e)).map(classes::get).map(e -> findVariableInSuperclass(e, true)).filter(Optional::isPresent).map(Optional::get).findAny();
 	}
 
 	private Optional<VariableDeclarator> getDeclaratorOfVariableForClass(ClassOrInterfaceDeclaration classDecl) {
 		return classDecl.getMembers().stream().filter(e -> e instanceof FieldDeclaration).flatMap(e -> ((FieldDeclaration)e).getVariables().stream()).filter(e -> e.getName().equals(variable)).findAny();
 	}
 
-	private<T extends Node & NodeWithType & NodeWithSimpleName> Optional<ResolvedVariable> createResolvedVariable(T decl) {
-		return Optional.of(new ResolvedVariable(decl.getType(), decl.getName(), decl, VariableType.METHODPARAMETER));
+	private<T extends Node & NodeWithType & NodeWithSimpleName> Optional<ResolvedVariable> createResolvedVariable(T decl, VariableType type) {
+		return Optional.of(new ResolvedVariable(decl.getType(), decl.getName(), decl, type));
 	}
 }
