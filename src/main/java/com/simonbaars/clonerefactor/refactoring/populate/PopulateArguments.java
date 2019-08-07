@@ -1,7 +1,7 @@
 package com.simonbaars.clonerefactor.refactoring.populate;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -16,7 +16,7 @@ import com.simonbaars.clonerefactor.ast.resolution.ResolvedVariable;
 import com.simonbaars.clonerefactor.refactoring.visitor.VariableVisitor;
 
 public class PopulateArguments implements PopulatesExtractedMethod {
-	final Map<SimpleName, ResolvedVariable> usedVariables = new HashMap<>();
+	final Map<SimpleName, ResolvedVariable> usedVariables = new LinkedHashMap<>();
 	Map<String, ClassOrInterfaceDeclaration> classes;
 	
 	public PopulateArguments() {}
