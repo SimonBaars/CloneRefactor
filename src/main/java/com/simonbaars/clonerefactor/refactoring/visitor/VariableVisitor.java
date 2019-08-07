@@ -22,7 +22,7 @@ import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 import com.github.javaparser.resolution.declarations.ResolvedValueDeclaration;
 import com.github.javaparser.resolution.types.ResolvedType;
 import com.simonbaars.clonerefactor.ast.interfaces.ResolvesSymbols;
-import com.simonbaars.clonerefactor.refactoring.visitor.ResolvedVariable.VariableType;
+import com.simonbaars.clonerefactor.ast.resolution.ResolvedVariable.VariableType;
 
 public class VariableVisitor extends VoidVisitorAdapter<Map<NameExpr, ResolvedType>> implements ResolvesSymbols {
 

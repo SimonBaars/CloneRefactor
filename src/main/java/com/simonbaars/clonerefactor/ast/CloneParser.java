@@ -3,15 +3,20 @@ package com.simonbaars.clonerefactor.ast;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import com.github.javaparser.ParseResult;
 import com.github.javaparser.ParserConfiguration;
 import com.github.javaparser.ast.CompilationUnit;
+import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.utils.SourceRoot;
 import com.github.javaparser.utils.SourceRoot.Callback.Result;
 import com.simonbaars.clonerefactor.SequenceObservable;
+import com.simonbaars.clonerefactor.ast.interfaces.ResolvesSymbols;
 import com.simonbaars.clonerefactor.ast.interfaces.SetsIfNotNull;
 import com.simonbaars.clonerefactor.detection.CloneDetection;
 import com.simonbaars.clonerefactor.detection.interfaces.RemovesDuplicates;
@@ -28,8 +33,8 @@ import com.simonbaars.clonerefactor.settings.Settings;
 import com.simonbaars.clonerefactor.thread.CalculatesTimeIntervals;
 import com.simonbaars.clonerefactor.thread.WritesErrors;
 
-public class CloneParser implements SetsIfNotNull, RemovesDuplicates, WritesErrors, CalculatesTimeIntervals {
-
+public class CloneParser implements SetsIfNotNull, RemovesDuplicates, WritesErrors, CalculatesTimeIntervals, ResolvesSymbols {
+	
 	public DetectionResults parse(Path projectRoot, SourceRoot sourceRoot, ParserConfiguration config) {
 		MetricCollector metricCollector = new MetricCollector();
 		
@@ -54,6 +59,7 @@ public class CloneParser implements SetsIfNotNull, RemovesDuplicates, WritesErro
 
 	private DetectionResults parseProject(Path projectRoot, SourceRoot sourceRoot, MetricCollector metricCollector,
 			int nGenerated, final List<CompilationUnit> compilationUnits) {
+		final Map<String, ClassOrInterfaceDeclaration> classes = determineClasses(compilationUnits);
 		long beginTime = System.currentTimeMillis();
 		SequenceObservable seqObservable = new SequenceObservable().subscribe(new MetricObserver(metricCollector));
 		Location lastLoc = calculateLineReg(metricCollector, compilationUnits, seqObservable);
@@ -66,6 +72,14 @@ public class CloneParser implements SetsIfNotNull, RemovesDuplicates, WritesErro
 				new ExtractMethod(projectRoot, sourceRoot.getRoot(), compilationUnits, metricCollector, nGenerated).refactor(findChains);
 			return res;
 		} else throw new IllegalStateException("Project has no usable sources!");
+	}
+
+	private Map<String, ClassOrInterfaceDeclaration> determineClasses(List<CompilationUnit> compilationUnits) {
+		Map<String, ClassOrInterfaceDeclaration> classes = new HashMap<>();
+		for(ClassOrInterfaceDeclaration classDecl : compilationUnits.stream().flatMap(cu -> cu.getTypes().stream()).filter(e -> e instanceof ClassOrInterfaceDeclaration).map(e -> (ClassOrInterfaceDeclaration)e).collect(Collectors.toList())) {
+			resolve(classDecl::resolve).ifPresent(resolved -> classes.put(resolved.getQualifiedName(), classDecl));
+		}
+		return classes;
 	}
 
 	private void doTypeSpecificTransformations(List<Sequence> findChains) {
