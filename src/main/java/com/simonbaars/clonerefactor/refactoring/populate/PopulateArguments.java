@@ -1,9 +1,9 @@
 package com.simonbaars.clonerefactor.refactoring.populate;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Optional;
 
 import com.github.javaparser.ast.Node;
@@ -24,9 +24,12 @@ public class PopulateArguments implements PopulatesExtractedMethod {
 	@Override
 	public void prePopulate(MethodDeclaration extractedMethod, List<Node> topLevel) {
 		topLevel.forEach(n -> n.accept(new VariableVisitor(classes), usedVariables));
-		for(Entry<SimpleName, ResolvedVariable> var : usedVariables.entrySet()) {
-			if(!declaresVariable(topLevel, var.getValue())) {
-				extractedMethod.addParameter(var.getValue().getType(), var.getKey().asString());
+		for(SimpleName varName : new ArrayList<>(usedVariables.keySet())) {
+			ResolvedVariable var = usedVariables.get(varName);
+			if(!declaresVariable(topLevel, var)) {
+				extractedMethod.addParameter(var.getType(), varName.asString());
+			} else {
+				usedVariables.remove(varName);
 			}
 		}
 	}
