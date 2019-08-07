@@ -56,8 +56,8 @@ public class CloneParser implements SetsIfNotNull, RemovesDuplicates, WritesErro
 	}
 
 	private DetectionResults parseProject(Path projectRoot, SourceRoot sourceRoot, int nGenerated, final List<CompilationUnit> compilationUnits) {
-		MetricCollector metricCollector = new MetricCollector();
 		final Map<String, ClassOrInterfaceDeclaration> classes = determineClasses(compilationUnits);
+		MetricCollector metricCollector = new MetricCollector(classes);
 		long beginTime = System.currentTimeMillis();
 		SequenceObservable seqObservable = new SequenceObservable().subscribe(new MetricObserver(metricCollector));
 		Location lastLoc = calculateLineReg(metricCollector, compilationUnits, seqObservable);

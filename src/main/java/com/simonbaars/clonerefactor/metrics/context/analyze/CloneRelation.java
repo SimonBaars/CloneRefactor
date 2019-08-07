@@ -15,7 +15,6 @@ import static com.simonbaars.clonerefactor.metrics.context.enums.RelationType.SU
 import static com.simonbaars.clonerefactor.metrics.context.enums.RelationType.UNRELATED;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -37,9 +36,11 @@ import com.simonbaars.clonerefactor.model.Sequence;
 public class CloneRelation implements DeterminesMetric<Relation>, SeekClassHierarchy, SeekInterfaceHierarchy { 
 	
 	private static final String JAVA_OBJECT_CLASS_NAME = "Object";
-	private final Map<String, ClassOrInterfaceDeclaration> classes = new HashMap<>();
+	private final Map<String, ClassOrInterfaceDeclaration> classes;
 	
-	public CloneRelation() {}
+	public CloneRelation(Map<String, ClassOrInterfaceDeclaration> classes) {
+		this.classes = classes;
+	}
 	
 	public Relation getLocation(Node n1, Node n2) {
 		Optional<ClassOrInterfaceDeclaration> class1 = getClass(n1);
@@ -118,15 +119,6 @@ public class CloneRelation implements DeterminesMetric<Relation>, SeekClassHiera
 		return !superclassC1.getNameAsString().equals(JAVA_OBJECT_CLASS_NAME) && 
 			   !superclassC2.getNameAsString().equals(JAVA_OBJECT_CLASS_NAME) && 
 				getFullyQualifiedName(superclassC1).equals(getFullyQualifiedName(superclassC2)) ? uses(cc) : Optional.empty();
-	}
-
-	public void registerNode(Node n) {
-		if(n instanceof ClassOrInterfaceDeclaration)
-			registerClass((ClassOrInterfaceDeclaration)n);
-	}
-
-	public void registerClass(ClassOrInterfaceDeclaration n2) {
-		classes.put(getFullyQualifiedName(n2), n2);
 	}
 	
 	private Optional<ClassOrInterfaceDeclaration[]> isSibling(ComparingClasses cc){

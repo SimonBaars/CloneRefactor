@@ -1,6 +1,7 @@
 package com.simonbaars.clonerefactor.metrics;
 
 import java.util.List;
+import java.util.Map;
 
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.simonbaars.clonerefactor.metrics.context.Metric;
@@ -14,18 +15,19 @@ import com.simonbaars.clonerefactor.model.location.Location;
 
 public class MetricCollector {
 	private final Metrics metrics = new Metrics();
-	private final CloneRelation relationFinder = new CloneRelation();
+	private final CloneRelation relationFinder;
 	private final CloneLocation locationFinder = new CloneLocation();
 	private final CloneContents contentsFinder = new CloneContents();
 	private final CloneRefactorability extractFinder = new CloneRefactorability();
 	
-	public MetricCollector() {}
-	
+	public MetricCollector(Map<String, ClassOrInterfaceDeclaration> classes) {
+		this.relationFinder = new CloneRelation(classes);
+	}
+
 	public void reportFoundNode(Location l) {
 		metrics.incrementGeneralStatistic(Metric.NODES, StatType.TOTAL, 1);
 		metrics.incrementGeneralStatistic(Metric.TOKENS, StatType.TOTAL, l.getAmountOfTokens());
 		metrics.incrementGeneralStatistic(Metric.LINES, StatType.TOTAL, l.getAmountOfLines());
-		l.getContents().getNodes().forEach(relationFinder::registerNode);
 	}
 
 	public Metrics reportClones(List<Sequence> clones) {
