@@ -16,6 +16,7 @@ import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.StreamSupport;
 
 import com.github.javaparser.JavaParser;
@@ -79,7 +80,7 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 	private final Map<CompilationUnit, CompilationUnit> newComps = new HashMap<>();
 	private final CountMap<String> metrics = new CountMap<>();
 	
-	public ExtractMethod(Path projectRoot, Path root, List<CompilationUnit> compilationUnits, MetricCollector metricCollector, int nGenerated) {
+	public ExtractMethod(Path projectRoot, Path root, List<CompilationUnit> compilationUnits, MetricCollector metricCollector, int nGenerated, Map<String, ClassOrInterfaceDeclaration> classes) {
 		this.projectFolder = projectRoot;
 		this.sourceFolder = root;
 		this.nGeneratedDeclarations = nGenerated;
@@ -89,6 +90,7 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 		gitCommit = Settings.get().getRefactoringStrategy().usesGit() ? new GitChangeCommitter(saveFolder) : new GitChangeCommitter();
 		this.compilationUnits = compilationUnits;
 		this.metricCollector = metricCollector;
+		IntStream.range(0, populators.length).filter(i -> populators[i] instanceof PopulateArguments).forEach(i -> ((PopulateArguments)populators[i]).setClasses(classes));
 
 		metrics.put(MetricObserver.metricTotalSize(ProblemType.UNITCOMPLEXITY), metricCollector.getMetrics().generalStats.get(MetricObserver.metricTotalSize(ProblemType.UNITCOMPLEXITY)));
 		metrics.put(MetricObserver.metricTotalSize(ProblemType.UNITINTERFACESIZE), metricCollector.getMetrics().generalStats.get(MetricObserver.metricTotalSize(ProblemType.UNITINTERFACESIZE)));
