@@ -1,7 +1,9 @@
 package com.simonbaars.clonerefactor.ast.resolution;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
@@ -17,10 +19,12 @@ import com.github.javaparser.ast.nodeTypes.NodeWithSimpleName;
 import com.github.javaparser.ast.nodeTypes.NodeWithType;
 import com.github.javaparser.ast.stmt.BlockStmt;
 import com.github.javaparser.ast.stmt.ExpressionStmt;
+import com.github.javaparser.resolution.types.ResolvedReferenceType;
+import com.simonbaars.clonerefactor.ast.interfaces.ResolvesSymbols;
 import com.simonbaars.clonerefactor.refactoring.visitor.ResolvedVariable;
 import com.simonbaars.clonerefactor.refactoring.visitor.ResolvedVariable.VariableType;
 
-public class ResolveVariable {
+public class ResolveVariable implements ResolvesSymbols {
 	
 	private final Map<String, ClassOrInterfaceDeclaration> classes;
 	private final SimpleName variable;
@@ -61,10 +65,9 @@ public class ResolveVariable {
 				}
 			}
 			else if(parent instanceof ClassOrInterfaceDeclaration && !((ClassOrInterfaceDeclaration)parent).isInterface()) {
-				ClassOrInterfaceDeclaration classDecl = (ClassOrInterfaceDeclaration)parent;
-				Optional<VariableDeclarator> declaration = getDeclaratorOfVariableForClass(classDecl);
-				if(declaration.isPresent()) 
-					return createResolvedVariable(declaration.get());
+				Optional<ResolvedVariable> resolved = findVariableInSuperclass((ClassOrInterfaceDeclaration)parent);
+				if(resolved.isPresent())
+					return resolved;
 			}
 			seekParents(parent);
 		}
@@ -72,8 +75,11 @@ public class ResolveVariable {
 	}
 	
 	private Optional<ResolvedVariable> findVariableInSuperclass(ClassOrInterfaceDeclaration classDecl){
-		classDecl.getExtendedTypes().stream().map(e -> findVariableInSuperclass(null, variable));
-		return Optional.empty();
+		Optional<VariableDeclarator> declaration = getDeclaratorOfVariableForClass(classDecl);
+		if(declaration.isPresent()) 
+			return createResolvedVariable(declaration.get());
+		return classDecl.getExtendedTypes().stream().map(e -> resolve(e::resolve)).filter(Optional::isPresent).map(Optional::get).map(ResolvedReferenceType::getQualifiedName)
+				.filter(e -> classes.containsKey(e)).map(classes::get).map(this::findVariableInSuperclass).filter(Optional::isPresent).map(Optional::get).findAny();
 	}
 
 	private Optional<VariableDeclarator> getDeclaratorOfVariableForClass(ClassOrInterfaceDeclaration classDecl) {
