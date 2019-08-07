@@ -52,7 +52,7 @@ public class ResolveVariable implements ResolvesSymbols {
 				if((result = findInBlockStmt(parent)).isPresent()) return result;
 			}
 			if((result = findInClassDeclaration(parent)).isPresent()) return result;
-			seekParents(parent, onlyGlobal);
+			return seekParents(parent, onlyGlobal);
 		}
 		return Optional.empty();
 	}
