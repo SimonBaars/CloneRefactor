@@ -10,6 +10,7 @@ import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.body.Parameter;
 import com.github.javaparser.ast.body.VariableDeclarator;
 import com.github.javaparser.ast.expr.FieldAccessExpr;
+import com.github.javaparser.ast.expr.NameExpr;
 import com.github.javaparser.ast.expr.SimpleName;
 import com.github.javaparser.ast.expr.ThisExpr;
 import com.github.javaparser.ast.expr.VariableDeclarationExpr;
@@ -17,6 +18,7 @@ import com.github.javaparser.ast.nodeTypes.NodeWithSimpleName;
 import com.github.javaparser.ast.nodeTypes.NodeWithType;
 import com.github.javaparser.ast.stmt.BlockStmt;
 import com.github.javaparser.ast.stmt.ExpressionStmt;
+import com.github.javaparser.ast.stmt.ForEachStmt;
 import com.github.javaparser.resolution.types.ResolvedReferenceType;
 import com.simonbaars.clonerefactor.ast.interfaces.ResolvesSymbols;
 import com.simonbaars.clonerefactor.ast.resolution.ResolvedVariable.VariableType;
@@ -32,6 +34,9 @@ public class ResolveVariable implements ResolvesSymbols {
 	}
 	
 	public Optional<ResolvedVariable> findDeclaration() {
+		if(!(variable.getParentNode().get() instanceof NameExpr || variable.getParentNode().get() instanceof FieldAccessExpr))
+			return Optional.empty();
+			
 		if(variable.getParentNode().isPresent() && variable.getParentNode().get() instanceof FieldAccessExpr) {
 			FieldAccessExpr fieldAccess = (FieldAccessExpr)variable.getParentNode().get();
 			if(fieldAccess.getScope() instanceof ThisExpr) {
@@ -74,10 +79,27 @@ public class ResolveVariable implements ResolvesSymbols {
 		}
 		return Optional.empty();
 	}
+	
+	private Optional<ResolvedVariable> findInLoop(Node parent) {
+		for(Node child : parent.getChildNodes()) {
+			if(child instanceof VariableDeclarationExpr) {
+				VariableDeclarationExpr
+			}
+		}
+		if(parent instanceof MethodDeclaration) {
+			Optional<Parameter> declaration = ((MethodDeclaration)parent).getParameters().stream().filter(parameter -> parameter.getName().equals(variable)).findAny();
+			if(declaration.isPresent())
+				return createResolvedVariable(declaration.get(), VariableType.METHODPARAMETER); 
+		}
+		return Optional.empty();
+	}
 
 	private Optional<ResolvedVariable> findInBlockStmt(Node parent) {
 		if(parent instanceof BlockStmt) {
 			for(Node child : parent.getChildNodes()) {
+				if(child instanceof ExpressionStmt) {
+					child = ((ExpressionStmt)child).getExpression();
+				}
 				if(child instanceof ExpressionStmt && ((ExpressionStmt)child).getExpression() instanceof VariableDeclarationExpr) {
 					VariableDeclarationExpr dec = (VariableDeclarationExpr)((ExpressionStmt)child).getExpression();
 					for(VariableDeclarator decl : dec.getVariables()) {
