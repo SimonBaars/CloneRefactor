@@ -6,12 +6,11 @@ import java.util.Optional;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.expr.SimpleName;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
-import com.github.javaparser.resolution.types.ResolvedType;
 import com.simonbaars.clonerefactor.ast.interfaces.ResolvesSymbols;
 import com.simonbaars.clonerefactor.ast.resolution.ResolveVariable;
 import com.simonbaars.clonerefactor.ast.resolution.ResolvedVariable;
 
-public class VariableVisitor extends VoidVisitorAdapter<Map<SimpleName, ResolvedType>> implements ResolvesSymbols {
+public class VariableVisitor extends VoidVisitorAdapter<Map<SimpleName, ResolvedVariable>> implements ResolvesSymbols {
 
 	private Map<String, ClassOrInterfaceDeclaration> classes;
 
@@ -20,16 +19,12 @@ public class VariableVisitor extends VoidVisitorAdapter<Map<SimpleName, Resolved
 	}
 
 	@Override
-	public void visit(SimpleName ne, Map<SimpleName, ResolvedType> arg) {
+	public void visit(SimpleName ne, Map<SimpleName, ResolvedVariable> arg) {
 		super.visit(ne, arg);
 		System.out.println(ne);
 		Optional<ResolvedVariable> resolvedVar = new ResolveVariable(classes, ne).findDeclaration();
 		if(resolvedVar.isPresent()) {
-			Optional<ResolvedType> type = resolvedVar.get().resolveType();
-			System.out.println(resolvedVar.get().toString()+ ", "+type.isPresent());
-			if(type.isPresent()) {
-				arg.put(ne, type.get());
-			}
+			arg.put(ne, resolvedVar.get());
 			
 		} else {
 			System.out.println(ne+" not found");

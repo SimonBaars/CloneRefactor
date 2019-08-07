@@ -12,12 +12,12 @@ import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.expr.MethodCallExpr;
 import com.github.javaparser.ast.expr.SimpleName;
 import com.github.javaparser.ast.stmt.Statement;
-import com.github.javaparser.resolution.types.ResolvedType;
+import com.simonbaars.clonerefactor.ast.resolution.ResolvedVariable;
 import com.simonbaars.clonerefactor.refactoring.visitor.DeclaresVariableVisitor;
 import com.simonbaars.clonerefactor.refactoring.visitor.VariableVisitor;
 
 public class PopulateArguments implements PopulatesExtractedMethod {
-	final Map<SimpleName, ResolvedType> usedVariables = new HashMap<>();
+	final Map<SimpleName, ResolvedVariable> usedVariables = new HashMap<>();
 	Map<String, ClassOrInterfaceDeclaration> classes;
 	
 	public PopulateArguments() {}
@@ -25,9 +25,9 @@ public class PopulateArguments implements PopulatesExtractedMethod {
 	@Override
 	public void prePopulate(MethodDeclaration extractedMethod, List<Node> topLevel) {
 		topLevel.forEach(n -> n.accept(new VariableVisitor(classes), usedVariables));
-		for(Entry<SimpleName, ResolvedType> var : usedVariables.entrySet()) {
+		for(Entry<SimpleName, ResolvedVariable> var : usedVariables.entrySet()) {
 			if(declaresVariable(extractedMethod, var.getKey())) {
-				extractedMethod.addParameter(var.getValue().describe(), var.getKey().asString());
+				extractedMethod.addParameter(var.getValue().getType(), var.getKey().asString());
 			}
 		}
 	}
