@@ -13,7 +13,6 @@ import com.github.javaparser.ast.expr.MethodCallExpr;
 import com.github.javaparser.ast.expr.SimpleName;
 import com.github.javaparser.ast.stmt.Statement;
 import com.simonbaars.clonerefactor.ast.resolution.ResolvedVariable;
-import com.simonbaars.clonerefactor.refactoring.visitor.DeclaresVariableVisitor;
 import com.simonbaars.clonerefactor.refactoring.visitor.VariableVisitor;
 
 public class PopulateArguments implements PopulatesExtractedMethod {
@@ -26,10 +25,18 @@ public class PopulateArguments implements PopulatesExtractedMethod {
 	public void prePopulate(MethodDeclaration extractedMethod, List<Node> topLevel) {
 		topLevel.forEach(n -> n.accept(new VariableVisitor(classes), usedVariables));
 		for(Entry<SimpleName, ResolvedVariable> var : usedVariables.entrySet()) {
-			if(declaresVariable(extractedMethod, var.getKey())) {
+			if(declaresVariable(topLevel, var.getValue())) {
 				extractedMethod.addParameter(var.getValue().getType(), var.getKey().asString());
 			}
 		}
+	}
+
+	private boolean declaresVariable(List<Node> topLevel, ResolvedVariable value) {
+		for(Node node : topLevel) {
+			if(node.containsWithin(value.getNode()))
+				return true;
+		}
+		return false;
 	}
 
 	@Override
@@ -41,13 +48,6 @@ public class PopulateArguments implements PopulatesExtractedMethod {
 	@Override
 	public void postPopulate(MethodDeclaration extractedMethod) {
 		usedVariables.clear();
-	}
-
-	private boolean declaresVariable(MethodDeclaration extractedMethod, SimpleName varName) {
-		Boolean b = extractedMethod.accept(new DeclaresVariableVisitor(), varName);
-		if(b == null)
-			return false;
-		return b;
 	}
 
 	public void setClasses(Map<String, ClassOrInterfaceDeclaration> classes) {
