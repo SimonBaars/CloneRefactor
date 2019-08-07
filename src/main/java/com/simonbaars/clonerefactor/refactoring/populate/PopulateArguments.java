@@ -25,7 +25,7 @@ public class PopulateArguments implements PopulatesExtractedMethod {
 	public void prePopulate(MethodDeclaration extractedMethod, List<Node> topLevel) {
 		topLevel.forEach(n -> n.accept(new VariableVisitor(classes), usedVariables));
 		for(Entry<SimpleName, ResolvedVariable> var : usedVariables.entrySet()) {
-			if(declaresVariable(topLevel, var.getValue())) {
+			if(!declaresVariable(topLevel, var.getValue())) {
 				extractedMethod.addParameter(var.getValue().getType(), var.getKey().asString());
 			}
 		}
