@@ -1,9 +1,7 @@
 package com.simonbaars.clonerefactor.ast.resolution;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
@@ -39,6 +37,8 @@ public class ResolveVariable implements ResolvesSymbols {
 			FieldAccessExpr fieldAccess = (FieldAccessExpr)variable.getParentNode().get();
 			if(fieldAccess.getScope() instanceof ThisExpr) {
 				return seekParents(variable, true);
+			} else if(fieldAccess.getName().equals(variable)) {
+				return Optional.empty();
 			}
 		}
 		return seekParents(variable, false);
@@ -103,6 +103,7 @@ public class ResolveVariable implements ResolvesSymbols {
 		return classDecl.getMembers().stream().filter(e -> e instanceof FieldDeclaration).flatMap(e -> ((FieldDeclaration)e).getVariables().stream()).filter(e -> e.getName().equals(variable)).findAny();
 	}
 
+	@SuppressWarnings("rawtypes")
 	private<T extends Node & NodeWithType & NodeWithSimpleName> Optional<ResolvedVariable> createResolvedVariable(T decl, VariableType type) {
 		return Optional.of(new ResolvedVariable(decl.getType(), decl.getName(), decl, type));
 	}
