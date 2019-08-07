@@ -54,7 +54,7 @@ public class ResolveVariable implements ResolvesSymbols {
 			Node parent = node.getParentNode().get();
 			if(!onlyGlobal) {
 				if((result = findInMethodDeclaration(parent)).isPresent()) return result;
-				if((result = findInBlockStmt(parent)).isPresent()) return result;
+				if((result = findLocalVariable(parent)).isPresent()) return result;
 			}
 			if((result = findInClassDeclaration(parent)).isPresent()) return result;
 			return seekParents(parent, onlyGlobal);
@@ -79,33 +79,16 @@ public class ResolveVariable implements ResolvesSymbols {
 		}
 		return Optional.empty();
 	}
-	
-	private Optional<ResolvedVariable> findInLoop(Node parent) {
-		for(Node child : parent.getChildNodes()) {
-			if(child instanceof VariableDeclarationExpr) {
-				VariableDeclarationExpr
-			}
-		}
-		if(parent instanceof MethodDeclaration) {
-			Optional<Parameter> declaration = ((MethodDeclaration)parent).getParameters().stream().filter(parameter -> parameter.getName().equals(variable)).findAny();
-			if(declaration.isPresent())
-				return createResolvedVariable(declaration.get(), VariableType.METHODPARAMETER); 
-		}
-		return Optional.empty();
-	}
 
-	private Optional<ResolvedVariable> findInBlockStmt(Node parent) {
-		if(parent instanceof BlockStmt) {
-			for(Node child : parent.getChildNodes()) {
-				if(child instanceof ExpressionStmt) {
-					child = ((ExpressionStmt)child).getExpression();
-				}
-				if(child instanceof ExpressionStmt && ((ExpressionStmt)child).getExpression() instanceof VariableDeclarationExpr) {
-					VariableDeclarationExpr dec = (VariableDeclarationExpr)((ExpressionStmt)child).getExpression();
-					for(VariableDeclarator decl : dec.getVariables()) {
-						if(decl.getName().equals(variable) && (decl.getRange().get().begin.isBefore(variable.getRange().get().begin)|| decl.getRange().get().begin.equals(variable.getRange().get().begin)))
-							return createResolvedVariable(decl, VariableType.LOCAL); 
-					}
+	private Optional<ResolvedVariable> findLocalVariable(Node parent) {
+		for(Node child : parent.getChildNodes()) {
+			if(child instanceof ExpressionStmt)
+				child = ((ExpressionStmt)child).getExpression();
+			if(child instanceof VariableDeclarationExpr) {
+				VariableDeclarationExpr dec = (VariableDeclarationExpr)child;
+				for(VariableDeclarator decl : dec.getVariables()) {
+					if(decl.getName().equals(variable) && (decl.getRange().get().begin.isBefore(variable.getRange().get().begin)|| decl.getRange().get().begin.equals(variable.getRange().get().begin)))
+						return createResolvedVariable(decl, VariableType.LOCAL); 
 				}
 			}
 		}
