@@ -7,32 +7,34 @@ import java.util.Map.Entry;
 import java.util.Optional;
 
 import com.github.javaparser.ast.Node;
+import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.expr.MethodCallExpr;
-import com.github.javaparser.ast.expr.NameExpr;
+import com.github.javaparser.ast.expr.SimpleName;
 import com.github.javaparser.ast.stmt.Statement;
 import com.github.javaparser.resolution.types.ResolvedType;
 import com.simonbaars.clonerefactor.refactoring.visitor.DeclaresVariableVisitor;
 import com.simonbaars.clonerefactor.refactoring.visitor.VariableVisitor;
 
 public class PopulateArguments implements PopulatesExtractedMethod {
-	final Map<NameExpr, ResolvedType> usedVariables = new HashMap<>();
+	final Map<SimpleName, ResolvedType> usedVariables = new HashMap<>();
+	Map<String, ClassOrInterfaceDeclaration> classes;
 	
 	public PopulateArguments() {}
 	
 	@Override
 	public void prePopulate(MethodDeclaration extractedMethod, List<Node> topLevel) {
-		topLevel.forEach(n -> n.accept(new VariableVisitor(), usedVariables));
-		for(Entry<NameExpr, ResolvedType> var : usedVariables.entrySet()) {
+		topLevel.forEach(n -> n.accept(new VariableVisitor(classes), usedVariables));
+		for(Entry<SimpleName, ResolvedType> var : usedVariables.entrySet()) {
 			if(declaresVariable(extractedMethod, var.getKey())) {
-				extractedMethod.addParameter(var.getValue().describe(), var.getKey().getNameAsString());
+				extractedMethod.addParameter(var.getValue().describe(), var.getKey().asString());
 			}
 		}
 	}
 
 	@Override
 	public Optional<Statement> modifyMethodCall(MethodCallExpr expr) {
-		usedVariables.keySet().forEach(v -> expr.addArgument(v));
+		usedVariables.keySet().forEach(v -> expr.addArgument(v.toString()));
 		return Optional.empty();
 	}
 
@@ -41,11 +43,15 @@ public class PopulateArguments implements PopulatesExtractedMethod {
 		usedVariables.clear();
 	}
 
-	private boolean declaresVariable(MethodDeclaration extractedMethod, NameExpr varName) {
+	private boolean declaresVariable(MethodDeclaration extractedMethod, SimpleName varName) {
 		Boolean b = extractedMethod.accept(new DeclaresVariableVisitor(), varName);
 		if(b == null)
 			return false;
 		return b;
+	}
+
+	public void setClasses(Map<String, ClassOrInterfaceDeclaration> classes) {
+		this.classes = classes;
 	}
 
 }
