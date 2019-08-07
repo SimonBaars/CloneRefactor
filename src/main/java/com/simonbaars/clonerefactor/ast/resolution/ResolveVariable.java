@@ -19,8 +19,7 @@ import com.github.javaparser.ast.stmt.BlockStmt;
 import com.github.javaparser.ast.stmt.ExpressionStmt;
 import com.github.javaparser.resolution.types.ResolvedReferenceType;
 import com.simonbaars.clonerefactor.ast.interfaces.ResolvesSymbols;
-import com.simonbaars.clonerefactor.refactoring.visitor.ResolvedVariable;
-import com.simonbaars.clonerefactor.refactoring.visitor.ResolvedVariable.VariableType;
+import com.simonbaars.clonerefactor.ast.resolution.ResolvedVariable.VariableType;
 
 public class ResolveVariable implements ResolvesSymbols {
 	

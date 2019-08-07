@@ -1,4 +1,4 @@
-package com.simonbaars.clonerefactor.refactoring.visitor;
+package com.simonbaars.clonerefactor.ast.resolution;
 
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.expr.SimpleName;
