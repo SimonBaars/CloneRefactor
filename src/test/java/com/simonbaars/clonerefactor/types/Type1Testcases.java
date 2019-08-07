@@ -51,6 +51,14 @@ public class Type1Testcases extends Type1Test {
 		tables.reportMetrics("Kryo", Main.cloneDetection(Paths.get(path), Paths.get(path+"src/main/java/")).getMetrics());
     }
     
+    public void testMetricTables2() {
+    	MetricsTables tables = new MetricsTables();
+    	System.out.println("athena");
+    	String path = "/Users/sbaars/clone/git/athena/";
+    	System.out.println(Settings.get());
+		tables.reportMetrics("Kryo", Main.cloneDetection(Paths.get(path), Paths.get(path+"src/main/java/")).getMetrics());
+    }
+    
     public void testRef() {
     	System.out.println("kryo-serializers");
     	String path = "/Users/sbaars/git/kryo-serializers/";
