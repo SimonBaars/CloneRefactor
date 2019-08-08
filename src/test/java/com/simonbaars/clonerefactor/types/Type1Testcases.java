@@ -53,8 +53,8 @@ public class Type1Testcases extends Type1Test {
     
     public void testMetricTables2() {
     	MetricsTables tables = new MetricsTables();
-    	System.out.println("athena");
-    	String path = "/Users/sbaars/clone/git/athena/";
+    	System.out.println("joda-time");
+    	String path = "/Users/sbaars/clone/git/joda-time/";
     	System.out.println(Settings.get());
 		tables.reportMetrics("Kryo", Main.cloneDetection(Paths.get(path), Paths.get(path+"src/main/java/")).getMetrics());
     }

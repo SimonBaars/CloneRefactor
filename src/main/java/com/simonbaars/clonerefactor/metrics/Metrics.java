@@ -29,12 +29,14 @@ public class Metrics {
 	
 	public final CountMap<Integer> amountPerEffectiveLines = new CountMap<>();
 	public final CountMap<Integer> amountPerTotalEffectiveLineVolume = new CountMap<>();
+	
+	public final CountMap<String> riskProfiles = new CountMap<>();
 
 	@Override
 	public String toString() {
 		return String.format(
-				"Metrics [generalStats=%s, averages=%s, amountPerRelation=%s, amountPerLocation=%s, amountPerContents=%s, amountPerExtract=%s, amountPerCloneClassSize=%s, amountPerNodes=%s, amountPerTotalNodeVolume=%s, amountPerEffectiveLines=%s, amountPerTotalEffectiveLineVolume=%s]",
-				generalStats, averages, amountPerRelation, amountPerLocation, amountPerContents, amountPerExtract,
+				"Metrics [generalStats=%s, riskProfiles=%s, averages=%s, amountPerRelation=%s, amountPerLocation=%s, amountPerContents=%s, amountPerExtract=%s, amountPerCloneClassSize=%s, amountPerNodes=%s, amountPerTotalNodeVolume=%s, amountPerEffectiveLines=%s, amountPerTotalEffectiveLineVolume=%s]",
+				generalStats, riskProfiles, averages, amountPerRelation, amountPerLocation, amountPerContents, amountPerExtract,
 				amountPerCloneClassSize, amountPerNodes, amountPerTotalNodeVolume, amountPerEffectiveLines,
 				amountPerTotalEffectiveLineVolume);
 	}
@@ -54,6 +56,8 @@ public class Metrics {
 		
 		amountPerEffectiveLines.addAll(metrics.amountPerEffectiveLines);
 		amountPerTotalEffectiveLineVolume.addAll(metrics.amountPerTotalEffectiveLineVolume);
+		
+		riskProfiles.addAll(metrics.riskProfiles);
 	}
 
 	public void incrementGeneralStatistic(Metric metric, StatType type, int amount) {
@@ -65,7 +69,7 @@ public class Metrics {
 	}
 	
 	public void incrementGeneralStatistic(ProblemType metric, Risk type) {
-		incrementGeneralStatistic(metric+" "+type+" Risk", 1);
+		riskProfiles.increment(metric+" "+type+" Risk", 1);
 	}
 	
 	public void incrementGeneralStatistic(ProblemType metric, int score) {

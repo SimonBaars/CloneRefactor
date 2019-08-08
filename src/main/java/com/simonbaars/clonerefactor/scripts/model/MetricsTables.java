@@ -12,6 +12,7 @@ public class MetricsTables implements WritesErrors {
 	
 	private final CountTable generalStats = new CountTable("General Statistics");
 	private final CountTable averages = new CountTable("Averages");
+	private final CountTable riskProfiles = new CountTable("Risk Profiles");
 	
 	private final CountTable amountPerRelation = new CountTable("Amount per Relation");
 	private final CountTable amountPerLocation = new CountTable("Amount per Location");
@@ -30,6 +31,8 @@ public class MetricsTables implements WritesErrors {
 		tableContents.append(generalStats.toString());
 		tableContents.append(System.lineSeparator()+System.lineSeparator());
 		tableContents.append(averages.toString());
+		tableContents.append(System.lineSeparator()+System.lineSeparator());
+		tableContents.append(riskProfiles.toString());
 		tableContents.append(System.lineSeparator()+System.lineSeparator());
 		
 		tableContents.append(amountPerRelation.toString());
@@ -62,6 +65,7 @@ public class MetricsTables implements WritesErrors {
 	private void collectMetrics(String percentage, Metrics metrics) {
 		generalStats.put(percentage, metrics.generalStats);
 		averages.put(percentage, metrics.averages);
+		riskProfiles.put(percentage, metrics.riskProfiles);
 		
 		amountPerRelation.put(percentage, metrics.amountPerRelation);
 		amountPerLocation.put(percentage, metrics.amountPerLocation);
