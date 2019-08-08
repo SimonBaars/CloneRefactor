@@ -217,6 +217,10 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 		return SavePaths.getRefactorFolder(projectFolder.getFileName().toString(), sources ? outputSourceFolder() : "");
 	}
 	
+	public Path getRefactorPath(boolean sources) {
+		return Paths.get(refactoringSaveFolder(sources));
+	}
+	
 	private String outputSourceFolder() {
 		return  sourceFolder.toString().replace(projectFolder.toString(), "");
 	}

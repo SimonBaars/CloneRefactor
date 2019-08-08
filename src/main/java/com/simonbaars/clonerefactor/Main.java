@@ -38,16 +38,21 @@ public class Main {
 	}
 	
 	public static DetectionResults cloneDetection(Path path, Path sourceRoot) {
+		final ParserConfiguration config = createParseConfig(path, sourceRoot);
+        SourceRoot root = new SourceRoot(sourceRoot);
+		return new CloneParser(path, root, config).parse();
+	}
+
+	public static ParserConfiguration createParseConfig(Path path, Path sourceRoot) {
 		CombinedTypeSolver combinedTypeSolver = new CombinedTypeSolver(new ReflectionTypeSolver(), new JavaParserTypeSolver(sourceRoot));
         
         addLibrariesToTypeSolver(path, combinedTypeSolver);
        
         final ParserConfiguration config = new ParserConfiguration()
-    			.setLexicalPreservationEnabled(false)//Settings.get().isApplyRefactorings())
+    			.setLexicalPreservationEnabled(false)
     			.setStoreTokens(true)
     			.setSymbolResolver(new JavaSymbolSolver(combinedTypeSolver));
-        SourceRoot root = new SourceRoot(sourceRoot);
-		return new CloneParser().parse(path, root, config);
+		return config;
 	}
 
 	private static void addLibrariesToTypeSolver(Path path, CombinedTypeSolver combinedTypeSolver) {
