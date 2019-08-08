@@ -4,7 +4,7 @@ public enum CloneType {
 	TYPE1R,TYPE2R,TYPE3R,
 	TYPE1, TYPE2, TYPE3;
 
-	public boolean isNotType() {
+	public boolean isNotType1() {
 		return !isType1();
 	}
 	
@@ -25,7 +25,7 @@ public enum CloneType {
 	}
 	
 	public String getNicelyFormatted() {
-		return name().charAt(0) + name().substring(1).toLowerCase();
+		return name().charAt(0) + name().substring(1,4).toLowerCase() + " " + name().substring(5);
 	}
 	
 	public boolean isRefactoringOriented() {

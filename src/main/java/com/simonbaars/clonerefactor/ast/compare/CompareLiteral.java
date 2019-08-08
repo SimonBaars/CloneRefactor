@@ -15,7 +15,7 @@ public class CompareLiteral extends Compare implements ResolvesSymbols {
 	public CompareLiteral(LiteralExpr t, CloneType cloneType) {
 		super(t.getRange().get());
 		this.literal=t;
-		if(cloneType.isNotType())
+		if(cloneType.isNotType1())
 			this.type = resolve(t::calculateResolvedType);
 		else this.type = Optional.empty();
 	}
@@ -25,12 +25,12 @@ public class CompareLiteral extends Compare implements ResolvesSymbols {
 		if(!super.equals(o))
 			return false;
 		CompareLiteral other = (CompareLiteral)o;
-		return getCloneType().isNotType() ? type.equals(other.type) : literal.equals(other.literal); 
+		return getCloneType().isNotType1() ? type.equals(other.type) : literal.equals(other.literal); 
 	}
 
 	@Override
 	public int hashCode() {
-		return getCloneType().isNotType() ? type.hashCode() : literal.hashCode();
+		return getCloneType().isNotType1() ? type.hashCode() : literal.hashCode();
 	}
 	
 	@Override

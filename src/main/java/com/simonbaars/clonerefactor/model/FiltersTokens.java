@@ -49,6 +49,6 @@ public interface FiltersTokens {
 	}
 	
 	public default List<JavaToken> filterTokensForCompare(List<JavaToken> tokens) {
-		return Settings.get().getCloneType().isNotType() ? tokens.stream().filter(t -> isComparableToken(t, LITERATURE_TYPE2_NO_TOKEN)).collect(Collectors.toList()) : tokens;
+		return Settings.get().getCloneType().isNotType1() ? tokens.stream().filter(t -> isComparableToken(t, LITERATURE_TYPE2_NO_TOKEN)).collect(Collectors.toList()) : tokens;
 	}
 }
