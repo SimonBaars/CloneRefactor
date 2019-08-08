@@ -126,6 +126,7 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 		refactoredSequences.put(s, decl);
 		CombinedMetrics combine = new PostMetrics(decl, s.getRelation().isEffectivelyUnrelated() ? getClass(decl) : Optional.empty(), methodcalls).combine(preMetrics);
 		storeChanges(s, decl, methodcalls);
+		System.out.println(decl);
 		return generateDescription(s, decl) + combine.save(metricCollector, metrics);
 	}
 	
@@ -233,9 +234,8 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 		s.getLocations().forEach(e -> lowestNodes.put(e, lowestNodes(e.getContents().getNodes())));
 		Arrays.stream(populators).forEach(p -> p.prePopulate(decl, lowestNodes.get(s.getAny())));
 		lowestNodes.get(s.getAny()).forEach(node -> decl.getBody().get().addStatement((Statement)node));
-		return s.getLocations().stream().map(l -> 
-			removeLowestNodes(lowestNodes.get(l), decl)
-		).collect(Collectors.toList());
+		System.out.println("JUST ADDED RIGHT "+decl+" ==");
+		return s.getLocations().stream().map(l -> removeLowestNodes(lowestNodes.get(l), decl)).collect(Collectors.toList());
 	}
 
 	private Statement removeLowestNodes(List<Node> lowestNodes, MethodDeclaration decl) {
