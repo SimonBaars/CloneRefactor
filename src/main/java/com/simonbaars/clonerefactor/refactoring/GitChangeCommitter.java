@@ -48,7 +48,6 @@ public class GitChangeCommitter implements RequiresNodeContext {
 		try {
 			return Optional.of(repositoryBuilder.build());
 		} catch (IOException e) {
-			e.printStackTrace();
 			return createNewRepo(path);
 		}
 	}
@@ -57,10 +56,15 @@ public class GitChangeCommitter implements RequiresNodeContext {
 		try {
 			Repository rep = FileRepositoryBuilder.create(new File(path.toString()+File.separator+".git"));
 			rep.create();
-			return Optional.of(rep);
-		} catch (IOException e1) {
+			try(Git git = new Git(rep)){
+				git.add().addFilepattern(".").call();
+				git.commit().setAuthor(CLONEREFACTOR_AUTHOR_NAME, CLONEREFACTOR_AUTHOR_EMAIL).setMessage("Initial commit").call();
+				return Optional.of(rep);
+			}
+		} catch (IOException | GitAPIException e1) {
+			e1.printStackTrace();
 			return Optional.empty();
-		}
+		} 
 	}
 	
 	public void commitFormat(String className) {
