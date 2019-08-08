@@ -31,4 +31,9 @@ public enum CloneType {
 	public boolean isRefactoringOriented() {
 		return name().endsWith("R");
 	}
+	
+	@Override
+	public String toString() {
+		return getNicelyFormatted();
+	}
 }

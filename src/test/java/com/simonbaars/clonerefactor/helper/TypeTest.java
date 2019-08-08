@@ -23,7 +23,6 @@ public abstract class TypeTest extends TestCase {
 	@Override
     public void setUp() {
     	Settings.get().setCloneType(getCloneType());
-    	Settings.get().setUseLiteratureTypeDefinitions(false);
     }
 	
 	protected DetectionResults testProject(String project) {

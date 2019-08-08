@@ -6,6 +6,7 @@ import java.nio.file.Paths;
 import com.simonbaars.clonerefactor.Main;
 import com.simonbaars.clonerefactor.helper.Type1Test;
 import com.simonbaars.clonerefactor.scripts.model.MetricsTables;
+import com.simonbaars.clonerefactor.settings.CloneType;
 import com.simonbaars.clonerefactor.settings.Scope;
 import com.simonbaars.clonerefactor.settings.Settings;
 import com.simonbaars.clonerefactor.thread.CorpusThread;
@@ -99,9 +100,9 @@ public class Type1Testcases extends Type1Test {
     	System.out.println("abmash");
     	String path = "/Users/sbaars/clone/git/abmash/";
 		System.out.println(Main.cloneDetection(Paths.get(path), Paths.get(path+"src/main/java/")).getMetrics());
-		Settings.get().setUseLiteratureTypeDefinitions(true);
+		Settings.get().setCloneType(CloneType.TYPE1);
 		System.out.println(Main.cloneDetection(Paths.get(path), Paths.get(path+"src/main/java/")).getMetrics());
-		Settings.get().setUseLiteratureTypeDefinitions(false);
+		Settings.get().setCloneType(CloneType.TYPE1R);
     }
     
     public void testThread() {

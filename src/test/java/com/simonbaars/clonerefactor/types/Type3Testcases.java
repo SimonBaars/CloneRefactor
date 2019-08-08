@@ -4,6 +4,7 @@ import java.nio.file.Paths;
 
 import com.simonbaars.clonerefactor.Main;
 import com.simonbaars.clonerefactor.helper.Type3Test;
+import com.simonbaars.clonerefactor.settings.CloneType;
 import com.simonbaars.clonerefactor.settings.Settings;
 
 import junit.framework.Test;
@@ -31,10 +32,11 @@ public class Type3Testcases extends Type3Test {
     }
     
     public void testAUD() {
-    	Settings.get().setUseLiteratureTypeDefinitions(true);
+    	Settings.get().setCloneType(CloneType.TYPE3);
     	System.out.println("AUD");
     	String path = "/Users/sbaars/clone/git/AUD/";
 		System.out.println(Main.cloneDetection(Paths.get(path), Paths.get(path+"src/main/java/")).sorted());
+		Settings.get().setCloneType(CloneType.TYPE3R);
     }
     
     public void testStatementAddedLeft() {

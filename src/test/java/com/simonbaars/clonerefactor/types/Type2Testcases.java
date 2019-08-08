@@ -4,6 +4,7 @@ import java.nio.file.Paths;
 
 import com.simonbaars.clonerefactor.Main;
 import com.simonbaars.clonerefactor.helper.Type2Test;
+import com.simonbaars.clonerefactor.settings.CloneType;
 import com.simonbaars.clonerefactor.settings.Settings;
 import com.simonbaars.clonerefactor.thread.CalculatesTimeIntervals;
 
@@ -38,12 +39,12 @@ public class Type2Testcases extends Type2Test implements CalculatesTimeIntervals
     }
     
     public void testCaronas() {
-    	Settings.get().setUseLiteratureTypeDefinitions(true);
+    	Settings.get().setCloneType(CloneType.TYPE2);
     	System.out.println("caronas");
     	String path = "/Users/sbaars/clone/git/Caronas/";
     	System.out.println(Settings.get());
 		System.out.println(Main.cloneDetection(Paths.get(path), Paths.get(path+"src/main/java/")).sorted());
-		Settings.get().setUseLiteratureTypeDefinitions(false);
+		Settings.get().setCloneType(CloneType.TYPE2R);
     }
     
     public void testSimpleHTTPServer() {
@@ -73,13 +74,13 @@ public class Type2Testcases extends Type2Test implements CalculatesTimeIntervals
     }
     
     public void testAbmashLiterature() {
-    	Settings.get().setUseLiteratureTypeDefinitions(true);
+    	Settings.get().setCloneType(CloneType.TYPE2);
     	System.out.println("abmash");
     	String path = "/Users/sbaars/clone/git/abmash/";
     	long t = System.nanoTime();
 		System.out.println(Main.cloneDetection(Paths.get(path), Paths.get(path+"src/main/java/")).sorted());
 		System.out.println("Time T2: "+(System.nanoTime()-t));
-		Settings.get().setUseLiteratureTypeDefinitions(false);
+		Settings.get().setCloneType(CloneType.TYPE2R);
     }
     
     public void testDifferentLiterals() {

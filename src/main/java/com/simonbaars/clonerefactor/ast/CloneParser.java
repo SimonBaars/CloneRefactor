@@ -28,7 +28,6 @@ import com.simonbaars.clonerefactor.model.Sequence;
 import com.simonbaars.clonerefactor.model.location.Location;
 import com.simonbaars.clonerefactor.refactoring.ExtractMethod;
 import com.simonbaars.clonerefactor.refactoring.RefactoringStrategy;
-import com.simonbaars.clonerefactor.settings.CloneType;
 import com.simonbaars.clonerefactor.settings.Settings;
 import com.simonbaars.clonerefactor.thread.CalculatesTimeIntervals;
 import com.simonbaars.clonerefactor.thread.WritesErrors;
@@ -93,7 +92,7 @@ public class CloneParser implements SetsIfNotNull, RemovesDuplicates, WritesErro
 	}
 
 	private void doType2Transformations(List<Sequence> findChains) {
-		if(Settings.get().getCloneType().isNotType1() && !Settings.get().isUseLiteratureTypeDefinitions()) {
+		if(Settings.get().getCloneType().isNotType1() && !Settings.get().useLiteratureTypeDefinitions()) {
 			IntStream.range(0, findChains.size()).forEach(i -> {
 				List<Sequence> determineVariability = new Type2Variability().determineVariability(findChains.remove(0));
 				for(Sequence s : determineVariability) {

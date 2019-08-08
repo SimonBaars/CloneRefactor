@@ -17,14 +17,13 @@ public class RunAllConfigurations {
 		configureSettings(cloneTypes, scopes);
 		MetricsTables table = new MetricsTables();
 		
-		do table.reportMetrics("T"+Settings.get().getCloneType().getTypeAsNumber()+(Settings.get().isUseLiteratureTypeDefinitions() ? "" : "R")+" "+Settings.get().getScope(), new RunOnCorpus().startCorpusCloneDetection());
+		do table.reportMetrics("T"+Settings.get().getCloneType()+" "+Settings.get().getScope(), new RunOnCorpus().startCorpusCloneDetection());
 		while (rotate(cloneTypes, scopes));
 	}
 
 	private static void configureSettings(CloneType[] cloneTypes, Scope[] scopes) {
 		Settings.get().setCloneType(cloneTypes[0]);
 		Settings.get().setScope(scopes[0]);
-		Settings.get().setUseLiteratureTypeDefinitions(false);
 		Settings.get().setMinAmountOfLines(1);
 		Settings.get().setMinAmountOfTokens(10);
 		Settings.get().setMinAmountOfNodes(1);
@@ -33,16 +32,13 @@ public class RunAllConfigurations {
 	private static boolean rotate(CloneType[] cloneTypes, Scope[] scopes) {
 		int curCloneType = Arrays.binarySearch(cloneTypes, Settings.get().getCloneType());
 		int curScope = Arrays.binarySearch(scopes, Settings.get().getScope());
-		if(Settings.get().isUseLiteratureTypeDefinitions()) {
-			curScope++;
-			if(curScope == scopes.length) {
-				curScope = 0;
-				curCloneType ++;
-			}
+		curScope++;
+		if(curScope == scopes.length) {
+			curScope = 0;
+			curCloneType ++;
 		}
 		if(curCloneType == cloneTypes.length)
 			return false;
-		Settings.get().setUseLiteratureTypeDefinitions(!Settings.get().isUseLiteratureTypeDefinitions());
 		Settings.get().setCloneType(cloneTypes[curCloneType]);
 		Settings.get().setScope(scopes[curScope]);
 		return true;

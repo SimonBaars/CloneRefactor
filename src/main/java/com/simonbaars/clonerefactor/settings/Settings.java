@@ -21,9 +21,6 @@ public class Settings {
 	private int minAmountOfTokens;
 	private int minAmountOfNodes;
 	
-	// Comparing by tokens only
-	private boolean useLiteratureTypeDefinitions;
-	
 	// Type-specific settings
 	private double type2VariabilityPercentage;
 	private double type3GapSize;
@@ -41,7 +38,6 @@ public class Settings {
             minAmountOfLines = Integer.parseInt(prop.getProperty("min_lines"));
             minAmountOfTokens = Integer.parseInt(prop.getProperty("min_tokens"));
             minAmountOfNodes = Integer.parseInt(prop.getProperty("min_statements"));
-            useLiteratureTypeDefinitions = prop.getProperty("use_literature_type_definitions").equals("true");
             type2VariabilityPercentage = percentageStringToDouble(prop.getProperty("max_type2_variability_percentage"));
             type3GapSize = percentageStringToDouble(prop.getProperty("max_type3_gap_size"));
             refactoringStrategy = RefactoringStrategy.valueOf(prop.getProperty("refactoring_strategy"));
@@ -62,8 +58,7 @@ public class Settings {
 	public String toString() {
 		return String.format(
 				"Settings [cloneType=%s, scope=%s, minAmountOfLines=%s, minAmountOfTokens=%s, minAmountOfNodes=%s, useLiteratureTypeDefinitions=%s, type2VariabilityPercentage=%s, type3GapSize=%s, refactoringStrategy=%s]",
-				cloneType, scope, minAmountOfLines, minAmountOfTokens, minAmountOfNodes, useLiteratureTypeDefinitions,
-				type2VariabilityPercentage, type3GapSize, refactoringStrategy);
+				cloneType, scope, minAmountOfLines, minAmountOfTokens, minAmountOfNodes, type2VariabilityPercentage, type3GapSize, refactoringStrategy);
 	}
 	
 	/*
@@ -87,7 +82,7 @@ public class Settings {
 	}
 
 	public boolean useLiteratureTypeDefinitions() {
-		return useLiteratureTypeDefinitions;
+		return !getCloneType().isRefactoringOriented();
 	}
 
 	public double getType2VariabilityPercentage() {
@@ -96,14 +91,6 @@ public class Settings {
 	
 	public double getType3GapSize() {
 		return type3GapSize;
-	}
-
-	public boolean isUseLiteratureTypeDefinitions() {
-		return useLiteratureTypeDefinitions;
-	}
-
-	public void setUseLiteratureTypeDefinitions(boolean useLiteratureTypeDefinitions) {
-		this.useLiteratureTypeDefinitions = useLiteratureTypeDefinitions;
 	}
 
 	public void setCloneType(CloneType cloneType) {
