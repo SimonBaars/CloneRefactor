@@ -78,7 +78,7 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 	private final MetricCollector metricCollector;
 
 	private final List<CompilationUnit> compilationUnits;
-	private final Map<CompilationUnit, CompilationUnit> newComps = new HashMap<>();
+	private final Set<CompilationUnit> changedComps = new HashSet<>();
 	private final CountMap<String> metrics = new CountMap<>();
 	private final Map<String, ClassOrInterfaceDeclaration> classes;
 	
@@ -151,13 +151,9 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 		List<Node> saveNodes = new ArrayList<>(s.getRelation().getIntersectingClasses());
 		saveNodes.addAll(methodcalls);
 		Set<CompilationUnit> cus = getUniqueCompilationUnits(saveNodes);
-		cus.forEach(this::makeValid);
+		changedComps.addAll(cus);
 		if(Settings.get().getRefactoringStrategy().savesFiles())
 			cus.forEach(this::save);
-	}
-
-	private void makeValid(CompilationUnit cu) {
-		newComps.put(cu, makeValidAfterChanges(cu));
 	}
 
 	private void placeMethodOnBasisOfRelation(Sequence s, MethodDeclaration decl) {
@@ -284,10 +280,10 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 	}
 
 	private void saveCUs() {
-		newComps.entrySet().forEach(e -> {
-			if(!compilationUnits.removeIf(cu -> cu.getStorage().get().getPath().equals(e.getKey().getStorage().get().getPath())))
-				throw new IllegalStateException("Could not remove!! "+e.getKey());
-			compilationUnits.add(e.getValue());
+		changedComps.forEach(e -> {
+			if(!compilationUnits.removeIf(cu -> cu.getStorage().get().getPath().equals(e.getStorage().get().getPath())))
+				throw new IllegalStateException("Could not remove!! "+e);
+			compilationUnits.add(makeValidAfterChanges(e));
 		});
 	}
 
