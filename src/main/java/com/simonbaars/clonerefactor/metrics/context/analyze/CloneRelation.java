@@ -26,6 +26,7 @@ import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
+import com.simonbaars.clonerefactor.ast.ASTHolder;
 import com.simonbaars.clonerefactor.metrics.context.interfaces.DeterminesMetric;
 import com.simonbaars.clonerefactor.metrics.context.relation.SeekClassHierarchy;
 import com.simonbaars.clonerefactor.metrics.context.relation.SeekInterfaceHierarchy;
@@ -38,8 +39,8 @@ public class CloneRelation implements DeterminesMetric<Relation>, SeekClassHiera
 	private static final String JAVA_OBJECT_CLASS_NAME = "Object";
 	private final Map<String, ClassOrInterfaceDeclaration> classes;
 	
-	public CloneRelation(Map<String, ClassOrInterfaceDeclaration> classes) {
-		this.classes = classes;
+	public CloneRelation() {
+		this.classes = ASTHolder.getClasses();
 	}
 	
 	public Relation getLocation(Node n1, Node n2) {

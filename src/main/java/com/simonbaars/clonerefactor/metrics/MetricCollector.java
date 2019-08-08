@@ -1,9 +1,7 @@
 package com.simonbaars.clonerefactor.metrics;
 
 import java.util.List;
-import java.util.Map;
 
-import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.simonbaars.clonerefactor.detection.interfaces.CalculatesPercentages;
 import com.simonbaars.clonerefactor.metrics.context.Metric;
 import com.simonbaars.clonerefactor.metrics.context.StatType;
@@ -21,8 +19,8 @@ public class MetricCollector implements CalculatesPercentages {
 	private final CloneContents contentsFinder = new CloneContents();
 	private final CloneRefactorability extractFinder = new CloneRefactorability();
 	
-	public MetricCollector(Map<String, ClassOrInterfaceDeclaration> classes) {
-		this.relationFinder = new CloneRelation(classes);
+	public MetricCollector() {
+		this.relationFinder = new CloneRelation();
 	}
 
 	public void reportFoundNode(Location l) {

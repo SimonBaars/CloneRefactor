@@ -63,15 +63,9 @@ public class CloneParser implements SetsIfNotNull, RemovesDuplicates, WritesErro
 	}
 
 	private DetectionResults parseProject(int nGenerated) {
-		final List<CompilationUnit> compilationUnits = createAST(sourceRoot, config);
-		
-		if(compilationUnits.isEmpty())
-			throw new IllegalStateException("Project has no sources! "+sourceRoot.getRoot()+", "+projectRoot);
-		
-		final Map<String, ClassOrInterfaceDeclaration> classes = determineClasses(compilationUnits);
-		ASTHolder.setClasses(classes);
+		final List<CompilationUnit> compilationUnits = createAST();
 		try {
-			MetricCollector metricCollector = new MetricCollector(classes);
+			MetricCollector metricCollector = new MetricCollector();
 			long beginTime = System.currentTimeMillis();
 			SequenceObservable seqObservable = new SequenceObservable().subscribe(new MetricObserver(metricCollector));
 			Location lastLoc = calculateLineReg(metricCollector, compilationUnits, seqObservable);
@@ -82,7 +76,7 @@ public class CloneParser implements SetsIfNotNull, RemovesDuplicates, WritesErro
 				metricCollector.getMetrics().generalStats.increment("Detection time", interval(beginTime));
 				DetectionResults res = new DetectionResults(metricCollector.reportClones(findChains), findChains);
 				if(Settings.get().getRefactoringStrategy() != RefactoringStrategy.DONOTREFACTOR) {
-					ExtractMethod extractMethod = new ExtractMethod(projectRoot, sourceRoot.getRoot(), compilationUnits, metricCollector, nGenerated, classes);
+					ExtractMethod extractMethod = new ExtractMethod(projectRoot, sourceRoot.getRoot(), compilationUnits, metricCollector, nGenerated);
 					extractMethod.refactor(findChains);
 					sourceRoot = new SourceRoot(extractMethod.getRefactorPath(true));
 					projectRoot = extractMethod.getRefactorPath(false);
@@ -93,6 +87,16 @@ public class CloneParser implements SetsIfNotNull, RemovesDuplicates, WritesErro
 		} finally {
 			ASTHolder.removeClasses();
 		}
+	}
+
+	private List<CompilationUnit> createAST() {
+		final List<CompilationUnit> compilationUnits = createAST(sourceRoot, config);
+		
+		if(compilationUnits.isEmpty())
+			throw new IllegalStateException("Project has no sources! "+sourceRoot.getRoot()+", "+projectRoot);
+		
+		ASTHolder.setClasses(determineClasses(compilationUnits));
+		return compilationUnits;
 	}
 
 	private Map<String, ClassOrInterfaceDeclaration> determineClasses(List<CompilationUnit> compilationUnits) {
