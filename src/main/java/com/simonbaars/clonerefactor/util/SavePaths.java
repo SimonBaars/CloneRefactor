@@ -62,8 +62,8 @@ public class SavePaths {
 		return getMyOutputFolder()+"tables"+File.separator;
 	}
 
-	public static String getRefactorFolder(String sourceFolder) {
-		return getMyOutputFolder()+"refactor"+ sourceFolder;
+	public static String getRefactorFolder(String projectName, String sourceFolder) {
+		return getMyOutputFolder()+ projectName + sourceFolder;
 	}
 
 	public static File createDirForFile(String string) {

@@ -25,7 +25,7 @@ public enum CloneType {
 	}
 	
 	public String getNicelyFormatted() {
-		return name().charAt(0) + name().substring(1,4).toLowerCase() + " " + name().substring(5);
+		return name().charAt(0) + name().substring(1,4).toLowerCase() + " " + name().substring(4);
 	}
 	
 	public boolean isRefactoringOriented() {
