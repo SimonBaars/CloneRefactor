@@ -126,7 +126,6 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 		refactoredSequences.put(s, decl);
 		CombinedMetrics combine = new PostMetrics(decl, s.getRelation().isEffectivelyUnrelated() ? getClass(decl) : Optional.empty(), methodcalls).combine(preMetrics);
 		storeChanges(s, decl, methodcalls);
-		System.out.println(decl);
 		return generateDescription(s, decl) + combine.save(metricCollector, metrics);
 	}
 	
@@ -233,22 +232,22 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 		ListMap<Location, Node> lowestNodes = new ListMap<>();
 		s.getLocations().forEach(e -> lowestNodes.put(e, lowestNodes(e.getContents().getNodes())));
 		Arrays.stream(populators).forEach(p -> p.prePopulate(decl, lowestNodes.get(s.getAny())));
+		List<Statement> methodcalls = s.getLocations().stream().map(l -> removeLowestNodes(lowestNodes.get(l), decl.getNameAsString())).collect(Collectors.toList());
 		lowestNodes.get(s.getAny()).forEach(node -> decl.getBody().get().addStatement((Statement)node));
-		System.out.println("JUST ADDED RIGHT "+decl+" ==");
-		return s.getLocations().stream().map(l -> removeLowestNodes(lowestNodes.get(l), decl)).collect(Collectors.toList());
+		return methodcalls;
 	}
 
-	private Statement removeLowestNodes(List<Node> lowestNodes, MethodDeclaration decl) {
-		MethodCallExpr methodCallExpr = new MethodCallExpr(decl.getNameAsString());
+	private Statement removeLowestNodes(List<Node> lowestNodes, String name) {
+		MethodCallExpr methodCallExpr = new MethodCallExpr(name);
 		Statement methodCallStmt = Arrays.stream(populators).map(p -> p.modifyMethodCall(methodCallExpr)).filter(Optional::isPresent).map(Optional::get).findAny().orElse(new ExpressionStmt(methodCallExpr));
 		if(Settings.get().getRefactoringStrategy().savesFiles())
 			saveASTBeforeChange(getCompilationUnit(lowestNodes.get(0)).get());
-		placeMethod(lowestNodes, methodCallStmt);
+		placeMethodCall(lowestNodes, methodCallStmt);
 		return methodCallStmt;
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	private void placeMethod(List<Node> lowestNodes, Statement methodCallStmt) {
+	private void placeMethodCall(List<Node> lowestNodes, Statement methodCallStmt) {
 		Node parent = lowestNodes.get(0).getParentNode().get();
 		if(parent instanceof NodeWithStatements) {
 			NodeWithStatements inBlock = ((NodeWithStatements)parent);
