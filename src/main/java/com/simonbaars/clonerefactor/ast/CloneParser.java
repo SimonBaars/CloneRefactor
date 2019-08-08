@@ -3,6 +3,7 @@ package com.simonbaars.clonerefactor.ast;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,6 +16,7 @@ import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.utils.SourceRoot;
 import com.github.javaparser.utils.SourceRoot.Callback.Result;
+import com.simonbaars.clonerefactor.Main;
 import com.simonbaars.clonerefactor.SequenceObservable;
 import com.simonbaars.clonerefactor.ast.interfaces.ResolvesSymbols;
 import com.simonbaars.clonerefactor.ast.interfaces.SetsIfNotNull;
@@ -34,17 +36,23 @@ import com.simonbaars.clonerefactor.thread.WritesErrors;
 
 public class CloneParser implements SetsIfNotNull, RemovesDuplicates, WritesErrors, CalculatesTimeIntervals, ResolvesSymbols {
 	
-	public DetectionResults parse(Path projectRoot, SourceRoot sourceRoot, ParserConfiguration config) {
-		final List<CompilationUnit> compilationUnits = createAST(sourceRoot, config);
-		
-		if(compilationUnits.isEmpty())
-			throw new IllegalStateException("Project has no sources!");
-				
+	private Path projectRoot;
+	private SourceRoot sourceRoot;
+	private ParserConfiguration config;
+
+	public CloneParser(Path projectRoot, SourceRoot sourceRoot, ParserConfiguration config) {
+		this.projectRoot = projectRoot;
+		this.sourceRoot = sourceRoot;
+		this.config = config;
+	}
+	
+	public DetectionResults parse() {
 		DetectionResults d = null, prev = null;
 		int oldRefactored, refactored = 0;
 		do {
 			oldRefactored = refactored;
-			DetectionResults res = parseProject(projectRoot, sourceRoot, prev == null ? 0 : prev.getMetrics().generalStats.get("Generated Declarations"), compilationUnits);
+			DetectionResults res = parseProject(prev == null ? 0 : prev.getMetrics().generalStats.get("Generated Declarations"));
+			System.out.println(Arrays.toString(res.getClones().toArray()).replace("Location [", "\nLocation [").replace("Sequence [sequence=[", "\nSequence [sequence=["));
 			if(d == null)
 				d = res;
 			else prev.getMetrics().setChild(res.getMetrics());
@@ -54,7 +62,12 @@ public class CloneParser implements SetsIfNotNull, RemovesDuplicates, WritesErro
 		return d;
 	}
 
-	private DetectionResults parseProject(Path projectRoot, SourceRoot sourceRoot, int nGenerated, final List<CompilationUnit> compilationUnits) {
+	private DetectionResults parseProject(int nGenerated) {
+		final List<CompilationUnit> compilationUnits = createAST(sourceRoot, config);
+		
+		if(compilationUnits.isEmpty())
+			throw new IllegalStateException("Project has no sources! "+sourceRoot.getRoot()+", "+projectRoot);
+		
 		final Map<String, ClassOrInterfaceDeclaration> classes = determineClasses(compilationUnits);
 		ASTHolder.setClasses(classes);
 		try {
@@ -68,8 +81,13 @@ public class CloneParser implements SetsIfNotNull, RemovesDuplicates, WritesErro
 				doTypeSpecificTransformations(findChains);
 				metricCollector.getMetrics().generalStats.increment("Detection time", interval(beginTime));
 				DetectionResults res = new DetectionResults(metricCollector.reportClones(findChains), findChains);
-				if(Settings.get().getRefactoringStrategy() != RefactoringStrategy.DONOTREFACTOR)
-					new ExtractMethod(projectRoot, sourceRoot.getRoot(), compilationUnits, metricCollector, nGenerated, classes).refactor(findChains);
+				if(Settings.get().getRefactoringStrategy() != RefactoringStrategy.DONOTREFACTOR) {
+					ExtractMethod extractMethod = new ExtractMethod(projectRoot, sourceRoot.getRoot(), compilationUnits, metricCollector, nGenerated, classes);
+					extractMethod.refactor(findChains);
+					sourceRoot = new SourceRoot(extractMethod.getRefactorPath(true));
+					projectRoot = extractMethod.getRefactorPath(false);
+					config = Main.createParseConfig(projectRoot, sourceRoot.getRoot());
+				}
 				return res;
 			} else throw new IllegalStateException("Project has no usable sources!");
 		} finally {
