@@ -10,6 +10,7 @@ import com.simonbaars.clonerefactor.metrics.context.enums.ContentsType;
 import com.simonbaars.clonerefactor.metrics.context.enums.LocationType;
 import com.simonbaars.clonerefactor.metrics.context.enums.Refactorability;
 import com.simonbaars.clonerefactor.metrics.context.enums.RelationType;
+import com.simonbaars.clonerefactor.metrics.context.enums.Risk;
 
 public class Metrics {
 	private Optional<Metrics> child = Optional.empty(); 
@@ -56,11 +57,19 @@ public class Metrics {
 	}
 
 	public void incrementGeneralStatistic(Metric metric, StatType type, int amount) {
-		generalStats.increment(type.toString()+" "+metric.toString(), amount);
+		incrementGeneralStatistic(type+" "+metric, amount);
 	}
 	
 	public void incrementGeneralStatistic(String generalStat, int amount) {
 		generalStats.increment(generalStat, amount);
+	}
+	
+	public void incrementGeneralStatistic(ProblemType metric, Risk type) {
+		incrementGeneralStatistic(metric+" "+type+" Risk", 1);
+	}
+	
+	public void incrementGeneralStatistic(ProblemType metric, int score) {
+		incrementGeneralStatistic(metric, metric.getRisk(score));
 	}
 	
 	public void setChild(Metrics results) {

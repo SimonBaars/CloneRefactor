@@ -19,6 +19,8 @@ public class MetricObserver implements SequenceObserver {
 		collector.getMetrics().incrementGeneralStatistic(problem+" Amount", 1);
 		collector.getMetrics().incrementGeneralStatistic(metricTotalSize(problem), problemSize);
 		collector.getMetrics().averages.addTo(problem.toString(), problemSize);
+		if(problem!=ProblemType.DUPLICATION)
+			collector.getMetrics().incrementGeneralStatistic(problem, problemSize);
 	}
 
 	public static String metricTotalSize(ProblemType problem) {
