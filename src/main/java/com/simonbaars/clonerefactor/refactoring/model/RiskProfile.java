@@ -38,9 +38,10 @@ public class RiskProfile {
 		return this;
 	}
 	
-	public Optional<Integer> getMetricChanges(Map<MethodDeclaration, Integer> map, MethodDeclaration key){
-		if(map.containsKey(key))
-			return Optional.of(map.get(key));
+	public<T> Optional<T> getMetricChanges(Map<MethodDeclaration, T> map, MethodDeclaration key){
+		Optional<MethodDeclaration> decl = map.keySet().stream().filter(e -> e.getSignature().equals(key.getSignature())).findAny();
+		if(decl.isPresent())
+			return Optional.of(map.get(decl.get()));
 		return Optional.empty();
 	}
 	
