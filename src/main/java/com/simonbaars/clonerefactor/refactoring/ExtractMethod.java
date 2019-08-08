@@ -74,17 +74,16 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 	private final Path projectFolder;
 	private final Path sourceFolder;
 	
-	private int nGeneratedDeclarations = 0;
+	private int gen = 1;
 	private final MetricCollector metricCollector;
 
 	private final List<CompilationUnit> compilationUnits;
-	private final Set<CompilationUnit> changedComps = new HashSet<>();
 	private final CountMap<String> metrics = new CountMap<>();
 	
 	public ExtractMethod(Path projectRoot, Path root, List<CompilationUnit> compilationUnits, MetricCollector metricCollector, int nGenerated) {
 		this.projectFolder = projectRoot;
 		this.sourceFolder = root;
-		this.nGeneratedDeclarations = nGenerated;
+		this.gen = nGenerated;
 		Path saveFolder = Paths.get(refactoringSaveFolder(false));
 		if(Settings.get().getRefactoringStrategy().copyAll() && !saveFolder.toFile().exists())
 			copyFolder(projectFolder, saveFolder);
@@ -114,8 +113,7 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 	}
 
 	private String extractMethod(Sequence s) {
-		metricCollector.getMetrics().generalStats.increment("Generated Declarations");
-		String methodName = METHOD_NAME+(nGeneratedDeclarations++);
+		String methodName = METHOD_NAME+(gen++);
 		PreMetrics preMetrics = new PreMetrics(s);
 		MethodDeclaration decl = new MethodDeclaration(Modifier.createModifierList(), new VoidType(), methodName);
 		placeMethodOnBasisOfRelation(s, decl);
@@ -148,7 +146,6 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 		List<Node> saveNodes = new ArrayList<>(s.getRelation().getIntersectingClasses());
 		saveNodes.addAll(methodcalls);
 		Set<CompilationUnit> cus = getUniqueCompilationUnits(saveNodes);
-		changedComps.addAll(cus);
 		if(Settings.get().getRefactoringStrategy().savesFiles())
 			cus.forEach(this::save);
 	}
@@ -174,8 +171,7 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 
 	private void createRelation(Sequence s, Relation relation) {
 		boolean createInterface = relation.isInterfaceRelation();
-		metricCollector.getMetrics().generalStats.increment("Generated Declarations");
-		String name = "CloneRefactor"+(nGeneratedDeclarations++);
+		String name = "CloneRefactor"+(gen++);
 		ClassOrInterfaceType implementedType = new JavaParser().parseClassOrInterfaceType(name).getResult().get();
 		relation.getIntersectingClasses().forEach(c -> addType(c, createInterface).apply(implementedType));
 		Optional<PackageDeclaration> pack = getCompilationUnit(s.getAny().getFirstNode()).get().getPackageDeclaration();
@@ -277,15 +273,7 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 				tryToExtractMethod(s);
 			}
 		}
-		saveCUs();
-	}
-
-	private void saveCUs() {
-		changedComps.forEach(e -> {
-			if(!compilationUnits.removeIf(cu -> cu.getStorage().get().getPath().equals(e.getStorage().get().getPath())))
-				throw new IllegalStateException("Could not remove!! "+e);
-			compilationUnits.add(makeValidAfterChanges(e));
-		});
+		metricCollector.getMetrics().generalStats.put("Generated Declarations", gen);
 	}
 
 	private boolean isGenerated(Sequence s) {
