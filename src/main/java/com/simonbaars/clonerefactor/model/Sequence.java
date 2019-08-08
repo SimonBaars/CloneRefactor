@@ -1,13 +1,11 @@
 package com.simonbaars.clonerefactor.model;
 
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.ToIntFunction;
 
-import com.simonbaars.clonerefactor.datatype.map.ListMap;
 import com.simonbaars.clonerefactor.metrics.context.analyze.CloneRefactorability;
 import com.simonbaars.clonerefactor.metrics.context.analyze.CloneRelation;
 import com.simonbaars.clonerefactor.metrics.context.enums.Refactorability;
@@ -136,14 +134,10 @@ public class Sequence implements Comparable<Sequence> {
 	}
 
 	public boolean overlapsWith(Sequence s) {
-		ListMap<Path, Location> fileMap = new ListMap<>();
-		s.getLocations().forEach(e -> fileMap.addTo(e.getFile(), e));
-		for(Location l1 : locations) {
-			if(fileMap.containsKey(l1.getFile())) {
-				for(Location l2 : fileMap.get(l1.getFile())) {
-					if(l1.overlapsWith(l2)) {
-						return true;
-					}
+		for(int i = 0; i<locations.size(); i++) {
+			for(int j = 0; j<s.getLocations().size(); j++) {
+				if(locations.get(i).getFile().equals(s.getLocations().get(j).getFile()) && locations.get(i).overlapsWith(s.getLocations().get(j))) {
+					return true;
 				}
 			}
 		}
