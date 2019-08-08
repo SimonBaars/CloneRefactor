@@ -32,9 +32,11 @@ import com.github.javaparser.ast.PackageDeclaration;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.expr.MethodCallExpr;
-import com.github.javaparser.ast.stmt.BlockStmt;
+import com.github.javaparser.ast.nodeTypes.NodeWithStatements;
 import com.github.javaparser.ast.stmt.ExpressionStmt;
+import com.github.javaparser.ast.stmt.IfStmt;
 import com.github.javaparser.ast.stmt.Statement;
+import com.github.javaparser.ast.stmt.WhileStmt;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import com.github.javaparser.ast.type.VoidType;
 import com.simonbaars.clonerefactor.ast.ASTHolder;
@@ -228,30 +230,41 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 
 	private List<Statement> removeLowestNodes(Sequence s, MethodDeclaration decl) {
 		ListMap<Location, Node> lowestNodes = new ListMap<>();
-		Map<Location, BlockStmt> insideBlock = new HashMap<>();
-		s.getLocations().forEach(e -> {
-			List<Node> lowest = lowestNodes(e.getContents().getNodes());
-			lowestNodes.put(e, lowest);
-			if(lowest.get(0).getParentNode().isPresent() && lowest.get(0).getParentNode().get() instanceof BlockStmt)
-				insideBlock.put(e, (BlockStmt)lowest.get(0).getParentNode().get());
-		});
+		s.getLocations().forEach(e -> lowestNodes.put(e, lowestNodes(e.getContents().getNodes())));
 		Arrays.stream(populators).forEach(p -> p.prePopulate(decl, lowestNodes.get(s.getAny())));
 		lowestNodes.get(s.getAny()).forEach(node -> decl.getBody().get().addStatement((Statement)node));
-		if(lowestNodes.size() == insideBlock.size())
-			return s.getLocations().stream().map(l -> 
-				removeLowestNodes(lowestNodes.get(l), insideBlock.get(l), decl)
-			).collect(Collectors.toList());
-		return Collections.emptyList();
+		return s.getLocations().stream().map(l -> 
+			removeLowestNodes(lowestNodes.get(l), decl)
+		).collect(Collectors.toList());
 	}
 
-	private Statement removeLowestNodes(List<Node> lowestNodes, BlockStmt inBlock, MethodDeclaration decl) {
+	private Statement removeLowestNodes(List<Node> lowestNodes, MethodDeclaration decl) {
 		MethodCallExpr methodCallExpr = new MethodCallExpr(decl.getNameAsString());
 		Statement methodCallStmt = Arrays.stream(populators).map(p -> p.modifyMethodCall(methodCallExpr)).filter(Optional::isPresent).map(Optional::get).findAny().orElse(new ExpressionStmt(methodCallExpr));
 		if(Settings.get().getRefactoringStrategy().savesFiles())
-			saveASTBeforeChange(getCompilationUnit(inBlock).get());
-		inBlock.getStatements().add(inBlock.getStatements().indexOf(lowestNodes.get(0)), methodCallStmt);
-		lowestNodes.forEach(inBlock::remove);
+			saveASTBeforeChange(getCompilationUnit(lowestNodes.get(0)).get());
+		placeMethod(lowestNodes, methodCallStmt);
 		return methodCallStmt;
+	}
+
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	private void placeMethod(List<Node> lowestNodes, Statement methodCallStmt) {
+		Node parent = lowestNodes.get(0).getParentNode().get();
+		if(parent instanceof NodeWithStatements) {
+			NodeWithStatements inBlock = ((NodeWithStatements)parent);
+			inBlock.getStatements().add(inBlock.getStatements().indexOf(lowestNodes.get(0)), methodCallStmt);
+			lowestNodes.forEach(inBlock.getStatements()::remove);
+		} else if(parent instanceof IfStmt) {
+			IfStmt inBlock = ((IfStmt)parent);
+			if(inBlock.getThenStmt() == lowestNodes.get(0)) {
+				inBlock.setThenStmt(methodCallStmt);
+			} else {
+				inBlock.setElseStmt(methodCallStmt);
+			}	
+		} else if(parent instanceof WhileStmt) {
+			((WhileStmt)parent).setBody(methodCallStmt);
+		}
+		throw new IllegalStateException("Could not place a method call! Parent node "+parent.getClass()+".");
 	}
 
 	private void saveASTBeforeChange(CompilationUnit cu) {
