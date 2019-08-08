@@ -45,4 +45,8 @@ public interface CalculatesPercentages {
 		}
 		return percentages.get(0).getPercentage();
 	}
+	
+	public default int round(double d) {
+		return Math.toIntExact(Math.round(d));
+	}
 }
