@@ -94,6 +94,8 @@ public class PopulateReturnValue implements PopulatesExtractedMethod, ChecksRetu
 
 	@Override
 	public void postPopulate(MethodDeclaration extractedMethod) {
+		if(type!=null)
+			extractedMethod.setType(type);
 		if(wipe)
 			extractedMethod.getBody().get().getStatements().clear();
 		if(retStmt !=null)
