@@ -263,8 +263,7 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 			}	
 		} else if(parent instanceof WhileStmt) {
 			((WhileStmt)parent).setBody(methodCallStmt);
-		}
-		throw new IllegalStateException("Could not place a method call! Parent node "+parent.getClass()+".");
+		} else throw new IllegalStateException("Could not place a method call! Parent node "+parent.getClass()+".");
 	}
 
 	private void saveASTBeforeChange(CompilationUnit cu) {
