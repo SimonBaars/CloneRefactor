@@ -1,6 +1,5 @@
 package com.simonbaars.clonerefactor.refactoring.populate;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -21,9 +20,9 @@ import com.github.javaparser.ast.stmt.ExpressionStmt;
 import com.github.javaparser.ast.stmt.ReturnStmt;
 import com.github.javaparser.ast.stmt.Statement;
 import com.github.javaparser.ast.type.Type;
-import com.simonbaars.clonerefactor.refactoring.visitor.ReturnVariablesCollector;
+import com.simonbaars.clonerefactor.metrics.context.interfaces.ChecksReturningData;
 
-public class PopulateReturnValue implements PopulatesExtractedMethod {	
+public class PopulateReturnValue implements PopulatesExtractedMethod, ChecksReturningData {	
 	private NameExpr name;
 	private Type type;
 	private ReturnStmt retStmt;
@@ -36,16 +35,25 @@ public class PopulateReturnValue implements PopulatesExtractedMethod {
 	@Override
 	public void prePopulate(MethodDeclaration extractedMethod, List<Node> topLevel) {
 		returnDirectlyIfSingleDeclarator(topLevel);
-		collectAllReturners(topLevel);
-			
+		if(!collectAllReturners(topLevel))
+			collectAllReturningNameExpr(topLevel);
 	}
 
-	private void collectAllReturners(List<Node> topLevel) {
-		final Map<SimpleName, Type> usedVariables = new HashMap<>();
-		topLevel.forEach(n -> n.accept(new ReturnVariablesCollector(topLevel), usedVariables));
+	private boolean collectAllReturners(List<Node> topLevel) {
+		List<VariableDeclarationExpr> topLevelVariableDeclarators = getTopLevelDeclarators(topLevel);
+		if(topLevelVariableDeclarators.size() == 1 && topLevelVariableDeclarators.get(0).getVariables().size() == 1) {
+			VariableDeclarator vd = topLevelVariableDeclarators.get(0).getVariable(0);
+			createReturn(vd.getNameAsExpression(), vd.getType(), vd.getNameAsExpression(), false);
+			return true;
+		}
+		return false;
+	}
+	
+	private void collectAllReturningNameExpr(List<Node> topLevel) {
+		final Map<SimpleName, Type> usedVariables = getUsedVariables(topLevel);
 		if(usedVariables.size() == 1) {
 			Entry<SimpleName, Type> e = usedVariables.entrySet().iterator().next();
-			createReturn(new NameExpr(e.getKey()), e.getValue(), name, false);
+			createReturn(new NameExpr(e.getKey()), e.getValue(), new NameExpr(e.getKey()), false);
 		}
 	}
 
