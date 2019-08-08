@@ -1,12 +1,14 @@
 package com.simonbaars.clonerefactor.metrics.context.analyze;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.expr.NameExpr;
 import com.github.javaparser.ast.expr.SimpleName;
+import com.github.javaparser.ast.expr.VariableDeclarationExpr;
 import com.github.javaparser.ast.stmt.BreakStmt;
 import com.github.javaparser.ast.stmt.ContinueStmt;
 import com.github.javaparser.ast.stmt.DoStmt;
@@ -17,22 +19,27 @@ import com.github.javaparser.ast.stmt.ReturnStmt;
 import com.github.javaparser.ast.stmt.Statement;
 import com.github.javaparser.ast.stmt.SwitchStmt;
 import com.github.javaparser.ast.stmt.WhileStmt;
+import com.github.javaparser.ast.type.Type;
 import com.simonbaars.clonerefactor.ast.interfaces.RequiresNodeOperations;
 import com.simonbaars.clonerefactor.metrics.context.enums.ContentsType;
 import com.simonbaars.clonerefactor.metrics.context.enums.Refactorability;
+import com.simonbaars.clonerefactor.metrics.context.interfaces.ChecksReturningData;
 import com.simonbaars.clonerefactor.metrics.context.interfaces.DeterminesMetric;
 import com.simonbaars.clonerefactor.model.Sequence;
 import com.simonbaars.clonerefactor.model.location.Location;
 
-public class CloneRefactorability implements DeterminesMetric<Refactorability>, RequiresNodeOperations {
+public class CloneRefactorability implements DeterminesMetric<Refactorability>, RequiresNodeOperations, ChecksReturningData {
 	@Override
 	public Refactorability get(Sequence sequence) {
+		List<Node> lowestNodes = lowestNodes(sequence.getAny().getContents().getNodes());
 		if(new CloneContents().get(sequence)!=ContentsType.PARTIALMETHOD)
 			return Refactorability.NOEXTRACTIONBYCONTENTTYPE;
 		else if (hasOverlap(sequence))
 			return Refactorability.OVERLAPS;
-		else if (!lowestNodesAllStatements(sequence))
+		else if (!lowestNodesAllStatements(lowestNodes))
 			return Refactorability.NOSTATEMENT;
+		else if(hasMultipleReturn(lowestNodes))
+			return Refactorability.MULTIPLERETURNVALUES;
 		else if(isPartialBlock(sequence))
 			return Refactorability.PARTIALBLOCK;
 		else if(hasComplexControlFlow(sequence))
@@ -40,8 +47,14 @@ public class CloneRefactorability implements DeterminesMetric<Refactorability>, 
 		return Refactorability.CANBEEXTRACTED;
 	}
 	
-	private boolean lowestNodesAllStatements(Sequence sequence) {
-		return lowestNodes(sequence.getAny().getContents().getNodes()).stream().allMatch(e -> e instanceof Statement);
+	private boolean hasMultipleReturn(List<Node> lowestNodes) {
+		final Map<SimpleName, Type> usedVariables = getUsedVariables(lowestNodes);
+		List<VariableDeclarationExpr> topLevelVariableDeclarators = getTopLevelDeclarators(lowestNodes);
+		return !refactorable(usedVariables, topLevelVariableDeclarators);
+	}
+
+	private boolean lowestNodesAllStatements(List<Node> lowestNodes) {
+		return lowestNodes.stream().allMatch(e -> e instanceof Statement);
 	}
 
 	private boolean hasOverlap(Sequence sequence) {

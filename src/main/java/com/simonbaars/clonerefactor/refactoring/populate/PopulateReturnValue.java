@@ -41,14 +41,14 @@ public class PopulateReturnValue implements PopulatesExtractedMethod, ChecksRetu
 
 	private boolean collectAllReturners(List<Node> topLevel) {
 		List<VariableDeclarationExpr> topLevelVariableDeclarators = getTopLevelDeclarators(topLevel);
-		if(topLevelVariableDeclarators.size() == 1 && topLevelVariableDeclarators.get(0).getVariables().size() == 1) {
+		if(canBeReturned(topLevelVariableDeclarators)) {
 			VariableDeclarator vd = topLevelVariableDeclarators.get(0).getVariable(0);
 			createReturn(vd.getNameAsExpression(), vd.getType(), vd.getNameAsExpression(), false);
 			return true;
 		}
 		return false;
 	}
-	
+
 	private void collectAllReturningNameExpr(List<Node> topLevel) {
 		final Map<SimpleName, Type> usedVariables = getUsedVariables(topLevel);
 		if(usedVariables.size() == 1) {

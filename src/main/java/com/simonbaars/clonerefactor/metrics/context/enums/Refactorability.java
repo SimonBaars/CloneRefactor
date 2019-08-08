@@ -2,6 +2,7 @@ package com.simonbaars.clonerefactor.metrics.context.enums;
 
 public enum Refactorability {
 	CANBEEXTRACTED("Can Be Extracted"), //Can be extracted
+	MULTIPLERETURNVALUES("Multiple Return Values"),
 	OVERLAPS("Overlap In Clone Class"),
 	NOSTATEMENT("Top-level Node is not a Statement"),
 	NOEXTRACTIONBYCONTENTTYPE("Is Not A Partial Method"), //When the clone is not a partial method

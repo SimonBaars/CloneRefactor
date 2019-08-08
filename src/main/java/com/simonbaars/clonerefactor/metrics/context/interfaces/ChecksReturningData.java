@@ -22,4 +22,20 @@ public interface ChecksReturningData {
 		topLevel.forEach(n -> n.accept(new ReturnVariablesCollector(topLevel), modifiedVariables));
 		return modifiedVariables;
 	}
+	
+	public default boolean canBeReturned(List<VariableDeclarationExpr> topLevelVariableDeclarators) {
+		return topLevelVariableDeclarators.size() == 1 && topLevelVariableDeclarators.get(0).getVariables().size() == 1;
+	}
+	
+	public default boolean refactorable(Map<SimpleName, Type> usedVariables, List<VariableDeclarationExpr> topLevelVariableDeclarators) {
+		return returnsNothing(usedVariables, topLevelVariableDeclarators) || returnsOneThing(usedVariables, topLevelVariableDeclarators);
+	}
+
+	public default boolean returnsNothing(Map<SimpleName, Type> usedVariables, List<VariableDeclarationExpr> topLevelVariableDeclarators) {
+		return usedVariables.size() == 0 && topLevelVariableDeclarators.size() == 0;
+	}
+	
+	public default boolean returnsOneThing(Map<SimpleName, Type> usedVariables, List<VariableDeclarationExpr> topLevelVariableDeclarators) {
+		return (canBeReturned(topLevelVariableDeclarators) && usedVariables.size() == 0) || (!canBeReturned(topLevelVariableDeclarators) && usedVariables.size() == 1);
+	}
 }
