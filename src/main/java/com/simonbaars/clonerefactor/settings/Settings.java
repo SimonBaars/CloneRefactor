@@ -57,7 +57,7 @@ public class Settings {
 	@Override
 	public String toString() {
 		return String.format(
-				"Settings [cloneType=%s, scope=%s, minAmountOfLines=%s, minAmountOfTokens=%s, minAmountOfNodes=%s, useLiteratureTypeDefinitions=%s, type2VariabilityPercentage=%s, type3GapSize=%s, refactoringStrategy=%s]",
+				"Settings [cloneType=%s, scope=%s, minAmountOfLines=%s, minAmountOfTokens=%s, minAmountOfNodes=%s, type2VariabilityPercentage=%s, type3GapSize=%s, refactoringStrategy=%s]",
 				cloneType, scope, minAmountOfLines, minAmountOfTokens, minAmountOfNodes, type2VariabilityPercentage, type3GapSize, refactoringStrategy);
 	}
 	
