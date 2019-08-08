@@ -103,9 +103,9 @@ public class Sequence implements Comparable<Sequence> {
 
 	@Override
 	public int compareTo(Sequence o) {
-		if(getTotalNodeVolume() == o.getTotalNodeVolume())
+		if(getNodeSize() == o.getNodeSize())
 			return Integer.compare(o.getTotalTokenVolume(), getTotalTokenVolume());
-		return Integer.compare(o.getTotalNodeVolume(), getTotalNodeVolume());
+		return Integer.compare(o.getNodeSize(), getNodeSize());
 	}
 	
 	public void setMetrics(CloneRelation relation, CloneRefactorability r) {
