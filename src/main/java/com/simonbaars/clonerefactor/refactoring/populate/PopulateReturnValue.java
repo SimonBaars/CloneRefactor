@@ -35,7 +35,7 @@ public class PopulateReturnValue implements PopulatesExtractedMethod {
 
 	@Override
 	public void prePopulate(MethodDeclaration extractedMethod, List<Node> topLevel) {
-		returnDirectlyIfSingleDeclarator(extractedMethod);
+		returnDirectlyIfSingleDeclarator(topLevel);
 		collectAllReturners(topLevel);
 			
 	}
@@ -49,16 +49,15 @@ public class PopulateReturnValue implements PopulatesExtractedMethod {
 		}
 	}
 
-	private void returnDirectlyIfSingleDeclarator(MethodDeclaration extractedMethod) {
-		NodeList<Statement> statements = extractedMethod.getBody().get().getStatements();
-		if(statements.size() == 1 && statements.get(0) instanceof ExpressionStmt) {
-			ExpressionStmt exprStmt = (ExpressionStmt)statements.get(0);
+	private void returnDirectlyIfSingleDeclarator(List<Node> topLevel) {
+		if(topLevel.size() == 1 && topLevel.get(0) instanceof ExpressionStmt) {
+			ExpressionStmt exprStmt = (ExpressionStmt)topLevel.get(0);
 			if(exprStmt.getExpression() instanceof VariableDeclarationExpr)
-				convertVariableDeclarationToReturn(extractedMethod, exprStmt);
+				convertVariableDeclarationToReturn(exprStmt);
 		}
 	}
 
-	private void convertVariableDeclarationToReturn(MethodDeclaration extractedMethod, ExpressionStmt exprStmt) {
+	private void convertVariableDeclarationToReturn(ExpressionStmt exprStmt) {
 		NodeList<VariableDeclarator> variables = ((VariableDeclarationExpr)exprStmt.getExpression()).getVariables();
 		if(variables.size() == 1) {
 			VariableDeclarator variableDeclarator = variables.get(0);
