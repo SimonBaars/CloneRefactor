@@ -24,14 +24,14 @@ public class CompareVariable extends Compare implements ResolvesSymbols {
 		if(!super.equals(o))
 			return false;
 		CompareVariable compareDec = ((CompareVariable)o);
-		if(getCloneType() == CloneType.TYPE1 && !variableName.equals(compareDec.variableName))
+		if(getCloneType() == CloneType.TYPE1R && !variableName.equals(compareDec.variableName))
 			return false;
 		return type.equals(compareDec.type);
 	}
 
 	@Override
 	public int hashCode() {
-		return (getCloneType() == CloneType.TYPE1 ? variableName.hashCode() : 0) + (type.isPresent() ? type.get().hashCode() : -3);
+		return (getCloneType() == CloneType.TYPE1R ? variableName.hashCode() : 0) + (type.isPresent() ? type.get().hashCode() : -3);
 	}
 
 	@Override

@@ -10,7 +10,7 @@ public class Type2Test extends TypeTest {
 
 	@Override
 	protected CloneType getCloneType() {
-		return CloneType.TYPE2;
+		return CloneType.TYPE2R;
 	}
 	
 	@Override

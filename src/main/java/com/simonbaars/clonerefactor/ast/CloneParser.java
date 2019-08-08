@@ -88,12 +88,12 @@ public class CloneParser implements SetsIfNotNull, RemovesDuplicates, WritesErro
 
 	private void doTypeSpecificTransformations(List<Sequence> findChains) {
 		doType2Transformations(findChains); 
-		if (Settings.get().getCloneType() == CloneType.TYPE3)
+		if (Settings.get().getCloneType() == CloneType.TYPE3R)
 			new Type3Opportunities().determineType3Opportunities(findChains);
 	}
 
 	private void doType2Transformations(List<Sequence> findChains) {
-		if(Settings.get().getCloneType().isNotTypeOne() && !Settings.get().isUseLiteratureTypeDefinitions()) {
+		if(Settings.get().getCloneType().isNotType() && !Settings.get().isUseLiteratureTypeDefinitions()) {
 			IntStream.range(0, findChains.size()).forEach(i -> {
 				List<Sequence> determineVariability = new Type2Variability().determineVariability(findChains.remove(0));
 				for(Sequence s : determineVariability) {

@@ -15,7 +15,7 @@ public class TryType2Thresholds implements Runnable {
 	public void run() {
 		MetricsTables metricsTables = new MetricsTables();
 		System.out.println("Try Threshold Percentages");
-		Settings.get().setCloneType(CloneType.TYPE2);
+		Settings.get().setCloneType(CloneType.TYPE2R);
 		for(int i = 0; i<=100; i++) {
 			Settings.get().setType2VariabilityPercentage(i);
 			Metrics metrics = new RunOnCorpus().startCorpusCloneDetection();

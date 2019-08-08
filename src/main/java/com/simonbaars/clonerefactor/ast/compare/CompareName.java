@@ -19,7 +19,7 @@ public class CompareName extends Compare {
 		if(!super.equals(o))
 			return false;
 		CompareName other = (CompareName)o;
-		if(getCloneType().isNotTypeOne() && nameNotCompared(name.getParentNode().get()))
+		if(getCloneType().isNotType() && nameNotCompared(name.getParentNode().get()))
 			return true;
 		return name.equals(other.name);
 	}
@@ -30,7 +30,7 @@ public class CompareName extends Compare {
 
 	@Override
 	public int hashCode() {
-		return getCloneType().isNotTypeOne() ? -2 : name.hashCode();
+		return getCloneType().isNotType() ? -2 : name.hashCode();
 	}
 
 	@Override

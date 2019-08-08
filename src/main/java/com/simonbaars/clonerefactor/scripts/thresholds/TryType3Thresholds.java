@@ -15,7 +15,7 @@ public class TryType3Thresholds implements Runnable {
 	public void run() {
 		MetricsTables metricsTables = new MetricsTables();
 		System.out.println("Try Type 3 Thresholds");
-		Settings.get().setCloneType(CloneType.TYPE3);
+		Settings.get().setCloneType(CloneType.TYPE3R);
 		for(int i = 1; i<=100; i++) {
 			Settings.get().setType3GapSize(i*2);
 			Metrics metrics = new RunOnCorpus().startCorpusCloneDetection();

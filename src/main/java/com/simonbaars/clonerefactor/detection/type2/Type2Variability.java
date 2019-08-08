@@ -138,7 +138,7 @@ public class Type2Variability implements CalculatesPercentages, ChecksThresholds
 		for(Location l : s.getLocations()) {
 			List<Compare> literals2 = l.getContents().getCompare();
 			literals.add(literals2);
-			literals2.stream().filter(Compare::doesType2Compare).forEach(e -> e.setCloneType(CloneType.TYPE1));
+			literals2.stream().filter(Compare::doesType2Compare).forEach(e -> e.setCloneType(CloneType.TYPE1R));
 		}
 		return literals;
 	}

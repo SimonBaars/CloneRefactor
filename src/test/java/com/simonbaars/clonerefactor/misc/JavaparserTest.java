@@ -23,7 +23,7 @@ import junit.framework.TestCase;
 public class JavaparserTest extends TestCase {
 	public void testJavaParserBug() {
     	System.out.println("testSingleFile");
-    	Path p = Paths.get(CloneContentsTest.class.getClassLoader().getResource(CloneType.TYPE1.getNicelyFormatted()).getFile()+File.separator+"SingleFile");
+    	Path p = Paths.get(CloneContentsTest.class.getClassLoader().getResource(CloneType.TYPE1R.getNicelyFormatted()).getFile()+File.separator+"SingleFile");
     	SourceRoot s = new SourceRoot(p);
     	ParseResult<CompilationUnit> pcu;
 		try {

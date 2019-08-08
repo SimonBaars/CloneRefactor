@@ -8,7 +8,7 @@ public class CompareOutOfScope extends Compare {
 	private static int x = Integer.MIN_VALUE;
 	
 	public CompareOutOfScope(Range range) {
-		super(CloneType.TYPE1, range);
+		super(CloneType.TYPE1R, range);
 	}
 
 	@Override

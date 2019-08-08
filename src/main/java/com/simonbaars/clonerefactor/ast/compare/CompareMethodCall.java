@@ -37,10 +37,10 @@ public class CompareMethodCall extends Compare implements ResolvesSymbols {
 		if(!super.equals(c))
 			return false;
 		CompareMethodCall other = (CompareMethodCall)c;
-		if(getCloneType() == CloneType.TYPE1 && !methodCall.equals(other.methodCall))
+		if(getCloneType() == CloneType.TYPE1R && !methodCall.equals(other.methodCall))
 			return false;
 		if(type.isPresent() && other.type.isPresent())
-			return getCloneType().isNotTypeOne() ? type.get().equalsType2(other.type.get()) : type.get().equalsType1(other.type.get());
+			return getCloneType().isNotType() ? type.get().equalsType2(other.type.get()) : type.get().equalsType1(other.type.get());
 		return estimatedTypes.equals(other.estimatedTypes);
 	}
 
@@ -57,7 +57,7 @@ public class CompareMethodCall extends Compare implements ResolvesSymbols {
 	@Override
 	public int hashCode() {
 		if(type.isPresent()) {
-			if(getCloneType().isNotTypeOne())
+			if(getCloneType().isNotType())
 				return type.get().hashcodeType2();
 			return type.get().hashcodeType1();
 		}

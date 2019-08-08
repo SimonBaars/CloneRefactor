@@ -9,6 +9,6 @@ public class Type1Test extends TypeTest {
 
 	@Override
 	protected CloneType getCloneType() {
-		return CloneType.TYPE1;
+		return CloneType.TYPE1R;
 	}
 }
