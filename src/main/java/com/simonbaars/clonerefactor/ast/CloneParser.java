@@ -15,7 +15,6 @@ import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.utils.SourceRoot;
 import com.github.javaparser.utils.SourceRoot.Callback.Result;
-import com.simonbaars.clonerefactor.Main;
 import com.simonbaars.clonerefactor.SequenceObservable;
 import com.simonbaars.clonerefactor.ast.interfaces.ResolvesSymbols;
 import com.simonbaars.clonerefactor.ast.interfaces.SetsIfNotNull;
@@ -28,7 +27,7 @@ import com.simonbaars.clonerefactor.model.DetectionResults;
 import com.simonbaars.clonerefactor.model.Sequence;
 import com.simonbaars.clonerefactor.model.location.Location;
 import com.simonbaars.clonerefactor.refactoring.ExtractMethod;
-import com.simonbaars.clonerefactor.refactoring.RefactoringStrategy;
+import com.simonbaars.clonerefactor.refactoring.enums.RefactoringStrategy;
 import com.simonbaars.clonerefactor.settings.Settings;
 import com.simonbaars.clonerefactor.thread.CalculatesTimeIntervals;
 import com.simonbaars.clonerefactor.thread.WritesErrors;
@@ -37,7 +36,7 @@ public class CloneParser implements SetsIfNotNull, RemovesDuplicates, WritesErro
 	
 	private Path projectRoot;
 	private SourceRoot sourceRoot;
-	private ParserConfiguration config;
+	private final ParserConfiguration config;
 
 	public CloneParser(Path projectRoot, SourceRoot sourceRoot, ParserConfiguration config) {
 		this.projectRoot = projectRoot;
@@ -77,7 +76,6 @@ public class CloneParser implements SetsIfNotNull, RemovesDuplicates, WritesErro
 					extractMethod.refactor(findChains);
 					sourceRoot = new SourceRoot(extractMethod.getRefactorPath(true));
 					projectRoot = extractMethod.getRefactorPath(false);
-					config = Main.createParseConfig(projectRoot, sourceRoot.getRoot());
 				}
 				return res;
 			} else throw new IllegalStateException("Project has no usable sources!");

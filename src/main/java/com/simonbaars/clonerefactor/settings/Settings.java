@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
-import com.simonbaars.clonerefactor.refactoring.RefactoringStrategy;
+import com.simonbaars.clonerefactor.refactoring.enums.RefactoringStrategy;
 
 public class Settings {
 	

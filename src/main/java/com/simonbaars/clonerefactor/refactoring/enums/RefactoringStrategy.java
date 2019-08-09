@@ -1,4 +1,4 @@
-package com.simonbaars.clonerefactor.refactoring;
+package com.simonbaars.clonerefactor.refactoring.enums;
 
 public enum RefactoringStrategy {
 	DONOTREFACTOR, //Does not do any refactoring
