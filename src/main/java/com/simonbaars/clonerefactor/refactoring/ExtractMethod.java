@@ -31,7 +31,9 @@ import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.PackageDeclaration;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
+import com.github.javaparser.ast.expr.AssignExpr;
 import com.github.javaparser.ast.expr.MethodCallExpr;
+import com.github.javaparser.ast.expr.VariableDeclarationExpr;
 import com.github.javaparser.ast.nodeTypes.NodeWithStatements;
 import com.github.javaparser.ast.stmt.ExpressionStmt;
 import com.github.javaparser.ast.stmt.IfStmt;
@@ -53,6 +55,7 @@ import com.simonbaars.clonerefactor.metrics.context.interfaces.RequiresNodeConte
 import com.simonbaars.clonerefactor.metrics.model.Relation;
 import com.simonbaars.clonerefactor.model.Sequence;
 import com.simonbaars.clonerefactor.model.location.Location;
+import com.simonbaars.clonerefactor.refactoring.enums.MethodType;
 import com.simonbaars.clonerefactor.refactoring.model.CombinedMetrics;
 import com.simonbaars.clonerefactor.refactoring.model.PostMetrics;
 import com.simonbaars.clonerefactor.refactoring.model.PreMetrics;
@@ -127,11 +130,20 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 		Arrays.stream(populators).forEach(p -> p.postPopulate(s, decl));
 		refactoredSequences.put(s, decl);
 		CombinedMetrics combine = new PostMetrics(decl, s.getRelation().isEffectivelyUnrelated() ? getClass(decl) : Optional.empty(), methodcalls).combine(preMetrics);
-		combine.saveTable(res, s, projectFolder.getFileName().toString(), decl);
+		combine.saveTable(res, s, projectFolder.getFileName().toString(), decl, calculateMethodType(methodcalls.get(0)));
 		storeChanges(s, decl, methodcalls);
 		return generateDescription(s, decl) + combine.save(metricCollector, metrics);
 	}
 	
+	private MethodType calculateMethodType(Statement statement) {
+		ExpressionStmt exprStmt = (ExpressionStmt)statement;
+		if(exprStmt.getExpression() instanceof VariableDeclarationExpr)
+			return MethodType.RETURNSDECLAREDVARIABLE;
+		else if(exprStmt.getExpression() instanceof AssignExpr)
+			return MethodType.RETURNSASSIGNEDVARIABLE;
+		return MethodType.VOID;
+	}
+
 	private String generateDescription(Sequence s, MethodDeclaration extractedMethod) {
 		StringBuilder b = new StringBuilder("Created unified method in "+s.getRelation().getFirstClass().getNameAsString()+"\n\nCloneRefactor refactored a clone class with "+s.size()+" clone instances. For the common code we created a new method and named this method \""+extractedMethod.getNameAsString()+"\". These clone instances have an "+s.getRelation().getType()+" relation with each other. ");
 		if(s.getRelation().isEffectivelyUnrelated()) {
@@ -340,5 +352,9 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 			cu = pr.getResult().get();
 		} else throw new IllegalStateException("Failed to parse "+cu+": "+Arrays.toString(pr.getProblems().toArray()));
 		return cu;
+	}
+
+	public SimpleTable getRes() {
+		return res;
 	}
 }
