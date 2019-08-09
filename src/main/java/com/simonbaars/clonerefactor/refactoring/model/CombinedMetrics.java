@@ -1,10 +1,14 @@
 package com.simonbaars.clonerefactor.refactoring.model;
 
+import com.github.javaparser.ast.body.MethodDeclaration;
 import com.simonbaars.clonerefactor.ast.MetricObserver;
 import com.simonbaars.clonerefactor.datatype.map.CountMap;
+import com.simonbaars.clonerefactor.datatype.map.SimpleTable;
 import com.simonbaars.clonerefactor.detection.interfaces.CalculatesPercentages;
 import com.simonbaars.clonerefactor.metrics.MetricCollector;
 import com.simonbaars.clonerefactor.metrics.ProblemType;
+import com.simonbaars.clonerefactor.model.Sequence;
+import com.simonbaars.clonerefactor.refactoring.enums.MethodType;
 
 public class CombinedMetrics implements CalculatesPercentages {
 	private final int ccIncrease;
@@ -116,5 +120,9 @@ public class CombinedMetrics implements CalculatesPercentages {
 		}
 		stringBuilder.append("."+System.lineSeparator());
 		return stringBuilder.toString();
+	}
+
+	public void saveTable(SimpleTable res, Sequence s, String systemName, MethodDeclaration decl, MethodType type) {
+		res.addRow(systemName, s.getNodeSize(), s.getTokenSize(), s.getRelation(), type, decl.getParameters().size(), duplicateTokensIncrease, ccIncrease, unitInterfaceSizeIncrease, tokenSizeIncrease, duplicateNodesIncrease, nodeSizeIncrease);
 	}
 }
