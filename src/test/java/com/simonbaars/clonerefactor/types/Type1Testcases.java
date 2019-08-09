@@ -1,15 +1,19 @@
 package com.simonbaars.clonerefactor.types;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Paths;
 
 import com.simonbaars.clonerefactor.Main;
 import com.simonbaars.clonerefactor.helper.Type1Test;
+import com.simonbaars.clonerefactor.model.DetectionResults;
 import com.simonbaars.clonerefactor.scripts.model.MetricsTables;
 import com.simonbaars.clonerefactor.settings.CloneType;
 import com.simonbaars.clonerefactor.settings.Scope;
 import com.simonbaars.clonerefactor.settings.Settings;
 import com.simonbaars.clonerefactor.thread.CorpusThread;
+import com.simonbaars.clonerefactor.util.DoesFileOperations;
+import com.simonbaars.clonerefactor.util.SavePaths;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
@@ -17,7 +21,7 @@ import junit.framework.TestSuite;
 /**
  * Unit test for the clone detector.
  */
-public class Type1Testcases extends Type1Test {
+public class Type1Testcases extends Type1Test implements DoesFileOperations {
     private static final String SEVERAL_METHODS_PROJECT = "SeveralMethodsCloned";
 	private static final String UNEQUAL_SIZE_CLONES_PROJECT = "UnequalSizeClones";
 	private static final String SINGLE_FILE_PROJECT = "SingleFile";
@@ -57,7 +61,13 @@ public class Type1Testcases extends Type1Test {
     	System.out.println("joda-time");
     	String path = "/Users/sbaars/clone/git/joda-time/";
     	System.out.println(Settings.get());
-		tables.reportMetrics("Kryo", Main.cloneDetection(Paths.get(path), Paths.get(path+"src/main/java/")).getMetrics());
+		DetectionResults cloneDetection = Main.cloneDetection(Paths.get(path), Paths.get(path+"src/main/java/"));
+		tables.reportMetrics("Kryo", cloneDetection.getMetrics());
+		try {
+			writeStringToFile(new File(SavePaths.getMyOutputFolder()+"refactor.txt"), cloneDetection.getRefactorResults().toString());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
     }
     
     public void testRef() {
