@@ -110,7 +110,7 @@ public class Type2Variability implements CalculatesPercentages, ChecksThresholds
 	}
 
 	private boolean globalThresholdsMet(int[][] equalityArray, int total) {
-		return checkType2VariabilityThreshold(diffPerc(equalityArray));
+		return diffPerc(equalityArray) == 0;
 	}
 
 	private int[][] createEqualityArray(List<List<Compare>> literals) {

@@ -10,8 +10,6 @@ import com.github.javaparser.ast.expr.Expression;
 import com.simonbaars.clonerefactor.model.location.Location;
 
 public class Type2RLocation extends Location {
-	
-	private final Set<Integer> diffIndices = new HashSet<>();
 	private final Set<Expression> diffExpressions = new HashSet<>();
 
 	public Type2RLocation(Location clonedLocation, Range r) {
@@ -32,10 +30,6 @@ public class Type2RLocation extends Location {
 
 	public Type2RLocation(Path file, Range range) {
 		super(file, range);
-	}
-
-	public Set<Integer> getDiffIndices() {
-		return diffIndices;
 	}
 
 	public Set<Expression> getDiffExpressions() {
