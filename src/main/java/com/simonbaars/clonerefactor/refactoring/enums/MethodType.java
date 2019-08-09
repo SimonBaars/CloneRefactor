@@ -3,7 +3,8 @@ package com.simonbaars.clonerefactor.refactoring.enums;
 public enum MethodType {
 	VOID("Void"),
 	RETURNSASSIGNEDVARIABLE("Assign"),
-	RETURNSDECLAREDVARIABLE("Declare");
+	RETURNSDECLAREDVARIABLE("Declare"),
+	RETURNS("Return");
 	
 	private String name;
 

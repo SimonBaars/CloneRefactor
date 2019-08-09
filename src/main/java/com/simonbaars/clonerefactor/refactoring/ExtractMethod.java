@@ -37,6 +37,7 @@ import com.github.javaparser.ast.expr.VariableDeclarationExpr;
 import com.github.javaparser.ast.nodeTypes.NodeWithStatements;
 import com.github.javaparser.ast.stmt.ExpressionStmt;
 import com.github.javaparser.ast.stmt.IfStmt;
+import com.github.javaparser.ast.stmt.ReturnStmt;
 import com.github.javaparser.ast.stmt.Statement;
 import com.github.javaparser.ast.stmt.WhileStmt;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
@@ -136,6 +137,8 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 	}
 	
 	private MethodType calculateMethodType(Statement statement) {
+		if(statement instanceof ReturnStmt)
+			return MethodType.RETURNS;
 		ExpressionStmt exprStmt = (ExpressionStmt)statement;
 		if(exprStmt.getExpression() instanceof VariableDeclarationExpr)
 			return MethodType.RETURNSDECLAREDVARIABLE;
