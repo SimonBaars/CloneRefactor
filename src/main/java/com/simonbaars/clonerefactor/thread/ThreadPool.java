@@ -10,15 +10,18 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.github.javaparser.symbolsolver.javaparsermodel.JavaParserFacade;
+import com.simonbaars.clonerefactor.datatype.map.SimpleTable;
 import com.simonbaars.clonerefactor.metrics.Metrics;
+import com.simonbaars.clonerefactor.util.DoesFileOperations;
 import com.simonbaars.clonerefactor.util.SavePaths;
 
-public class ThreadPool implements WritesErrors, CalculatesTimeIntervals {
+public class ThreadPool implements WritesErrors, CalculatesTimeIntervals, DoesFileOperations {
 	private final File OUTPUT_FOLDER = new File(SavePaths.getFullOutputFolder());
 	private final File FULL_METRICS = new File(OUTPUT_FOLDER.getParent()+"/metrics.txt");
 	private final int NUMBER_OF_THREADS = 4;
 	private final int THREAD_TIMEOUT = 6000000;
 	private final Metrics fullMetrics = new Metrics();
+	private final SimpleTable refactorResults = new SimpleTable("System", "Nodes", "Tokens", "Relation", "Returns", "Arguments", "Duplication", "Complexity", "Interface Size", "Size", "Duplication (nodes)", "Size (nodes)");
 	
 	private final List<Optional<CorpusThread>> threads;
 	
@@ -73,6 +76,11 @@ public class ThreadPool implements WritesErrors, CalculatesTimeIntervals {
 	
 	public void finishFinalThreads() {
 		while(waitForThreadToFinish()) replaceFinishedThread(Optional.empty());
+		try {
+			writeStringToFile(new File(SavePaths.getMyOutputFolder()+"refactor.txt"), refactorResults.toString());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	private void writePreviousThreadResults(int i) {
@@ -90,6 +98,7 @@ public class ThreadPool implements WritesErrors, CalculatesTimeIntervals {
 	private void writeResults(CorpusThread t) {
 		calculateGeneralMetrics(t);
 		fullMetrics.add(t.res.getMetrics());
+		refactorResults.addAll(t.res.getRefactorResults());
 		try {
 			writeStringToFile(new File(OUTPUT_FOLDER.getAbsolutePath()+File.separator+t.getFile().getName()+"-"+t.res.getClones().size()+".txt"), t.res.toString());
 			writeStringToFile(FULL_METRICS, fullMetrics.toString());
