@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import com.github.javaparser.Range;
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.expr.NameExpr;
 import com.github.javaparser.ast.expr.SimpleName;
@@ -40,7 +41,7 @@ public class CloneRefactorability implements DeterminesMetric<Refactorability>, 
 			return Refactorability.NOSTATEMENT;
 		else if(hasMultipleReturn(lowestNodes))
 			return Refactorability.MULTIPLERETURNVALUES;
-		else if(isPartialBlock(sequence))
+		else if(isPartialBlock(sequence, lowestNodes))
 			return Refactorability.PARTIALBLOCK;
 		else if(hasComplexControlFlow(sequence))
 			return Refactorability.COMPLEXCONTROLFLOW;
@@ -70,15 +71,8 @@ public class CloneRefactorability implements DeterminesMetric<Refactorability>, 
 		return false;
 	}
 
-	private boolean isPartialBlock(Sequence sequence) {
-		for(Location location : sequence.getLocations()) {
-			for(Node n : location.getContents().getNodes()) {
-				List<Node> children = childrenToParse(n);
-				if(children.stream().anyMatch(e -> !isExcluded(e) && !location.getContents().getNodes().contains(e)))
-					return true;
-			}
-		}
-		return false;
+	private boolean isPartialBlock(Sequence sequence, List<Node> lowestNodes) {
+		return !new Range(lowestNodes.get(0).getRange().get().begin, lowestNodes.get(lowestNodes.size()-1).getRange().get().end).equals(sequence.getAny().getRange());
 	}
 	
 	private boolean hasComplexControlFlow(Sequence sequence) {
