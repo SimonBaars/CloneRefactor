@@ -152,4 +152,8 @@ public class Sequence implements Comparable<Sequence> {
 	public Relation getRelation() {
 		return relation;
 	}
+
+	public int getTokenSize() {
+		return getAny().getAmountOfTokens();
+	}
 }

@@ -3,7 +3,6 @@ package com.simonbaars.clonerefactor.ast;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -52,12 +51,10 @@ public class CloneParser implements SetsIfNotNull, RemovesDuplicates, WritesErro
 		do {
 			oldRefactored = refactored;
 			DetectionResults res = parseProject(prev == null ? 0 : prev.getMetrics().generalStats.get("Generated Declarations"));
-			System.out.println(Arrays.toString(res.getClones().toArray()).replace("Location [", "\nLocation [").replace("Sequence [sequence=[", "\nSequence [sequence=["));
-			if(d == null)
-				d = res;
+			if(d == null) d = res;
 			else prev.getMetrics().setChild(res.getMetrics());
 			prev = res;
-			refactored = res.getMetrics().generalStats.get("Amount Refactored");
+			refactored = res.getMetrics().generalStats.get("Generated Declarations");
 		} while(oldRefactored != refactored);
 		return d;
 	}
