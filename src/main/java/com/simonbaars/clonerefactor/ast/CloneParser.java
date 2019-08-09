@@ -76,6 +76,7 @@ public class CloneParser implements SetsIfNotNull, RemovesDuplicates, WritesErro
 					extractMethod.refactor(findChains);
 					sourceRoot = new SourceRoot(extractMethod.getRefactorPath(true));
 					projectRoot = extractMethod.getRefactorPath(false);
+					res.getRefactorResults().addAll(extractMethod.getRes());
 				}
 				return res;
 			} else throw new IllegalStateException("Project has no usable sources!");

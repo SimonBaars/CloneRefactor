@@ -11,7 +11,7 @@ import com.simonbaars.clonerefactor.metrics.Metrics;
 public class DetectionResults {
 	private Metrics metrics;
 	private List<Sequence> clones;
-	private SimpleTable refactorResults = new SimpleTable();
+	private final SimpleTable refactorResults = new SimpleTable();
 	
 	public DetectionResults(Metrics metrics, List<Sequence> clones) {
 		super();
@@ -52,7 +52,7 @@ public class DetectionResults {
 		return this;
 	}
 
-	
-	
-	
+	public SimpleTable getRefactorResults() {
+		return refactorResults;
+	}
 }
