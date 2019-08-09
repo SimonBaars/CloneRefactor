@@ -45,6 +45,7 @@ import com.simonbaars.clonerefactor.ast.interfaces.RequiresNodeOperations;
 import com.simonbaars.clonerefactor.ast.interfaces.ResolvesSymbols;
 import com.simonbaars.clonerefactor.datatype.map.CountMap;
 import com.simonbaars.clonerefactor.datatype.map.ListMap;
+import com.simonbaars.clonerefactor.datatype.map.SimpleTable;
 import com.simonbaars.clonerefactor.metrics.MetricCollector;
 import com.simonbaars.clonerefactor.metrics.ProblemType;
 import com.simonbaars.clonerefactor.metrics.context.enums.Refactorability;
@@ -81,6 +82,7 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 
 	private final List<CompilationUnit> compilationUnits;
 	private final CountMap<String> metrics = new CountMap<>();
+	private final SimpleTable res = new SimpleTable();
 	
 	public ExtractMethod(Path projectRoot, Path root, List<CompilationUnit> compilationUnits, MetricCollector metricCollector, int nGenerated) {
 		this.projectFolder = projectRoot;
@@ -125,6 +127,7 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 		Arrays.stream(populators).forEach(p -> p.postPopulate(s, decl));
 		refactoredSequences.put(s, decl);
 		CombinedMetrics combine = new PostMetrics(decl, s.getRelation().isEffectivelyUnrelated() ? getClass(decl) : Optional.empty(), methodcalls).combine(preMetrics);
+		combine.saveTable(res, s, projectFolder.getFileName().toString(), decl);
 		storeChanges(s, decl, methodcalls);
 		return generateDescription(s, decl) + combine.save(metricCollector, metrics);
 	}

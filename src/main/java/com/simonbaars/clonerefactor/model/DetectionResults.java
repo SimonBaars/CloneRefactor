@@ -5,12 +5,13 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import com.simonbaars.clonerefactor.datatype.map.SimpleTable;
 import com.simonbaars.clonerefactor.metrics.Metrics;
 
 public class DetectionResults {
 	private Metrics metrics;
 	private List<Sequence> clones;
-	
+	private SimpleTable refactorResults = new SimpleTable();
 	
 	public DetectionResults(Metrics metrics, List<Sequence> clones) {
 		super();
