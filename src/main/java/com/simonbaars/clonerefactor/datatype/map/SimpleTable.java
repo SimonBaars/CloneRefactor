@@ -20,4 +20,9 @@ public class SimpleTable extends ArrayList<String> {
 	public void addRow(Object...objects) {
 		add(Arrays.stream(objects).map(e -> e.toString()).collect(Collectors.joining("\t")));
 	}
+	
+	@Override
+	public String toString() {
+		return stream().collect(Collectors.joining(System.lineSeparator()));
+	}
 }
