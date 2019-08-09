@@ -13,6 +13,8 @@ import com.github.javaparser.ast.expr.SimpleName;
 import com.github.javaparser.ast.stmt.Statement;
 import com.simonbaars.clonerefactor.ast.ASTHolder;
 import com.simonbaars.clonerefactor.ast.resolution.ResolvedVariable;
+import com.simonbaars.clonerefactor.detection.type2.Type2RLocation;
+import com.simonbaars.clonerefactor.model.Sequence;
 import com.simonbaars.clonerefactor.refactoring.visitor.VariableVisitor;
 
 public class PopulateArguments implements PopulatesExtractedMethod {
@@ -42,13 +44,19 @@ public class PopulateArguments implements PopulatesExtractedMethod {
 	}
 
 	@Override
-	public Optional<Statement> modifyMethodCall(MethodCallExpr expr) {
+	public Optional<Statement> modifyMethodCall(Sequence s, MethodCallExpr expr) {
 		usedVariables.keySet().forEach(v -> expr.addArgument(v.toString()));
+		if(s.getAny() instanceof Type2RLocation) {
+			((Type2RLocation)s.getAny()).addDummyParameters(expr);
+		}
 		return Optional.empty();
 	}
 
 	@Override
-	public void postPopulate(MethodDeclaration extractedMethod) {
+	public void postPopulate(Sequence s, MethodDeclaration extractedMethod) {
 		usedVariables.clear();
+		if(s.getAny() instanceof Type2RLocation) {
+			((Type2RLocation)s.getAny()).addDummyParameters(extractedMethod);
+		}
 	}
 }

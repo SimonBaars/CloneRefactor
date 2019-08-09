@@ -7,6 +7,7 @@ import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.expr.MethodCallExpr;
 import com.github.javaparser.ast.stmt.Statement;
+import com.simonbaars.clonerefactor.model.Sequence;
 
 public interface PopulatesExtractedMethod {
 	/**
@@ -19,10 +20,10 @@ public interface PopulatesExtractedMethod {
 	 * Gives the opportunity to modify the method call while it is being added to each location. This method is called for each location in each Sequence.
 	 * @param expr The method call to the newly refactored method that has just been added to the location.
 	 */
-	public Optional<Statement> modifyMethodCall(MethodCallExpr expr);
+	public Optional<Statement> modifyMethodCall(Sequence s, MethodCallExpr expr);
 	/**
 	 * Ran after the extractedMethod is populated and placed at the appropriate location. This method is called only once per Sequence.
 	 * @param extractedMethod The extracted method that is currently located at its appropriate location in the code.
 	 */
-	public void postPopulate(MethodDeclaration extractedMethod);
+	public void postPopulate(Sequence s, MethodDeclaration extractedMethod);
 }

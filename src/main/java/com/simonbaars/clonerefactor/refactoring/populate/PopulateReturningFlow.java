@@ -9,6 +9,7 @@ import com.github.javaparser.ast.expr.MethodCallExpr;
 import com.github.javaparser.ast.stmt.ReturnStmt;
 import com.github.javaparser.ast.stmt.Statement;
 import com.simonbaars.clonerefactor.metrics.context.interfaces.RequiresNodeContext;
+import com.simonbaars.clonerefactor.model.Sequence;
 
 public class PopulateReturningFlow implements PopulatesExtractedMethod, RequiresNodeContext {
 	public PopulateReturningFlow() {}
@@ -28,14 +29,14 @@ public class PopulateReturningFlow implements PopulatesExtractedMethod, Requires
 	}
 
 	@Override
-	public Optional<Statement> modifyMethodCall(MethodCallExpr expr) {
+	public Optional<Statement> modifyMethodCall(Sequence s, MethodCallExpr expr) {
 		if(returns)
 			return Optional.of(new ReturnStmt(expr));
 		return Optional.empty();
 	}
 
 	@Override
-	public void postPopulate(MethodDeclaration extractedMethod) {
+	public void postPopulate(Sequence s, MethodDeclaration extractedMethod) {
 		returns = false;
 	}
 

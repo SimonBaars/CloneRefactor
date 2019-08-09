@@ -21,6 +21,7 @@ import com.github.javaparser.ast.stmt.ReturnStmt;
 import com.github.javaparser.ast.stmt.Statement;
 import com.github.javaparser.ast.type.Type;
 import com.simonbaars.clonerefactor.metrics.context.interfaces.ChecksReturningData;
+import com.simonbaars.clonerefactor.model.Sequence;
 
 public class PopulateReturnValue implements PopulatesExtractedMethod, ChecksReturningData {	
 	private NameExpr name;
@@ -84,7 +85,7 @@ public class PopulateReturnValue implements PopulatesExtractedMethod, ChecksRetu
 	}
 
 	@Override
-	public Optional<Statement> modifyMethodCall(MethodCallExpr expr) {
+	public Optional<Statement> modifyMethodCall(Sequence s, MethodCallExpr expr) {
 		if(type!=null && name!=null)
 			return Optional.of(new ExpressionStmt(new VariableDeclarationExpr(new VariableDeclarator(type, name.getNameAsString(), expr))));
 		else if(name!=null)
@@ -93,7 +94,7 @@ public class PopulateReturnValue implements PopulatesExtractedMethod, ChecksRetu
 	}
 
 	@Override
-	public void postPopulate(MethodDeclaration extractedMethod) {
+	public void postPopulate(Sequence s, MethodDeclaration extractedMethod) {
 		if(type!=null)
 			extractedMethod.setType(type);
 		if(wipe)

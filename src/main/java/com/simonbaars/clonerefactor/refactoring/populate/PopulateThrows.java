@@ -7,6 +7,7 @@ import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.expr.MethodCallExpr;
 import com.github.javaparser.ast.stmt.Statement;
+import com.simonbaars.clonerefactor.model.Sequence;
 import com.simonbaars.clonerefactor.refactoring.visitor.ThrowsVisitor;
 
 public class PopulateThrows implements PopulatesExtractedMethod {
@@ -16,12 +17,12 @@ public class PopulateThrows implements PopulatesExtractedMethod {
 	}
 
 	@Override
-	public Optional<Statement> modifyMethodCall(MethodCallExpr expr) {
+	public Optional<Statement> modifyMethodCall(Sequence s, MethodCallExpr expr) {
 		return Optional.empty();
 	}
 
 	@Override
-	public void postPopulate(MethodDeclaration extractedMethod) {
+	public void postPopulate(Sequence s, MethodDeclaration extractedMethod) {
 		extractedMethod.accept(new ThrowsVisitor(), extractedMethod);
 	}
 }

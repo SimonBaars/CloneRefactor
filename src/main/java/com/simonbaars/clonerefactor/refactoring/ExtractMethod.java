@@ -122,7 +122,7 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 		List<Statement> methodcalls = removeLowestNodes(s, decl);;
 		if(getClass(decl).get().isInterface() && !s.getRelation().isInterfaceRelation())
 			decl.setModifiers(Keyword.PUBLIC, Keyword.DEFAULT);
-		Arrays.stream(populators).forEach(p -> p.postPopulate(decl));
+		Arrays.stream(populators).forEach(p -> p.postPopulate(s, decl));
 		refactoredSequences.put(s, decl);
 		CombinedMetrics combine = new PostMetrics(decl, s.getRelation().isEffectivelyUnrelated() ? getClass(decl) : Optional.empty(), methodcalls).combine(preMetrics);
 		storeChanges(s, decl, methodcalls);
@@ -232,14 +232,14 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 		ListMap<Location, Node> lowestNodes = new ListMap<>();
 		s.getLocations().forEach(e -> lowestNodes.put(e, lowestNodes(e.getContents().getNodes())));
 		Arrays.stream(populators).forEach(p -> p.prePopulate(decl, lowestNodes.get(s.getAny())));
-		List<Statement> methodcalls = s.getLocations().stream().map(l -> removeLowestNodes(lowestNodes.get(l), decl.getNameAsString())).collect(Collectors.toList());
+		List<Statement> methodcalls = s.getLocations().stream().map(l -> removeLowestNodes(s, lowestNodes.get(l), decl.getNameAsString())).collect(Collectors.toList());
 		lowestNodes.get(s.getAny()).forEach(node -> decl.getBody().get().addStatement((Statement)node));
 		return methodcalls;
 	}
 
-	private Statement removeLowestNodes(List<Node> lowestNodes, String name) {
+	private Statement removeLowestNodes(Sequence s, List<Node> lowestNodes, String name) {
 		MethodCallExpr methodCallExpr = new MethodCallExpr(name);
-		Statement methodCallStmt = Arrays.stream(populators).map(p -> p.modifyMethodCall(methodCallExpr)).filter(Optional::isPresent).map(Optional::get).findAny().orElse(new ExpressionStmt(methodCallExpr));
+		Statement methodCallStmt = Arrays.stream(populators).map(p -> p.modifyMethodCall(s, methodCallExpr)).filter(Optional::isPresent).map(Optional::get).findAny().orElse(new ExpressionStmt(methodCallExpr));
 		if(Settings.get().getRefactoringStrategy().savesFiles())
 			saveASTBeforeChange(getCompilationUnit(lowestNodes.get(0)).get());
 		placeMethodCall(lowestNodes, methodCallStmt);
