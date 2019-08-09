@@ -72,9 +72,18 @@ public class CloneRefactorability implements DeterminesMetric<Refactorability>, 
 	}
 
 	private boolean isPartialBlock(Sequence sequence, List<Node> lowestNodes) {
-		return !new Range(lowestNodes.get(0).getRange().get().begin, lowestNodes.get(lowestNodes.size()-1).getRange().get().end).equals(sequence.getAny().getRange());
+		return !new Range(lowestNodes.get(0).getRange().get().begin, getFinalEndNode(lowestNodes.get(lowestNodes.size()-1)).getRange().get().end).equals(sequence.getAny().getRange());
 	}
 	
+	private Node getFinalEndNode(Node node) {
+		if(!node.getChildNodes().isEmpty()) {
+			Node finalChild = node.getChildNodes().get(node.getChildNodes().size()-1);
+			if(!isExcluded(finalChild))
+				return getFinalEndNode(finalChild);
+		}
+		return node;
+	}
+
 	private boolean hasComplexControlFlow(Sequence sequence) {
 		return !loopForAllBreakAndContinueStatementsIsIncluded(sequence.getAny()) || !allPathsReturn(sequence.getAny());
 	}
