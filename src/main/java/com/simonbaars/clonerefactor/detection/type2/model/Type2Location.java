@@ -144,7 +144,10 @@ public class Type2Location implements DeterminesNodeTokens, Comparable<Type2Loca
 		assert a.length == b.length;
 		for(int i = 0; i<a.length; i++) {
 			if(a[i]!=b[i] && a[i]>0 && b[i]>0) {
-				exprs.add(compare.get(i).getExpression());
+				Expression expression = compare.get(i).getExpression();
+				if(expression == null) 
+					throw new IllegalStateException("Expression may not be null! "+compare.get(i)+" at index!");
+				exprs.add(expression);
 			}
 		}
 	}
