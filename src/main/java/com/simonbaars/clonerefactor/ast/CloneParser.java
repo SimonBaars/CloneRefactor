@@ -45,11 +45,12 @@ public class CloneParser implements SetsIfNotNull, RemovesDuplicates, WritesErro
 	}
 	
 	public DetectionResults parse() {
+		final List<CompilationUnit> compilationUnits = createAST();
 		DetectionResults d = null, prev = null;
 		int oldRefactored, refactored = 0;
 		do {
 			oldRefactored = refactored;
-			DetectionResults res = parseProject(prev == null ? 0 : prev.getMetrics().generalStats.get("Generated Declarations"));
+			DetectionResults res = parseProject(prev == null ? 0 : prev.getMetrics().generalStats.get("Generated Declarations"), compilationUnits);
 			if(d == null) d = res;
 			else prev.getMetrics().setChild(res.getMetrics());
 			prev = res;
@@ -58,8 +59,7 @@ public class CloneParser implements SetsIfNotNull, RemovesDuplicates, WritesErro
 		return d;
 	}
 
-	private DetectionResults parseProject(int nGenerated) {
-		final List<CompilationUnit> compilationUnits = createAST();
+	private DetectionResults parseProject(int nGenerated, final List<CompilationUnit> compilationUnits) {
 		try {
 			MetricCollector metricCollector = new MetricCollector();
 			long beginTime = System.currentTimeMillis();

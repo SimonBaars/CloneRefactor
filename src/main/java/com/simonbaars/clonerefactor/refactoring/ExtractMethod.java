@@ -6,6 +6,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -25,6 +26,7 @@ import com.github.javaparser.Position;
 import com.github.javaparser.Range;
 import com.github.javaparser.TokenRange;
 import com.github.javaparser.ast.CompilationUnit;
+import com.github.javaparser.ast.CompilationUnit.Storage;
 import com.github.javaparser.ast.Modifier;
 import com.github.javaparser.ast.Modifier.Keyword;
 import com.github.javaparser.ast.Node;
@@ -88,6 +90,8 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 	private final CountMap<String> metrics = new CountMap<>();
 	private final SimpleTable res = new SimpleTable();
 	
+	private final Set<Storage> modified = new HashSet<>();
+	
 	public ExtractMethod(Path projectRoot, Path root, List<CompilationUnit> compilationUnits, MetricCollector metricCollector, int nGenerated) {
 		this.projectFolder = projectRoot;
 		this.sourceFolder = root;
@@ -130,7 +134,9 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 			decl.setModifiers(Keyword.PUBLIC, Keyword.DEFAULT);
 		Arrays.stream(populators).forEach(p -> p.postPopulate(s, decl));
 		refactoredSequences.put(s, decl);
-		CombinedMetrics combine = new PostMetrics(decl, s.getRelation().isEffectivelyUnrelated() ? getClass(decl) : Optional.empty(), methodcalls).combine(preMetrics);
+		Optional<ClassOrInterfaceDeclaration> cu = s.getRelation().isEffectivelyUnrelated() ? getClass(decl) : Optional.empty();
+		if(cu.isPresent()) compilationUnits.add(makeValidAfterChanges(getCompilationUnit(cu.get()).get()));
+		CombinedMetrics combine = new PostMetrics(decl, cu, methodcalls).combine(preMetrics);
 		combine.saveTable(res, s, projectFolder.getFileName().toString(), decl, calculateMethodType(methodcalls.get(0)));
 		storeChanges(s, decl, methodcalls);
 		return generateDescription(s, decl) + combine.save(metricCollector, metrics);
@@ -165,7 +171,8 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 	private void storeChanges(Sequence s, MethodDeclaration decl, List<Statement> methodcalls) {
 		List<Node> saveNodes = new ArrayList<>(s.getRelation().getIntersectingClasses());
 		saveNodes.addAll(methodcalls);
-		Set<CompilationUnit> cus = getUniqueCompilationUnits(saveNodes);
+		Collection<CompilationUnit> cus = getUniqueCompilationUnits(saveNodes);
+		cus.forEach(cu -> modified.add(cu.getStorage().get()));
 		if(Settings.get().getRefactoringStrategy().savesFiles())
 			cus.forEach(this::save);
 	}
@@ -196,7 +203,6 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 		relation.getIntersectingClasses().forEach(c -> addType(c, createInterface).apply(implementedType));
 		Optional<PackageDeclaration> pack = getCompilationUnit(s.getAny().getFirstNode()).get().getPackageDeclaration();
 		CompilationUnit cu = pack.isPresent() ? new CompilationUnit(pack.get().getNameAsString()) : new CompilationUnit();
-		compilationUnits.add(cu);
 		relation.getIntersectingClasses().add(0, create(cu, createInterface).apply(name, createInterface ? new Keyword[] {Keyword.PUBLIC} : new Keyword[] {Keyword.PUBLIC, Keyword.ABSTRACT}));
 		cu.setStorage(Paths.get(compilationUnitFilePath(cu)));
 		resolve(relation.getFirstClass()::resolve).ifPresent(type -> ASTHolder.getClasses().put(type.getQualifiedName(), relation.getFirstClass()));
@@ -303,6 +309,11 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 			}
 		}
 		metricCollector.getMetrics().generalStats.put("Generated Declarations", gen);
+		for(int i = 0; i<compilationUnits.size(); i++) {
+			if(modified.contains(compilationUnits.get(i).getStorage().get())) {
+				compilationUnits.set(i, makeValidAfterChanges(compilationUnits.get(i)));
+			}
+		}
 	}
 
 	private boolean isGenerated(Sequence s) {

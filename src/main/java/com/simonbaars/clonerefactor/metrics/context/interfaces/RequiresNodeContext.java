@@ -1,8 +1,8 @@
 package com.simonbaars.clonerefactor.metrics.context.interfaces;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.github.javaparser.ast.CompilationUnit;
@@ -13,6 +13,7 @@ import com.github.javaparser.ast.body.EnumDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.stmt.Statement;
 import com.github.javaparser.ast.stmt.TryStmt;
+import com.simonbaars.clonerefactor.datatype.SimpleEqualsSet;
 
 public interface RequiresNodeContext {
 	public default Optional<MethodDeclaration> getMethod(Node n1) {
@@ -53,7 +54,7 @@ public interface RequiresNodeContext {
 		return Optional.of((T)n1);
 	}
 	
-	public default Set<CompilationUnit> getUniqueCompilationUnits(List<Node> nodes) {
-		return nodes.stream().map(this::getCompilationUnit).filter(Optional::isPresent).map(Optional::get).collect(Collectors.toSet());
+	public default Collection<CompilationUnit> getUniqueCompilationUnits(List<Node> nodes) {
+		return nodes.stream().map(this::getCompilationUnit).filter(Optional::isPresent).map(Optional::get).collect(Collectors.toCollection(SimpleEqualsSet::new));
 	}
 }
