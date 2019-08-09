@@ -2,6 +2,7 @@ package com.simonbaars.clonerefactor.ast.compare;
 
 import java.util.Optional;
 
+import com.github.javaparser.ast.expr.Expression;
 import com.github.javaparser.ast.expr.NameExpr;
 import com.simonbaars.clonerefactor.ast.ASTHolder;
 import com.simonbaars.clonerefactor.ast.interfaces.ResolvesSymbols;
@@ -42,5 +43,10 @@ public class CompareVariable extends Compare implements ResolvesSymbols {
 	@Override
 	public boolean doesType2Compare() {
 		return true;
+	}
+	
+	@Override
+	public Expression getExpression(){
+		return variableName;
 	}
 }

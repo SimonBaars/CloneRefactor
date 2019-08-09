@@ -2,12 +2,14 @@ package com.simonbaars.clonerefactor.detection.type2.model;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.IntStream;
 
 import com.github.javaparser.ast.Node;
+import com.github.javaparser.ast.expr.Expression;
+import com.simonbaars.clonerefactor.ast.compare.Compare;
 import com.simonbaars.clonerefactor.ast.interfaces.DeterminesNodeTokens;
 import com.simonbaars.clonerefactor.datatype.IndexRange;
 import com.simonbaars.clonerefactor.detection.type2.Type2RLocation;
@@ -130,22 +132,21 @@ public class Type2Location implements DeterminesNodeTokens, Comparable<Type2Loca
 		Type2RLocation t2Location = new Type2RLocation(location.getFile(), statementIndices.stream().boxed().map(i -> location.getContents().getNodes().get(i)).toArray(Node[]::new));
 		for(int i = 0; i<contents.size(); i++) {
 			for(Type2Location s : seq.getSequence()) {
-				if(contents.size() == s.contents.size() && contents.get(i).getContents().length == s.getContents().get(i).getContents().length)
-					t2Location.getDiffIndices().addAll(diffIndices(contents.get(i).getContents(), s.getContents().get(i).getContents()));
+				if(contents.size() == s.contents.size() && contents.get(i).getContents().length == s.getContents().get(i).getContents().length) {
+					diffIndices(contents.get(i).getContents(), s.getContents().get(i).getContents(), location.getContents().getCompare(), t2Location.getDiffExpressions());
+				}
 			}
 		}
 		return t2Location;
 	}
 	
-	private Collection<Integer> diffIndices(int[] a, int[] b) {
+	private void diffIndices(int[] a, int[] b, List<Compare> compare, Set<Expression> exprs) {
 		assert a.length == b.length;
-		List<Integer> diffIndices = new ArrayList<>();
 		for(int i = 0; i<a.length; i++) {
 			if(a[i]!=b[i] && a[i]>0 && b[i]>0) {
-				diffIndices.add(i);
+				exprs.add(compare.get(i).getExpression());
 			}
 		}
-		return diffIndices;
 	}
 	
 	public Type2Location getLast() {

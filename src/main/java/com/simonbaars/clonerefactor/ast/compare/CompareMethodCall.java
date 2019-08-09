@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 
 import com.github.javaparser.JavaToken;
 import com.github.javaparser.ast.Node;
+import com.github.javaparser.ast.expr.Expression;
 import com.github.javaparser.ast.expr.MethodCallExpr;
 import com.simonbaars.clonerefactor.ast.interfaces.HasCompareList;
 import com.simonbaars.clonerefactor.ast.interfaces.ResolvesSymbols;
@@ -77,5 +78,10 @@ public class CompareMethodCall extends Compare implements ResolvesSymbols {
 	@Override
 	public boolean doesType2Compare() {
 		return true;
+	}
+	
+	@Override
+	public Expression getExpression(){
+		return methodCallExpr;
 	}
 }

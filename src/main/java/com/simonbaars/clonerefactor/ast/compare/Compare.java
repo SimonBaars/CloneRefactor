@@ -6,6 +6,7 @@ import java.util.List;
 import com.github.javaparser.JavaToken;
 import com.github.javaparser.Range;
 import com.github.javaparser.ast.Node;
+import com.github.javaparser.ast.expr.Expression;
 import com.github.javaparser.ast.expr.LiteralExpr;
 import com.github.javaparser.ast.expr.MethodCallExpr;
 import com.github.javaparser.ast.expr.NameExpr;
@@ -90,5 +91,9 @@ public abstract class Compare implements HasRange {
 
 	public Node getBelongsToStatement() {
 		return belongsToStatement;
+	}
+	
+	public Expression getExpression(){
+		return null;
 	}
 }
