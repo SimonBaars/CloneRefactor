@@ -48,21 +48,10 @@ public class CloneParser implements SetsIfNotNull, RemovesDuplicates, WritesErro
 	public DetectionResults parse() {
 		final Progress progress = new Progress(sourceRoot.getRoot());
 		final List<CompilationUnit> compilationUnits = createAST(progress);
-		DetectionResults d = null, prev = null;
-		int oldRefactored, refactored = 0;
-		do {
-			oldRefactored = refactored;
-			DetectionResults res = parseProject(prev == null ? 0 : prev.getMetrics().generalStats.get("Generated Declarations"), compilationUnits, progress);
-			if(d == null) d = res;
-			else prev.getMetrics().setChild(res.getMetrics());
-			prev = res;
-			refactored = res.getMetrics().generalStats.get("Generated Declarations");
-			progress.reset();
-		} while(oldRefactored != refactored);
-		return d;
+		return parseProject(compilationUnits, progress);
 	}
 
-	private DetectionResults parseProject(int nGenerated, final List<CompilationUnit> compilationUnits, Progress progress) {
+	private DetectionResults parseProject(final List<CompilationUnit> compilationUnits, Progress progress) {
 		try {
 			ASTHolder.setClasses(determineClasses(compilationUnits));
 			progress.nextStage(compilationUnits.size());
@@ -79,9 +68,10 @@ public class CloneParser implements SetsIfNotNull, RemovesDuplicates, WritesErro
 				DetectionResults res = new DetectionResults(metricCollector.reportClones(findChains, progress), findChains);
 				if(Settings.get().getRefactoringStrategy() != RefactoringStrategy.DONOTREFACTOR) {
 					progress.nextStage();
-					ExtractMethod extractMethod = new ExtractMethod(projectRoot, sourceRoot.getRoot(), compilationUnits, metricCollector, nGenerated);
+					ExtractMethod extractMethod = new ExtractMethod(projectRoot, sourceRoot.getRoot(), compilationUnits, metricCollector);
 					extractMethod.refactor(findChains, progress);
 					res.getRefactorResults().addAll(extractMethod.getRes());
+					res.getMetrics().setChild(metricCollector.reportClones(findChains, progress));
 				}
 				return res;
 			} else throw new IllegalStateException("Project has no usable sources!");
