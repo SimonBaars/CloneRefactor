@@ -17,7 +17,7 @@ public class RunAllConfigurations {
 		configureSettings(cloneTypes, scopes);
 		MetricsTables table = new MetricsTables();
 		
-		do table.reportMetrics(Settings.get().getCloneType()+" "+Settings.get().getScope(), new RunOnCorpus().startCorpusCloneDetection());
+		do table.reportMetrics(Settings.get().getCloneType()+" "+Settings.get().getScope(), new RunOnCorpus().calculateMetricsForCorpus());
 		while (rotate(cloneTypes, scopes));
 	}
 

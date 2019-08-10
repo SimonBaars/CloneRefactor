@@ -16,7 +16,7 @@ public class TryStatementThresholds implements Runnable {
 		System.out.println("Try Statement Thresholds");
 		for(int i = 1; i<20; i++) {
 			Settings.get().setMinAmountOfNodes(i);
-			Metrics metrics = new RunOnCorpus().startCorpusCloneDetection();
+			Metrics metrics = new RunOnCorpus().calculateMetricsForCorpus();
 			metricsTables.reportMetrics(Integer.toString(i), metrics);
 		}
 	}

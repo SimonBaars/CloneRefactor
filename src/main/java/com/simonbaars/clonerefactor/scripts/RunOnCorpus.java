@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 
 import com.simonbaars.clonerefactor.metrics.Metrics;
+import com.simonbaars.clonerefactor.scripts.model.MetricsTables;
 import com.simonbaars.clonerefactor.settings.Settings;
 import com.simonbaars.clonerefactor.thread.CalculatesTimeIntervals;
 import com.simonbaars.clonerefactor.thread.ThreadPool;
@@ -13,10 +14,12 @@ import com.simonbaars.clonerefactor.util.SavePaths;
 public class RunOnCorpus implements WritesErrors, CalculatesTimeIntervals {
 
 	public static void main(String[] args) {
-		new RunOnCorpus().startCorpusCloneDetection();
+		MetricsTables t = new MetricsTables();
+		Metrics m = new RunOnCorpus().calculateMetricsForCorpus();
+		t.reportMetrics("Corpus", m);
 	}
 
-	public Metrics startCorpusCloneDetection() {
+	public Metrics calculateMetricsForCorpus() {
 		try {
 			System.out.println(Settings.get());
 			SavePaths.genTimestamp();

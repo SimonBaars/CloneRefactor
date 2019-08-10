@@ -16,7 +16,7 @@ public class TryTokenThresholds implements Runnable {
 		System.out.println("Try Thresholds");
 		for(int i = 1; i<150; i++) {
 			Settings.get().setMinAmountOfTokens(i);
-			Metrics metrics = new RunOnCorpus().startCorpusCloneDetection();
+			Metrics metrics = new RunOnCorpus().calculateMetricsForCorpus();
 			metricsTables.reportMetrics(Integer.toString(i), metrics);
 		}
 	}

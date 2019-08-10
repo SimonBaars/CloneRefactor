@@ -18,7 +18,7 @@ public class TryType2Thresholds implements Runnable {
 		Settings.get().setCloneType(CloneType.TYPE2R);
 		for(int i = 0; i<=100; i++) {
 			Settings.get().setType2VariabilityPercentage(i);
-			Metrics metrics = new RunOnCorpus().startCorpusCloneDetection();
+			Metrics metrics = new RunOnCorpus().calculateMetricsForCorpus();
 			metricsTables.reportMetrics(Integer.toString(i), metrics);
 		}
 	}

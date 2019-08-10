@@ -117,10 +117,6 @@ public class Settings {
 		this.type3GapSize = type3GapSize;
 	}
 
-	public static Settings getSettings() {
-		return settings;
-	}
-
 	public Scope getScope() {
 		return scope;
 	}

@@ -9,7 +9,7 @@ import junit.framework.TestCase;
 public class RunTest extends TestCase {
 	public void testMetricTables() {
 		MetricsTables metricsTables = new MetricsTables();
-		Metrics metrics = new RunOnCorpus().startCorpusCloneDetection();
+		Metrics metrics = new RunOnCorpus().calculateMetricsForCorpus();
 		metricsTables.reportMetrics("testcolumn", metrics);
 	}
 }
