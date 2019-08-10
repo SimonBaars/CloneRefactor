@@ -34,8 +34,8 @@ import com.simonbaars.clonerefactor.thread.WritesErrors;
 
 public class CloneParser implements SetsIfNotNull, RemovesDuplicates, WritesErrors, CalculatesTimeIntervals, ResolvesSymbols {
 	
-	private Path projectRoot;
-	private SourceRoot sourceRoot;
+	private final Path projectRoot;
+	private final SourceRoot sourceRoot;
 	private final ParserConfiguration config;
 
 	public CloneParser(Path projectRoot, SourceRoot sourceRoot, ParserConfiguration config) {
@@ -75,8 +75,6 @@ public class CloneParser implements SetsIfNotNull, RemovesDuplicates, WritesErro
 				if(Settings.get().getRefactoringStrategy() != RefactoringStrategy.DONOTREFACTOR) {
 					ExtractMethod extractMethod = new ExtractMethod(projectRoot, sourceRoot.getRoot(), compilationUnits, metricCollector, nGenerated);
 					extractMethod.refactor(findChains);
-					sourceRoot = new SourceRoot(extractMethod.getRefactorPath(true));
-					projectRoot = extractMethod.getRefactorPath(false);
 					res.getRefactorResults().addAll(extractMethod.getRes());
 				}
 				return res;
