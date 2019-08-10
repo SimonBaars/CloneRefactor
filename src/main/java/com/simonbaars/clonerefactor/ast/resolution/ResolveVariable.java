@@ -20,8 +20,9 @@ import com.github.javaparser.ast.stmt.ExpressionStmt;
 import com.github.javaparser.resolution.types.ResolvedReferenceType;
 import com.simonbaars.clonerefactor.ast.interfaces.ResolvesSymbols;
 import com.simonbaars.clonerefactor.ast.resolution.ResolvedVariable.VariableType;
+import com.simonbaars.clonerefactor.metrics.context.interfaces.RequiresNodeContext;
 
-public class ResolveVariable implements ResolvesSymbols {
+public class ResolveVariable implements ResolvesSymbols, RequiresNodeContext {
 	
 	private final Map<String, ClassOrInterfaceDeclaration> classes;
 	private final SimpleName variable;
@@ -85,7 +86,7 @@ public class ResolveVariable implements ResolvesSymbols {
 			if(child instanceof VariableDeclarationExpr) {
 				VariableDeclarationExpr dec = (VariableDeclarationExpr)child;
 				for(VariableDeclarator decl : dec.getVariables()) {
-					if(decl.getName().equals(variable) && (decl.getRange().get().begin.isBefore(variable.getRange().get().begin)|| decl.getRange().get().begin.equals(variable.getRange().get().begin)))
+					if(decl.getName().equals(variable) && (!decl.getRange().isPresent() || !variable.getRange().isPresent() || (decl.getRange().get().begin.isBefore(variable.getRange().get().begin)|| decl.getRange().get().begin.equals(variable.getRange().get().begin))))
 						return createResolvedVariable(decl, VariableType.LOCAL); 
 				}
 			}
