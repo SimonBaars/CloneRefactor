@@ -182,13 +182,9 @@ public class CloneRelation implements DeterminesMetric<Relation>, SeekClassHiera
 	@Override
 	public Relation get(Sequence clone) {
 		List<Relation> locations = new ArrayList<>();
-		for(int i = 0; i<clone.getLocations().get(0).getContents().getNodes().size(); i++) {
-			for(int j = 0; j<clone.getLocations().size(); j++) {
-				for(int z = j+1; z<clone.getLocations().size(); z++) {
-					if(clone.getLocations().get(j).getContents().getNodes().size()<=i || clone.getLocations().get(z).getContents().getNodes().size()<=i)
-						continue;
-					locations.add(getLocation(clone.getLocations().get(j).getContents().getNodes().get(i), clone.getLocations().get(z).getContents().getNodes().get(i)));
-				}
+		for(int j = 0; j<clone.getLocations().size(); j++) {
+			for(int z = j+1; z<clone.getLocations().size(); z++) {
+				locations.add(getLocation(clone.getLocations().get(j).getFirstNode(), clone.getLocations().get(z).getFirstNode()));
 			}
 		}
 		Relation r = locations.stream().reduce((first, second) -> first.getType().compareTo(second.getType()) < 0 ? first : second).get();
