@@ -171,6 +171,7 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 	private void storeChanges(Sequence s, MethodDeclaration decl, List<Statement> methodcalls) {
 		List<Node> saveNodes = new ArrayList<>(s.getRelation().getIntersectingClasses());
 		saveNodes.addAll(methodcalls);
+		System.out.println("Method calls: "+Arrays.toString(methodcalls.toArray()));
 		Collection<CompilationUnit> cus = getUniqueCompilationUnits(saveNodes);
 		cus.forEach(cu -> modified.add(cu.getStorage().get()));
 		if(Settings.get().getRefactoringStrategy().savesFiles())
@@ -216,7 +217,6 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 		return createInterface && !c.isInterface() ? c::addImplementedType : c::addExtendedType;
 	}
 
-
 	private void save(CompilationUnit cu) {
 		File file = SavePaths.createDirForFile(compilationUnitFilePath(cu));
 		try {
@@ -234,10 +234,6 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 		if(Settings.get().getRefactoringStrategy().originalLocation())
 			return (sources ? sourceFolder : projectFolder).toString();
 		return SavePaths.getRefactorFolder(projectFolder.getFileName().toString(), sources ? outputSourceFolder() : "");
-	}
-	
-	public Path getRefactorPath(boolean sources) {
-		return Paths.get(refactoringSaveFolder(sources));
 	}
 	
 	private String outputSourceFolder() {
@@ -309,11 +305,16 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 			}
 		}
 		metricCollector.getMetrics().generalStats.put("Generated Declarations", gen);
+		fixModified();
+	}
+
+	private void fixModified() {
 		for(int i = 0; i<compilationUnits.size(); i++) {
 			if(modified.contains(compilationUnits.get(i).getStorage().get())) {
 				compilationUnits.set(i, makeValidAfterChanges(compilationUnits.get(i)));
 			}
 		}
+		modified.clear();
 	}
 
 	private boolean isGenerated(Sequence s) {
