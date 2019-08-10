@@ -109,7 +109,7 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 	}
 
 	public void tryToExtractMethod(Sequence s) {
-		if(s.getRefactorability() == Refactorability.CANBEEXTRACTED) {
+		if(s.getRefactorability() == Refactorability.CANBEEXTRACTED && noOverlap(refactoredSequences.keySet(), s)) {
 			if(s.getRelation().isEffectivelyUnrelated())
 				metricCollector.reassessRelation(s);
 			String extractedMethod = extractMethod(s);
@@ -290,6 +290,10 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 				e.printStackTrace();
 			}
 		}
+	}
+	
+	private boolean noOverlap(Set<Sequence> keySet, Sequence s) {
+		return keySet.stream().noneMatch(s::overlapsWith);
 	}
 
 	public void refactor(List<Sequence> foundCloneClasses, Progress progress) {

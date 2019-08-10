@@ -7,6 +7,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 
 public class ASTHolder {
+	
+	private ASTHolder() {}
+	
 	private static Map<Long, Map<String, ClassOrInterfaceDeclaration>> classes = new ConcurrentHashMap<>();
 
 	public static Map<String, ClassOrInterfaceDeclaration> getClasses(){
