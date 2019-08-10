@@ -45,9 +45,15 @@ public class CloneRefactorability implements DeterminesMetric<Refactorability>, 
 			return Refactorability.PARTIALBLOCK;
 		else if(hasComplexControlFlow(sequence))
 			return Refactorability.COMPLEXCONTROLFLOW;
+		else if(notInClassOrInterface(sequence))
+			return Refactorability.NOTINCLASSORINTERFACE;
 		return Refactorability.CANBEEXTRACTED;
 	}
 	
+	private boolean notInClassOrInterface(Sequence sequence) {
+		return sequence.getLocations().stream().anyMatch(e -> !getClass(e.getFirstNode()).isPresent());
+	}
+
 	private boolean hasMultipleReturn(List<Node> lowestNodes) {
 		final Map<SimpleName, Type> usedVariables = getUsedVariables(lowestNodes);
 		List<VariableDeclarationExpr> topLevelVariableDeclarators = getTopLevelDeclarators(lowestNodes);
