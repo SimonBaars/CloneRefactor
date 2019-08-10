@@ -88,10 +88,9 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 	
 	private final Set<Storage> modified = new HashSet<>();
 	
-	public ExtractMethod(Path projectRoot, Path root, List<CompilationUnit> compilationUnits, MetricCollector metricCollector, int nGenerated) {
+	public ExtractMethod(Path projectRoot, Path root, List<CompilationUnit> compilationUnits, MetricCollector metricCollector) {
 		this.projectFolder = projectRoot;
-		this.sourceFolder = root;
-		this.gen = nGenerated;
+		this.sourceFolder = root; 
 		Path saveFolder = Paths.get(refactoringSaveFolder(false));
 		if(Settings.get().getRefactoringStrategy().copyAll() && !saveFolder.toFile().exists())
 			copyFolder(projectFolder, saveFolder);
@@ -296,10 +295,9 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 	public void refactor(List<Sequence> foundCloneClasses, Progress progress) {
 		Collections.sort(foundCloneClasses);
 		for(Sequence s : foundCloneClasses) {
-			if(noOverlap(refactoredSequences.keySet(), s) && !isGenerated(s)) {
-				tryToExtractMethod(s);
-			}
+			tryToExtractMethod(s);
 			progress.next();
+			foundCloneClasses.remove(s);
 		}
 		metricCollector.getMetrics().generalStats.put("Generated Declarations", gen);
 		fixModified();
@@ -312,14 +310,6 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 			}
 		}
 		modified.clear();
-	}
-
-	private boolean isGenerated(Sequence s) {
-		return s.getNodeSize() == 1 && s.getLocations().stream().allMatch(l -> l.getContents().getTokens().stream().anyMatch(t -> t.asString().startsWith(METHOD_NAME)));
-	}
-
-	private boolean noOverlap(Set<Sequence> keySet, Sequence s) {
-		return keySet.stream().noneMatch(s::overlapsWith);
 	}
 	
 	public CompilationUnit makeValidAfterChanges(CompilationUnit cu) {
