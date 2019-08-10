@@ -171,7 +171,6 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 	private void storeChanges(Sequence s, MethodDeclaration decl, List<Statement> methodcalls) {
 		List<Node> saveNodes = new ArrayList<>(s.getRelation().getIntersectingClasses());
 		saveNodes.addAll(methodcalls);
-		System.out.println("Method calls: "+Arrays.toString(methodcalls.toArray()));
 		Collection<CompilationUnit> cus = getUniqueCompilationUnits(saveNodes);
 		cus.forEach(cu -> modified.add(cu.getStorage().get()));
 		if(Settings.get().getRefactoringStrategy().savesFiles())
