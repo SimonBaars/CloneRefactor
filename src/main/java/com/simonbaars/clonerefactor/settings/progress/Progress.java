@@ -13,7 +13,7 @@ import java.util.List;
 import com.simonbaars.clonerefactor.detection.interfaces.CalculatesPercentages;
 
 public class Progress implements CalculatesPercentages{
-	private static final int PRINTS_PER_STAGE = 100;
+	private static final int MAX_PRINTS_PER_STAGE = 100;
 	private Stage currentStage;
 	private int processed = 0;
 	private int total = 0;
@@ -48,7 +48,7 @@ public class Progress implements CalculatesPercentages{
 	
 	public void next() {
 		processed++;
-		if(processed % ((total / PRINTS_PER_STAGE)+1) == 0)
+		if(processed % ((total / MAX_PRINTS_PER_STAGE)+1) == 0)
 			System.out.println(toString());
 	}
 	
