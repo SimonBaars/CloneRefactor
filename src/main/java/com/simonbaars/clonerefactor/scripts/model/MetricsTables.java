@@ -81,10 +81,13 @@ public class MetricsTables implements WritesErrors {
 	}
 
 	public void reportMetrics(String percentage, Metrics metrics) {
-		boolean appendNumber = metrics.getChild().isPresent();
-		for(int i = 1; metrics != null; i++) {
-			collectMetrics(percentage + (appendNumber ? " P"+i : ""), metrics);
-			metrics = metrics.getChild().orElse(null);
+		if(metrics.getChild().isPresent()) {
+			collectMetrics(percentage + " Before", metrics);
+			while(metrics.getChild().isPresent())
+				metrics = metrics.getChild().get();
+			collectMetrics(percentage + " After", metrics);
+		} else {
+			collectMetrics(percentage, metrics);
 		}
 		saveToDisk();
 	}

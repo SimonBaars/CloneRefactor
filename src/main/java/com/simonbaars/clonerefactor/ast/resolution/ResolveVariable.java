@@ -1,5 +1,6 @@
 package com.simonbaars.clonerefactor.ast.resolution;
 
+import java.util.Arrays;
 import java.util.Map;
 import java.util.Optional;
 
@@ -18,6 +19,7 @@ import com.github.javaparser.ast.nodeTypes.NodeWithSimpleName;
 import com.github.javaparser.ast.nodeTypes.NodeWithType;
 import com.github.javaparser.ast.stmt.ExpressionStmt;
 import com.github.javaparser.resolution.types.ResolvedReferenceType;
+import com.simonbaars.clonerefactor.ast.ASTHolder;
 import com.simonbaars.clonerefactor.ast.interfaces.ResolvesSymbols;
 import com.simonbaars.clonerefactor.ast.resolution.ResolvedVariable.VariableType;
 
@@ -98,7 +100,7 @@ public class ResolveVariable implements ResolvesSymbols {
 		if(declaration.isPresent()) 
 			return createResolvedVariable(declaration.get(), isSuperclass ? VariableType.SUPERCLASSFIELD : VariableType.CLASSFIELD);
 		return classDecl.getExtendedTypes().stream().map(e -> resolve(e::resolve)).filter(Optional::isPresent).map(Optional::get).map(ResolvedReferenceType::getQualifiedName)
-				.filter(e -> classes.containsKey(e)).map(classes::get).map(e -> findVariableInSuperclass(e, true)).filter(Optional::isPresent).map(Optional::get).findAny();
+					.filter(e -> classes.containsKey(e)).map(classes::get).map(e -> findVariableInSuperclass(e, true)).filter(Optional::isPresent).map(Optional::get).findAny();
 	}
 
 	private Optional<VariableDeclarator> getDeclaratorOfVariableForClass(ClassOrInterfaceDeclaration classDecl) {
