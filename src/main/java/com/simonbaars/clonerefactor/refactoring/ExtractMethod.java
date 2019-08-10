@@ -17,14 +17,9 @@ import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 import com.github.javaparser.JavaParser;
-import com.github.javaparser.JavaToken;
 import com.github.javaparser.ParseResult;
-import com.github.javaparser.Position;
-import com.github.javaparser.Range;
-import com.github.javaparser.TokenRange;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.CompilationUnit.Storage;
 import com.github.javaparser.ast.Modifier;
@@ -323,41 +318,6 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 
 	private boolean noOverlap(Set<Sequence> keySet, Sequence s) {
 		return keySet.stream().noneMatch(s::overlapsWith);
-	}
-	
-	public void determineRanges(CompilationUnit cu) {
-		determineRanges(cu, Position.HOME);
-	}
-	
-	private Position determineRanges(Node node, Position cursor) {
-		Optional<TokenRange> tr = node.getTokenRange();
-		if(!tr.isPresent() || cursor == null)
-			return null;
-		Position end = determineTokenRanges(cursor, tr.get());
-		node.setRange(new Range(cursor, end));
-		for(Node childNode : node.getChildNodes()) {
-			cursor = determineRanges(childNode, determineStartPosition(node));
-		}
-		return cursor;
-	}
-
-	private Position determineStartPosition(Node node) {
-		Optional<TokenRange> tr = node.getTokenRange();
-		if(!tr.isPresent())
-			return null;
-		JavaToken firstToken = tr.get().getBegin();
-		return StreamSupport.stream(tr.get().spliterator(), false)
-				.filter(token -> token == firstToken).map(JavaToken::getRange)
-				.filter(Optional::isPresent).map(e -> e.get().begin).findAny().orElse(null);
-	}
-
-	private Position determineTokenRanges(Position cursor, TokenRange tokenRange) {
-		for(JavaToken token : tokenRange) {
-			Position end = token.getCategory().isEndOfLine() ? cursor.nextLine() : cursor.right(token.getText().length()-1);
-			token.setRange(new Range(cursor, end));
-			cursor = end;
-		}
-		return cursor;
 	}
 	
 	public CompilationUnit makeValidAfterChanges(CompilationUnit cu) {
