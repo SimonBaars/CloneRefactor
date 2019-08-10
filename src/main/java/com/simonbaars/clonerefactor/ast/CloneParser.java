@@ -61,6 +61,7 @@ public class CloneParser implements SetsIfNotNull, RemovesDuplicates, WritesErro
 
 	private DetectionResults parseProject(int nGenerated, final List<CompilationUnit> compilationUnits) {
 		try {
+			ASTHolder.setClasses(determineClasses(compilationUnits));
 			MetricCollector metricCollector = new MetricCollector();
 			long beginTime = System.currentTimeMillis();
 			SequenceObservable seqObservable = new SequenceObservable().subscribe(new MetricObserver(metricCollector));
@@ -90,8 +91,7 @@ public class CloneParser implements SetsIfNotNull, RemovesDuplicates, WritesErro
 		
 		if(compilationUnits.isEmpty())
 			throw new IllegalStateException("Project has no sources! "+sourceRoot.getRoot()+", "+projectRoot);
-		
-		ASTHolder.setClasses(determineClasses(compilationUnits));
+
 		return compilationUnits;
 	}
 

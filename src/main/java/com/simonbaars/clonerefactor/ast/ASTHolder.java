@@ -1,6 +1,7 @@
 package com.simonbaars.clonerefactor.ast;
 
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
@@ -18,5 +19,9 @@ public class ASTHolder {
 	
 	public static Map<String, ClassOrInterfaceDeclaration> removeClasses(){
 		return classes.remove(Thread.currentThread().getId());
+	}
+	
+	public static Set<Long> activeThreads() {
+		return classes.keySet();
 	}
 }
