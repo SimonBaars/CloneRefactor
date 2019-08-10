@@ -179,7 +179,8 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 
 	private void placeMethodOnBasisOfRelation(Sequence s, MethodDeclaration decl) {
 		Relation relation = s.getRelation();
-		relation.getIntersectingClasses().forEach(c -> saveASTBeforeChange(getCompilationUnit(c).get()));
+		if(Settings.get().getRefactoringStrategy().usesGit())
+			relation.getIntersectingClasses().forEach(c -> saveASTBeforeChange(getCompilationUnit(c).get()));
 		if(relation.isEffectivelyUnrelated())
 			createRelation(s, relation);
 		new ExtractToClassOrInterface(relation.getFirstClass()).extract(decl);
@@ -259,7 +260,7 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 	private Statement removeLowestNodes(Sequence s, List<Node> lowestNodes, String name) {
 		MethodCallExpr methodCallExpr = new MethodCallExpr(name);
 		Statement methodCallStmt = Arrays.stream(populators).map(p -> p.modifyMethodCall(s, methodCallExpr)).filter(Optional::isPresent).map(Optional::get).findAny().orElse(new ExpressionStmt(methodCallExpr));
-		if(Settings.get().getRefactoringStrategy().savesFiles())
+		if(Settings.get().getRefactoringStrategy().usesGit())
 			saveASTBeforeChange(getCompilationUnit(lowestNodes.get(0)).get());
 		placeMethodCall(lowestNodes, methodCallStmt);
 		return methodCallStmt;
