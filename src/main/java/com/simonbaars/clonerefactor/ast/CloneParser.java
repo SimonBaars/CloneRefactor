@@ -29,6 +29,7 @@ import com.simonbaars.clonerefactor.model.location.Location;
 import com.simonbaars.clonerefactor.refactoring.ExtractMethod;
 import com.simonbaars.clonerefactor.refactoring.enums.RefactoringStrategy;
 import com.simonbaars.clonerefactor.settings.Settings;
+import com.simonbaars.clonerefactor.settings.progress.Progress;
 import com.simonbaars.clonerefactor.thread.CalculatesTimeIntervals;
 import com.simonbaars.clonerefactor.thread.WritesErrors;
 
@@ -45,36 +46,41 @@ public class CloneParser implements SetsIfNotNull, RemovesDuplicates, WritesErro
 	}
 	
 	public DetectionResults parse() {
-		final List<CompilationUnit> compilationUnits = createAST();
+		final Progress progress = new Progress(sourceRoot.getRoot());
+		final List<CompilationUnit> compilationUnits = createAST(progress);
 		DetectionResults d = null, prev = null;
 		int oldRefactored, refactored = 0;
 		do {
 			oldRefactored = refactored;
-			DetectionResults res = parseProject(prev == null ? 0 : prev.getMetrics().generalStats.get("Generated Declarations"), compilationUnits);
+			DetectionResults res = parseProject(prev == null ? 0 : prev.getMetrics().generalStats.get("Generated Declarations"), compilationUnits, progress);
 			if(d == null) d = res;
 			else prev.getMetrics().setChild(res.getMetrics());
 			prev = res;
 			refactored = res.getMetrics().generalStats.get("Generated Declarations");
+			progress.reset();
 		} while(oldRefactored != refactored);
 		return d;
 	}
 
-	private DetectionResults parseProject(int nGenerated, final List<CompilationUnit> compilationUnits) {
+	private DetectionResults parseProject(int nGenerated, final List<CompilationUnit> compilationUnits, Progress progress) {
 		try {
 			ASTHolder.setClasses(determineClasses(compilationUnits));
+			progress.nextStage(compilationUnits.size());
 			MetricCollector metricCollector = new MetricCollector();
 			long beginTime = System.currentTimeMillis();
 			SequenceObservable seqObservable = new SequenceObservable().subscribe(new MetricObserver(metricCollector));
-			Location lastLoc = calculateLineReg(metricCollector, compilationUnits, seqObservable);
-			
+			Location lastLoc = calculateLineReg(metricCollector, compilationUnits, seqObservable, progress);
 			if(lastLoc!=null) {
-				List<Sequence> findChains = new CloneDetection(seqObservable).findChains(lastLoc);
+				progress.nextStage(metricCollector.getMetrics().generalStats.get("Total Nodes"));
+				List<Sequence> findChains = new CloneDetection(seqObservable).findChains(lastLoc, progress);
 				doTypeSpecificTransformations(findChains);
 				metricCollector.getMetrics().generalStats.increment("Detection time", interval(beginTime));
-				DetectionResults res = new DetectionResults(metricCollector.reportClones(findChains), findChains);
+				progress.nextStage(findChains.size());
+				DetectionResults res = new DetectionResults(metricCollector.reportClones(findChains, progress), findChains);
 				if(Settings.get().getRefactoringStrategy() != RefactoringStrategy.DONOTREFACTOR) {
+					progress.nextStage();
 					ExtractMethod extractMethod = new ExtractMethod(projectRoot, sourceRoot.getRoot(), compilationUnits, metricCollector, nGenerated);
-					extractMethod.refactor(findChains);
+					extractMethod.refactor(findChains, progress);
 					res.getRefactorResults().addAll(extractMethod.getRes());
 				}
 				return res;
@@ -84,8 +90,8 @@ public class CloneParser implements SetsIfNotNull, RemovesDuplicates, WritesErro
 		}
 	}
 
-	private List<CompilationUnit> createAST() {
-		final List<CompilationUnit> compilationUnits = createAST(sourceRoot, config);
+	private List<CompilationUnit> createAST(Progress progress) {
+		final List<CompilationUnit> compilationUnits = parseAST(progress);
 		
 		if(compilationUnits.isEmpty())
 			throw new IllegalStateException("Project has no sources! "+sourceRoot.getRoot()+", "+projectRoot);
@@ -119,21 +125,23 @@ public class CloneParser implements SetsIfNotNull, RemovesDuplicates, WritesErro
 		}
 	}
 
-	private final Location calculateLineReg(MetricCollector metricCollector, List<CompilationUnit> compilationUnits, SequenceObservable seqObservable) {
+	private final Location calculateLineReg(MetricCollector metricCollector, List<CompilationUnit> compilationUnits, SequenceObservable seqObservable, Progress progress) {
 		NodeParser astParser = new NodeParser(metricCollector, seqObservable);
 		Location l = null;
-		for(CompilationUnit cu : compilationUnits)
+		for(CompilationUnit cu : compilationUnits) {
 			l = astParser.extractLinesFromAST(l, cu, cu);
+			progress.next();
+		}
 		return l;
 	}
 
-	private List<CompilationUnit> createAST(SourceRoot sourceRoot, ParserConfiguration config) {
+	private List<CompilationUnit> parseAST(Progress progress) {
 		final List<CompilationUnit> compilationUnits = new ArrayList<>();
 		try {
 			sourceRoot.parse("", config, (Path localPath, Path absolutePath, ParseResult<CompilationUnit> result) -> {
-				if(result.getResult().isPresent()) {
+				if(result.getResult().isPresent())
 					compilationUnits.add(result.getResult().get());
-				}
+				progress.next();
 				return Result.DONT_SAVE;
 			});
 		} catch (IOException e) {
