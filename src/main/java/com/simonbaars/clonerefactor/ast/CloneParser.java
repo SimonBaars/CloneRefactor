@@ -71,6 +71,7 @@ public class CloneParser implements SetsIfNotNull, RemovesDuplicates, WritesErro
 					ExtractMethod extractMethod = new ExtractMethod(projectRoot, sourceRoot.getRoot(), compilationUnits, metricCollector);
 					extractMethod.refactor(findChains, progress);
 					res.getRefactorResults().addAll(extractMethod.getRes());
+					metricCollector.resetMetrics();
 					res.getMetrics().setChild(metricCollector.reportClones(findChains, progress));
 				}
 				return res;

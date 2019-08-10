@@ -14,7 +14,7 @@ import com.simonbaars.clonerefactor.model.location.Location;
 import com.simonbaars.clonerefactor.settings.progress.Progress;
 
 public class MetricCollector implements CalculatesPercentages {
-	private final Metrics metrics = new Metrics();
+	private Metrics metrics = new Metrics();
 	private final CloneRelation relationFinder;
 	private final CloneLocation locationFinder = new CloneLocation();
 	private final CloneContents contentsFinder = new CloneContents();
@@ -39,11 +39,11 @@ public class MetricCollector implements CalculatesPercentages {
 			reportClone(clone);
 			progress.next();
 		}
-		saveDuplicationPercentage(metrics, metrics.generalStats.get("Total Nodes"), metrics.generalStats.get("Cloned Nodes"));
+		saveDuplicationPercentage(metrics.generalStats.get("Total Nodes"), metrics.generalStats.get("Cloned Nodes"));
 		return metrics;
 	}
 
-	private void saveDuplicationPercentage(Metrics metrics2, int total, int cloned) {
+	private void saveDuplicationPercentage(int total, int cloned) {
 		double percBefore = calcPercentage(cloned, total);
 		metrics.averages.addTo("Percentage Duplicated", percBefore);
 		metrics.incrementGeneralStatistic(ProblemType.DUPLICATION, round(percBefore));
@@ -83,5 +83,9 @@ public class MetricCollector implements CalculatesPercentages {
 
 	public Metrics getMetrics() {
 		return metrics;
+	}
+
+	public void resetMetrics() {
+		metrics = new Metrics();
 	}
 }
