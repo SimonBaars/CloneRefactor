@@ -70,6 +70,14 @@ public class Type1Testcases extends Type1Test implements DoesFileOperations {
 		}
     }
     
+    public void testMetricTables3() {
+    	MetricsTables tables = new MetricsTables();
+    	System.out.println("spring-crypto-utils");
+    	String path = "/Users/sbaars/clone/git/spring-crypto-utils/";
+    	System.out.println(Settings.get());
+		tables.reportMetrics("Kryo", Main.cloneDetection(Paths.get(path), Paths.get(path+"src/main/java/")).getMetrics());
+    }
+    
     public void testRef() {
     	System.out.println("kryo-serializers");
     	String path = "/Users/sbaars/git/kryo-serializers/";
