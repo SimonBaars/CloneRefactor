@@ -294,10 +294,10 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 
 	public void refactor(List<Sequence> foundCloneClasses, Progress progress) {
 		Collections.sort(foundCloneClasses);
-		for(Sequence s : foundCloneClasses) {
-			tryToExtractMethod(s);
+		for(int i = 0; i<foundCloneClasses.size(); i++) {
+			tryToExtractMethod(foundCloneClasses.get(i));
 			progress.next();
-			foundCloneClasses.remove(s);
+			foundCloneClasses.remove(i);
 		}
 		metricCollector.getMetrics().generalStats.put("Generated Declarations", gen);
 		fixModified();
