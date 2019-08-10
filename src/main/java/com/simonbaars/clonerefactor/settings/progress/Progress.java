@@ -10,7 +10,10 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Progress {
+import com.simonbaars.clonerefactor.detection.interfaces.CalculatesPercentages;
+
+public class Progress implements CalculatesPercentages{
+	private static final int PRINTS_PER_STAGE = 100;
 	private Stage currentStage;
 	private int processed = 0;
 	private int total = 0;
@@ -45,7 +48,8 @@ public class Progress {
 	
 	public void next() {
 		processed++;
-		System.out.println(toString());
+		if(processed % ((total / PRINTS_PER_STAGE)+1) == 0)
+			System.out.println(toString());
 	}
 	
 	@Override
