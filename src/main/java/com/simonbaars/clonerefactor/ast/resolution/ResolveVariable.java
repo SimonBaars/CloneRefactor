@@ -1,6 +1,5 @@
 package com.simonbaars.clonerefactor.ast.resolution;
 
-import java.util.Arrays;
 import java.util.Map;
 import java.util.Optional;
 
@@ -19,7 +18,6 @@ import com.github.javaparser.ast.nodeTypes.NodeWithSimpleName;
 import com.github.javaparser.ast.nodeTypes.NodeWithType;
 import com.github.javaparser.ast.stmt.ExpressionStmt;
 import com.github.javaparser.resolution.types.ResolvedReferenceType;
-import com.simonbaars.clonerefactor.ast.ASTHolder;
 import com.simonbaars.clonerefactor.ast.interfaces.ResolvesSymbols;
 import com.simonbaars.clonerefactor.ast.resolution.ResolvedVariable.VariableType;
 

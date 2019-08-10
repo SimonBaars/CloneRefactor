@@ -123,6 +123,6 @@ public class CombinedMetrics implements CalculatesPercentages {
 	}
 
 	public void saveTable(SimpleTable res, Sequence s, String systemName, MethodDeclaration decl, MethodType type) {
-		res.addRow(systemName, s.getNodeSize(), s.getTokenSize(), s.getRelation(), type, decl.getParameters().size(), duplicateTokensIncrease, ccIncrease, unitInterfaceSizeIncrease, tokenSizeIncrease, duplicateNodesIncrease, nodeSizeIncrease);
+		res.addRow(systemName, s.getNodeSize(), s.getTokenSize(), s.getRelation().getType(), type, decl.getParameters().size(), duplicateTokensIncrease, ccIncrease, unitInterfaceSizeIncrease, tokenSizeIncrease, duplicateNodesIncrease, nodeSizeIncrease);
 	}
 }
