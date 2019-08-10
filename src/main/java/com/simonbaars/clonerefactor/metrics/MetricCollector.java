@@ -11,6 +11,7 @@ import com.simonbaars.clonerefactor.metrics.context.analyze.CloneRefactorability
 import com.simonbaars.clonerefactor.metrics.context.analyze.CloneRelation;
 import com.simonbaars.clonerefactor.model.Sequence;
 import com.simonbaars.clonerefactor.model.location.Location;
+import com.simonbaars.clonerefactor.settings.progress.Progress;
 
 public class MetricCollector implements CalculatesPercentages {
 	private final Metrics metrics = new Metrics();
@@ -29,13 +30,15 @@ public class MetricCollector implements CalculatesPercentages {
 		metrics.incrementGeneralStatistic(Metric.LINES, StatType.TOTAL, l.getAmountOfLines());
 	}
 
-	public Metrics reportClones(List<Sequence> clones) {
+	public Metrics reportClones(List<Sequence> clones, Progress progress) {
 		if(clones.isEmpty())
 			metrics.generalStats.increment("Projects without clone classes");
 		metrics.generalStats.increment("Clone classes", clones.size());
 		metrics.averages.addTo("Amount of clone classes", clones.size());
-		for(Sequence clone : clones)
+		for(Sequence clone : clones) {
 			reportClone(clone);
+			progress.next();
+		}
 		saveDuplicationPercentage(metrics, metrics.generalStats.get("Total Nodes"), metrics.generalStats.get("Cloned Nodes"));
 		return metrics;
 	}

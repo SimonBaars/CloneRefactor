@@ -15,6 +15,7 @@ import com.simonbaars.clonerefactor.detection.interfaces.RemovesDuplicates;
 import com.simonbaars.clonerefactor.metrics.ProblemType;
 import com.simonbaars.clonerefactor.model.Sequence;
 import com.simonbaars.clonerefactor.model.location.Location;
+import com.simonbaars.clonerefactor.settings.progress.Progress;
 
 public class CloneDetection implements ChecksThresholds, RemovesDuplicates, DeterminesNodeTokens {
 	final List<Sequence> clones = new ArrayList<>();
@@ -24,13 +25,14 @@ public class CloneDetection implements ChecksThresholds, RemovesDuplicates, Dete
 		this.seqObservable = seqObservable;
 	}
 
-	public List<Sequence> findChains(Location lastLoc) {
+	public List<Sequence> findChains(Location lastLoc, Progress progress) {
 		for(Sequence buildingChains = new Sequence(); lastLoc!=null; lastLoc = lastLoc.getPrev()) {
 			Sequence newClones = collectClones(lastLoc);
 			if(!buildingChains.getLocations().isEmpty() || newClones.size()>1)
 				buildingChains = makeValid(lastLoc, buildingChains, newClones); //Because of the recent additions the current sequence may be invalidated
 			if(buildingChains.size() == 1 || (lastLoc.getPrev()!=null && lastLoc.getPrev().getFile()!=lastLoc.getFile()))
 				buildingChains.getLocations().clear();
+			progress.next();
 		}
 		return clones;
 	}

@@ -64,6 +64,7 @@ import com.simonbaars.clonerefactor.refactoring.populate.PopulateThrows;
 import com.simonbaars.clonerefactor.refactoring.populate.PopulatesExtractedMethod;
 import com.simonbaars.clonerefactor.refactoring.target.ExtractToClassOrInterface;
 import com.simonbaars.clonerefactor.settings.Settings;
+import com.simonbaars.clonerefactor.settings.progress.Progress;
 import com.simonbaars.clonerefactor.util.DoesFileOperations;
 import com.simonbaars.clonerefactor.util.SavePaths;
 
@@ -292,12 +293,13 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 		}
 	}
 
-	public void refactor(List<Sequence> foundCloneClasses) {
+	public void refactor(List<Sequence> foundCloneClasses, Progress progress) {
 		Collections.sort(foundCloneClasses);
 		for(Sequence s : foundCloneClasses) {
 			if(noOverlap(refactoredSequences.keySet(), s) && !isGenerated(s)) {
 				tryToExtractMethod(s);
 			}
+			progress.next();
 		}
 		metricCollector.getMetrics().generalStats.put("Generated Declarations", gen);
 		fixModified();
