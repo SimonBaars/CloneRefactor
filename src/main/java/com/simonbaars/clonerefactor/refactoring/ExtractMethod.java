@@ -336,19 +336,19 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 		Position end = determineTokenRanges(cursor, tr.get());
 		node.setRange(new Range(cursor, end));
 		for(Node childNode : node.getChildNodes()) {
-			cursor = determineRanges(childNode, determineStartPosition(node, tr.get()));
+			cursor = determineRanges(childNode, determineStartPosition(node));
 		}
 		return cursor;
 	}
 
-	private Position determineStartPosition(Node node, TokenRange tokenRange) {
+	private Position determineStartPosition(Node node) {
 		Optional<TokenRange> tr = node.getTokenRange();
 		if(!tr.isPresent())
 			return null;
 		JavaToken firstToken = tr.get().getBegin();
 		return StreamSupport.stream(tr.get().spliterator(), false)
-				.filter(token -> token == firstToken).map(token -> token.getRange())
-				.filter(e -> e.isPresent()).map(e -> e.get().begin).findAny().orElse(null);
+				.filter(token -> token == firstToken).map(JavaToken::getRange)
+				.filter(Optional::isPresent).map(e -> e.get().begin).findAny().orElse(null);
 	}
 
 	private Position determineTokenRanges(Position cursor, TokenRange tokenRange) {
