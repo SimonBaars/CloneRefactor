@@ -196,12 +196,20 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 		boolean createInterface = relation.isInterfaceRelation();
 		String name = "CloneRefactor"+(gen++);
 		ClassOrInterfaceType implementedType = new JavaParser().parseClassOrInterfaceType(name).getResult().get();
-		relation.getIntersectingClasses().forEach(c -> addType(c, createInterface).apply(implementedType));
+		addTypesToIntersectingClasses(relation, createInterface, implementedType);
 		Optional<PackageDeclaration> pack = getCompilationUnit(s.getAny().getFirstNode()).get().getPackageDeclaration();
 		CompilationUnit cu = pack.isPresent() ? new CompilationUnit(pack.get().getNameAsString()) : new CompilationUnit();
 		relation.getIntersectingClasses().add(0, create(cu, createInterface).apply(name, createInterface ? new Keyword[] {Keyword.PUBLIC} : new Keyword[] {Keyword.PUBLIC, Keyword.ABSTRACT}));
 		cu.setStorage(Paths.get(compilationUnitFilePath(cu)));
 		resolve(relation.getFirstClass()::resolve).ifPresent(type -> ASTHolder.getClasses().put(type.getQualifiedName(), relation.getFirstClass()));
+	}
+
+	private void addTypesToIntersectingClasses(Relation relation, boolean createInterface, ClassOrInterfaceType implementedType) {
+		relation.getIntersectingClasses().forEach(c -> {
+			addType(c, createInterface).apply(implementedType);
+			if(!createInterface && c.getExtendedTypes().size() == 2)
+				c.getExtendedTypes().remove(0); // First extended type is Object
+		});
 	}
 	
 	public BiFunction<String, Keyword[], ClassOrInterfaceDeclaration> create(CompilationUnit cu, boolean createInterface) {
