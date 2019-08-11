@@ -2,7 +2,7 @@ package com.simonbaars.clonerefactor.scripts.thresholds;
 
 import com.simonbaars.clonerefactor.metrics.Metrics;
 import com.simonbaars.clonerefactor.scripts.RunOnCorpus;
-import com.simonbaars.clonerefactor.scripts.model.MetricsTables;
+import com.simonbaars.clonerefactor.scripts.model.MetricsTable;
 import com.simonbaars.clonerefactor.settings.Settings;
 
 public class TryStatementThresholds implements Runnable {
@@ -12,7 +12,7 @@ public class TryStatementThresholds implements Runnable {
 
 	@Override
 	public void run() {
-		MetricsTables metricsTables = new MetricsTables();
+		MetricsTable metricsTables = new MetricsTable();
 		System.out.println("Try Statement Thresholds");
 		for(int i = 1; i<20; i++) {
 			Settings.get().setMinAmountOfNodes(i);

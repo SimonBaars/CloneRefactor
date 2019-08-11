@@ -2,7 +2,7 @@ package com.simonbaars.clonerefactor.scripts;
 
 import java.util.Arrays;
 
-import com.simonbaars.clonerefactor.scripts.model.MetricsTables;
+import com.simonbaars.clonerefactor.scripts.model.MetricsTable;
 import com.simonbaars.clonerefactor.settings.CloneType;
 import com.simonbaars.clonerefactor.settings.Scope;
 import com.simonbaars.clonerefactor.settings.Settings;
@@ -15,7 +15,7 @@ public class RunAllConfigurations {
 		CloneType[] cloneTypes = CloneType.values();
 		Scope[] scopes = Scope.values();
 		configureSettings(cloneTypes, scopes);
-		MetricsTables table = new MetricsTables();
+		MetricsTable table = new MetricsTable();
 		
 		do table.reportMetrics(Settings.get().getCloneType()+" "+Settings.get().getScope(), new RunOnCorpus().calculateMetricsForCorpus());
 		while (rotate(cloneTypes, scopes));

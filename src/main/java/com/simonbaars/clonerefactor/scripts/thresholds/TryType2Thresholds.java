@@ -2,7 +2,7 @@ package com.simonbaars.clonerefactor.scripts.thresholds;
 
 import com.simonbaars.clonerefactor.metrics.Metrics;
 import com.simonbaars.clonerefactor.scripts.RunOnCorpus;
-import com.simonbaars.clonerefactor.scripts.model.MetricsTables;
+import com.simonbaars.clonerefactor.scripts.model.MetricsTable;
 import com.simonbaars.clonerefactor.settings.CloneType;
 import com.simonbaars.clonerefactor.settings.Settings;
 
@@ -13,7 +13,7 @@ public class TryType2Thresholds implements Runnable {
 
 	@Override
 	public void run() {
-		MetricsTables metricsTables = new MetricsTables();
+		MetricsTable metricsTables = new MetricsTable();
 		System.out.println("Try Threshold Percentages");
 		Settings.get().setCloneType(CloneType.TYPE2R);
 		for(int i = 0; i<=100; i++) {

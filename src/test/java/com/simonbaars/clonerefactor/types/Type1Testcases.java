@@ -7,7 +7,7 @@ import java.nio.file.Paths;
 import com.simonbaars.clonerefactor.Main;
 import com.simonbaars.clonerefactor.helper.Type1Test;
 import com.simonbaars.clonerefactor.model.DetectionResults;
-import com.simonbaars.clonerefactor.scripts.model.MetricsTables;
+import com.simonbaars.clonerefactor.scripts.model.MetricsTable;
 import com.simonbaars.clonerefactor.settings.CloneType;
 import com.simonbaars.clonerefactor.settings.Scope;
 import com.simonbaars.clonerefactor.settings.Settings;
@@ -49,17 +49,17 @@ public class Type1Testcases extends Type1Test implements DoesFileOperations {
     }
     
     public void testMetricTables() {
-    	MetricsTables tables = new MetricsTables();
+    	MetricsTable tables = new MetricsTable();
     	System.out.println("kryo-serializers");
-    	String path = "/Users/sbaars/git/kryo-serializers/";
+    	String path = "/home/simon/clone/git/kryo-serializers/";
     	System.out.println(Settings.get());
 		tables.reportMetrics("Kryo", Main.cloneDetection(Paths.get(path), Paths.get(path+"src/main/java/")).getMetrics());
     }
     
     public void testMetricTables2() {
-    	MetricsTables tables = new MetricsTables();
+    	MetricsTable tables = new MetricsTable();
     	System.out.println("joda-time");
-    	String path = "/Users/sbaars/clone/git/joda-time/";
+    	String path = "/home/simon/clone/git/zkfiddle-sandbox/";
     	System.out.println(Settings.get());
 		DetectionResults cloneDetection = Main.cloneDetection(Paths.get(path), Paths.get(path+"src/main/java/"));
 		tables.reportMetrics("Kryo", cloneDetection.getMetrics());
@@ -71,9 +71,9 @@ public class Type1Testcases extends Type1Test implements DoesFileOperations {
     }
     
     public void testMetricTables3() {
-    	MetricsTables tables = new MetricsTables();
+    	MetricsTable tables = new MetricsTable();
     	System.out.println("ning-api-java");
-    	String path = "/Users/sbaars/clone/git/automaton/";
+    	String path = "/home/simon/clone/git/Alice/";
     	System.out.println(Settings.get());
 		tables.reportMetrics("Kryo", Main.cloneDetection(Paths.get(path), Paths.get(path+"src/main/java/")).getMetrics());
     }

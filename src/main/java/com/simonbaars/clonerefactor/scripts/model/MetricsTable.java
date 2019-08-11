@@ -8,7 +8,7 @@ import com.simonbaars.clonerefactor.metrics.Metrics;
 import com.simonbaars.clonerefactor.thread.WritesErrors;
 import com.simonbaars.clonerefactor.util.SavePaths;
 
-public class MetricsTables implements WritesErrors {
+public class MetricsTable implements WritesErrors {
 	
 	private final CountTable generalStats = new CountTable("General Statistics");
 	private final CountTable averages = new CountTable("Averages");
