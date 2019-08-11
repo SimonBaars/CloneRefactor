@@ -98,6 +98,7 @@ public class ThreadPool implements WritesErrors, CalculatesTimeIntervals, DoesFi
 	private void writeResults(CorpusThread t) {
 		calculateGeneralMetrics(t);
 		fullMetrics.add(t.res.getMetrics());
+		refactorResults.addAll(t.res.getRefactorResults());
 		if(t.res.getMetrics().getChild().isPresent()) {
 			if(fullMetrics.getChild().isPresent())
 				fullMetrics.getChild().get().add(t.res.getMetrics().getChild().get());
