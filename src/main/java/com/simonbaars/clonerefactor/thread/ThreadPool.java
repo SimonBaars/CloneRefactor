@@ -18,7 +18,7 @@ import com.simonbaars.clonerefactor.util.SavePaths;
 public class ThreadPool implements WritesErrors, CalculatesTimeIntervals, DoesFileOperations {
 	private final File OUTPUT_FOLDER = new File(SavePaths.getFullOutputFolder());
 	private final File FULL_METRICS = new File(OUTPUT_FOLDER.getParent()+"/metrics.txt");
-	private final int NUMBER_OF_THREADS = Runtime.getRuntime().availableProcessors();
+	private final int NUMBER_OF_THREADS = 1;
 	private final int THREAD_TIMEOUT = 6000000;
 	private final Metrics fullMetrics = new Metrics();
 	private final SimpleTable refactorResults = new SimpleTable("System", "Nodes", "Tokens", "Relation", "Returns", "Arguments", "Duplication", "Complexity", "Interface Size", "Size", "Duplication (nodes)", "Size (nodes)");
@@ -98,7 +98,11 @@ public class ThreadPool implements WritesErrors, CalculatesTimeIntervals, DoesFi
 	private void writeResults(CorpusThread t) {
 		calculateGeneralMetrics(t);
 		fullMetrics.add(t.res.getMetrics());
-		refactorResults.addAll(t.res.getRefactorResults());
+		if(t.res.getMetrics().getChild().isPresent()) {
+			if(fullMetrics.getChild().isPresent())
+				fullMetrics.getChild().get().add(t.res.getMetrics().getChild().get());
+			else fullMetrics.setChild(t.res.getMetrics().getChild().get());
+		}
 		try {
 			writeStringToFile(new File(OUTPUT_FOLDER.getAbsolutePath()+File.separator+t.getFile().getName()+"-"+t.res.getClones().size()+".txt"), t.res.toString());
 			writeStringToFile(FULL_METRICS, fullMetrics.toString());
