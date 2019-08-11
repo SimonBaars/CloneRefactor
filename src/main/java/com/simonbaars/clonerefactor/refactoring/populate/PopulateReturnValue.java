@@ -59,8 +59,9 @@ public class PopulateReturnValue implements PopulatesExtractedMethod, ChecksRetu
 	}
 
 	private void returnDirectlyIfSingleDeclarator(List<Node> topLevel) {
-		if(topLevel.size() == 1 && topLevel.get(0) instanceof ExpressionStmt) {
-			ExpressionStmt exprStmt = (ExpressionStmt)topLevel.get(0);
+		Node last = topLevel.get(topLevel.size()-1);
+		if(last instanceof ExpressionStmt) {
+			ExpressionStmt exprStmt = (ExpressionStmt)last;
 			if(exprStmt.getExpression() instanceof VariableDeclarationExpr)
 				convertVariableDeclarationToReturn(exprStmt);
 		}
