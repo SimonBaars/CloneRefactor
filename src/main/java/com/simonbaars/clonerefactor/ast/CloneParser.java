@@ -19,7 +19,6 @@ import com.github.javaparser.symbolsolver.resolution.typesolvers.JavaParserTypeS
 import com.github.javaparser.utils.SourceRoot;
 import com.github.javaparser.utils.SourceRoot.Callback.Result;
 import com.google.common.cache.Cache;
-import com.simonbaars.clonerefactor.Hashtable;
 import com.simonbaars.clonerefactor.SequenceObservable;
 import com.simonbaars.clonerefactor.ast.interfaces.ResolvesSymbols;
 import com.simonbaars.clonerefactor.ast.interfaces.SetsIfNotNull;
