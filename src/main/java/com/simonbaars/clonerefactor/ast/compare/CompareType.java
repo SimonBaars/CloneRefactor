@@ -2,6 +2,7 @@ package com.simonbaars.clonerefactor.ast.compare;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
@@ -17,7 +18,7 @@ public class CompareType extends Compare implements ResolvesSymbols {
 	public CompareType(ReferenceType type) {
 		super(type.getRange().get());
 		this.referenceType = parseType(type);
-		this.type = this.referenceType.stream().map(t -> resolve(t::resolve)).filter(t -> t.isPresent()).map(t -> t.get()).collect(Collectors.toList());
+		this.type = this.referenceType.stream().map(t -> resolve(t::resolve)).filter(Optional::isPresent).map(Optional::get).collect(Collectors.toList());
 	}
 	
 	private List<ClassOrInterfaceType> parseType(ReferenceType type2) {
