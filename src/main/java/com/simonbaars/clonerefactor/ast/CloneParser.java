@@ -137,7 +137,7 @@ public class CloneParser implements SetsIfNotNull, RemovesDuplicates, WritesErro
 			sourceRoot.parse("", config, (Path localPath, Path absolutePath, ParseResult<CompilationUnit> result) -> {
 				if(result.getResult().isPresent()) {
 					compilationUnits.add(result.getResult().get());
-					setupTypeSolver(absolutePath, javaParserTypeSolver);
+					setupTypeSolver(absolutePath, javaParserTypeSolver, result.getResult().get());
 				}
 				progress.next();
 				return Result.DONT_SAVE;
@@ -149,12 +149,12 @@ public class CloneParser implements SetsIfNotNull, RemovesDuplicates, WritesErro
 	}
 
 	@SuppressWarnings("unchecked")
-	private void setupTypeSolver(Path path, JavaParserTypeSolver javaParserTypeSolver) {
+	private void setupTypeSolver(Path path, JavaParserTypeSolver javaParserTypeSolver, CompilationUnit compilationUnit) {
 		try {
 			Field f = javaParserTypeSolver.getClass().getDeclaredField("parsedFiles");
 			f.setAccessible(true);
 			Cache<Path, Optional<CompilationUnit>> iWantThis = (Cache<Path, Optional<CompilationUnit>>) f.get(javaParserTypeSolver);
-			iWantThis.put(key, value);
+			iWantThis.put(path, Optional.of(compilationUnit));
 		} catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
