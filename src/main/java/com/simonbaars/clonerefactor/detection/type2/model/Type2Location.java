@@ -4,15 +4,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.IntStream;
 
 import com.github.javaparser.ast.Node;
-import com.github.javaparser.ast.expr.Expression;
-import com.simonbaars.clonerefactor.ast.compare.Compare;
 import com.simonbaars.clonerefactor.ast.interfaces.DeterminesNodeTokens;
 import com.simonbaars.clonerefactor.datatype.IndexRange;
-import com.simonbaars.clonerefactor.detection.type2.Type2RLocation;
 import com.simonbaars.clonerefactor.model.Sequence;
 import com.simonbaars.clonerefactor.model.location.Location;
 
@@ -129,27 +125,7 @@ public class Type2Location implements DeterminesNodeTokens, Comparable<Type2Loca
 	}
 
 	private Location convertToLocation(Location location, Type2Sequence seq) {
-		Type2RLocation t2Location = new Type2RLocation(location.getFile(), statementIndices.stream().boxed().map(i -> location.getContents().getNodes().get(i)).toArray(Node[]::new));
-		for(int i = 0; i<contents.size(); i++) {
-			for(Type2Location s : seq.getSequence()) {
-				if(contents.size() == s.contents.size() && contents.get(i).getContents().length == s.getContents().get(i).getContents().length) {
-					diffIndices(contents.get(i).getContents(), s.getContents().get(i).getContents(), location.getContents().getCompare(), t2Location.getDiffExpressions());
-				}
-			}
-		}
-		return t2Location;
-	}
-	
-	private void diffIndices(int[] a, int[] b, List<Compare> compare, Set<Expression> exprs) {
-		assert a.length == b.length;
-		for(int i = 0; i<a.length; i++) {
-			if(a[i]!=b[i] && a[i]>0 && b[i]>0) {
-				Expression expression = compare.get(i).getExpression();
-				if(expression == null) 
-					throw new IllegalStateException("Expression may not be null! "+compare.get(i)+" at index!");
-				exprs.add(expression);
-			}
-		}
+		return new Location(location.getFile(), statementIndices.stream().boxed().map(i -> location.getContents().getNodes().get(i)).toArray(Node[]::new));
 	}
 	
 	public Type2Location getLast() {
