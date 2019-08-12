@@ -1,11 +1,13 @@
 package com.simonbaars.clonerefactor.ast;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -13,8 +15,11 @@ import com.github.javaparser.ParseResult;
 import com.github.javaparser.ParserConfiguration;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
+import com.github.javaparser.symbolsolver.resolution.typesolvers.JavaParserTypeSolver;
 import com.github.javaparser.utils.SourceRoot;
 import com.github.javaparser.utils.SourceRoot.Callback.Result;
+import com.google.common.cache.Cache;
+import com.simonbaars.clonerefactor.Hashtable;
 import com.simonbaars.clonerefactor.SequenceObservable;
 import com.simonbaars.clonerefactor.ast.interfaces.ResolvesSymbols;
 import com.simonbaars.clonerefactor.ast.interfaces.SetsIfNotNull;
@@ -45,9 +50,9 @@ public class CloneParser implements SetsIfNotNull, RemovesDuplicates, WritesErro
 		this.config = config;
 	}
 	
-	public DetectionResults parse() {
+	public DetectionResults parse(JavaParserTypeSolver javaParserTypeSolver) {
 		final Progress progress = new Progress(sourceRoot.getRoot());
-		final List<CompilationUnit> compilationUnits = createAST(progress);
+		final List<CompilationUnit> compilationUnits = createAST(progress, javaParserTypeSolver);
 		return parseProject(compilationUnits, progress);
 	}
 
@@ -81,8 +86,8 @@ public class CloneParser implements SetsIfNotNull, RemovesDuplicates, WritesErro
 		}
 	}
 
-	private List<CompilationUnit> createAST(Progress progress) {
-		final List<CompilationUnit> compilationUnits = parseAST(progress);
+	private List<CompilationUnit> createAST(Progress progress, JavaParserTypeSolver javaParserTypeSolver) {
+		final List<CompilationUnit> compilationUnits = parseAST(progress, javaParserTypeSolver);
 		
 		if(compilationUnits.isEmpty())
 			throw new IllegalStateException("Project has no sources! "+sourceRoot.getRoot()+", "+projectRoot);
@@ -126,12 +131,14 @@ public class CloneParser implements SetsIfNotNull, RemovesDuplicates, WritesErro
 		return l;
 	}
 
-	private List<CompilationUnit> parseAST(Progress progress) {
+	private List<CompilationUnit> parseAST(Progress progress, JavaParserTypeSolver javaParserTypeSolver) {
 		final List<CompilationUnit> compilationUnits = new ArrayList<>();
 		try {
 			sourceRoot.parse("", config, (Path localPath, Path absolutePath, ParseResult<CompilationUnit> result) -> {
-				if(result.getResult().isPresent())
+				if(result.getResult().isPresent()) {
 					compilationUnits.add(result.getResult().get());
+					setupTypeSolver(absolutePath, javaParserTypeSolver);
+				}
 				progress.next();
 				return Result.DONT_SAVE;
 			});
@@ -139,5 +146,19 @@ public class CloneParser implements SetsIfNotNull, RemovesDuplicates, WritesErro
 			throw new IllegalStateException(e);
 		}
 		return compilationUnits;
+	}
+
+	@SuppressWarnings("unchecked")
+	private void setupTypeSolver(Path path, JavaParserTypeSolver javaParserTypeSolver) {
+		try {
+			Field f = javaParserTypeSolver.getClass().getDeclaredField("parsedFiles");
+			f.setAccessible(true);
+			Cache<Path, Optional<CompilationUnit>> iWantThis = (Cache<Path, Optional<CompilationUnit>>) f.get(javaParserTypeSolver);
+			iWantThis.put(key, value);
+		} catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} //NoSuchFieldException
+		
 	}
 }
