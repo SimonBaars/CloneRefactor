@@ -62,7 +62,7 @@
 					</execution>
 				</executions>
 				<configuration>
-					<mainClass>com.simonbaars.clonerefactor.scripts.RunAllConfigurations</mainClass>
+					<mainClass>com.simonbaars.clonerefactor.scripts.RunAllTypes</mainClass>
 				</configuration>
 			</plugin>
 			<plugin>
