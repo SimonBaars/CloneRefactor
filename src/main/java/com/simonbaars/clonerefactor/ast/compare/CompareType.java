@@ -11,13 +11,12 @@ import com.github.javaparser.resolution.types.ResolvedType;
 import com.simonbaars.clonerefactor.ast.interfaces.ResolvesSymbols;
 
 public class CompareType extends Compare implements ResolvesSymbols {
-	private final List<ClassOrInterfaceType> referenceType;
-	private final List<ResolvedType> type;
-	
+
+	private ReferenceType referenceType;
+
 	public CompareType(ReferenceType type) {
 		super(type.getRange().get());
-		this.referenceType = parseType(type);
-		this.type = this.referenceType.stream().map(t -> resolve(t::resolve)).filter(t -> t.isPresent()).map(t -> t.get()).collect(Collectors.toList());
+		this.referenceType = type;
 	}
 	
 	private List<ClassOrInterfaceType> parseType(ReferenceType type2) {
