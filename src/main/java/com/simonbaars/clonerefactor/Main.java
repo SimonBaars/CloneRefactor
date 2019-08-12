@@ -3,6 +3,7 @@ package com.simonbaars.clonerefactor;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
@@ -38,13 +39,14 @@ public class Main {
 	}
 	
 	public static DetectionResults cloneDetection(Path path, Path sourceRoot) {
-		final ParserConfiguration config = createParseConfig(path, sourceRoot);
+		JavaParserTypeSolver javaParserTypeSolver = new JavaParserTypeSolver(sourceRoot);
+		final ParserConfiguration config = createParseConfig(path, sourceRoot, javaParserTypeSolver);
         SourceRoot root = new SourceRoot(sourceRoot);
-		return new CloneParser(path, root, config).parse();
+		return new CloneParser(path, root, config).parse(javaParserTypeSolver);
 	}
 
-	public static ParserConfiguration createParseConfig(Path path, Path sourceRoot) {
-		CombinedTypeSolver combinedTypeSolver = new CombinedTypeSolver(new ReflectionTypeSolver(), new JavaParserTypeSolver(sourceRoot));
+	public static ParserConfiguration createParseConfig(Path path, Path sourceRoot, JavaParserTypeSolver javaParserTypeSolver) {
+		CombinedTypeSolver combinedTypeSolver = new CombinedTypeSolver(new ReflectionTypeSolver(), javaParserTypeSolver);
         
         addLibrariesToTypeSolver(path, combinedTypeSolver);
        
