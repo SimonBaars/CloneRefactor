@@ -69,11 +69,17 @@ public class ThreadPool implements WritesErrors, CalculatesTimeIntervals, DoesFi
 			if((!threads.get(i).isPresent() && t.isPresent()) || (threads.get(i).isPresent() && !threads.get(i).get().isAlive())) {
 				writePreviousThreadResults(i);
 				threads.set(i, t);
+				clearThreadObjects();
 				break;
 			}
 		}
 	}
 	
+	private void clearThreadObjects() {
+		JavaParserFacade.clearInstances();
+		System.gc();
+	}
+
 	public void finishFinalThreads() {
 		while(waitForThreadToFinish()) replaceFinishedThread(Optional.empty());
 		try {
@@ -87,7 +93,6 @@ public class ThreadPool implements WritesErrors, CalculatesTimeIntervals, DoesFi
 		if(threads.get(i).isPresent() && !threads.get(i).get().isAlive()) {
 			if(threads.get(i).get().res != null) writeResults(threads.get(i).get());
 			else writeError(threads.get(i).get());
-			if(freeMemoryPercentage()<15) JavaParserFacade.clearInstances();
 		}
 	}
 
