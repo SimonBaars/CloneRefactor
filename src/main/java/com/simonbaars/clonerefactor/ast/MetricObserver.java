@@ -1,9 +1,9 @@
 package com.simonbaars.clonerefactor.ast;
 
 import com.simonbaars.clonerefactor.SequenceObserver;
+import com.simonbaars.clonerefactor.context.MetricCollector;
+import com.simonbaars.clonerefactor.context.ProblemType;
 import com.simonbaars.clonerefactor.detection.model.Sequence;
-import com.simonbaars.clonerefactor.metrics.MetricCollector;
-import com.simonbaars.clonerefactor.metrics.ProblemType;
 
 public class MetricObserver implements SequenceObserver {
 	

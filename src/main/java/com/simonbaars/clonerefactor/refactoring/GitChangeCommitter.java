@@ -11,7 +11,7 @@ import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 
-import com.simonbaars.clonerefactor.metrics.context.interfaces.RequiresNodeContext;
+import com.simonbaars.clonerefactor.context.context.interfaces.RequiresNodeContext;
 import com.simonbaars.clonerefactor.settings.Settings;
 
 public class GitChangeCommitter implements RequiresNodeContext {

@@ -3,7 +3,7 @@ package com.simonbaars.clonerefactor.scripts;
 import java.io.File;
 import java.io.IOException;
 
-import com.simonbaars.clonerefactor.metrics.Metrics;
+import com.simonbaars.clonerefactor.context.Metrics;
 import com.simonbaars.clonerefactor.scripts.model.MetricsTable;
 import com.simonbaars.clonerefactor.settings.Settings;
 import com.simonbaars.clonerefactor.thread.CalculatesTimeIntervals;

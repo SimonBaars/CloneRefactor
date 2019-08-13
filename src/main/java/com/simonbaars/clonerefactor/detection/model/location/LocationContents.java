@@ -21,10 +21,10 @@ import com.simonbaars.clonerefactor.ast.compare.CompareTokens;
 import com.simonbaars.clonerefactor.ast.compare.CompareVariable;
 import com.simonbaars.clonerefactor.ast.interfaces.CalculatesLineSize;
 import com.simonbaars.clonerefactor.ast.interfaces.HasCompareList;
+import com.simonbaars.clonerefactor.context.context.analyze.CloneContents;
+import com.simonbaars.clonerefactor.context.context.enums.ContentsType;
+import com.simonbaars.clonerefactor.context.context.interfaces.RequiresNodeContext;
 import com.simonbaars.clonerefactor.datatype.map.ListMap;
-import com.simonbaars.clonerefactor.metrics.context.analyze.CloneContents;
-import com.simonbaars.clonerefactor.metrics.context.enums.ContentsType;
-import com.simonbaars.clonerefactor.metrics.context.interfaces.RequiresNodeContext;
 import com.simonbaars.clonerefactor.settings.Scope;
 import com.simonbaars.clonerefactor.settings.Settings;
 

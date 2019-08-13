@@ -9,7 +9,7 @@ import com.github.javaparser.ast.type.ReferenceType;
 import com.github.javaparser.ast.type.Type;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 import com.simonbaars.clonerefactor.ast.interfaces.ResolvesSymbols;
-import com.simonbaars.clonerefactor.metrics.context.interfaces.RequiresNodeContext;
+import com.simonbaars.clonerefactor.context.context.interfaces.RequiresNodeContext;
 
 public class ThrowsVisitor extends VoidVisitorAdapter<MethodDeclaration> implements RequiresNodeContext, ResolvesSymbols {
 

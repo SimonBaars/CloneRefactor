@@ -6,7 +6,7 @@ import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import com.simonbaars.clonerefactor.ast.ASTHolder;
-import com.simonbaars.clonerefactor.metrics.context.interfaces.RequiresNodeContext;
+import com.simonbaars.clonerefactor.context.context.interfaces.RequiresNodeContext;
 
 public interface ResolvesFQIs extends RequiresNodeContext {
 	public default String getFullyQualifiedName(ClassOrInterfaceDeclaration childClass, ClassOrInterfaceType t) {

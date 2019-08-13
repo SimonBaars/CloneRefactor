@@ -1,8 +1,8 @@
 package com.simonbaars.clonerefactor.metrics;
 
+import com.simonbaars.clonerefactor.context.context.enums.LocationType;
 import com.simonbaars.clonerefactor.detection.model.DetectionResults;
 import com.simonbaars.clonerefactor.helper.Type1Test;
-import com.simonbaars.clonerefactor.metrics.context.enums.LocationType;
 
 import junit.framework.Assert;
 import junit.framework.Test;

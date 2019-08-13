@@ -6,12 +6,12 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.ToIntFunction;
 
+import com.simonbaars.clonerefactor.context.context.analyze.CloneRefactorability;
+import com.simonbaars.clonerefactor.context.context.analyze.CloneRelation;
+import com.simonbaars.clonerefactor.context.context.enums.Refactorability;
+import com.simonbaars.clonerefactor.context.context.enums.RelationType;
+import com.simonbaars.clonerefactor.context.model.Relation;
 import com.simonbaars.clonerefactor.detection.model.location.Location;
-import com.simonbaars.clonerefactor.metrics.context.analyze.CloneRefactorability;
-import com.simonbaars.clonerefactor.metrics.context.analyze.CloneRelation;
-import com.simonbaars.clonerefactor.metrics.context.enums.Refactorability;
-import com.simonbaars.clonerefactor.metrics.context.enums.RelationType;
-import com.simonbaars.clonerefactor.metrics.model.Relation;
 
 public class Sequence implements Comparable<Sequence> {
 	private final List<Location> locations;

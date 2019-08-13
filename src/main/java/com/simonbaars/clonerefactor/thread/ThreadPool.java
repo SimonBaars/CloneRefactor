@@ -10,8 +10,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.github.javaparser.symbolsolver.javaparsermodel.JavaParserFacade;
+import com.simonbaars.clonerefactor.context.Metrics;
 import com.simonbaars.clonerefactor.datatype.map.SimpleTable;
-import com.simonbaars.clonerefactor.metrics.Metrics;
 import com.simonbaars.clonerefactor.util.DoesFileOperations;
 import com.simonbaars.clonerefactor.util.SavePaths;
 

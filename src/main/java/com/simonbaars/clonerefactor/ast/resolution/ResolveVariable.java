@@ -20,7 +20,7 @@ import com.github.javaparser.ast.stmt.ExpressionStmt;
 import com.github.javaparser.resolution.types.ResolvedReferenceType;
 import com.simonbaars.clonerefactor.ast.interfaces.ResolvesSymbols;
 import com.simonbaars.clonerefactor.ast.resolution.ResolvedVariable.VariableType;
-import com.simonbaars.clonerefactor.metrics.context.interfaces.RequiresNodeContext;
+import com.simonbaars.clonerefactor.context.context.interfaces.RequiresNodeContext;
 
 public class ResolveVariable implements ResolvesSymbols, RequiresNodeContext {
 	

@@ -12,7 +12,7 @@ import com.github.javaparser.ast.expr.SimpleName;
 import com.github.javaparser.ast.stmt.Statement;
 import com.github.javaparser.ast.type.Type;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
-import com.simonbaars.clonerefactor.metrics.context.interfaces.RequiresNodeContext;
+import com.simonbaars.clonerefactor.context.context.interfaces.RequiresNodeContext;
 
 public class ReturnVariablesCollector extends VoidVisitorAdapter<Map<SimpleName, Type>> implements RequiresNodeContext{
 	

@@ -8,8 +8,8 @@ import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.expr.MethodCallExpr;
 import com.github.javaparser.ast.stmt.ReturnStmt;
 import com.github.javaparser.ast.stmt.Statement;
+import com.simonbaars.clonerefactor.context.context.interfaces.RequiresNodeContext;
 import com.simonbaars.clonerefactor.detection.model.Sequence;
-import com.simonbaars.clonerefactor.metrics.context.interfaces.RequiresNodeContext;
 
 public class PopulateReturningFlow implements PopulatesExtractedMethod, RequiresNodeContext {
 	public PopulateReturningFlow() {}
