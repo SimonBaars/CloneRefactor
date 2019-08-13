@@ -7,9 +7,9 @@ import java.util.stream.Collectors;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.simonbaars.clonerefactor.context.context.interfaces.RequiresNodeContext;
 import com.simonbaars.clonerefactor.detection.metrics.CalculatesCyclomaticComplexity;
-import com.simonbaars.clonerefactor.detection.metrics.CyclomaticComplexityCalculator;
-import com.simonbaars.clonerefactor.detection.metrics.UnitLineSizeCalculator;
-import com.simonbaars.clonerefactor.detection.metrics.UnitTokenSizeCalculator;
+import com.simonbaars.clonerefactor.detection.metrics.calculators.CyclomaticComplexityCalculator;
+import com.simonbaars.clonerefactor.detection.metrics.calculators.UnitLineSizeCalculator;
+import com.simonbaars.clonerefactor.detection.metrics.calculators.UnitTokenSizeCalculator;
 import com.simonbaars.clonerefactor.detection.model.Sequence;
 
 public class PreMetrics implements RequiresNodeContext, CalculatesCyclomaticComplexity {

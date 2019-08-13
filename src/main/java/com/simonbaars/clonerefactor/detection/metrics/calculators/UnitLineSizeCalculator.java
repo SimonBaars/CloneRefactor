@@ -1,6 +1,7 @@
-package com.simonbaars.clonerefactor.detection.metrics;
+package com.simonbaars.clonerefactor.detection.metrics.calculators;
 
 import com.github.javaparser.ast.body.MethodDeclaration;
+import com.simonbaars.clonerefactor.detection.metrics.Calculator;
 
 import clonegraph.interfaces.CalculatesLineSize;
 
