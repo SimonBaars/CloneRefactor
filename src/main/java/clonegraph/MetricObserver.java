@@ -1,8 +1,8 @@
 package clonegraph;
 
-import com.simonbaars.clonerefactor.SequenceObserver;
 import com.simonbaars.clonerefactor.context.MetricCollector;
 import com.simonbaars.clonerefactor.context.ProblemType;
+import com.simonbaars.clonerefactor.detection.metrics.interfaces.SequenceObserver;
 import com.simonbaars.clonerefactor.detection.model.Sequence;
 
 public class MetricObserver implements SequenceObserver {

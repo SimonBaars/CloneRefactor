@@ -19,10 +19,10 @@ import com.github.javaparser.symbolsolver.resolution.typesolvers.JavaParserTypeS
 import com.github.javaparser.utils.SourceRoot;
 import com.github.javaparser.utils.SourceRoot.Callback.Result;
 import com.google.common.cache.Cache;
-import com.simonbaars.clonerefactor.SequenceObservable;
 import com.simonbaars.clonerefactor.context.MetricCollector;
 import com.simonbaars.clonerefactor.detection.CloneDetection;
 import com.simonbaars.clonerefactor.detection.interfaces.RemovesDuplicates;
+import com.simonbaars.clonerefactor.detection.metrics.SequenceObservable;
 import com.simonbaars.clonerefactor.detection.model.DetectionResults;
 import com.simonbaars.clonerefactor.detection.model.Sequence;
 import com.simonbaars.clonerefactor.detection.model.location.Location;

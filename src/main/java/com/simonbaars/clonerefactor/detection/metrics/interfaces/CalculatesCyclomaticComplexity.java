@@ -1,4 +1,4 @@
-package com.simonbaars.clonerefactor.detection.metrics;
+package com.simonbaars.clonerefactor.detection.metrics.interfaces;
 
 import java.util.List;
 import java.util.stream.Collectors;
