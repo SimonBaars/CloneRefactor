@@ -58,6 +58,8 @@ public class ThreadPool implements WritesErrors, CalculatesTimeIntervals, DoesFi
 
 	private void nullifyThreadIfStarved() {
 		validElements().filter(i -> i.creationTime+THREAD_TIMEOUT<System.currentTimeMillis()).forEach(CorpusThread::timeout);
+		if(freeMemoryPercentage()<15)
+			clearThreadObjects();
 	}
 
 	public void addToAvailableThread(File file) {
