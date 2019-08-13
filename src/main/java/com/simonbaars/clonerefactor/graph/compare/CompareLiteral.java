@@ -1,11 +1,11 @@
-package com.simonbaars.clonerefactor.clonegraph.compare;
+package com.simonbaars.clonerefactor.graph.compare;
 
 import java.util.Optional;
 
 import com.github.javaparser.ast.expr.Expression;
 import com.github.javaparser.ast.expr.LiteralExpr;
 import com.github.javaparser.resolution.types.ResolvedType;
-import com.simonbaars.clonerefactor.clonegraph.interfaces.ResolvesSymbols;
+import com.simonbaars.clonerefactor.graph.interfaces.ResolvesSymbols;
 import com.simonbaars.clonerefactor.settings.CloneType;
 
 public class CompareLiteral extends Compare implements ResolvesSymbols {

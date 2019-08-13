@@ -1,13 +1,13 @@
-package com.simonbaars.clonerefactor.clonegraph.compare;
+package com.simonbaars.clonerefactor.graph.compare;
 
 import java.util.Optional;
 
 import com.github.javaparser.ast.expr.Expression;
 import com.github.javaparser.ast.expr.NameExpr;
-import com.simonbaars.clonerefactor.clonegraph.ASTHolder;
-import com.simonbaars.clonerefactor.clonegraph.interfaces.ResolvesSymbols;
-import com.simonbaars.clonerefactor.clonegraph.resolution.ResolveVariable;
-import com.simonbaars.clonerefactor.clonegraph.resolution.ResolvedVariable;
+import com.simonbaars.clonerefactor.graph.ASTHolder;
+import com.simonbaars.clonerefactor.graph.interfaces.ResolvesSymbols;
+import com.simonbaars.clonerefactor.graph.resolution.ResolveVariable;
+import com.simonbaars.clonerefactor.graph.resolution.ResolvedVariable;
 import com.simonbaars.clonerefactor.settings.CloneType;
 
 public class CompareVariable extends Compare implements ResolvesSymbols {

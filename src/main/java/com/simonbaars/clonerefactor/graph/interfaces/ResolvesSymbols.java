@@ -1,4 +1,4 @@
-package com.simonbaars.clonerefactor.clonegraph.interfaces;
+package com.simonbaars.clonerefactor.graph.interfaces;
 
 import java.util.Optional;
 import java.util.function.Supplier;

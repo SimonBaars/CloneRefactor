@@ -1,4 +1,4 @@
-package com.simonbaars.clonerefactor.clonegraph.compare;
+package com.simonbaars.clonerefactor.graph.compare;
 
 import com.github.javaparser.JavaToken;
 

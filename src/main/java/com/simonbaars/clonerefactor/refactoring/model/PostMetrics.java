@@ -13,13 +13,13 @@ import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.body.TypeDeclaration;
 import com.github.javaparser.ast.stmt.Statement;
-import com.simonbaars.clonerefactor.clonegraph.interfaces.CalculatesLineSize;
 import com.simonbaars.clonerefactor.context.ProblemType;
 import com.simonbaars.clonerefactor.context.context.interfaces.RequiresNodeContext;
 import com.simonbaars.clonerefactor.detection.metrics.calculators.CyclomaticComplexityCalculator;
 import com.simonbaars.clonerefactor.detection.metrics.calculators.UnitLineSizeCalculator;
 import com.simonbaars.clonerefactor.detection.metrics.calculators.UnitTokenSizeCalculator;
 import com.simonbaars.clonerefactor.detection.metrics.interfaces.CalculatesCyclomaticComplexity;
+import com.simonbaars.clonerefactor.graph.interfaces.CalculatesLineSize;
 
 public class PostMetrics implements RequiresNodeContext, CalculatesLineSize, CalculatesCyclomaticComplexity {
 	private final Map<MethodDeclaration, Integer> methodCC = new HashMap<>();

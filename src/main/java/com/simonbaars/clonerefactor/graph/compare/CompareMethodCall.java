@@ -1,4 +1,4 @@
-package com.simonbaars.clonerefactor.clonegraph.compare;
+package com.simonbaars.clonerefactor.graph.compare;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,8 +9,8 @@ import com.github.javaparser.JavaToken;
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.expr.Expression;
 import com.github.javaparser.ast.expr.MethodCallExpr;
-import com.simonbaars.clonerefactor.clonegraph.interfaces.HasCompareList;
-import com.simonbaars.clonerefactor.clonegraph.interfaces.ResolvesSymbols;
+import com.simonbaars.clonerefactor.graph.interfaces.HasCompareList;
+import com.simonbaars.clonerefactor.graph.interfaces.ResolvesSymbols;
 import com.simonbaars.clonerefactor.settings.CloneType;
 
 public class CompareMethodCall extends Compare implements ResolvesSymbols {

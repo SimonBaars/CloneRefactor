@@ -26,13 +26,13 @@ import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
-import com.simonbaars.clonerefactor.clonegraph.ASTHolder;
 import com.simonbaars.clonerefactor.context.context.interfaces.DeterminesMetric;
 import com.simonbaars.clonerefactor.context.context.relation.SeekClassHierarchy;
 import com.simonbaars.clonerefactor.context.context.relation.SeekInterfaceHierarchy;
 import com.simonbaars.clonerefactor.context.model.ComparingClasses;
 import com.simonbaars.clonerefactor.context.model.Relation;
 import com.simonbaars.clonerefactor.detection.model.Sequence;
+import com.simonbaars.clonerefactor.graph.ASTHolder;
 
 public class CloneRelation implements DeterminesMetric<Relation>, SeekClassHierarchy, SeekInterfaceHierarchy { 
 	

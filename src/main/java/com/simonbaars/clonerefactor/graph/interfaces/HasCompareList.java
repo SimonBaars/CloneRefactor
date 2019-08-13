@@ -1,4 +1,4 @@
-package com.simonbaars.clonerefactor.clonegraph.interfaces;
+package com.simonbaars.clonerefactor.graph.interfaces;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -10,8 +10,8 @@ import java.util.Optional;
 import com.github.javaparser.JavaToken;
 import com.github.javaparser.Range;
 import com.github.javaparser.ast.Node;
-import com.simonbaars.clonerefactor.clonegraph.compare.Compare;
-import com.simonbaars.clonerefactor.clonegraph.compare.CompareToken;
+import com.simonbaars.clonerefactor.graph.compare.Compare;
+import com.simonbaars.clonerefactor.graph.compare.CompareToken;
 import com.simonbaars.clonerefactor.settings.Settings;
 
 public interface HasCompareList extends DeterminesNodeTokens {

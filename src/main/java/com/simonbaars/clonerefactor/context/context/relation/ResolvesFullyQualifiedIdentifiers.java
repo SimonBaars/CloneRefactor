@@ -6,7 +6,7 @@ import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import com.github.javaparser.resolution.declarations.ResolvedReferenceTypeDeclaration;
 import com.github.javaparser.resolution.types.ResolvedReferenceType;
-import com.simonbaars.clonerefactor.clonegraph.interfaces.ResolvesSymbols;
+import com.simonbaars.clonerefactor.graph.interfaces.ResolvesSymbols;
 
 public interface ResolvesFullyQualifiedIdentifiers extends ResolvesSymbols {
 	public default String getFullyQualifiedName(ClassOrInterfaceType t) {

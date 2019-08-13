@@ -1,4 +1,4 @@
-package com.simonbaars.clonerefactor.clonegraph.compare;
+package com.simonbaars.clonerefactor.graph.compare;
 
 import java.util.Collections;
 import java.util.List;
@@ -12,8 +12,8 @@ import com.github.javaparser.ast.expr.MethodCallExpr;
 import com.github.javaparser.ast.expr.NameExpr;
 import com.github.javaparser.ast.expr.SimpleName;
 import com.github.javaparser.ast.type.ReferenceType;
-import com.simonbaars.clonerefactor.clonegraph.interfaces.HasCompareList;
 import com.simonbaars.clonerefactor.detection.model.location.HasRange;
+import com.simonbaars.clonerefactor.graph.interfaces.HasCompareList;
 import com.simonbaars.clonerefactor.settings.CloneType;
 
 public abstract class Compare implements HasRange {
