@@ -1,7 +1,7 @@
 package com.simonbaars.clonerefactor.metrics.calculators;
 
 import com.github.javaparser.ast.body.MethodDeclaration;
-import com.simonbaars.clonerefactor.model.FiltersTokens;
+import com.simonbaars.clonerefactor.detection.model.FiltersTokens;
 
 public class UnitTokenSizeCalculator implements Calculator<MethodDeclaration>, FiltersTokens {
     @Override

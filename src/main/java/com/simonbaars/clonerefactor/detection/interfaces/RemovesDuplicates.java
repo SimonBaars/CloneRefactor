@@ -2,7 +2,7 @@ package com.simonbaars.clonerefactor.detection.interfaces;
 
 import java.util.List;
 
-import com.simonbaars.clonerefactor.model.Sequence;
+import com.simonbaars.clonerefactor.detection.model.Sequence;
 
 public interface RemovesDuplicates {
 	public default boolean removeDuplicatesOf(List<Sequence> clones, Sequence newClone) {

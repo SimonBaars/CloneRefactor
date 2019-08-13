@@ -3,14 +3,14 @@ package com.simonbaars.clonerefactor.metrics;
 import java.util.List;
 
 import com.simonbaars.clonerefactor.detection.interfaces.CalculatesPercentages;
+import com.simonbaars.clonerefactor.detection.model.Sequence;
+import com.simonbaars.clonerefactor.detection.model.location.Location;
 import com.simonbaars.clonerefactor.metrics.context.Metric;
 import com.simonbaars.clonerefactor.metrics.context.StatType;
 import com.simonbaars.clonerefactor.metrics.context.analyze.CloneContents;
 import com.simonbaars.clonerefactor.metrics.context.analyze.CloneLocation;
 import com.simonbaars.clonerefactor.metrics.context.analyze.CloneRefactorability;
 import com.simonbaars.clonerefactor.metrics.context.analyze.CloneRelation;
-import com.simonbaars.clonerefactor.model.Sequence;
-import com.simonbaars.clonerefactor.model.location.Location;
 import com.simonbaars.clonerefactor.settings.progress.Progress;
 
 public class MetricCollector implements CalculatesPercentages {

@@ -14,7 +14,7 @@ import com.github.javaparser.ast.stmt.ForStmt;
 import com.github.javaparser.ast.stmt.IfStmt;
 import com.github.javaparser.ast.stmt.SwitchEntry;
 import com.github.javaparser.ast.stmt.WhileStmt;
-import com.simonbaars.clonerefactor.model.location.Location;
+import com.simonbaars.clonerefactor.detection.model.location.Location;
 
 public interface CalculatesCyclomaticComplexity {
 	public default int calculateCC(Node node) {

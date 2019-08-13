@@ -8,9 +8,9 @@ import com.github.javaparser.ast.Node;
 import com.simonbaars.clonerefactor.ast.compare.CompareOutOfScope;
 import com.simonbaars.clonerefactor.datatype.map.ListMap;
 import com.simonbaars.clonerefactor.detection.interfaces.CalculatesPercentages;
-import com.simonbaars.clonerefactor.model.Sequence;
-import com.simonbaars.clonerefactor.model.location.Location;
-import com.simonbaars.clonerefactor.model.location.LocationContents;
+import com.simonbaars.clonerefactor.detection.model.Sequence;
+import com.simonbaars.clonerefactor.detection.model.location.Location;
+import com.simonbaars.clonerefactor.detection.model.location.LocationContents;
 import com.simonbaars.clonerefactor.settings.Settings;
 
 public class Type3Opportunities implements Type3Calculation, CalculatesPercentages {

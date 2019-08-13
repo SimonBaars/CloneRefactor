@@ -5,12 +5,12 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.github.javaparser.ast.body.MethodDeclaration;
+import com.simonbaars.clonerefactor.detection.model.Sequence;
 import com.simonbaars.clonerefactor.metrics.calculators.CalculatesCyclomaticComplexity;
 import com.simonbaars.clonerefactor.metrics.calculators.CyclomaticComplexityCalculator;
 import com.simonbaars.clonerefactor.metrics.calculators.UnitLineSizeCalculator;
 import com.simonbaars.clonerefactor.metrics.calculators.UnitTokenSizeCalculator;
 import com.simonbaars.clonerefactor.metrics.context.interfaces.RequiresNodeContext;
-import com.simonbaars.clonerefactor.model.Sequence;
 
 public class PreMetrics implements RequiresNodeContext, CalculatesCyclomaticComplexity {
 	private final Map<MethodDeclaration, Integer> methodCC = new HashMap<>();

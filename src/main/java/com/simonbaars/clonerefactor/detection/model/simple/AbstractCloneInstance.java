@@ -1,10 +1,10 @@
-package com.simonbaars.clonerefactor.model.simple;
+package com.simonbaars.clonerefactor.detection.model.simple;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import com.simonbaars.clonerefactor.model.location.Location;
+import com.simonbaars.clonerefactor.detection.model.location.Location;
 
 public class AbstractCloneInstance {
 	final List<AbstractClonedStatement> acs = new ArrayList<>();

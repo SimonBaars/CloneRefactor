@@ -1,6 +1,6 @@
 package com.simonbaars.clonerefactor.detection.interfaces;
 
-import com.simonbaars.clonerefactor.model.Sequence;
+import com.simonbaars.clonerefactor.detection.model.Sequence;
 import com.simonbaars.clonerefactor.settings.Settings;
 
 public interface ChecksThresholds {

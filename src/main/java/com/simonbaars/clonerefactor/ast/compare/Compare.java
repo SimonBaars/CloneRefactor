@@ -13,7 +13,7 @@ import com.github.javaparser.ast.expr.NameExpr;
 import com.github.javaparser.ast.expr.SimpleName;
 import com.github.javaparser.ast.type.ReferenceType;
 import com.simonbaars.clonerefactor.ast.interfaces.HasCompareList;
-import com.simonbaars.clonerefactor.model.location.HasRange;
+import com.simonbaars.clonerefactor.detection.model.location.HasRange;
 import com.simonbaars.clonerefactor.settings.CloneType;
 
 public abstract class Compare implements HasRange {

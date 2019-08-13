@@ -8,8 +8,8 @@ import java.util.stream.Stream;
 
 import com.github.javaparser.JavaToken;
 import com.github.javaparser.ast.Node;
-import com.simonbaars.clonerefactor.model.FiltersTokens;
-import com.simonbaars.clonerefactor.model.location.Location;
+import com.simonbaars.clonerefactor.detection.model.FiltersTokens;
+import com.simonbaars.clonerefactor.detection.model.location.Location;
 
 public interface CalculatesLineSize extends FiltersTokens {
 	public default int lineSize(Node node) {

@@ -3,7 +3,6 @@ package com.simonbaars.clonerefactor;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
@@ -17,7 +16,7 @@ import com.github.javaparser.symbolsolver.resolution.typesolvers.JavaParserTypeS
 import com.github.javaparser.symbolsolver.resolution.typesolvers.ReflectionTypeSolver;
 import com.github.javaparser.utils.SourceRoot;
 import com.simonbaars.clonerefactor.ast.CloneParser;
-import com.simonbaars.clonerefactor.model.DetectionResults;
+import com.simonbaars.clonerefactor.detection.model.DetectionResults;
 import com.simonbaars.clonerefactor.util.NoJavaFilesFoundException;
 
 public class Main {

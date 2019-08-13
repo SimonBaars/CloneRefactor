@@ -5,7 +5,7 @@ import java.nio.file.Paths;
 import java.util.concurrent.TimeoutException;
 
 import com.simonbaars.clonerefactor.Main;
-import com.simonbaars.clonerefactor.model.DetectionResults;
+import com.simonbaars.clonerefactor.detection.model.DetectionResults;
 
 public class CorpusThread extends Thread {
 	private final File file;

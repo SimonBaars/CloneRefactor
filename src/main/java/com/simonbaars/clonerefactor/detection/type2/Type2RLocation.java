@@ -14,7 +14,7 @@ import com.github.javaparser.ast.expr.LiteralExpr;
 import com.github.javaparser.ast.expr.MethodCallExpr;
 import com.github.javaparser.ast.expr.NameExpr;
 import com.github.javaparser.ast.type.PrimitiveType;
-import com.simonbaars.clonerefactor.model.location.Location;
+import com.simonbaars.clonerefactor.detection.model.location.Location;
 
 public class Type2RLocation extends Location {
 	private final Set<Expression> diffExpressions = new HashSet<>();

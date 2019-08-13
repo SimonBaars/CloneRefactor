@@ -1,4 +1,4 @@
-package com.simonbaars.clonerefactor.model.location;
+package com.simonbaars.clonerefactor.detection.model.location;
 
 import java.util.ArrayList;
 import java.util.Arrays;

@@ -20,8 +20,8 @@ import com.github.javaparser.ast.stmt.ExpressionStmt;
 import com.github.javaparser.ast.stmt.ReturnStmt;
 import com.github.javaparser.ast.stmt.Statement;
 import com.github.javaparser.ast.type.Type;
+import com.simonbaars.clonerefactor.detection.model.Sequence;
 import com.simonbaars.clonerefactor.metrics.context.interfaces.ChecksReturningData;
-import com.simonbaars.clonerefactor.model.Sequence;
 
 public class PopulateReturnValue implements PopulatesExtractedMethod, ChecksReturningData {	
 	private NameExpr name;

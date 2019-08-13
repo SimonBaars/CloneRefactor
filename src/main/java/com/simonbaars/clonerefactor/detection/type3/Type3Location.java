@@ -3,8 +3,8 @@ package com.simonbaars.clonerefactor.detection.type3;
 import java.nio.file.Path;
 
 import com.github.javaparser.Range;
-import com.simonbaars.clonerefactor.model.location.Location;
-import com.simonbaars.clonerefactor.model.location.LocationContents;
+import com.simonbaars.clonerefactor.detection.model.location.Location;
+import com.simonbaars.clonerefactor.detection.model.location.LocationContents;
 
 public class Type3Location extends Location implements Type3Calculation{
 	private LocationContents diffContents;

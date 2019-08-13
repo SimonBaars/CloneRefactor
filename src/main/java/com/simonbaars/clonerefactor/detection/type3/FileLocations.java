@@ -4,8 +4,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.IntStream;
 
-import com.simonbaars.clonerefactor.model.Sequence;
-import com.simonbaars.clonerefactor.model.location.Location;
+import com.simonbaars.clonerefactor.detection.model.Sequence;
+import com.simonbaars.clonerefactor.detection.model.location.Location;
 
 public class FileLocations {
 	private final Sequence seq;

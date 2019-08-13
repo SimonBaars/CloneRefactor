@@ -2,8 +2,8 @@ package com.simonbaars.clonerefactor.refactoring.target;
 
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
+import com.simonbaars.clonerefactor.detection.model.Sequence;
 import com.simonbaars.clonerefactor.metrics.context.interfaces.RequiresNodeContext;
-import com.simonbaars.clonerefactor.model.Sequence;
 
 public class ExtractToClassOrInterface implements ExtractionTarget, RequiresNodeContext {
 	private final ClassOrInterfaceDeclaration classOrInterface;

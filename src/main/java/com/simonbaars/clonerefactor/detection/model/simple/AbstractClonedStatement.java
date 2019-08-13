@@ -1,4 +1,4 @@
-package com.simonbaars.clonerefactor.model.simple;
+package com.simonbaars.clonerefactor.detection.model.simple;
 
 import java.util.List;
 import java.util.stream.Collectors;

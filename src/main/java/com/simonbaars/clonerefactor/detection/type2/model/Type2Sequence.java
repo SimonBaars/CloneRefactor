@@ -10,7 +10,7 @@ import java.util.stream.IntStream;
 import com.simonbaars.clonerefactor.detection.interfaces.CalculatesPercentages;
 import com.simonbaars.clonerefactor.detection.interfaces.ChecksForComparability;
 import com.simonbaars.clonerefactor.detection.interfaces.ChecksThresholds;
-import com.simonbaars.clonerefactor.model.Sequence;
+import com.simonbaars.clonerefactor.detection.model.Sequence;
 
 public class Type2Sequence implements CalculatesPercentages, ChecksThresholds, ChecksForComparability {
 	private final List<Type2Location> statements;

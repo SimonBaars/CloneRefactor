@@ -10,7 +10,7 @@ import com.github.javaparser.Position;
 import com.github.javaparser.Range;
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.nodeTypes.NodeWithImplements;
-import com.simonbaars.clonerefactor.model.FiltersTokens;
+import com.simonbaars.clonerefactor.detection.model.FiltersTokens;
 
 public interface DeterminesNodeTokens extends FiltersTokens, RequiresNodeOperations {
 	public default List<JavaToken> calculateTokensFromNode(Node n) {

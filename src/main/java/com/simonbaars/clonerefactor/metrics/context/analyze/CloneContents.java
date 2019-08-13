@@ -21,10 +21,10 @@ import com.github.javaparser.ast.body.EnumDeclaration;
 import com.github.javaparser.ast.body.FieldDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.simonbaars.clonerefactor.ast.interfaces.RequiresNodeOperations;
+import com.simonbaars.clonerefactor.detection.model.Sequence;
+import com.simonbaars.clonerefactor.detection.model.location.LocationContents;
 import com.simonbaars.clonerefactor.metrics.context.enums.ContentsType;
 import com.simonbaars.clonerefactor.metrics.context.interfaces.DeterminesMetric;
-import com.simonbaars.clonerefactor.model.Sequence;
-import com.simonbaars.clonerefactor.model.location.LocationContents;
 
 public class CloneContents implements DeterminesMetric<ContentsType>, RequiresNodeOperations {
 	@Override

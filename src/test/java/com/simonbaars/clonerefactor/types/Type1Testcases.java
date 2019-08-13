@@ -5,8 +5,8 @@ import java.io.IOException;
 import java.nio.file.Paths;
 
 import com.simonbaars.clonerefactor.Main;
+import com.simonbaars.clonerefactor.detection.model.DetectionResults;
 import com.simonbaars.clonerefactor.helper.Type1Test;
-import com.simonbaars.clonerefactor.model.DetectionResults;
 import com.simonbaars.clonerefactor.scripts.model.MetricsTable;
 import com.simonbaars.clonerefactor.settings.CloneType;
 import com.simonbaars.clonerefactor.settings.Scope;

@@ -3,8 +3,8 @@ package com.simonbaars.clonerefactor;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.simonbaars.clonerefactor.detection.model.Sequence;
 import com.simonbaars.clonerefactor.metrics.ProblemType;
-import com.simonbaars.clonerefactor.model.Sequence;
 
 public class SequenceObservable {
 	private final List<SequenceObserver> observers = new ArrayList<>();

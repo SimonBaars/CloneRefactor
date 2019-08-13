@@ -13,8 +13,8 @@ import com.github.javaparser.ast.expr.SimpleName;
 import com.github.javaparser.ast.stmt.Statement;
 import com.simonbaars.clonerefactor.ast.ASTHolder;
 import com.simonbaars.clonerefactor.ast.resolution.ResolvedVariable;
+import com.simonbaars.clonerefactor.detection.model.Sequence;
 import com.simonbaars.clonerefactor.detection.type2.Type2RLocation;
-import com.simonbaars.clonerefactor.model.Sequence;
 import com.simonbaars.clonerefactor.refactoring.visitor.VariableVisitor;
 
 public class PopulateArguments implements PopulatesExtractedMethod {

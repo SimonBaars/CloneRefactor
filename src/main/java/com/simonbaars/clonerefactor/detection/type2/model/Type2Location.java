@@ -9,8 +9,8 @@ import java.util.stream.IntStream;
 import com.github.javaparser.ast.Node;
 import com.simonbaars.clonerefactor.ast.interfaces.DeterminesNodeTokens;
 import com.simonbaars.clonerefactor.datatype.IndexRange;
-import com.simonbaars.clonerefactor.model.Sequence;
-import com.simonbaars.clonerefactor.model.location.Location;
+import com.simonbaars.clonerefactor.detection.model.Sequence;
+import com.simonbaars.clonerefactor.detection.model.location.Location;
 
 public class Type2Location implements DeterminesNodeTokens, Comparable<Type2Location> {
 	private final int locationIndex;
