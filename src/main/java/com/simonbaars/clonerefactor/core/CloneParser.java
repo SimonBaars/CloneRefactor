@@ -74,18 +74,23 @@ public class CloneParser implements SetsIfNotNull, RemovesDuplicates, WritesErro
 				progress.nextStage(findChains.size());
 				DetectionResults res = new DetectionResults(metricCollector.reportClones(findChains, progress), findChains);
 				if(Settings.get().getRefactoringStrategy() != RefactoringStrategy.DONOTREFACTOR) {
-					progress.nextStage();
-					ExtractMethod extractMethod = new ExtractMethod(projectRoot, sourceRoot.getRoot(), compilationUnits, metricCollector);
-					extractMethod.refactor(findChains, progress);
-					res.getRefactorResults().addAll(extractMethod.getRes());
-					metricCollector.resetMetrics();
-					res.getMetrics().setChild(metricCollector.reportClones(findChains, progress));
+					refactorClones(compilationUnits, progress, metricCollector, findChains, res);
 				}
 				return res;
 			} else throw new IllegalStateException("Project has no usable sources!");
 		} finally {
 			ASTHolder.removeClasses();
 		}
+	}
+
+	private void refactorClones(final List<CompilationUnit> compilationUnits, Progress progress,
+			MetricCollector metricCollector, List<Sequence> findChains, DetectionResults res) {
+		progress.nextStage();
+		ExtractMethod extractMethod = new ExtractMethod(projectRoot, sourceRoot.getRoot(), compilationUnits, metricCollector);
+		extractMethod.refactor(findChains, progress);
+		res.getRefactorResults().addAll(extractMethod.getRes());
+		metricCollector.resetMetrics();
+		res.getMetrics().setChild(metricCollector.reportClones(findChains, progress));
 	}
 
 	private List<CompilationUnit> createAST(Progress progress, JavaParserTypeSolver javaParserTypeSolver) {
