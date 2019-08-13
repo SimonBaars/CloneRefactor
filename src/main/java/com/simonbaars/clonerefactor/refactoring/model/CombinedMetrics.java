@@ -1,7 +1,6 @@
 package com.simonbaars.clonerefactor.refactoring.model;
 
 import com.github.javaparser.ast.body.MethodDeclaration;
-import com.simonbaars.clonerefactor.ast.MetricObserver;
 import com.simonbaars.clonerefactor.context.MetricCollector;
 import com.simonbaars.clonerefactor.context.ProblemType;
 import com.simonbaars.clonerefactor.datatype.map.CountMap;
@@ -9,6 +8,8 @@ import com.simonbaars.clonerefactor.datatype.map.SimpleTable;
 import com.simonbaars.clonerefactor.detection.interfaces.CalculatesPercentages;
 import com.simonbaars.clonerefactor.detection.model.Sequence;
 import com.simonbaars.clonerefactor.refactoring.enums.MethodType;
+
+import clonegraph.MetricObserver;
 
 public class CombinedMetrics implements CalculatesPercentages {
 	private final int ccIncrease;

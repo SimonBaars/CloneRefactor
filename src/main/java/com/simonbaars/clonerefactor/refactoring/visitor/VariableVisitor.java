@@ -5,9 +5,10 @@ import java.util.Map;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.expr.SimpleName;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
-import com.simonbaars.clonerefactor.ast.interfaces.ResolvesSymbols;
-import com.simonbaars.clonerefactor.ast.resolution.ResolveVariable;
-import com.simonbaars.clonerefactor.ast.resolution.ResolvedVariable;
+
+import clonegraph.interfaces.ResolvesSymbols;
+import clonegraph.resolution.ResolveVariable;
+import clonegraph.resolution.ResolvedVariable;
 
 public class VariableVisitor extends VoidVisitorAdapter<Map<SimpleName, ResolvedVariable>> implements ResolvesSymbols {
 

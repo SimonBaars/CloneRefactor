@@ -1,4 +1,4 @@
-package com.simonbaars.clonerefactor.ast;
+package clonegraph;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -20,8 +20,6 @@ import com.github.javaparser.utils.SourceRoot;
 import com.github.javaparser.utils.SourceRoot.Callback.Result;
 import com.google.common.cache.Cache;
 import com.simonbaars.clonerefactor.SequenceObservable;
-import com.simonbaars.clonerefactor.ast.interfaces.ResolvesSymbols;
-import com.simonbaars.clonerefactor.ast.interfaces.SetsIfNotNull;
 import com.simonbaars.clonerefactor.context.MetricCollector;
 import com.simonbaars.clonerefactor.detection.CloneDetection;
 import com.simonbaars.clonerefactor.detection.interfaces.RemovesDuplicates;
@@ -36,6 +34,9 @@ import com.simonbaars.clonerefactor.settings.Settings;
 import com.simonbaars.clonerefactor.settings.progress.Progress;
 import com.simonbaars.clonerefactor.thread.CalculatesTimeIntervals;
 import com.simonbaars.clonerefactor.thread.WritesErrors;
+
+import clonegraph.interfaces.ResolvesSymbols;
+import clonegraph.interfaces.SetsIfNotNull;
 
 public class CloneParser implements SetsIfNotNull, RemovesDuplicates, WritesErrors, CalculatesTimeIntervals, ResolvesSymbols {
 	

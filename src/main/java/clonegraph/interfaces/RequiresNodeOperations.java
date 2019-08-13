@@ -1,4 +1,4 @@
-package com.simonbaars.clonerefactor.ast.interfaces;
+package clonegraph.interfaces;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,4 +1,4 @@
-package com.simonbaars.clonerefactor.ast.compare;
+package clonegraph.compare;
 
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;

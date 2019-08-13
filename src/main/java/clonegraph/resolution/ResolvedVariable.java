@@ -1,4 +1,4 @@
-package com.simonbaars.clonerefactor.ast.resolution;
+package clonegraph.resolution;
 
 import java.util.Optional;
 
@@ -6,7 +6,8 @@ import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.expr.SimpleName;
 import com.github.javaparser.ast.type.Type;
 import com.github.javaparser.resolution.types.ResolvedType;
-import com.simonbaars.clonerefactor.ast.interfaces.ResolvesSymbols;
+
+import clonegraph.interfaces.ResolvesSymbols;
 
 public class ResolvedVariable implements ResolvesSymbols {
 	public enum VariableType{

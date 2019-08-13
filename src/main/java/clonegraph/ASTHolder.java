@@ -1,4 +1,4 @@
-package com.simonbaars.clonerefactor.ast;
+package clonegraph;
 
 import java.util.Map;
 import java.util.Set;

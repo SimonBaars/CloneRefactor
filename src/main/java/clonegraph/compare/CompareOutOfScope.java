@@ -1,4 +1,4 @@
-package com.simonbaars.clonerefactor.ast.compare;
+package clonegraph.compare;
 
 import com.github.javaparser.Range;
 import com.simonbaars.clonerefactor.settings.CloneType;

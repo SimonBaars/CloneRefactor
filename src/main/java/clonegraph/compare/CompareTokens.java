@@ -1,4 +1,4 @@
-package com.simonbaars.clonerefactor.ast.compare;
+package clonegraph.compare;
 
 import java.util.Arrays;
 import java.util.List;

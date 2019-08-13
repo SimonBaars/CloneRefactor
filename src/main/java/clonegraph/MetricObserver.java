@@ -1,4 +1,4 @@
-package com.simonbaars.clonerefactor.ast;
+package clonegraph;
 
 import com.simonbaars.clonerefactor.SequenceObserver;
 import com.simonbaars.clonerefactor.context.MetricCollector;

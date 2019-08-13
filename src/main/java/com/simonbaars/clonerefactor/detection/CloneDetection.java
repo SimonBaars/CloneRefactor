@@ -8,7 +8,6 @@ import java.util.stream.Collectors;
 
 import com.github.javaparser.Range;
 import com.simonbaars.clonerefactor.SequenceObservable;
-import com.simonbaars.clonerefactor.ast.interfaces.DeterminesNodeTokens;
 import com.simonbaars.clonerefactor.context.ProblemType;
 import com.simonbaars.clonerefactor.datatype.map.ListMap;
 import com.simonbaars.clonerefactor.detection.interfaces.ChecksThresholds;
@@ -16,6 +15,8 @@ import com.simonbaars.clonerefactor.detection.interfaces.RemovesDuplicates;
 import com.simonbaars.clonerefactor.detection.model.Sequence;
 import com.simonbaars.clonerefactor.detection.model.location.Location;
 import com.simonbaars.clonerefactor.settings.progress.Progress;
+
+import clonegraph.interfaces.DeterminesNodeTokens;
 
 public class CloneDetection implements ChecksThresholds, RemovesDuplicates, DeterminesNodeTokens {
 	final List<Sequence> clones = new ArrayList<>();
