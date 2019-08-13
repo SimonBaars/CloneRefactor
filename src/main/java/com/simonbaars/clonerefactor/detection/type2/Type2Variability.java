@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
+import com.simonbaars.clonerefactor.clonegraph.compare.Compare;
 import com.simonbaars.clonerefactor.detection.interfaces.CalculatesPercentages;
 import com.simonbaars.clonerefactor.detection.interfaces.ChecksForComparability;
 import com.simonbaars.clonerefactor.detection.interfaces.ChecksThresholds;
@@ -18,8 +19,6 @@ import com.simonbaars.clonerefactor.detection.type2.model.Type2Location;
 import com.simonbaars.clonerefactor.detection.type2.model.Type2Sequence;
 import com.simonbaars.clonerefactor.detection.type2.model.WeightedPercentage;
 import com.simonbaars.clonerefactor.settings.CloneType;
-
-import clonegraph.compare.Compare;
 
 public class Type2Variability implements CalculatesPercentages, ChecksThresholds, ChecksForComparability {
 	public List<Sequence> determineVariability(Sequence s) {

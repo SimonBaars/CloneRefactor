@@ -1,4 +1,4 @@
-package clonegraph.compare;
+package com.simonbaars.clonerefactor.clonegraph.compare;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,8 +9,7 @@ import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import com.github.javaparser.ast.type.ReferenceType;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 import com.github.javaparser.resolution.types.ResolvedType;
-
-import clonegraph.interfaces.ResolvesSymbols;
+import com.simonbaars.clonerefactor.clonegraph.interfaces.ResolvesSymbols;
 
 public class CompareType extends Compare implements ResolvesSymbols {
 	private final List<ClassOrInterfaceType> referenceType;

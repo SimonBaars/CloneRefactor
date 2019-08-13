@@ -21,14 +21,13 @@ import com.github.javaparser.ast.stmt.Statement;
 import com.github.javaparser.ast.stmt.SwitchStmt;
 import com.github.javaparser.ast.stmt.WhileStmt;
 import com.github.javaparser.ast.type.Type;
+import com.simonbaars.clonerefactor.clonegraph.interfaces.RequiresNodeOperations;
 import com.simonbaars.clonerefactor.context.context.enums.ContentsType;
 import com.simonbaars.clonerefactor.context.context.enums.Refactorability;
 import com.simonbaars.clonerefactor.context.context.interfaces.ChecksReturningData;
 import com.simonbaars.clonerefactor.context.context.interfaces.DeterminesMetric;
 import com.simonbaars.clonerefactor.detection.model.Sequence;
 import com.simonbaars.clonerefactor.detection.model.location.Location;
-
-import clonegraph.interfaces.RequiresNodeOperations;
 
 public class CloneRefactorability implements DeterminesMetric<Refactorability>, RequiresNodeOperations, ChecksReturningData {
 	@Override

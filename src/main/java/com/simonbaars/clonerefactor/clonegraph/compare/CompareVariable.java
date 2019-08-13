@@ -1,15 +1,14 @@
-package clonegraph.compare;
+package com.simonbaars.clonerefactor.clonegraph.compare;
 
 import java.util.Optional;
 
 import com.github.javaparser.ast.expr.Expression;
 import com.github.javaparser.ast.expr.NameExpr;
+import com.simonbaars.clonerefactor.clonegraph.ASTHolder;
+import com.simonbaars.clonerefactor.clonegraph.interfaces.ResolvesSymbols;
+import com.simonbaars.clonerefactor.clonegraph.resolution.ResolveVariable;
+import com.simonbaars.clonerefactor.clonegraph.resolution.ResolvedVariable;
 import com.simonbaars.clonerefactor.settings.CloneType;
-
-import clonegraph.ASTHolder;
-import clonegraph.interfaces.ResolvesSymbols;
-import clonegraph.resolution.ResolveVariable;
-import clonegraph.resolution.ResolvedVariable;
 
 public class CompareVariable extends Compare implements ResolvesSymbols {
 	private final NameExpr variableName;

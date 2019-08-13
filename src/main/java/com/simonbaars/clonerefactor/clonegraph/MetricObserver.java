@@ -1,4 +1,4 @@
-package clonegraph;
+package com.simonbaars.clonerefactor.clonegraph;
 
 import com.simonbaars.clonerefactor.context.MetricCollector;
 import com.simonbaars.clonerefactor.context.ProblemType;

@@ -8,9 +8,8 @@ import com.github.javaparser.ast.stmt.ThrowStmt;
 import com.github.javaparser.ast.type.ReferenceType;
 import com.github.javaparser.ast.type.Type;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
+import com.simonbaars.clonerefactor.clonegraph.interfaces.ResolvesSymbols;
 import com.simonbaars.clonerefactor.context.context.interfaces.RequiresNodeContext;
-
-import clonegraph.interfaces.ResolvesSymbols;
 
 public class ThrowsVisitor extends VoidVisitorAdapter<MethodDeclaration> implements RequiresNodeContext, ResolvesSymbols {
 

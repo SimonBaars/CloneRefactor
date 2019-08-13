@@ -11,12 +11,11 @@ import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.expr.MethodCallExpr;
 import com.github.javaparser.ast.expr.SimpleName;
 import com.github.javaparser.ast.stmt.Statement;
+import com.simonbaars.clonerefactor.clonegraph.ASTHolder;
+import com.simonbaars.clonerefactor.clonegraph.resolution.ResolvedVariable;
 import com.simonbaars.clonerefactor.detection.model.Sequence;
 import com.simonbaars.clonerefactor.detection.type2.Type2RLocation;
 import com.simonbaars.clonerefactor.refactoring.visitor.VariableVisitor;
-
-import clonegraph.ASTHolder;
-import clonegraph.resolution.ResolvedVariable;
 
 public class PopulateArguments implements PopulatesExtractedMethod {
 	final Map<SimpleName, ResolvedVariable> usedVariables = new LinkedHashMap<>();

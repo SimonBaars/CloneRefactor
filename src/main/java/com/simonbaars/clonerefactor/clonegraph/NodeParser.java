@@ -1,4 +1,4 @@
-package clonegraph;
+package com.simonbaars.clonerefactor.clonegraph;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -11,6 +11,8 @@ import com.github.javaparser.ast.PackageDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.stmt.BlockStmt;
 import com.github.javaparser.ast.stmt.LocalClassDeclarationStmt;
+import com.simonbaars.clonerefactor.clonegraph.interfaces.DeterminesNodeTokens;
+import com.simonbaars.clonerefactor.clonegraph.interfaces.SetsIfNotNull;
 import com.simonbaars.clonerefactor.context.MetricCollector;
 import com.simonbaars.clonerefactor.context.ProblemType;
 import com.simonbaars.clonerefactor.detection.metrics.SequenceObservable;
@@ -21,9 +23,6 @@ import com.simonbaars.clonerefactor.detection.metrics.calculators.UnitTokenSizeC
 import com.simonbaars.clonerefactor.detection.model.Sequence;
 import com.simonbaars.clonerefactor.detection.model.location.Location;
 import com.simonbaars.clonerefactor.detection.model.location.LocationContents;
-
-import clonegraph.interfaces.DeterminesNodeTokens;
-import clonegraph.interfaces.SetsIfNotNull;
 
 public class NodeParser implements SetsIfNotNull, DeterminesNodeTokens {
 	private final Map<LocationContents, Location> lineReg = new HashMap<>();

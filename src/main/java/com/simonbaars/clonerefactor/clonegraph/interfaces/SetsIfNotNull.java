@@ -1,4 +1,4 @@
-package clonegraph.interfaces;
+package com.simonbaars.clonerefactor.clonegraph.interfaces;
 
 import java.util.Optional;
 

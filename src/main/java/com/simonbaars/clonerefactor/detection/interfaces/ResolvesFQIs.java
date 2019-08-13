@@ -5,9 +5,8 @@ import java.util.Optional;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
+import com.simonbaars.clonerefactor.clonegraph.ASTHolder;
 import com.simonbaars.clonerefactor.context.context.interfaces.RequiresNodeContext;
-
-import clonegraph.ASTHolder;
 
 public interface ResolvesFQIs extends RequiresNodeContext {
 	public default String getFullyQualifiedName(ClassOrInterfaceDeclaration childClass, ClassOrInterfaceType t) {

@@ -39,6 +39,10 @@ import com.github.javaparser.ast.stmt.Statement;
 import com.github.javaparser.ast.stmt.WhileStmt;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import com.github.javaparser.ast.type.VoidType;
+import com.simonbaars.clonerefactor.clonegraph.ASTHolder;
+import com.simonbaars.clonerefactor.clonegraph.MetricObserver;
+import com.simonbaars.clonerefactor.clonegraph.interfaces.RequiresNodeOperations;
+import com.simonbaars.clonerefactor.clonegraph.interfaces.ResolvesSymbols;
 import com.simonbaars.clonerefactor.context.MetricCollector;
 import com.simonbaars.clonerefactor.context.ProblemType;
 import com.simonbaars.clonerefactor.context.context.enums.Refactorability;
@@ -63,11 +67,6 @@ import com.simonbaars.clonerefactor.settings.Settings;
 import com.simonbaars.clonerefactor.settings.progress.Progress;
 import com.simonbaars.clonerefactor.util.DoesFileOperations;
 import com.simonbaars.clonerefactor.util.SavePaths;
-
-import clonegraph.ASTHolder;
-import clonegraph.MetricObserver;
-import clonegraph.interfaces.RequiresNodeOperations;
-import clonegraph.interfaces.ResolvesSymbols;
 
 public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperations, DoesFileOperations, ResolvesSymbols {
 	private final PopulatesExtractedMethod[] populators = {new PopulateThrows(), new PopulateArguments(), new PopulateReturnValue(), new PopulateReturningFlow()};

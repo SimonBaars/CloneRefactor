@@ -5,14 +5,13 @@ import java.util.Optional;
 import java.util.stream.IntStream;
 
 import com.github.javaparser.ast.Node;
+import com.simonbaars.clonerefactor.clonegraph.compare.CompareOutOfScope;
 import com.simonbaars.clonerefactor.datatype.map.ListMap;
 import com.simonbaars.clonerefactor.detection.interfaces.CalculatesPercentages;
 import com.simonbaars.clonerefactor.detection.model.Sequence;
 import com.simonbaars.clonerefactor.detection.model.location.Location;
 import com.simonbaars.clonerefactor.detection.model.location.LocationContents;
 import com.simonbaars.clonerefactor.settings.Settings;
-
-import clonegraph.compare.CompareOutOfScope;
 
 public class Type3Opportunities implements Type3Calculation, CalculatesPercentages {
 	private ListMap<Integer, FileLocations> opportunities = new ListMap<>();
