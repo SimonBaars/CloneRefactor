@@ -163,14 +163,12 @@ public class CloneParser implements SetsIfNotNull, RemovesDuplicates, WritesErro
 	@SuppressWarnings("unchecked")
 	private void setupTypeSolver(Path path, JavaParserTypeSolver javaParserTypeSolver, CompilationUnit compilationUnit) {
 		try {
-			Field f = javaParserTypeSolver.getClass().getDeclaredField("parsedFiles");
-			f.setAccessible(true);
-			Cache<Path, Optional<CompilationUnit>> iWantThis = (Cache<Path, Optional<CompilationUnit>>) f.get(javaParserTypeSolver);
-			iWantThis.put(path, Optional.of(compilationUnit));
+			Field parsedFilesField = javaParserTypeSolver.getClass().getDeclaredField("parsedFiles");
+			parsedFilesField.setAccessible(true);
+			Cache<Path, Optional<CompilationUnit>> parserCache = (Cache<Path, Optional<CompilationUnit>>) parsedFilesField.get(javaParserTypeSolver);
+			parserCache.put(path, Optional.of(compilationUnit));
 		} catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} //NoSuchFieldException
-		
+		}
 	}
 }
