@@ -1,4 +1,4 @@
-package com.simonbaars.clonerefactor.metrics.calculators;
+package com.simonbaars.clonerefactor.detection.metrics;
 
 public interface Calculator<T> {
 	public int calculate(T t);

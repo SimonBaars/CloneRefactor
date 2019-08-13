@@ -1,4 +1,4 @@
-package com.simonbaars.clonerefactor.metrics.calculators;
+package com.simonbaars.clonerefactor.detection.metrics;
 
 import com.github.javaparser.ast.body.MethodDeclaration;
 

@@ -14,15 +14,15 @@ import com.github.javaparser.ast.stmt.LocalClassDeclarationStmt;
 import com.simonbaars.clonerefactor.SequenceObservable;
 import com.simonbaars.clonerefactor.ast.interfaces.DeterminesNodeTokens;
 import com.simonbaars.clonerefactor.ast.interfaces.SetsIfNotNull;
+import com.simonbaars.clonerefactor.detection.metrics.CyclomaticComplexityCalculator;
+import com.simonbaars.clonerefactor.detection.metrics.NumberOfParametersCalculator;
+import com.simonbaars.clonerefactor.detection.metrics.UnitLineSizeCalculator;
+import com.simonbaars.clonerefactor.detection.metrics.UnitTokenSizeCalculator;
 import com.simonbaars.clonerefactor.detection.model.Sequence;
 import com.simonbaars.clonerefactor.detection.model.location.Location;
 import com.simonbaars.clonerefactor.detection.model.location.LocationContents;
 import com.simonbaars.clonerefactor.metrics.MetricCollector;
 import com.simonbaars.clonerefactor.metrics.ProblemType;
-import com.simonbaars.clonerefactor.metrics.calculators.CyclomaticComplexityCalculator;
-import com.simonbaars.clonerefactor.metrics.calculators.NumberOfParametersCalculator;
-import com.simonbaars.clonerefactor.metrics.calculators.UnitLineSizeCalculator;
-import com.simonbaars.clonerefactor.metrics.calculators.UnitTokenSizeCalculator;
 
 public class NodeParser implements SetsIfNotNull, DeterminesNodeTokens {
 	private final Map<LocationContents, Location> lineReg = new HashMap<>();

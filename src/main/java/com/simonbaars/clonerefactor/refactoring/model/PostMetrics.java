@@ -14,11 +14,11 @@ import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.body.TypeDeclaration;
 import com.github.javaparser.ast.stmt.Statement;
 import com.simonbaars.clonerefactor.ast.interfaces.CalculatesLineSize;
+import com.simonbaars.clonerefactor.detection.metrics.CalculatesCyclomaticComplexity;
+import com.simonbaars.clonerefactor.detection.metrics.CyclomaticComplexityCalculator;
+import com.simonbaars.clonerefactor.detection.metrics.UnitLineSizeCalculator;
+import com.simonbaars.clonerefactor.detection.metrics.UnitTokenSizeCalculator;
 import com.simonbaars.clonerefactor.metrics.ProblemType;
-import com.simonbaars.clonerefactor.metrics.calculators.CalculatesCyclomaticComplexity;
-import com.simonbaars.clonerefactor.metrics.calculators.CyclomaticComplexityCalculator;
-import com.simonbaars.clonerefactor.metrics.calculators.UnitLineSizeCalculator;
-import com.simonbaars.clonerefactor.metrics.calculators.UnitTokenSizeCalculator;
 import com.simonbaars.clonerefactor.metrics.context.interfaces.RequiresNodeContext;
 
 public class PostMetrics implements RequiresNodeContext, CalculatesLineSize, CalculatesCyclomaticComplexity {
