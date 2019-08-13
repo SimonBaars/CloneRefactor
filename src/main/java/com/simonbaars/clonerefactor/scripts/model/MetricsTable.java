@@ -4,9 +4,9 @@ import java.io.File;
 import java.io.IOException;
 
 import com.simonbaars.clonerefactor.context.Metrics;
+import com.simonbaars.clonerefactor.core.util.SavePaths;
 import com.simonbaars.clonerefactor.datatype.map.CountTable;
 import com.simonbaars.clonerefactor.thread.WritesErrors;
-import com.simonbaars.clonerefactor.util.SavePaths;
 
 public class MetricsTable implements WritesErrors {
 	

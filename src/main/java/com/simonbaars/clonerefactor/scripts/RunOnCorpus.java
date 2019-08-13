@@ -4,12 +4,12 @@ import java.io.File;
 import java.io.IOException;
 
 import com.simonbaars.clonerefactor.context.Metrics;
+import com.simonbaars.clonerefactor.core.util.SavePaths;
 import com.simonbaars.clonerefactor.scripts.model.MetricsTable;
 import com.simonbaars.clonerefactor.settings.Settings;
 import com.simonbaars.clonerefactor.thread.CalculatesTimeIntervals;
 import com.simonbaars.clonerefactor.thread.ThreadPool;
 import com.simonbaars.clonerefactor.thread.WritesErrors;
-import com.simonbaars.clonerefactor.util.SavePaths;
 
 public class RunOnCorpus implements WritesErrors, CalculatesTimeIntervals {
 

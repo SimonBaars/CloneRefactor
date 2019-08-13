@@ -48,6 +48,8 @@ import com.simonbaars.clonerefactor.context.ProblemType;
 import com.simonbaars.clonerefactor.context.context.enums.Refactorability;
 import com.simonbaars.clonerefactor.context.context.interfaces.RequiresNodeContext;
 import com.simonbaars.clonerefactor.context.model.Relation;
+import com.simonbaars.clonerefactor.core.util.DoesFileOperations;
+import com.simonbaars.clonerefactor.core.util.SavePaths;
 import com.simonbaars.clonerefactor.datatype.map.CountMap;
 import com.simonbaars.clonerefactor.datatype.map.ListMap;
 import com.simonbaars.clonerefactor.datatype.map.SimpleTable;
@@ -65,8 +67,6 @@ import com.simonbaars.clonerefactor.refactoring.populate.PopulatesExtractedMetho
 import com.simonbaars.clonerefactor.refactoring.target.ExtractToClassOrInterface;
 import com.simonbaars.clonerefactor.settings.Settings;
 import com.simonbaars.clonerefactor.settings.progress.Progress;
-import com.simonbaars.clonerefactor.util.DoesFileOperations;
-import com.simonbaars.clonerefactor.util.SavePaths;
 
 public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperations, DoesFileOperations, ResolvesSymbols {
 	private final PopulatesExtractedMethod[] populators = {new PopulateThrows(), new PopulateArguments(), new PopulateReturnValue(), new PopulateReturningFlow()};

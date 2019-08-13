@@ -7,8 +7,8 @@ import java.io.StringWriter;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.simonbaars.clonerefactor.util.DoesFileOperations;
-import com.simonbaars.clonerefactor.util.SavePaths;
+import com.simonbaars.clonerefactor.core.util.DoesFileOperations;
+import com.simonbaars.clonerefactor.core.util.SavePaths;
 
 public interface WritesErrors extends DoesFileOperations {
 	public default void writeError(String path, Exception exception) {

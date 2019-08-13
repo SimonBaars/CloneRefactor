@@ -1,4 +1,4 @@
-package com.simonbaars.clonerefactor.util;
+package com.simonbaars.clonerefactor.core.util;
 
 public class NoJavaFilesFoundException extends RuntimeException {
 

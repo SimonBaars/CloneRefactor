@@ -1,4 +1,4 @@
-package com.simonbaars.clonerefactor.clonegraph;
+package com.simonbaars.clonerefactor.core;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -19,6 +19,9 @@ import com.github.javaparser.symbolsolver.resolution.typesolvers.JavaParserTypeS
 import com.github.javaparser.utils.SourceRoot;
 import com.github.javaparser.utils.SourceRoot.Callback.Result;
 import com.google.common.cache.Cache;
+import com.simonbaars.clonerefactor.clonegraph.ASTHolder;
+import com.simonbaars.clonerefactor.clonegraph.MetricObserver;
+import com.simonbaars.clonerefactor.clonegraph.NodeParser;
 import com.simonbaars.clonerefactor.clonegraph.interfaces.ResolvesSymbols;
 import com.simonbaars.clonerefactor.clonegraph.interfaces.SetsIfNotNull;
 import com.simonbaars.clonerefactor.context.MetricCollector;
