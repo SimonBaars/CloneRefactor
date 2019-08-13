@@ -67,20 +67,25 @@ public class CloneParser implements SetsIfNotNull, RemovesDuplicates, WritesErro
 			SequenceObservable seqObservable = new SequenceObservable().subscribe(new MetricObserver(metricCollector));
 			Location lastLoc = calculateLineReg(metricCollector, compilationUnits, seqObservable, progress);
 			if(lastLoc!=null) {
-				progress.nextStage(metricCollector.getMetrics().generalStats.get("Total Nodes"));
-				List<Sequence> findChains = new CloneDetection(seqObservable).findChains(lastLoc, progress);
-				doTypeSpecificTransformations(findChains);
-				metricCollector.getMetrics().generalStats.increment("Detection time", interval(beginTime));
-				progress.nextStage(findChains.size());
+				List<Sequence> findChains = detectClones(progress, metricCollector, beginTime, seqObservable, lastLoc);
 				DetectionResults res = new DetectionResults(metricCollector.reportClones(findChains, progress), findChains);
-				if(Settings.get().getRefactoringStrategy() != RefactoringStrategy.DONOTREFACTOR) {
+				if(Settings.get().getRefactoringStrategy() != RefactoringStrategy.DONOTREFACTOR)
 					refactorClones(compilationUnits, progress, metricCollector, findChains, res);
-				}
 				return res;
 			} else throw new IllegalStateException("Project has no usable sources!");
 		} finally {
 			ASTHolder.removeClasses();
 		}
+	}
+
+	private List<Sequence> detectClones(Progress progress, MetricCollector metricCollector, long beginTime,
+			SequenceObservable seqObservable, Location lastLoc) {
+		progress.nextStage(metricCollector.getMetrics().generalStats.get("Total Nodes"));
+		List<Sequence> findChains = new CloneDetection(seqObservable).findChains(lastLoc, progress);
+		doTypeSpecificTransformations(findChains);
+		metricCollector.getMetrics().generalStats.increment("Detection time", interval(beginTime));
+		progress.nextStage(findChains.size());
+		return findChains;
 	}
 
 	private void refactorClones(final List<CompilationUnit> compilationUnits, Progress progress,
