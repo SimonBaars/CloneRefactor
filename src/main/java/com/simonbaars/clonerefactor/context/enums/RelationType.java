@@ -8,7 +8,8 @@ public enum RelationType { //Please note that the order of these enum constants 
 	ANCESTOR("Ancestor"), // Refactor to common parent class as a protected method
 	FIRSTCOUSIN("First Cousin"), // Refactor to common parent class as a protected method
 	COMMONHIERARCHY("Common Hierarchy"), // Refactor to common parent class as a protected method
-	SAMEINTERFACE("Same Interface"), // Refactor common interface as an default method
+	SAMEDIRECTINTERFACE("Same Direct Interface"), // Refactor common interface as an default method
+	SAMEINDIRECTINTERFACE("Same Indirect Interface"), // Refactor common interface as an default method
 	NODIRECTSUPERCLASS("No Direct Superclass"), // Refactor to newly created abstract class as a protected method
 	NOINDIRECTSUPERCLASS("No Indirect Superclass"), // Refactor to newly created abstract class as a protected method
 	EXTERNALSUPERCLASS("External Superclass"), // Refactor to newly created interface as a default method

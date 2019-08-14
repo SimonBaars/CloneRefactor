@@ -91,7 +91,7 @@ public class Relation implements Comparable<Relation> {
 	}
 
 	public boolean isInterfaceRelation() {
-		return type == RelationType.SAMEINTERFACE || type == RelationType.EXTERNALANCESTOR || type == RelationType.EXTERNALSUPERCLASS;
+		return type == RelationType.SAMEDIRECTINTERFACE || type == RelationType.SAMEINDIRECTINTERFACE || type == RelationType.EXTERNALANCESTOR || type == RelationType.EXTERNALSUPERCLASS;
 	}
 	
 }

@@ -8,7 +8,8 @@ import static com.simonbaars.clonerefactor.context.enums.RelationType.FIRSTCOUSI
 import static com.simonbaars.clonerefactor.context.enums.RelationType.NODIRECTSUPERCLASS;
 import static com.simonbaars.clonerefactor.context.enums.RelationType.NOINDIRECTSUPERCLASS;
 import static com.simonbaars.clonerefactor.context.enums.RelationType.SAMECLASS;
-import static com.simonbaars.clonerefactor.context.enums.RelationType.SAMEINTERFACE;
+import static com.simonbaars.clonerefactor.context.enums.RelationType.SAMEDIRECTINTERFACE;
+import static com.simonbaars.clonerefactor.context.enums.RelationType.SAMEINDIRECTINTERFACE;
 import static com.simonbaars.clonerefactor.context.enums.RelationType.SAMEMETHOD;
 import static com.simonbaars.clonerefactor.context.enums.RelationType.SIBLING;
 import static com.simonbaars.clonerefactor.context.enums.RelationType.SUPERCLASS;
@@ -66,12 +67,26 @@ public class CloneRelation implements DeterminesMetric<Relation>, SeekClassHiera
 		relation.setRelationIfNotYetDetermined(ANCESTOR, () -> isAncestor(rev));
 		relation.setRelationIfNotYetDetermined(FIRSTCOUSIN, () -> isFirstCousin(cc));
 		relation.setRelationIfNotYetDetermined(COMMONHIERARCHY, () -> sameHierarchy(classes, cc));
-		relation.setRelationIfNotYetDetermined(SAMEINTERFACE, () -> sameInterface(classes, cc));
+		relation.setRelationIfNotYetDetermined(SAMEDIRECTINTERFACE, () -> sameDirectInterface(classes, cc));
+		relation.setRelationIfNotYetDetermined(SAMEINDIRECTINTERFACE, () -> sameInterface(classes, cc));
 		relation.setRelationIfNotYetDetermined(NODIRECTSUPERCLASS, () -> noSuperclass(cc));
 		relation.setRelationIfNotYetDetermined(NOINDIRECTSUPERCLASS, () -> noIndirectSuperclass(cc));
 		relation.setRelationIfNotYetDetermined(EXTERNALSUPERCLASS, () -> hasExternalSuperclass(cc));
 		relation.setRelationIfNotYetDetermined(EXTERNALANCESTOR, () -> uses(cc));
 		return relation;
+	}
+
+	private Optional<ClassOrInterfaceDeclaration[]> sameDirectInterface(Map<String, ClassOrInterfaceDeclaration> classes2, ComparingClasses cc) {
+		for(ClassOrInterfaceType t1 : cc.getClassOne().getImplementedTypes()){
+			for(ClassOrInterfaceType t2 : cc.getClassTwo().getImplementedTypes()){
+				String fqi1 = getFullyQualifiedName(t1);
+				String fqi2 = getFullyQualifiedName(t2);
+				if(fqi1.equals(fqi2) && classes.containsKey(fqi1)) {
+					return uses(classes.get(fqi1));
+				}
+			}
+		}
+		return Optional.empty();
 	}
 
 	private Optional<ClassOrInterfaceDeclaration[]> noIndirectSuperclass(ComparingClasses cc) {
