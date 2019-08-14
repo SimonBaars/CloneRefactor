@@ -3,7 +3,6 @@ package com.simonbaars.clonerefactor.detection.metrics;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.simonbaars.clonerefactor.context.ProblemType;
 import com.simonbaars.clonerefactor.detection.metrics.interfaces.SequenceObserver;
 import com.simonbaars.clonerefactor.detection.model.Sequence;
 

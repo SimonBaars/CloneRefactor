@@ -8,7 +8,7 @@ import java.util.Optional;
 import java.util.function.Supplier;
 
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
-import com.simonbaars.clonerefactor.context.context.enums.RelationType;
+import com.simonbaars.clonerefactor.context.enums.RelationType;
 
 public class Relation implements Comparable<Relation> {
 	private RelationType type;

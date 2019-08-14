@@ -5,7 +5,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.github.javaparser.ast.body.MethodDeclaration;
-import com.simonbaars.clonerefactor.context.context.interfaces.RequiresNodeContext;
+import com.simonbaars.clonerefactor.context.interfaces.RequiresNodeContext;
 import com.simonbaars.clonerefactor.detection.metrics.calculators.CyclomaticComplexityCalculator;
 import com.simonbaars.clonerefactor.detection.metrics.calculators.UnitLineSizeCalculator;
 import com.simonbaars.clonerefactor.detection.metrics.calculators.UnitTokenSizeCalculator;

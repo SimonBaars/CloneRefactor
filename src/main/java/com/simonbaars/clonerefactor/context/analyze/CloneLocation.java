@@ -1,11 +1,11 @@
-package com.simonbaars.clonerefactor.context.context.analyze;
+package com.simonbaars.clonerefactor.context.analyze;
 
-import static com.simonbaars.clonerefactor.context.context.enums.LocationType.CLASSLEVEL;
-import static com.simonbaars.clonerefactor.context.context.enums.LocationType.CONSTRUCTORLEVEL;
-import static com.simonbaars.clonerefactor.context.context.enums.LocationType.ENUMLEVEL;
-import static com.simonbaars.clonerefactor.context.context.enums.LocationType.INTERFACELEVEL;
-import static com.simonbaars.clonerefactor.context.context.enums.LocationType.METHODLEVEL;
-import static com.simonbaars.clonerefactor.context.context.enums.LocationType.OUTSIDE;
+import static com.simonbaars.clonerefactor.context.enums.LocationType.CLASSLEVEL;
+import static com.simonbaars.clonerefactor.context.enums.LocationType.CONSTRUCTORLEVEL;
+import static com.simonbaars.clonerefactor.context.enums.LocationType.ENUMLEVEL;
+import static com.simonbaars.clonerefactor.context.enums.LocationType.INTERFACELEVEL;
+import static com.simonbaars.clonerefactor.context.enums.LocationType.METHODLEVEL;
+import static com.simonbaars.clonerefactor.context.enums.LocationType.OUTSIDE;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,8 +15,8 @@ import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.ConstructorDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
-import com.simonbaars.clonerefactor.context.context.enums.LocationType;
-import com.simonbaars.clonerefactor.context.context.interfaces.DeterminesMetric;
+import com.simonbaars.clonerefactor.context.enums.LocationType;
+import com.simonbaars.clonerefactor.context.interfaces.DeterminesMetric;
 import com.simonbaars.clonerefactor.detection.model.Sequence;
 import com.simonbaars.clonerefactor.detection.model.location.Location;
 

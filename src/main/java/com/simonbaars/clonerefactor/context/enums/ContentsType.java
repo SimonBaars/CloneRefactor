@@ -1,4 +1,4 @@
-package com.simonbaars.clonerefactor.context.context.enums;
+package com.simonbaars.clonerefactor.context.enums;
 
 public enum ContentsType{
 	FULLMETHOD("Full Method"), 

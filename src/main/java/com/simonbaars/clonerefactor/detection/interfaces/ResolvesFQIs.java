@@ -5,7 +5,7 @@ import java.util.Optional;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
-import com.simonbaars.clonerefactor.context.context.interfaces.RequiresNodeContext;
+import com.simonbaars.clonerefactor.context.interfaces.RequiresNodeContext;
 import com.simonbaars.clonerefactor.graph.ASTHolder;
 
 public interface ResolvesFQIs extends RequiresNodeContext {

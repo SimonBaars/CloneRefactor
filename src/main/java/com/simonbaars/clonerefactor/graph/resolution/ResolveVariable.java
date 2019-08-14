@@ -18,7 +18,7 @@ import com.github.javaparser.ast.nodeTypes.NodeWithSimpleName;
 import com.github.javaparser.ast.nodeTypes.NodeWithType;
 import com.github.javaparser.ast.stmt.ExpressionStmt;
 import com.github.javaparser.resolution.types.ResolvedReferenceType;
-import com.simonbaars.clonerefactor.context.context.interfaces.RequiresNodeContext;
+import com.simonbaars.clonerefactor.context.interfaces.RequiresNodeContext;
 import com.simonbaars.clonerefactor.graph.interfaces.ResolvesSymbols;
 import com.simonbaars.clonerefactor.graph.resolution.ResolvedVariable.VariableType;
 

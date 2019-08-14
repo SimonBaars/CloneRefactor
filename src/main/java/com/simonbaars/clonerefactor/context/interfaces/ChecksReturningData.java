@@ -1,4 +1,4 @@
-package com.simonbaars.clonerefactor.context.context.interfaces;
+package com.simonbaars.clonerefactor.context.interfaces;
 
 import java.util.HashMap;
 import java.util.List;

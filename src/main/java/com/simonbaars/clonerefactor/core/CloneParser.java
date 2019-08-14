@@ -19,7 +19,6 @@ import com.github.javaparser.symbolsolver.resolution.typesolvers.JavaParserTypeS
 import com.github.javaparser.utils.SourceRoot;
 import com.github.javaparser.utils.SourceRoot.Callback.Result;
 import com.google.common.cache.Cache;
-import com.simonbaars.clonerefactor.context.MetricCollector;
 import com.simonbaars.clonerefactor.detection.CloneDetection;
 import com.simonbaars.clonerefactor.detection.interfaces.RemovesDuplicates;
 import com.simonbaars.clonerefactor.detection.metrics.SequenceObservable;
@@ -33,6 +32,7 @@ import com.simonbaars.clonerefactor.graph.MetricObserver;
 import com.simonbaars.clonerefactor.graph.NodeParser;
 import com.simonbaars.clonerefactor.graph.interfaces.ResolvesSymbols;
 import com.simonbaars.clonerefactor.graph.interfaces.SetsIfNotNull;
+import com.simonbaars.clonerefactor.metrics.MetricCollector;
 import com.simonbaars.clonerefactor.refactoring.ExtractMethod;
 import com.simonbaars.clonerefactor.refactoring.enums.RefactoringStrategy;
 import com.simonbaars.clonerefactor.settings.Settings;

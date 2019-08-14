@@ -5,7 +5,7 @@ import java.util.Collections;
 import java.util.List;
 
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
-import com.simonbaars.clonerefactor.context.context.enums.RelationType;
+import com.simonbaars.clonerefactor.context.enums.RelationType;
 
 public class RefactoringPlace implements Comparable<RefactoringPlace>{
 	private final List<ClassOrInterfaceDeclaration> place = new ArrayList<>();

@@ -1,4 +1,4 @@
-package com.simonbaars.clonerefactor.context.context.analyze;
+package com.simonbaars.clonerefactor.context.analyze;
 
 import java.util.List;
 import java.util.Map;
@@ -21,10 +21,10 @@ import com.github.javaparser.ast.stmt.Statement;
 import com.github.javaparser.ast.stmt.SwitchStmt;
 import com.github.javaparser.ast.stmt.WhileStmt;
 import com.github.javaparser.ast.type.Type;
-import com.simonbaars.clonerefactor.context.context.enums.ContentsType;
-import com.simonbaars.clonerefactor.context.context.enums.Refactorability;
-import com.simonbaars.clonerefactor.context.context.interfaces.ChecksReturningData;
-import com.simonbaars.clonerefactor.context.context.interfaces.DeterminesMetric;
+import com.simonbaars.clonerefactor.context.enums.ContentsType;
+import com.simonbaars.clonerefactor.context.enums.Refactorability;
+import com.simonbaars.clonerefactor.context.interfaces.ChecksReturningData;
+import com.simonbaars.clonerefactor.context.interfaces.DeterminesMetric;
 import com.simonbaars.clonerefactor.detection.model.Sequence;
 import com.simonbaars.clonerefactor.detection.model.location.Location;
 import com.simonbaars.clonerefactor.graph.interfaces.RequiresNodeOperations;

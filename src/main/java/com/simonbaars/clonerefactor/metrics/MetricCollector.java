@@ -1,14 +1,15 @@
-package com.simonbaars.clonerefactor.context;
+package com.simonbaars.clonerefactor.metrics;
 
 import java.util.List;
 
-import com.simonbaars.clonerefactor.context.context.Metric;
-import com.simonbaars.clonerefactor.context.context.StatType;
-import com.simonbaars.clonerefactor.context.context.analyze.CloneContents;
-import com.simonbaars.clonerefactor.context.context.analyze.CloneLocation;
-import com.simonbaars.clonerefactor.context.context.analyze.CloneRefactorability;
-import com.simonbaars.clonerefactor.context.context.analyze.CloneRelation;
+import com.simonbaars.clonerefactor.context.Metric;
+import com.simonbaars.clonerefactor.context.StatType;
+import com.simonbaars.clonerefactor.context.analyze.CloneContents;
+import com.simonbaars.clonerefactor.context.analyze.CloneLocation;
+import com.simonbaars.clonerefactor.context.analyze.CloneRefactorability;
+import com.simonbaars.clonerefactor.context.analyze.CloneRelation;
 import com.simonbaars.clonerefactor.detection.interfaces.CalculatesPercentages;
+import com.simonbaars.clonerefactor.detection.metrics.ProblemType;
 import com.simonbaars.clonerefactor.detection.model.Sequence;
 import com.simonbaars.clonerefactor.detection.model.location.Location;
 import com.simonbaars.clonerefactor.settings.progress.Progress;

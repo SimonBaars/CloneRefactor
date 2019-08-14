@@ -1,15 +1,15 @@
-package com.simonbaars.clonerefactor.context.context.analyze;
+package com.simonbaars.clonerefactor.context.analyze;
 
-import static com.simonbaars.clonerefactor.context.context.enums.ContentsType.FULLCLASS;
-import static com.simonbaars.clonerefactor.context.context.enums.ContentsType.FULLCONSTRUCTOR;
-import static com.simonbaars.clonerefactor.context.context.enums.ContentsType.FULLENUM;
-import static com.simonbaars.clonerefactor.context.context.enums.ContentsType.FULLINTERFACE;
-import static com.simonbaars.clonerefactor.context.context.enums.ContentsType.FULLMETHOD;
-import static com.simonbaars.clonerefactor.context.context.enums.ContentsType.ONLYFIELDS;
-import static com.simonbaars.clonerefactor.context.context.enums.ContentsType.OTHER;
-import static com.simonbaars.clonerefactor.context.context.enums.ContentsType.PARTIALCONSTRUCTOR;
-import static com.simonbaars.clonerefactor.context.context.enums.ContentsType.PARTIALMETHOD;
-import static com.simonbaars.clonerefactor.context.context.enums.ContentsType.SEVERALMETHODS;
+import static com.simonbaars.clonerefactor.context.enums.ContentsType.FULLCLASS;
+import static com.simonbaars.clonerefactor.context.enums.ContentsType.FULLCONSTRUCTOR;
+import static com.simonbaars.clonerefactor.context.enums.ContentsType.FULLENUM;
+import static com.simonbaars.clonerefactor.context.enums.ContentsType.FULLINTERFACE;
+import static com.simonbaars.clonerefactor.context.enums.ContentsType.FULLMETHOD;
+import static com.simonbaars.clonerefactor.context.enums.ContentsType.ONLYFIELDS;
+import static com.simonbaars.clonerefactor.context.enums.ContentsType.OTHER;
+import static com.simonbaars.clonerefactor.context.enums.ContentsType.PARTIALCONSTRUCTOR;
+import static com.simonbaars.clonerefactor.context.enums.ContentsType.PARTIALMETHOD;
+import static com.simonbaars.clonerefactor.context.enums.ContentsType.SEVERALMETHODS;
 
 import java.util.List;
 import java.util.Optional;
@@ -20,8 +20,8 @@ import com.github.javaparser.ast.body.ConstructorDeclaration;
 import com.github.javaparser.ast.body.EnumDeclaration;
 import com.github.javaparser.ast.body.FieldDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
-import com.simonbaars.clonerefactor.context.context.enums.ContentsType;
-import com.simonbaars.clonerefactor.context.context.interfaces.DeterminesMetric;
+import com.simonbaars.clonerefactor.context.enums.ContentsType;
+import com.simonbaars.clonerefactor.context.interfaces.DeterminesMetric;
 import com.simonbaars.clonerefactor.detection.model.Sequence;
 import com.simonbaars.clonerefactor.detection.model.location.LocationContents;
 import com.simonbaars.clonerefactor.graph.interfaces.RequiresNodeOperations;

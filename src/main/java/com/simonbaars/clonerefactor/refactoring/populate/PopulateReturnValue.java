@@ -20,7 +20,7 @@ import com.github.javaparser.ast.stmt.ExpressionStmt;
 import com.github.javaparser.ast.stmt.ReturnStmt;
 import com.github.javaparser.ast.stmt.Statement;
 import com.github.javaparser.ast.type.Type;
-import com.simonbaars.clonerefactor.context.context.interfaces.ChecksReturningData;
+import com.simonbaars.clonerefactor.context.interfaces.ChecksReturningData;
 import com.simonbaars.clonerefactor.detection.model.Sequence;
 
 public class PopulateReturnValue implements PopulatesExtractedMethod, ChecksReturningData {	

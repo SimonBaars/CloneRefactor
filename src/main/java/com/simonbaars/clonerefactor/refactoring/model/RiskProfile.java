@@ -7,8 +7,8 @@ import java.util.Optional;
 
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.utils.Pair;
-import com.simonbaars.clonerefactor.context.ProblemType;
-import com.simonbaars.clonerefactor.context.context.enums.Risk;
+import com.simonbaars.clonerefactor.context.enums.Risk;
+import com.simonbaars.clonerefactor.detection.metrics.ProblemType;
 
 public class RiskProfile {
 	private final Map<MethodDeclaration, Pair<Integer, Integer>> changedProblemSize = new HashMap<MethodDeclaration, Pair<Integer, Integer>>();

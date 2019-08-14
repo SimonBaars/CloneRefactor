@@ -1,4 +1,4 @@
-package com.simonbaars.clonerefactor.context.context;
+package com.simonbaars.clonerefactor.context;
 
 public enum Metric {
 	LINES ("Lines"), NODES("Nodes"), TOKENS("Tokens");

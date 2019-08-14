@@ -1,6 +1,6 @@
 package com.simonbaars.clonerefactor.scripts.thresholds;
 
-import com.simonbaars.clonerefactor.context.Metrics;
+import com.simonbaars.clonerefactor.metrics.Metrics;
 import com.simonbaars.clonerefactor.scripts.RunOnCorpus;
 import com.simonbaars.clonerefactor.scripts.model.MetricsTable;
 import com.simonbaars.clonerefactor.settings.Settings;

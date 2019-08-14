@@ -1,18 +1,18 @@
-package com.simonbaars.clonerefactor.context.context.analyze;
+package com.simonbaars.clonerefactor.context.analyze;
 
-import static com.simonbaars.clonerefactor.context.context.enums.RelationType.ANCESTOR;
-import static com.simonbaars.clonerefactor.context.context.enums.RelationType.COMMONHIERARCHY;
-import static com.simonbaars.clonerefactor.context.context.enums.RelationType.EXTERNALANCESTOR;
-import static com.simonbaars.clonerefactor.context.context.enums.RelationType.EXTERNALSUPERCLASS;
-import static com.simonbaars.clonerefactor.context.context.enums.RelationType.FIRSTCOUSIN;
-import static com.simonbaars.clonerefactor.context.context.enums.RelationType.NODIRECTSUPERCLASS;
-import static com.simonbaars.clonerefactor.context.context.enums.RelationType.NOINDIRECTSUPERCLASS;
-import static com.simonbaars.clonerefactor.context.context.enums.RelationType.SAMECLASS;
-import static com.simonbaars.clonerefactor.context.context.enums.RelationType.SAMEINTERFACE;
-import static com.simonbaars.clonerefactor.context.context.enums.RelationType.SAMEMETHOD;
-import static com.simonbaars.clonerefactor.context.context.enums.RelationType.SIBLING;
-import static com.simonbaars.clonerefactor.context.context.enums.RelationType.SUPERCLASS;
-import static com.simonbaars.clonerefactor.context.context.enums.RelationType.UNRELATED;
+import static com.simonbaars.clonerefactor.context.enums.RelationType.ANCESTOR;
+import static com.simonbaars.clonerefactor.context.enums.RelationType.COMMONHIERARCHY;
+import static com.simonbaars.clonerefactor.context.enums.RelationType.EXTERNALANCESTOR;
+import static com.simonbaars.clonerefactor.context.enums.RelationType.EXTERNALSUPERCLASS;
+import static com.simonbaars.clonerefactor.context.enums.RelationType.FIRSTCOUSIN;
+import static com.simonbaars.clonerefactor.context.enums.RelationType.NODIRECTSUPERCLASS;
+import static com.simonbaars.clonerefactor.context.enums.RelationType.NOINDIRECTSUPERCLASS;
+import static com.simonbaars.clonerefactor.context.enums.RelationType.SAMECLASS;
+import static com.simonbaars.clonerefactor.context.enums.RelationType.SAMEINTERFACE;
+import static com.simonbaars.clonerefactor.context.enums.RelationType.SAMEMETHOD;
+import static com.simonbaars.clonerefactor.context.enums.RelationType.SIBLING;
+import static com.simonbaars.clonerefactor.context.enums.RelationType.SUPERCLASS;
+import static com.simonbaars.clonerefactor.context.enums.RelationType.UNRELATED;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,11 +26,11 @@ import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
-import com.simonbaars.clonerefactor.context.context.interfaces.DeterminesMetric;
-import com.simonbaars.clonerefactor.context.context.relation.SeekClassHierarchy;
-import com.simonbaars.clonerefactor.context.context.relation.SeekInterfaceHierarchy;
+import com.simonbaars.clonerefactor.context.interfaces.DeterminesMetric;
 import com.simonbaars.clonerefactor.context.model.ComparingClasses;
 import com.simonbaars.clonerefactor.context.model.Relation;
+import com.simonbaars.clonerefactor.context.relation.SeekClassHierarchy;
+import com.simonbaars.clonerefactor.context.relation.SeekInterfaceHierarchy;
 import com.simonbaars.clonerefactor.detection.model.Sequence;
 import com.simonbaars.clonerefactor.graph.ASTHolder;
 

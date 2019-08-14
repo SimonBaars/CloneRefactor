@@ -7,10 +7,10 @@ import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 import com.github.javaparser.Range;
-import com.simonbaars.clonerefactor.context.ProblemType;
 import com.simonbaars.clonerefactor.datatype.map.ListMap;
 import com.simonbaars.clonerefactor.detection.interfaces.ChecksThresholds;
 import com.simonbaars.clonerefactor.detection.interfaces.RemovesDuplicates;
+import com.simonbaars.clonerefactor.detection.metrics.ProblemType;
 import com.simonbaars.clonerefactor.detection.metrics.SequenceObservable;
 import com.simonbaars.clonerefactor.detection.model.Sequence;
 import com.simonbaars.clonerefactor.detection.model.location.Location;

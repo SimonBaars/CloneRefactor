@@ -1,6 +1,6 @@
 package com.simonbaars.clonerefactor.metrics;
 
-import com.simonbaars.clonerefactor.context.context.enums.ContentsType;
+import com.simonbaars.clonerefactor.context.enums.ContentsType;
 import com.simonbaars.clonerefactor.detection.model.DetectionResults;
 import com.simonbaars.clonerefactor.helper.Type1Test;
 

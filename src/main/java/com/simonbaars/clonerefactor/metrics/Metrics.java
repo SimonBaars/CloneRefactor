@@ -1,16 +1,17 @@
-package com.simonbaars.clonerefactor.context;
+package com.simonbaars.clonerefactor.metrics;
 
 import java.util.Optional;
 
-import com.simonbaars.clonerefactor.context.context.Metric;
-import com.simonbaars.clonerefactor.context.context.StatType;
-import com.simonbaars.clonerefactor.context.context.enums.ContentsType;
-import com.simonbaars.clonerefactor.context.context.enums.LocationType;
-import com.simonbaars.clonerefactor.context.context.enums.Refactorability;
-import com.simonbaars.clonerefactor.context.context.enums.RelationType;
-import com.simonbaars.clonerefactor.context.context.enums.Risk;
+import com.simonbaars.clonerefactor.context.Metric;
+import com.simonbaars.clonerefactor.context.StatType;
+import com.simonbaars.clonerefactor.context.enums.ContentsType;
+import com.simonbaars.clonerefactor.context.enums.LocationType;
+import com.simonbaars.clonerefactor.context.enums.Refactorability;
+import com.simonbaars.clonerefactor.context.enums.RelationType;
+import com.simonbaars.clonerefactor.context.enums.Risk;
 import com.simonbaars.clonerefactor.datatype.map.AverageMap;
 import com.simonbaars.clonerefactor.datatype.map.CountMap;
+import com.simonbaars.clonerefactor.detection.metrics.ProblemType;
 
 public class Metrics {
 	private Optional<Metrics> child = Optional.empty(); 

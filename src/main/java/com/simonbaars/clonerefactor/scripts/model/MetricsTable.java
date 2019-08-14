@@ -3,9 +3,9 @@ package com.simonbaars.clonerefactor.scripts.model;
 import java.io.File;
 import java.io.IOException;
 
-import com.simonbaars.clonerefactor.context.Metrics;
 import com.simonbaars.clonerefactor.core.util.SavePaths;
 import com.simonbaars.clonerefactor.datatype.map.CountTable;
+import com.simonbaars.clonerefactor.metrics.Metrics;
 import com.simonbaars.clonerefactor.thread.WritesErrors;
 
 public class MetricsTable implements WritesErrors {

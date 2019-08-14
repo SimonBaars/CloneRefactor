@@ -1,6 +1,6 @@
-package com.simonbaars.clonerefactor.context;
+package com.simonbaars.clonerefactor.detection.metrics;
 
-import com.simonbaars.clonerefactor.context.context.enums.Risk;
+import com.simonbaars.clonerefactor.context.enums.Risk;
 
 public enum ProblemType {
 	DUPLICATION("Duplication", 5, 10, 20),

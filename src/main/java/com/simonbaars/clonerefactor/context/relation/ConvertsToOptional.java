@@ -1,4 +1,4 @@
-package com.simonbaars.clonerefactor.context.context.relation;
+package com.simonbaars.clonerefactor.context.relation;
 
 import java.util.Optional;
 

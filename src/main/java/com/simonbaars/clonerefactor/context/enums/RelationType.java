@@ -1,4 +1,4 @@
-package com.simonbaars.clonerefactor.context.context.enums;
+package com.simonbaars.clonerefactor.context.enums;
 
 public enum RelationType { //Please note that the order of these enum constants matters
 	SAMEMETHOD("Same Method"), // Refactor to same class as a private method
