@@ -1,6 +1,5 @@
 package com.simonbaars.clonerefactor.detection.interfaces;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.IntStream;
 
@@ -38,12 +37,13 @@ public interface CalculatesPercentages {
 	}
 
 	public default double calcAvg(List<WeightedPercentage> percentages) {
-		percentages = new ArrayList<>(percentages);
-		while(percentages.size()>1) {
-			percentages.set(0, percentages.get(0).mergeWith(percentages.get(1)));
-			percentages.remove(1);
+		if(percentages.isEmpty())
+			return 0;
+		WeightedPercentage p = percentages.get(0);
+		for(int i = 1; i<percentages.size(); i++) {
+			p.mergeWith(percentages.get(i));
 		}
-		return percentages.get(0).getPercentage();
+		return p.getPercentage();
 	}
 	
 	public default int round(double d) {
