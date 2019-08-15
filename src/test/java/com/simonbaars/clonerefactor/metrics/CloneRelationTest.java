@@ -94,6 +94,7 @@ public class CloneRelationTest extends Type1Test {
     }
     
 	private void test(String name, RelationType loc) {
+		System.out.println(name);
 		DetectionResults r = testProject(name);
         Assert.assertEquals(loc, r.getMetrics().amountPerRelation.keySet().iterator().next());
 	}
