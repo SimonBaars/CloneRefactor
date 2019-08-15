@@ -66,15 +66,15 @@ public class CloneRelationTest extends Type1Test {
     }
     
     public void testSameInterface() {
-        test("SameInterface", RelationType.SAMEINTERFACE);
+        test("SameInterface", RelationType.SAMEDIRECTINTERFACE);
     }
     
     public void testSameInterfaceInSuperclass() {
-        test("SameInterfaceInSuperclass", RelationType.SAMEINTERFACE);
+        test("SameInterfaceInSuperclass", RelationType.SAMEINDIRECTINTERFACE);
     }
 
     public void testSameInterfaceInInterfaceHierarchy() {
-        test("SameInterfaceInInterfaceHierarchy", RelationType.SAMEINTERFACE);
+        test("SameInterfaceInInterfaceHierarchy", RelationType.SAMEINDIRECTINTERFACE);
     }
     
     public void testNoDirectSuperclass() {
