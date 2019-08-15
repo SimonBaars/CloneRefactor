@@ -56,6 +56,14 @@ public class Type1Testcases extends Type1Test implements DoesFileOperations {
 		tables.reportMetrics("Kryo", Main.cloneDetection(Paths.get(path), Paths.get(path+"src/main/java/")).getMetrics());
     }
     
+    public void testCCCC() {
+    	MetricsTable tables = new MetricsTable();
+    	System.out.println("cccc-plugin");
+    	String path = "/Users/sbaars/clone/git/cccc-plugin/";
+    	System.out.println(Settings.get());
+		tables.reportMetrics("Kryo", Main.cloneDetection(Paths.get(path), Paths.get(path+"src/main/java/")).getMetrics());
+    }
+    
     public void testMetricTables2() {
     	MetricsTable tables = new MetricsTable();
     	System.out.println("joda-time");

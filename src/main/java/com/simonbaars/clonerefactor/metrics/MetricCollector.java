@@ -57,12 +57,13 @@ public class MetricCollector implements CalculatesPercentages {
 		metrics.amountPerTotalNodeVolume.increment(clone.getTotalNodeVolume());
 		metrics.amountPerEffectiveLines.increment(clone.getEffectiveLineSize());
 		metrics.amountPerTotalEffectiveLineVolume.increment(clone.getTotalLineVolume());
+		for(Location l : clone.getLocations())
+			reportClonedLocation(l);
+		
 		clone.setMetrics(relationFinder, extractFinder);
 		metrics.amountPerRelation.increment(clone.getRelationType());
 		metrics.amountPerExtract.increment(clone.getRefactorability());
 		metrics.averages.addTo("Statements per clone class", clone.getNodeSize());
-		for(Location l : clone.getLocations())
-			reportClonedLocation(l);
 	}
 	
 	public void reassessRelation(Sequence clone) {

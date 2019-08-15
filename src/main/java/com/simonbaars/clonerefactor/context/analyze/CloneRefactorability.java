@@ -33,7 +33,7 @@ public class CloneRefactorability implements DeterminesMetric<Refactorability>, 
 	@Override
 	public Refactorability get(Sequence sequence) {
 		List<Node> lowestNodes = lowestNodes(sequence.getAny().getContents().getNodes());
-		if(new CloneContents().get(sequence)!=ContentsType.PARTIALMETHOD)
+		if(sequence.getLocations().stream().anyMatch(e -> e.getContents().getContentsType() != ContentsType.PARTIALMETHOD))
 			return Refactorability.NOEXTRACTIONBYCONTENTTYPE;
 		else if (hasOverlap(sequence))
 			return Refactorability.OVERLAPS;
