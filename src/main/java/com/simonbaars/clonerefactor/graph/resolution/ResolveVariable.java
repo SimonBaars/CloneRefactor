@@ -17,12 +17,11 @@ import com.github.javaparser.ast.expr.VariableDeclarationExpr;
 import com.github.javaparser.ast.nodeTypes.NodeWithSimpleName;
 import com.github.javaparser.ast.nodeTypes.NodeWithType;
 import com.github.javaparser.ast.stmt.ExpressionStmt;
-import com.github.javaparser.resolution.types.ResolvedReferenceType;
 import com.simonbaars.clonerefactor.context.interfaces.RequiresNodeContext;
-import com.simonbaars.clonerefactor.graph.interfaces.ResolvesSymbols;
+import com.simonbaars.clonerefactor.context.relation.ResolvesFullyQualifiedIdentifiers;
 import com.simonbaars.clonerefactor.graph.resolution.ResolvedVariable.VariableType;
 
-public class ResolveVariable implements ResolvesSymbols, RequiresNodeContext {
+public class ResolveVariable implements ResolvesFullyQualifiedIdentifiers, RequiresNodeContext {
 	
 	private final Map<String, ClassOrInterfaceDeclaration> classes;
 	private final SimpleName variable;
@@ -98,8 +97,7 @@ public class ResolveVariable implements ResolvesSymbols, RequiresNodeContext {
 		Optional<VariableDeclarator> declaration = getDeclaratorOfVariableForClass(classDecl);
 		if(declaration.isPresent()) 
 			return createResolvedVariable(declaration.get(), isSuperclass ? VariableType.SUPERCLASSFIELD : VariableType.CLASSFIELD);
-		return classDecl.getExtendedTypes().stream().map(e -> resolve(e::resolve)).filter(Optional::isPresent).map(Optional::get).map(ResolvedReferenceType::getQualifiedName)
-					.filter(e -> classes.containsKey(e)).map(classes::get).map(e -> findVariableInSuperclass(e, true)).filter(Optional::isPresent).map(Optional::get).findAny();
+		return classDecl.getExtendedTypes().stream().map(e -> getFullyQualifiedName(classDecl, e)).filter(classes::containsKey).map(classes::get).map(e -> findVariableInSuperclass(e, true)).filter(Optional::isPresent).map(Optional::get).findAny();
 	}
 
 	private Optional<VariableDeclarator> getDeclaratorOfVariableForClass(ClassOrInterfaceDeclaration classDecl) {
