@@ -16,7 +16,7 @@ public class RunOnCorpus implements WritesErrors, CalculatesTimeIntervals {
 	public static void main(String[] args) {
 		MetricsTable t = new MetricsTable();
 		Metrics m = new RunOnCorpus().calculateMetricsForCorpus();
-		t.reportMetrics("Corpus", m);
+		t.reportMetrics(Settings.get().getCloneType().getNicelyFormatted(), m);
 	}
 
 	public Metrics calculateMetricsForCorpus() {
