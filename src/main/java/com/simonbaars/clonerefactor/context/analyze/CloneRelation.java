@@ -32,6 +32,7 @@ import com.simonbaars.clonerefactor.context.model.ComparingClasses;
 import com.simonbaars.clonerefactor.context.model.Relation;
 import com.simonbaars.clonerefactor.context.relation.SeekClassHierarchy;
 import com.simonbaars.clonerefactor.context.relation.SeekInterfaceHierarchy;
+import com.simonbaars.clonerefactor.detection.interfaces.ResolvesFQIs;
 import com.simonbaars.clonerefactor.detection.model.Sequence;
 import com.simonbaars.clonerefactor.graph.ASTHolder;
 

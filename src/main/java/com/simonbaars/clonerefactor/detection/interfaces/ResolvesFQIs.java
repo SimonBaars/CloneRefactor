@@ -3,7 +3,9 @@ package com.simonbaars.clonerefactor.detection.interfaces;
 import java.util.Optional;
 
 import com.github.javaparser.ast.CompilationUnit;
+import com.github.javaparser.ast.ImportDeclaration;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
+import com.github.javaparser.ast.nodeTypes.NodeWithName;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import com.simonbaars.clonerefactor.context.interfaces.RequiresNodeContext;
 import com.simonbaars.clonerefactor.graph.ASTHolder;
@@ -17,14 +19,14 @@ public interface ResolvesFQIs extends RequiresNodeContext {
 			Optional<CompilationUnit> compilationUnit = getCompilationUnit(childClass);
 			if(!compilationUnit.isPresent())
 				return t.asString();
-			Optional<String> nameOpt = compilationUnit.get().getImports().stream().map(e -> e.getNameAsString()).filter(e -> e.endsWith("."+t.getName())).findAny();
+			Optional<String> nameOpt = compilationUnit.get().getImports().stream().map(NodeWithName::getNameAsString).filter(e -> e.endsWith("."+t.getName())).findAny();
 			if(nameOpt.isPresent()) 
 				return nameOpt.get();
 			else {
 				String fullyQualifiedName = getFullyQualifiedName(childClass);
 				name+=fullyQualifiedName.substring(0, fullyQualifiedName.lastIndexOf('.')+1);
-				if(!ASTHolder.getClasses().containsKey(name+t.getNameAsString()) && compilationUnit.get().getImports().stream().anyMatch(e -> e.isAsterisk())) {
-					Optional<String> asteriks = compilationUnit.get().getImports().stream().filter(e -> e.isAsterisk()).map(e -> e.getNameAsString()+"."+t.getNameAsString()).filter(e -> ASTHolder.getClasses().containsKey(e)).findAny();
+				if(!ASTHolder.getClasses().containsKey(name+t.getNameAsString()) && compilationUnit.get().getImports().stream().anyMatch(ImportDeclaration::isAsterisk)) {
+					Optional<String> asteriks = compilationUnit.get().getImports().stream().filter(ImportDeclaration::isAsterisk).map(e -> e.getNameAsString()+"."+t.getNameAsString()).filter(e -> ASTHolder.getClasses().containsKey(e)).findAny();
 					if(asteriks.isPresent())
 						return asteriks.get();
 				}
