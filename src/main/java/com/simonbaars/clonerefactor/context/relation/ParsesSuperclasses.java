@@ -16,7 +16,7 @@ public interface ParsesSuperclasses extends ResolvesFullyQualifiedIdentifiers, C
 			return uses(classDecl);
 		classesInHierarchy.add(className);
 		for(ClassOrInterfaceType type : getTypes.get()) {
-			String fullyQualifiedName = getFullyQualifiedName(type);
+			String fullyQualifiedName = getFullyQualifiedName(classDecl, type);
 			if(classes.containsKey(fullyQualifiedName)) {
 				ClassOrInterfaceDeclaration superClass = classes.get(fullyQualifiedName);
 				return recurse.apply(classes, superClass, classesInHierarchy);

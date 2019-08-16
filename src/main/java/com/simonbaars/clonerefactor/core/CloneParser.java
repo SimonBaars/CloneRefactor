@@ -19,6 +19,7 @@ import com.github.javaparser.symbolsolver.resolution.typesolvers.JavaParserTypeS
 import com.github.javaparser.utils.SourceRoot;
 import com.github.javaparser.utils.SourceRoot.Callback.Result;
 import com.google.common.cache.Cache;
+import com.simonbaars.clonerefactor.context.relation.ResolvesFullyQualifiedIdentifiers;
 import com.simonbaars.clonerefactor.detection.CloneDetection;
 import com.simonbaars.clonerefactor.detection.interfaces.RemovesDuplicates;
 import com.simonbaars.clonerefactor.detection.metrics.SequenceObservable;
@@ -30,7 +31,6 @@ import com.simonbaars.clonerefactor.detection.type3.Type3Opportunities;
 import com.simonbaars.clonerefactor.graph.ASTHolder;
 import com.simonbaars.clonerefactor.graph.MetricObserver;
 import com.simonbaars.clonerefactor.graph.NodeParser;
-import com.simonbaars.clonerefactor.graph.interfaces.ResolvesSymbols;
 import com.simonbaars.clonerefactor.graph.interfaces.SetsIfNotNull;
 import com.simonbaars.clonerefactor.metrics.MetricCollector;
 import com.simonbaars.clonerefactor.refactoring.ExtractMethod;
@@ -40,7 +40,7 @@ import com.simonbaars.clonerefactor.settings.progress.Progress;
 import com.simonbaars.clonerefactor.thread.CalculatesTimeIntervals;
 import com.simonbaars.clonerefactor.thread.WritesErrors;
 
-public class CloneParser implements SetsIfNotNull, RemovesDuplicates, WritesErrors, CalculatesTimeIntervals, ResolvesSymbols {
+public class CloneParser implements SetsIfNotNull, RemovesDuplicates, WritesErrors, CalculatesTimeIntervals, ResolvesFullyQualifiedIdentifiers {
 	
 	private final Path projectRoot;
 	private final SourceRoot sourceRoot;
@@ -109,9 +109,8 @@ public class CloneParser implements SetsIfNotNull, RemovesDuplicates, WritesErro
 
 	private Map<String, ClassOrInterfaceDeclaration> determineClasses(List<CompilationUnit> compilationUnits) {
 		Map<String, ClassOrInterfaceDeclaration> classes = new HashMap<>();
-		for(ClassOrInterfaceDeclaration classDecl : compilationUnits.stream().flatMap(cu -> cu.getTypes().stream()).filter(e -> e instanceof ClassOrInterfaceDeclaration).map(e -> (ClassOrInterfaceDeclaration)e).collect(Collectors.toList())) {
-			resolve(classDecl::resolve).ifPresent(resolved -> classes.put(resolved.getQualifiedName(), classDecl));
-		}
+		for(ClassOrInterfaceDeclaration classDecl : compilationUnits.stream().flatMap(cu -> cu.getTypes().stream()).filter(e -> e instanceof ClassOrInterfaceDeclaration).map(e -> (ClassOrInterfaceDeclaration)e).collect(Collectors.toList()))
+			classes.put(getFullyQualifiedName(classDecl), classDecl);
 		return classes;
 	}
 
