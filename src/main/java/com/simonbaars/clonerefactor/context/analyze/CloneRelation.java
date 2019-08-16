@@ -32,7 +32,6 @@ import com.simonbaars.clonerefactor.context.model.ComparingClasses;
 import com.simonbaars.clonerefactor.context.model.Relation;
 import com.simonbaars.clonerefactor.context.relation.SeekClassHierarchy;
 import com.simonbaars.clonerefactor.context.relation.SeekInterfaceHierarchy;
-import com.simonbaars.clonerefactor.detection.interfaces.ResolvesFQIs;
 import com.simonbaars.clonerefactor.detection.model.Sequence;
 import com.simonbaars.clonerefactor.graph.ASTHolder;
 
@@ -80,8 +79,8 @@ public class CloneRelation implements DeterminesMetric<Relation>, SeekClassHiera
 	private Optional<ClassOrInterfaceDeclaration[]> sameDirectInterface(Map<String, ClassOrInterfaceDeclaration> classes2, ComparingClasses cc) {
 		for(ClassOrInterfaceType t1 : cc.getClassOne().getImplementedTypes()){
 			for(ClassOrInterfaceType t2 : cc.getClassTwo().getImplementedTypes()){
-				String fqi1 = getFullyQualifiedName(t1);
-				String fqi2 = getFullyQualifiedName(t2);
+				String fqi1 = getFullyQualifiedName(cc.getClassOne(), t1);
+				String fqi2 = getFullyQualifiedName(cc.getClassTwo(), t2);
 				if(fqi1.equals(fqi2) && classes.containsKey(fqi1)) {
 					return uses(classes.get(fqi1));
 				}
@@ -106,7 +105,7 @@ public class CloneRelation implements DeterminesMetric<Relation>, SeekClassHiera
 		if(noSuperclass(classDecl))
 			return Optional.of(classDecl);
 		for(ClassOrInterfaceType type : classDecl.getExtendedTypes()) {
-			String name = getFullyQualifiedName(type);
+			String name = getFullyQualifiedName(classDecl, type);
 			if(classes.containsKey(name))
 				return findWithoutSuperclass(classes.get(name));
 		}
@@ -131,11 +130,11 @@ public class CloneRelation implements DeterminesMetric<Relation>, SeekClassHiera
 	private Optional<ClassOrInterfaceDeclaration[]> hasExternalSuperclass(ComparingClasses cc) {
 		if(!cc.hasExtendedTypes())
 			return Optional.empty();
-		ClassOrInterfaceType superclassC1 = cc.getClassOne().getExtendedTypes().get(0);
-		ClassOrInterfaceType superclassC2 = cc.getClassTwo().getExtendedTypes().get(0);
+		ClassOrInterfaceType superclassC1 = cc.getClassOne().getExtendedTypes(0);
+		ClassOrInterfaceType superclassC2 = cc.getClassTwo().getExtendedTypes(0);
 		return !superclassC1.getNameAsString().equals(JAVA_OBJECT_CLASS_NAME) && 
 			   !superclassC2.getNameAsString().equals(JAVA_OBJECT_CLASS_NAME) && 
-				getFullyQualifiedName(superclassC1).equals(getFullyQualifiedName(superclassC2)) ? uses(cc) : Optional.empty();
+				getFullyQualifiedName(cc.getClassOne(), superclassC1).equals(getFullyQualifiedName(cc.getClassTwo(), superclassC2)) ? uses(cc) : Optional.empty();
 	}
 	
 	private Optional<ClassOrInterfaceDeclaration[]> isSibling(ComparingClasses cc){
@@ -154,7 +153,7 @@ public class CloneRelation implements DeterminesMetric<Relation>, SeekClassHiera
 	
 	private ClassOrInterfaceDeclaration goUp(ClassOrInterfaceDeclaration classDecl, int i) {
 		if(i>0 && !classDecl.getExtendedTypes().isEmpty()) {
-			String fullyQualifiedName = getFullyQualifiedName(classDecl.getExtendedTypes(0));
+			String fullyQualifiedName = getFullyQualifiedName(classDecl, classDecl.getExtendedTypes(0));
 			if(classes.containsKey(fullyQualifiedName))
 				return goUp(classes.get(fullyQualifiedName), i-1);
 		}
@@ -163,7 +162,7 @@ public class CloneRelation implements DeterminesMetric<Relation>, SeekClassHiera
 
 	private Optional<ClassOrInterfaceDeclaration[]> isAncestor(ComparingClasses cc) {
 		if(!cc.getClassOne().getExtendedTypes().isEmpty()) {
-			String fullyQualifiedName = getFullyQualifiedName(cc.getClassOne().getExtendedTypes(0));
+			String fullyQualifiedName = getFullyQualifiedName(cc.getClassOne(), cc.getClassOne().getExtendedTypes(0));
 			if(!classes.containsKey(fullyQualifiedName))
 				return Optional.empty();
 			ComparingClasses superCC = new ComparingClasses(classes.get(fullyQualifiedName), cc.getClassTwo());
@@ -188,7 +187,7 @@ public class CloneRelation implements DeterminesMetric<Relation>, SeekClassHiera
 
 	private Optional<ClassOrInterfaceDeclaration[]> isSuperClass(ComparingClasses cc) {
 		return cc.getClassOne().getExtendedTypes().stream().filter(e -> {
-			String fullyQualifiedName = getFullyQualifiedName(e);
+			String fullyQualifiedName = getFullyQualifiedName(cc.getClassOne(), e);
 			if(!classes.containsKey(fullyQualifiedName))
 				return false;
 			return getFullyQualifiedName(cc.getClassTwo()).equals(fullyQualifiedName);
