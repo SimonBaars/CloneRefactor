@@ -42,6 +42,7 @@ import com.github.javaparser.ast.type.VoidType;
 import com.simonbaars.clonerefactor.context.enums.Refactorability;
 import com.simonbaars.clonerefactor.context.interfaces.RequiresNodeContext;
 import com.simonbaars.clonerefactor.context.model.Relation;
+import com.simonbaars.clonerefactor.context.relation.ResolvesFullyQualifiedIdentifiers;
 import com.simonbaars.clonerefactor.core.util.DoesFileOperations;
 import com.simonbaars.clonerefactor.core.util.SavePaths;
 import com.simonbaars.clonerefactor.datatype.map.CountMap;
@@ -53,7 +54,6 @@ import com.simonbaars.clonerefactor.detection.model.location.Location;
 import com.simonbaars.clonerefactor.graph.ASTHolder;
 import com.simonbaars.clonerefactor.graph.MetricObserver;
 import com.simonbaars.clonerefactor.graph.interfaces.RequiresNodeOperations;
-import com.simonbaars.clonerefactor.graph.interfaces.ResolvesSymbols;
 import com.simonbaars.clonerefactor.metrics.MetricCollector;
 import com.simonbaars.clonerefactor.refactoring.enums.MethodType;
 import com.simonbaars.clonerefactor.refactoring.model.CombinedMetrics;
@@ -68,7 +68,7 @@ import com.simonbaars.clonerefactor.refactoring.target.ExtractToClassOrInterface
 import com.simonbaars.clonerefactor.settings.Settings;
 import com.simonbaars.clonerefactor.settings.progress.Progress;
 
-public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperations, DoesFileOperations, ResolvesSymbols {
+public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperations, DoesFileOperations, ResolvesFullyQualifiedIdentifiers {
 	private final PopulatesExtractedMethod[] populators = {new PopulateThrows(), new PopulateArguments(), new PopulateReturnValue(), new PopulateReturningFlow()};
 	private static final String METHOD_NAME = "cloneRefactor";
 	
@@ -201,7 +201,7 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 		CompilationUnit cu = pack.isPresent() ? new CompilationUnit(pack.get().getNameAsString()) : new CompilationUnit();
 		relation.getIntersectingClasses().add(0, create(cu, createInterface).apply(name, createInterface ? new Keyword[] {Keyword.PUBLIC} : new Keyword[] {Keyword.PUBLIC, Keyword.ABSTRACT}));
 		cu.setStorage(Paths.get(compilationUnitFilePath(cu)));
-		resolve(relation.getFirstClass()::resolve).ifPresent(type -> ASTHolder.getClasses().put(type.getQualifiedName(), relation.getFirstClass()));
+		ASTHolder.getClasses().put(getFullyQualifiedName(relation.getFirstClass()), relation.getFirstClass());
 	}
 
 	private void addTypesToIntersectingClasses(Relation relation, boolean createInterface, ClassOrInterfaceType implementedType) {
