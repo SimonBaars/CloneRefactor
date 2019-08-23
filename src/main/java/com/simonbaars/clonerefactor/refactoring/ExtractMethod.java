@@ -28,6 +28,7 @@ import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.PackageDeclaration;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
+import com.github.javaparser.ast.body.TypeDeclaration;
 import com.github.javaparser.ast.expr.AssignExpr;
 import com.github.javaparser.ast.expr.MethodCallExpr;
 import com.github.javaparser.ast.expr.VariableDeclarationExpr;
@@ -248,7 +249,10 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 	}
 
 	private String getClassName(CompilationUnit unit) {
-		return unit.getChildNodes().stream().filter(e -> e instanceof ClassOrInterfaceDeclaration).map(e -> (ClassOrInterfaceDeclaration)e).findAny().get().getNameAsString();
+		Optional<TypeDeclaration> decl = unit.getChildNodes().stream().filter(e -> e instanceof TypeDeclaration).map(e -> (TypeDeclaration)e).findAny();
+		if(!decl.isPresent())
+			return "EmptyCompilationUnit";
+		return decl.get().getNameAsString();
 	}
 
 	private List<Statement> removeLowestNodes(Sequence s, MethodDeclaration decl) {
