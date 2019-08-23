@@ -8,10 +8,10 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import com.github.javaparser.JavaParser;
+import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
-import com.github.javaparser.ast.body.TypeDeclaration;
 import com.github.javaparser.ast.stmt.Statement;
 import com.simonbaars.clonerefactor.context.interfaces.RequiresNodeContext;
 import com.simonbaars.clonerefactor.detection.metrics.ProblemType;
@@ -46,11 +46,11 @@ public class PostMetrics implements RequiresNodeContext, CalculatesLineSize, Cal
 		
 		newMethod = (MethodDeclaration)new JavaParser().parseBodyDeclaration(newMethod.toString()).getResult().get();
 		methodcalls = methodcalls.stream().map(e -> new JavaParser().parseStatement(e.toString())).filter(e -> e.isSuccessful()).map(e -> e.getResult().get()).collect(Collectors.toList());
-		Optional<TypeDeclaration<?>> c = classOrInterface.isPresent() ? Optional.of(new JavaParser().parseTypeDeclaration(classOrInterface.get().toString()).getResult().get()) : Optional.empty();
+		Optional<CompilationUnit> c = classOrInterface.isPresent() ? Optional.of(new JavaParser().parse(getCompilationUnit(classOrInterface.get()).toString()).getResult().get()) : Optional.empty();
 		
 		addedTokenVolume = calculateAddedVolume(this::countTokens, c, newMethod, methodcalls);
-		addedLineVolume = methodcalls.size() + (classOrInterface.isPresent() ? 2 : 0) + lineSize(newMethod);
-		addedNodeVolume = addedLineVolume - 2;
+		addedLineVolume = methodcalls.size() + (classOrInterface.isPresent() ? 4 : 0) + lineSize(newMethod);
+		addedNodeVolume = addedLineVolume - (classOrInterface.isPresent() ? 3 : 1);
 		unitInterfaceSize = newMethod.getParameters().size();
 		cc = calculateCC(newMethod);
 		
