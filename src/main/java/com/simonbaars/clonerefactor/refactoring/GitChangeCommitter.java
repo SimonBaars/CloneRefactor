@@ -78,7 +78,7 @@ public class GitChangeCommitter implements RequiresNodeContext {
 				git.add().addFilepattern(".").call();
 				git.commit().setAuthor(CLONEREFACTOR_AUTHOR_NAME, CLONEREFACTOR_AUTHOR_EMAIL).setMessage(message).call();
 			}
-		} catch (GitAPIException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
