@@ -248,6 +248,7 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 		return unit.getPackageDeclaration().isPresent() ? unit.getPackageDeclaration().get().getNameAsString().replace('.', File.separatorChar) : "";
 	}
 
+	@SuppressWarnings("rawtypes")
 	private String getClassName(CompilationUnit unit) {
 		Optional<TypeDeclaration> decl = unit.getChildNodes().stream().filter(e -> e instanceof TypeDeclaration).map(e -> (TypeDeclaration)e).findAny();
 		if(!decl.isPresent())
