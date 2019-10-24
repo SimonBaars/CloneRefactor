@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.nio.file.Paths;
 
 import com.simonbaars.clonerefactor.Main;
-import com.simonbaars.clonerefactor.core.util.DoesFileOperations;
 import com.simonbaars.clonerefactor.core.util.SavePaths;
 import com.simonbaars.clonerefactor.detection.model.DetectionResults;
 import com.simonbaars.clonerefactor.helper.Type1Test;
@@ -21,7 +20,7 @@ import junit.framework.TestSuite;
 /**
  * Unit test for the clone detector.
  */
-public class Type1Testcases extends Type1Test implements DoesFileOperations {
+public class Type1Testcases extends Type1Test {
     private static final String SEVERAL_METHODS_PROJECT = "SeveralMethodsCloned";
 	private static final String UNEQUAL_SIZE_CLONES_PROJECT = "UnequalSizeClones";
 	private static final String SINGLE_FILE_PROJECT = "SingleFile";
