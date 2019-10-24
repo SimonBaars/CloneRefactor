@@ -20,6 +20,7 @@ public class Settings {
 	private int minAmountOfLines;
 	private int minAmountOfTokens;
 	private int minAmountOfNodes;
+	private int minCloneClassSize;
 	
 	// Type-specific settings
 	private double type2VariabilityPercentage;
@@ -38,6 +39,7 @@ public class Settings {
             minAmountOfLines = Integer.parseInt(prop.getProperty("min_lines"));
             minAmountOfTokens = Integer.parseInt(prop.getProperty("min_tokens"));
             minAmountOfNodes = Integer.parseInt(prop.getProperty("min_statements"));
+            setMinCloneClassSize(Integer.parseInt(prop.getProperty("min_clone_class_size")));
             type2VariabilityPercentage = percentageStringToDouble(prop.getProperty("max_type2_variability_percentage"));
             type3GapSize = percentageStringToDouble(prop.getProperty("max_type3_gap_size"));
             refactoringStrategy = RefactoringStrategy.valueOf(prop.getProperty("refactoring_strategy"));
@@ -57,8 +59,8 @@ public class Settings {
 	@Override
 	public String toString() {
 		return String.format(
-				"Settings [cloneType=%s, scope=%s, minAmountOfLines=%s, minAmountOfTokens=%s, minAmountOfNodes=%s, type2VariabilityPercentage=%s, type3GapSize=%s, refactoringStrategy=%s]",
-				cloneType, scope, minAmountOfLines, minAmountOfTokens, minAmountOfNodes, type2VariabilityPercentage, type3GapSize, refactoringStrategy);
+				"Settings [cloneType=%s, scope=%s, minAmountOfLines=%s, minAmountOfTokens=%s, minAmountOfNodes=%s, minCloneClassSize=%s, type2VariabilityPercentage=%s, type3GapSize=%s, refactoringStrategy=%s]",
+				cloneType, scope, minAmountOfLines, minAmountOfTokens, minAmountOfNodes, minCloneClassSize, type2VariabilityPercentage, type3GapSize, refactoringStrategy);
 	}
 	
 	/*
@@ -131,5 +133,13 @@ public class Settings {
 
 	public void setRefactoringStrategy(RefactoringStrategy refactoringStrategy) {
 		this.refactoringStrategy = refactoringStrategy;
+	}
+
+	public int getMinCloneClassSize() {
+		return minCloneClassSize;
+	}
+
+	public void setMinCloneClassSize(int minCloneClassSize) {
+		this.minCloneClassSize = minCloneClassSize;
 	}
 }

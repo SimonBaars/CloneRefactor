@@ -15,6 +15,7 @@ import com.simonbaars.clonerefactor.detection.metrics.SequenceObservable;
 import com.simonbaars.clonerefactor.detection.model.Sequence;
 import com.simonbaars.clonerefactor.detection.model.location.Location;
 import com.simonbaars.clonerefactor.graph.interfaces.DeterminesNodeTokens;
+import com.simonbaars.clonerefactor.settings.Settings;
 import com.simonbaars.clonerefactor.settings.progress.Progress;
 
 public class CloneDetection implements ChecksThresholds, RemovesDuplicates, DeterminesNodeTokens {
@@ -28,9 +29,9 @@ public class CloneDetection implements ChecksThresholds, RemovesDuplicates, Dete
 	public List<Sequence> findChains(Location lastLoc, Progress progress) {
 		for(Sequence buildingChains = new Sequence(); lastLoc!=null; lastLoc = lastLoc.getPrev()) {
 			Sequence newClones = collectClones(lastLoc);
-			if(!buildingChains.getLocations().isEmpty() || newClones.size()>1)
+			if(!buildingChains.getLocations().isEmpty() || newClones.size()>=Settings.get().getMinCloneClassSize())
 				buildingChains = makeValid(lastLoc, buildingChains, newClones); //Because of the recent additions the current sequence may be invalidated
-			if(buildingChains.size() == 1 || (lastLoc.getPrev()!=null && lastLoc.getPrev().getFile()!=lastLoc.getFile()))
+			if(buildingChains.size() <= 1 || (lastLoc.getPrev()!=null && lastLoc.getPrev().getFile()!=lastLoc.getFile()))
 				buildingChains.getLocations().clear();
 			progress.next();
 		}
@@ -44,6 +45,10 @@ public class CloneDetection implements ChecksThresholds, RemovesDuplicates, Dete
 		    && newClone.getContents().getRange()!= null && newClone.getContents().getRange().equals(oldClone.getPrev().getContents().getRange()))).collect(Collectors.toMap(e -> e, Location::getPrev));
 		
 		collectFinishedClones(oldClones, newClones, validChains);
+		
+		if(newClones.size()<Settings.get().getMinCloneClassSize())
+			return new Sequence();
+		
 		mergeLocationsOnBasisOfChains(newClones, validChains);
 		
 		if(lastLoc.getPrev()==null || lastLoc.getPrev().getFile()!=lastLoc.getFile()) {
