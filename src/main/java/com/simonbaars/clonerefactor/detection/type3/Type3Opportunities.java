@@ -63,7 +63,7 @@ public class Type3Opportunities implements Type3Calculation, CalculatesPercentag
 	private boolean checkType3Threshold(Location l1, Location l2) {
 		if(!(Settings.get().useLiteratureTypeDefinitions() || parentsEqual(l1.getLastNode().getParentNode(), l2.getFirstNode().getParentNode())))
 			return false;
-		int combinedSize = l1.getAmountOfNodes() + l2.getAmountOfNodes();
+		int combinedSize = l1.getNumberOfNodes() + l2.getNumberOfNodes();
 		LocationContents diff = calculateDiffContents(l1, l2);
 		if(diff.getCompare().stream().anyMatch(e -> e instanceof CompareOutOfScope))
 			return false;

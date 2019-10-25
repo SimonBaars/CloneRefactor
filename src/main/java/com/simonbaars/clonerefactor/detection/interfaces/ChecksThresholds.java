@@ -9,15 +9,15 @@ public interface ChecksThresholds {
 	}
 
 	public default boolean compareNodesThreshold(Sequence s) {
-		return s.getAny().getAmountOfNodes() >= Settings.get().getMinAmountOfNodes();
+		return s.getAny().getNumberOfNodes() >= Settings.get().getMinAmountOfNodes();
 	}
 	
 	public default boolean compareLinesThreshold(Sequence s) {
-		return s.getAny().getAmountOfLines() >= Settings.get().getMinAmountOfLines();
+		return s.getAny().getNumberOfLines() >= Settings.get().getMinAmountOfLines();
 	}
 	
 	public default boolean compareTokensThreshold(Sequence s) {
-		return s.getAny().getAmountOfTokens() >= Settings.get().getMinAmountOfTokens();
+		return s.getAny().getNumberOfTokens() >= Settings.get().getMinAmountOfTokens();
 	}
 	
 	public default boolean checkType2VariabilityThreshold(double perc) {

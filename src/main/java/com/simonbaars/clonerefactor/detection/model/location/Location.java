@@ -84,7 +84,7 @@ public class Location implements Comparable<Location>, HasRange {
 		return "Location [file=" + file + ", range=" + range + "]";
 	}
 	
-	public int getAmountOfLines() {
+	public int getNumberOfLines() {
 		return getContents().getAmountOfLines();
 	}
 
@@ -94,7 +94,7 @@ public class Location implements Comparable<Location>, HasRange {
 		return file == null ? other.file == null : file.equals(other.file);
 	}
 
-	public int getAmountOfTokens() {
+	public int getNumberOfTokens() {
 		return getContents().getAmountOfTokens();
 	}
 
@@ -142,7 +142,7 @@ public class Location implements Comparable<Location>, HasRange {
 		this.range = contents.getRange();
 	}
 
-	public int getAmountOfNodes() {
+	public int getNumberOfNodes() {
 		return getContents().getNodes().size();
 	}
 

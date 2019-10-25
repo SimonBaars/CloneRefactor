@@ -27,8 +27,8 @@ public class MetricCollector implements CalculatesPercentages {
 
 	public void reportFoundNode(Location l) {
 		metrics.incrementGeneralStatistic(Metric.NODES, StatType.TOTAL, 1);
-		metrics.incrementGeneralStatistic(Metric.TOKENS, StatType.TOTAL, l.getAmountOfTokens());
-		metrics.incrementGeneralStatistic(Metric.LINES, StatType.TOTAL, l.getAmountOfLines());
+		metrics.incrementGeneralStatistic(Metric.TOKENS, StatType.TOTAL, l.getNumberOfTokens());
+		metrics.incrementGeneralStatistic(Metric.LINES, StatType.TOTAL, l.getNumberOfLines());
 	}
 
 	public Metrics reportClones(List<Sequence> clones, Progress progress) {
@@ -71,12 +71,12 @@ public class MetricCollector implements CalculatesPercentages {
 	}
 
 	private void reportClonedLocation(Location l) {
-		metrics.averages.addTo("Cloned nodes", l.getAmountOfNodes());
-		metrics.averages.addTo("Cloned tokens", l.getAmountOfTokens());
-		metrics.averages.addTo("Cloned lines", l.getAmountOfLines());
-		metrics.incrementGeneralStatistic(Metric.TOKENS, StatType.CLONED, l.getAmountOfTokens());
-		metrics.incrementGeneralStatistic(Metric.NODES, StatType.CLONED, l.getAmountOfNodes());
-		metrics.incrementGeneralStatistic(Metric.LINES, StatType.CLONED, l.getAmountOfLines());
+		metrics.averages.addTo("Cloned nodes", l.getNumberOfNodes());
+		metrics.averages.addTo("Cloned tokens", l.getNumberOfTokens());
+		metrics.averages.addTo("Cloned lines", l.getNumberOfLines());
+		metrics.incrementGeneralStatistic(Metric.TOKENS, StatType.CLONED, l.getNumberOfTokens());
+		metrics.incrementGeneralStatistic(Metric.NODES, StatType.CLONED, l.getNumberOfNodes());
+		metrics.incrementGeneralStatistic(Metric.LINES, StatType.CLONED, l.getNumberOfLines());
 		l.setMetrics(locationFinder);
 		l.getContents().setMetrics(contentsFinder);
 		metrics.amountPerLocation.increment(l.getLocationType());
