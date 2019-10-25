@@ -72,23 +72,23 @@ public class Sequence implements Comparable<Sequence> {
 	}
 
 	public int getNodeSize() {
-		return locations.isEmpty() ? 0 : getAny().getAmountOfNodes();
+		return locations.isEmpty() ? 0 : getAny().getNumberOfNodes();
 	}
 	
 	public int getEffectiveLineSize() {
-		return locations.isEmpty() ? 0 : getAny().getAmountOfLines();
+		return locations.isEmpty() ? 0 : getAny().getNumberOfLines();
 	}
 	
 	public int getTotalNodeVolume() {
-		return getTotalVolume(Location::getAmountOfNodes);
+		return getTotalVolume(Location::getNumberOfNodes);
 	}
 	
 	public int getTotalTokenVolume() {
-		return getTotalVolume(Location::getAmountOfTokens);
+		return getTotalVolume(Location::getNumberOfTokens);
 	}
 	
 	public int getTotalLineVolume() {
-		return getTotalVolume(Location::getAmountOfLines);
+		return getTotalVolume(Location::getNumberOfLines);
 	}
 	
 	public int getTotalVolume(ToIntFunction<? super Location> mapper) {
@@ -126,6 +126,10 @@ public class Sequence implements Comparable<Sequence> {
 	public Sequence isValid() {
 		if(locations.size()<2)
 			throw new IllegalStateException("Not enough locations for "+this);
+		if(locations.stream().anyMatch(e -> e.getNumberOfLines()<=0 || e.getNumberOfTokens()<=0 || e.getNumberOfNodes()<=0))
+			throw new IllegalStateException("Negative or empty nodes, lines or tokens "+this);
+		if(locations.stream().anyMatch(e -> !e.getRange().equals(e.getContents().getRange())))
+			throw new IllegalStateException("Invalid range for "+this);
 		//if(locations.stream().map(e -> e.getContents().getNodes().size()).distinct().count()>1)
 		//	throw new IllegalStateException("Unequal location node sizes for "+this);
 		//if(locations.stream().map(e -> e.getContents().getCompare().size()).distinct().count()>1)
@@ -154,6 +158,6 @@ public class Sequence implements Comparable<Sequence> {
 	}
 
 	public int getTokenSize() {
-		return getAny().getAmountOfTokens();
+		return getAny().getNumberOfTokens();
 	}
 }
