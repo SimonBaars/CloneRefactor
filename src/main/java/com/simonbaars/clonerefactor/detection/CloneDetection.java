@@ -74,7 +74,7 @@ public class CloneDetection implements ChecksThresholds, RemovesDuplicates, Dete
 
 	private void checkValidClones(Sequence oldClones, List<Location> endedClones) {
 		ListMap<Integer /*Sequence size*/, Location /* Clones */> cloneList = new ListMap<>();
-		endedClones.stream().forEach(e -> cloneList.addTo(e.getAmountOfNodes(), e));
+		endedClones.stream().forEach(e -> cloneList.addTo(e.getNumberOfNodes(), e));
 		
 		for(Entry<Integer, List<Location>> entry : cloneList.entrySet()) {
 			int amountOfNodes = entry.getKey();
@@ -86,7 +86,7 @@ public class CloneDetection implements ChecksThresholds, RemovesDuplicates, Dete
 
 	private void createClone(List<Location> l) {
 		Sequence newSequence = new Sequence(l);
-		if(l.size()>1 && checkThresholds(newSequence) && !isDuplicate(newSequence)) {
+		if(l.size()>=Settings.get().getMinCloneClassSize() && checkThresholds(newSequence) && !isDuplicate(newSequence)) {
 			for(int i = clones.size()-1; i>=0 && isPossiblyRedundant(newSequence, clones.get(i)); i--) {
 				if(isSubset(clones.get(i), newSequence))
 					clones.remove(i);
@@ -98,7 +98,7 @@ public class CloneDetection implements ChecksThresholds, RemovesDuplicates, Dete
 
 	private void addAllNonEndedLocations(Sequence oldClones, int amountOfNodes, List<Location> l) {
 		for(Location l2 : oldClones.getLocations()) {
-			if(!l.contains(l2) && l2.getAmountOfNodes()>=amountOfNodes)
+			if(!l.contains(l2) && l2.getNumberOfNodes()>=amountOfNodes)
 				l.add(new Location(l2, getRange(l2, amountOfNodes)));
 		}
 	}
