@@ -7,10 +7,11 @@ import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 import com.simonbaars.clonerefactor.datatype.map.ListMap;
+import com.simonbaars.clonerefactor.detection.interfaces.ChecksThresholds;
 import com.simonbaars.clonerefactor.detection.type2.model.Type2Location;
 import com.simonbaars.clonerefactor.detection.type2.model.Type2Sequence;
 
-public class Type2CloneDetection  {
+public class Type2CloneDetection implements ChecksThresholds {
 	final List<Type2Sequence> clones = new ArrayList<>();
 
 	public Type2CloneDetection() {}
@@ -28,7 +29,7 @@ public class Type2CloneDetection  {
 	
 	public List<Type2Sequence> tryToExpand(List<Type2Sequence> clones){
 		for(int i = 0; i<clones.size(); i++)
-		clones.get(i).tryToExpand(clones);
+			clones.get(i).tryToExpand(clones);
 		return clones;
 	}
 
@@ -74,7 +75,7 @@ public class Type2CloneDetection  {
 
 	private void createClone(List<Type2Location> l) {
 		Type2Sequence newSequence = new Type2Sequence(l);
-		if(l.size()>1)
+		if(checkThresholds(newSequence))
 			clones.add(newSequence);
 	}
 

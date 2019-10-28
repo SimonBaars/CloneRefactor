@@ -11,9 +11,10 @@ import com.simonbaars.clonerefactor.context.analyze.CloneRelation;
 import com.simonbaars.clonerefactor.context.enums.Refactorability;
 import com.simonbaars.clonerefactor.context.enums.RelationType;
 import com.simonbaars.clonerefactor.context.model.Relation;
+import com.simonbaars.clonerefactor.detection.interfaces.HasSize;
 import com.simonbaars.clonerefactor.detection.model.location.Location;
 
-public class Sequence implements Comparable<Sequence> {
+public class Sequence implements Comparable<Sequence>, HasSize {
 	private final List<Location> locations;
 	
 	private Relation relation;

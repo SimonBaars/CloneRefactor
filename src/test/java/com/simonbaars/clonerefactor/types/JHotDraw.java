@@ -42,7 +42,7 @@ public class JHotDraw extends Type1Test {
 	
 	public void type3R() {
 		MetricsTable tables = new MetricsTable();
-			Settings.get().setCloneType(CloneType.TYPE3);
+			Settings.get().setCloneType(CloneType.TYPE3R);
 			SavePaths.genTimestamp();
 			Settings.get().setRefactoringStrategy(RefactoringStrategy.DONOTREFACTOR);
 	    	System.out.println("JHotDraw");

@@ -10,9 +10,10 @@ import java.util.stream.IntStream;
 import com.simonbaars.clonerefactor.detection.interfaces.CalculatesPercentages;
 import com.simonbaars.clonerefactor.detection.interfaces.ChecksForComparability;
 import com.simonbaars.clonerefactor.detection.interfaces.ChecksThresholds;
+import com.simonbaars.clonerefactor.detection.interfaces.HasSize;
 import com.simonbaars.clonerefactor.detection.model.Sequence;
 
-public class Type2Sequence implements CalculatesPercentages, ChecksThresholds, ChecksForComparability {
+public class Type2Sequence implements CalculatesPercentages, ChecksThresholds, ChecksForComparability, HasSize {
 	private final List<Type2Location> statements;
 
 	public Type2Sequence() {
@@ -32,7 +33,7 @@ public class Type2Sequence implements CalculatesPercentages, ChecksThresholds, C
 	}
 	
 	public int[] locationArray() {
-		return statements.stream().mapToInt(e -> e.getLocationIndex()).sorted().toArray();
+		return statements.stream().mapToInt(Type2Location::getLocationIndex).sorted().toArray();
 	}
 	
 	public Object[] transformedEqualityArray(boolean left, int transform) {

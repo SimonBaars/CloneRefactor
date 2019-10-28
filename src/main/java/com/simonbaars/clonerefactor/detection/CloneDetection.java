@@ -86,7 +86,7 @@ public class CloneDetection implements ChecksThresholds, RemovesDuplicates, Dete
 
 	private void createClone(List<Location> l) {
 		Sequence newSequence = new Sequence(l);
-		if(l.size()>=Settings.get().getMinCloneClassSize() && checkThresholds(newSequence) && !isDuplicate(newSequence)) {
+		if(checkThresholds(newSequence) && !isDuplicate(newSequence)) {
 			for(int i = clones.size()-1; i>=0 && isPossiblyRedundant(newSequence, clones.get(i)); i--) {
 				if(isSubset(clones.get(i), newSequence))
 					clones.remove(i);
