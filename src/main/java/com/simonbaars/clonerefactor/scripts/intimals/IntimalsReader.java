@@ -8,6 +8,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
@@ -23,10 +24,19 @@ public class IntimalsReader {
 		DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
 		Document doc = dBuilder.parse(matchesFile);
 		doc.getDocumentElement().normalize();
-		NodeList nList = doc.getElementsByTagName("matches");
-		for(int i = 0; i<nList.getLength(); i++) {
-			Node node = nList.item(i);
-			//if(n)
+		parseMatches(doc.getElementsByTagName("matches"));
+	}
+
+	private static void parseMatches(NodeList matches) {
+		for(int i = 0; i<matches.getLength(); i++) {
+			Node node = matches.item(i);
+			if(node.getNodeType() == Node.ELEMENT_NODE) {
+				Element element = (Element)node;
+				parseNodes(element.getChildNodes());
+			}
 		}
+	}
+
+	private static void parseNodes(NodeList nodes) {
 	}
 }
