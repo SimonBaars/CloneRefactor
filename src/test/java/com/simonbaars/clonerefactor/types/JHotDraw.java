@@ -53,7 +53,7 @@ public class JHotDraw extends Type1Test {
 			tables.reportMetrics(CloneType.TYPE3.getNicelyFormatted(), cloneDetection.getMetrics());
 			try {
 				writeStringToFile(new File(SavePaths.getMyOutputFolder()+"refactor.txt"), cloneDetection.getRefactorResults().toString());
-				writeStringToFile(new File(SavePaths.getMyOutputFolder()+CloneType.TYPE3.getNicelyFormatted()+".txt"), cloneDetection.toString());
+				writeStringToFile(new File(SavePaths.getMyOutputFolder()+CloneType.TYPE3R.getNicelyFormatted()+".txt"), cloneDetection.toString());
 				writeStringToFile(new File(SavePaths.getMyOutputFolder()+"settings.txt"), Settings.get().toString());
 			} catch (IOException e) {
 				e.printStackTrace();
