@@ -1,5 +1,6 @@
 package com.simonbaars.clonerefactor.scripts.intimals.model;
 
+import java.util.Arrays;
 import java.util.List;
 
 public class Match {
@@ -26,5 +27,10 @@ public class Match {
 
 	public void setNodes(List<Node> nodes) {
 		this.nodes = nodes;
+	}
+
+	@Override
+	public String toString() {
+		return "Match [file=" + file + ", nodes=" + Arrays.toString(nodes.toArray()) + "]";
 	}
 }

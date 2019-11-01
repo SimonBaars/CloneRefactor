@@ -11,11 +11,11 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import com.simonbaars.clonerefactor.scripts.intimals.model.Match;
 import com.simonbaars.clonerefactor.scripts.intimals.model.Pattern;
 
 public class IntimalsReader {
@@ -29,18 +29,27 @@ public class IntimalsReader {
 		DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
 		Document doc = dBuilder.parse(matchesFile);
 		doc.getDocumentElement().normalize();
-		parseMatches(doc.getElementsByTagName("matches"));
+		List<Pattern> patterns = parseMatches(doc.getElementsByTagName("matches"));
+		System.out.println(patterns);
 	}
 
 	private static List<Pattern> parseMatches(NodeList matches) {
+		List<Pattern> patterns = new ArrayList<>();
 		for(int i = 0; i<matches.getLength(); i++) {
 			Node node = matches.item(i);
 			if(node.getNodeType() == Node.ELEMENT_NODE) {
 				Element element = (Element)node;
-				parseNodes(element.getElementsByTagName("node"));
+				Match match = new Match(element.getAttribute("FullName"), parseNodes(element.getElementsByTagName("node")));
+				int id = Integer.parseInt(element.getAttribute("PatternID"));
+				Pattern pattern = patterns.stream().filter(e -> e.getId() == id).findAny().orElse(null);
+				if(pattern == null) {
+					pattern = new Pattern(id);
+					patterns.add(pattern);
+				}
+				pattern.getMatches().add(match);
 			}
 		}
-		return null;
+		return patterns;
 	}
 
 	private static List<com.simonbaars.clonerefactor.scripts.intimals.model.Node> parseNodes(NodeList nodes) {

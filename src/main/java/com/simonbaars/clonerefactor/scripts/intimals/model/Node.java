@@ -25,4 +25,9 @@ public class Node {
 	public void setRoot(boolean isRoot) {
 		this.isRoot = isRoot;
 	}
+
+	@Override
+	public String toString() {
+		return "Node [id=" + id + ", isRoot=" + isRoot + "]";
+	}
 }
