@@ -1,4 +1,4 @@
-package com.simonbaars.clonerefactor.scripts.intimals.model;
+package com.simonbaars.clonerefactor.scripts.intimals.model.matches;
 
 import java.util.Arrays;
 import java.util.List;

@@ -1,4 +1,4 @@
-package com.simonbaars.clonerefactor.scripts.intimals.model;
+package com.simonbaars.clonerefactor.scripts.intimals.model.matches;
 
 public class Node {
 	private int id;

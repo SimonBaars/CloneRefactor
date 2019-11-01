@@ -15,8 +15,8 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import com.simonbaars.clonerefactor.scripts.intimals.model.Match;
-import com.simonbaars.clonerefactor.scripts.intimals.model.Pattern;
+import com.simonbaars.clonerefactor.scripts.intimals.model.matches.Match;
+import com.simonbaars.clonerefactor.scripts.intimals.model.matches.Pattern;
 
 public class IntimalsReader {
 	private static int clusterNum = 1;
@@ -29,7 +29,7 @@ public class IntimalsReader {
 		DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
 		Document doc = dBuilder.parse(matchesFile);
 		doc.getDocumentElement().normalize();
-		List<Pattern> patterns = parseMatches(doc.getElementsByTagName("matches"));
+		List<Pattern> patterns = parseMatches(doc.getElementsByTagName("match"));
 		System.out.println(patterns);
 	}
 
@@ -52,13 +52,13 @@ public class IntimalsReader {
 		return patterns;
 	}
 
-	private static List<com.simonbaars.clonerefactor.scripts.intimals.model.Node> parseNodes(NodeList nodes) {
-		List<com.simonbaars.clonerefactor.scripts.intimals.model.Node> parsedNodes = new ArrayList<>();
+	private static List<com.simonbaars.clonerefactor.scripts.intimals.model.matches.Node> parseNodes(NodeList nodes) {
+		List<com.simonbaars.clonerefactor.scripts.intimals.model.matches.Node> parsedNodes = new ArrayList<>();
 		for(int i = 0; i<nodes.getLength(); i++) {
 			Node node = nodes.item(i);
 			if(node.getNodeType() == Node.ELEMENT_NODE) {
 				Element element = (Element)node;
-				parsedNodes.add(new com.simonbaars.clonerefactor.scripts.intimals.model.Node(Integer.parseInt(element.getAttribute("ID")), element.getAttribute("Name").equals("?_root")));
+				parsedNodes.add(new com.simonbaars.clonerefactor.scripts.intimals.model.matches.Node(Integer.parseInt(element.getAttribute("ID")), element.getAttribute("Name").equals("?_root")));
 			}
 		}
 		return parsedNodes;
