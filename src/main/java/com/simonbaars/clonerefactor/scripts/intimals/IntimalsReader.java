@@ -2,6 +2,8 @@ package com.simonbaars.clonerefactor.scripts.intimals;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,8 +17,13 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import com.github.javaparser.Position;
+import com.github.javaparser.Range;
+import com.simonbaars.clonerefactor.detection.model.location.Location;
 import com.simonbaars.clonerefactor.scripts.intimals.model.matches.Match;
 import com.simonbaars.clonerefactor.scripts.intimals.model.matches.Pattern;
+import com.simonbaars.clonerefactor.scripts.intimals.model.sourcefiles.SourceFile;
+import com.simonbaars.clonerefactor.scripts.intimals.model.sourcefiles.SourceFiles;
 
 public class IntimalsReader {
 	private static int clusterNum = 1;
@@ -24,14 +31,45 @@ public class IntimalsReader {
 	private static String matchesLoc = "/Users/sbaars/Documents/Kim/jhotdraw_source/output-4-fold/cluster_"+clusterNum+"-5-matches.xml";
 	
 	public static void main(String[] args) throws SAXException, IOException, ParserConfigurationException {
-		File matchesFile = new File(matchesLoc);
 		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-		Document doc = dBuilder.parse(matchesFile);
+		Document doc = dBuilder.parse(new File(matchesLoc));
 		doc.getDocumentElement().normalize();
 		List<Pattern> patterns = parseMatches(doc.getElementsByTagName("match"));
-		System.out.println(patterns);
+		SourceFiles files = loadSourceCode(dBuilder, patterns);
+		System.out.println(files);
 	}
+
+	private static SourceFiles loadSourceCode(DocumentBuilder dBuilder, List<Pattern> patterns) throws SAXException, IOException {
+		SourceFiles sourceFiles = new SourceFiles();
+		for(Pattern pattern : patterns) {
+			for(Match match : pattern.getMatches()) {
+				if(!sourceFiles.getSourceFiles().containsKey(match.getFile())) {
+					SourceFile file = new SourceFile();
+					Document doc = dBuilder.parse(new File(clusterLoc+match.getXMLFile()));
+					collectLocations(match.getFilePath(clusterLoc), file, doc.getDocumentElement());
+					sourceFiles.getSourceFiles().put(match.getFile(), file);
+				}
+			}
+		}
+		return sourceFiles;
+	}
+	
+	public static void collectLocations(Path filePath, SourceFile file, Node node) {
+	    NodeList nodeList = node.getChildNodes();
+	    for (int i = 0; i < nodeList.getLength(); i++) {
+	        Node currentNode = nodeList.item(i);
+	        if (currentNode.getNodeType() == Node.ELEMENT_NODE) {
+	            Element e = (Element)currentNode;
+	            String id = e.getAttribute("ID");
+	            if(id!=null && !id.isEmpty()) {
+	            	file.getSourceLocations().put(Integer.parseInt(id), new Location(filePath, new Range(new Position(Integer.parseInt(e.getAttribute("LineNr")), Integer.parseInt(e.getAttribute("ColNr"))), new Position(Integer.parseInt(e.getAttribute("EndLineNr")), Integer.parseInt(e.getAttribute("EndColNr"))))));
+	            }
+	            collectLocations(filePath, file, currentNode);
+	        }
+	    }
+	}
+
 
 	private static List<Pattern> parseMatches(NodeList matches) {
 		List<Pattern> patterns = new ArrayList<>();

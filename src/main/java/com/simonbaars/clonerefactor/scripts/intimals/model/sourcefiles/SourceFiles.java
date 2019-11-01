@@ -18,4 +18,9 @@ public class SourceFiles {
 	public void setSourceFiles(Map<String, SourceFile> sourceFiles) {
 		this.sourceFiles = sourceFiles;
 	}
+
+	@Override
+	public String toString() {
+		return "SourceFiles [sourceFiles=" + sourceFiles + "]";
+	}
 }

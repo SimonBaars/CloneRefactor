@@ -1,5 +1,8 @@
 package com.simonbaars.clonerefactor.scripts.intimals.model.matches;
 
+import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 
@@ -32,5 +35,13 @@ public class Match {
 	@Override
 	public String toString() {
 		return "Match [file=" + file + ", nodes=" + Arrays.toString(nodes.toArray()) + "]";
+	}
+	
+	public String getXMLFile() {
+		return new File(file).getName().replace(".java", ".xml");
+	}
+
+	public Path getFilePath(String clusterLoc) {
+		return Paths.get(clusterLoc+file);
 	}
 }
