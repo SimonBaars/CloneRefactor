@@ -3,8 +3,8 @@ package com.simonbaars.clonerefactor.scripts.intimals;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -19,7 +19,9 @@ import org.xml.sax.SAXException;
 
 import com.github.javaparser.Position;
 import com.github.javaparser.Range;
+import com.simonbaars.clonerefactor.detection.model.Sequence;
 import com.simonbaars.clonerefactor.detection.model.location.Location;
+import com.simonbaars.clonerefactor.scripts.intimals.model.PatternLocation;
 import com.simonbaars.clonerefactor.scripts.intimals.model.matches.Match;
 import com.simonbaars.clonerefactor.scripts.intimals.model.matches.Pattern;
 import com.simonbaars.clonerefactor.scripts.intimals.model.sourcefiles.SourceFile;
@@ -37,7 +39,30 @@ public class IntimalsReader {
 		doc.getDocumentElement().normalize();
 		List<Pattern> patterns = parseMatches(doc.getElementsByTagName("match"));
 		SourceFiles files = loadSourceCode(dBuilder, patterns);
-		System.out.println(files);
+		List<Sequence> s = createCloneClasses(patterns, files);
+		System.out.println(Arrays.toString(s.toArray()));
+	}
+
+	private static List<Sequence> createCloneClasses(List<Pattern> patterns, SourceFiles files) {
+		List<Sequence> clones = new ArrayList<>();
+		for(Pattern pattern : patterns) {
+			Sequence s = new Sequence();
+			for(Match m : pattern.getMatches()) {
+				List<Location> locations = new ArrayList<>();
+				Location rootLoc = null;
+				for(com.simonbaars.clonerefactor.scripts.intimals.model.matches.Node n : m.getNodes()) {
+					Location loc = files.get(m.getFile()).getLoc(n.getId());
+					if(n.isRoot()) {
+						rootLoc = new PatternLocation(loc);
+					} else {
+						locations.add(loc);
+					}
+				}
+				s.add(rootLoc);
+			}
+			clones.add(s);
+		}
+		return clones;
 	}
 
 	private static SourceFiles loadSourceCode(DocumentBuilder dBuilder, List<Pattern> patterns) throws SAXException, IOException {

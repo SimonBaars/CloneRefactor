@@ -65,7 +65,7 @@ public class LocationContents implements HasRange, HasCompareList, RequiresNodeC
 	}
 
 	public LocationContents(LocationContents contents, Range r) {
-		if(contents.nodes.isEmpty()) throw new IllegalStateException("Must have at least one node!");
+		//if(contents.nodes.isEmpty()) throw new IllegalStateException("Must have at least one node!");
 		this.range = r;
 		this.nodes = new ArrayList<>(contents.getNodes());
 		this.tokens = new ArrayList<>(contents.getTokens());

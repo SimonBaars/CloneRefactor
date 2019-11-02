@@ -20,6 +20,10 @@ public class SourceFile {
 	public Map<Integer, Location> getSourceLocations() {
 		return sourceLocations;
 	}
+	
+	public Location getLoc(int nodeId) {
+		return sourceLocations.get(nodeId);
+	}
 
 	public void setSourceLocations(Map<Integer, Location> sourceLocations) {
 		this.sourceLocations = sourceLocations;

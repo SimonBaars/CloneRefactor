@@ -23,4 +23,8 @@ public class SourceFiles {
 	public String toString() {
 		return "SourceFiles [sourceFiles=" + sourceFiles + "]";
 	}
+	
+	public SourceFile get(String fileName) {
+		return sourceFiles.get(fileName);
+	}
 }
