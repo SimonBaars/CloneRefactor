@@ -33,39 +33,46 @@ public class IntimalsReader {
 	private static String matchesLoc = "/Users/sbaars/Documents/Kim/jhotdraw_source/output-4-fold/cluster_"+clusterNum+"-5-matches.xml";
 	
 	public static void main(String[] args) throws SAXException, IOException, ParserConfigurationException {
+		List<Sequence> s = new IntimalsReader().loadIntimalsClones();
+		System.out.println(Arrays.toString(s.toArray()));
+	}
+
+	private List<Sequence> loadIntimalsClones() throws ParserConfigurationException, SAXException, IOException {
 		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
 		Document doc = dBuilder.parse(new File(matchesLoc));
 		doc.getDocumentElement().normalize();
 		List<Pattern> patterns = parseMatches(doc.getElementsByTagName("match"));
 		SourceFiles files = loadSourceCode(dBuilder, patterns);
-		List<Sequence> s = createCloneClasses(patterns, files);
-		System.out.println(Arrays.toString(s.toArray()));
+		return createCloneClasses(patterns, files);
 	}
 
-	private static List<Sequence> createCloneClasses(List<Pattern> patterns, SourceFiles files) {
+	private List<Sequence> createCloneClasses(List<Pattern> patterns, SourceFiles files) {
 		List<Sequence> clones = new ArrayList<>();
 		for(Pattern pattern : patterns) {
 			Sequence s = new Sequence();
-			for(Match m : pattern.getMatches()) {
-				List<Location> locations = new ArrayList<>();
-				Location rootLoc = null;
-				for(com.simonbaars.clonerefactor.scripts.intimals.model.matches.Node n : m.getNodes()) {
-					Location loc = files.get(m.getFile()).getLoc(n.getId());
-					if(n.isRoot()) {
-						rootLoc = new PatternLocation(loc);
-					} else {
-						locations.add(loc);
-					}
-				}
-				s.add(rootLoc);
-			}
+			for(Match m : pattern.getMatches())
+				s.add(createLocation(files, m));
 			clones.add(s);
 		}
 		return clones;
 	}
 
-	private static SourceFiles loadSourceCode(DocumentBuilder dBuilder, List<Pattern> patterns) throws SAXException, IOException {
+	private Location createLocation(SourceFiles files, Match m) {
+		List<Location> locations = new ArrayList<>();
+		Location rootLoc = null;
+		for(com.simonbaars.clonerefactor.scripts.intimals.model.matches.Node n : m.getNodes()) {
+			Location loc = files.get(m.getFile()).getLoc(n.getId());
+			if(n.isRoot()) {
+				rootLoc = new PatternLocation(loc);
+			} else {
+				locations.add(loc);
+			}
+		}
+		return rootLoc;
+	}
+
+	private SourceFiles loadSourceCode(DocumentBuilder dBuilder, List<Pattern> patterns) throws SAXException, IOException {
 		SourceFiles sourceFiles = new SourceFiles();
 		for(Pattern pattern : patterns) {
 			for(Match match : pattern.getMatches()) {
@@ -80,7 +87,7 @@ public class IntimalsReader {
 		return sourceFiles;
 	}
 	
-	public static void collectLocations(Path filePath, SourceFile file, Node node) {
+	public void collectLocations(Path filePath, SourceFile file, Node node) {
 	    NodeList nodeList = node.getChildNodes();
 	    for (int i = 0; i < nodeList.getLength(); i++) {
 	        Node currentNode = nodeList.item(i);
@@ -96,7 +103,7 @@ public class IntimalsReader {
 	}
 
 
-	private static List<Pattern> parseMatches(NodeList matches) {
+	private List<Pattern> parseMatches(NodeList matches) {
 		List<Pattern> patterns = new ArrayList<>();
 		for(int i = 0; i<matches.getLength(); i++) {
 			Node node = matches.item(i);
@@ -115,7 +122,7 @@ public class IntimalsReader {
 		return patterns;
 	}
 
-	private static List<com.simonbaars.clonerefactor.scripts.intimals.model.matches.Node> parseNodes(NodeList nodes) {
+	private List<com.simonbaars.clonerefactor.scripts.intimals.model.matches.Node> parseNodes(NodeList nodes) {
 		List<com.simonbaars.clonerefactor.scripts.intimals.model.matches.Node> parsedNodes = new ArrayList<>();
 		for(int i = 0; i<nodes.getLength(); i++) {
 			Node node = nodes.item(i);
