@@ -6,6 +6,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -28,22 +29,39 @@ import com.simonbaars.clonerefactor.scripts.intimals.model.sourcefiles.SourceFil
 import com.simonbaars.clonerefactor.scripts.intimals.model.sourcefiles.SourceFiles;
 
 public class IntimalsReader {
-	private static int clusterNum = 1;
-	private static String clusterLoc = "/Users/sbaars/Documents/Kim/jhotdraw-4-folds/cluster_"+clusterNum+"/";
-	private static String matchesLoc = "/Users/sbaars/Documents/Kim/jhotdraw_source/output-4-fold/cluster_"+clusterNum+"-5-matches.xml";
+	private String getClusterLoc(int clusterNum) {
+		return "/Users/sbaars/Documents/Kim/jhotdraw-4-folds/cluster_"+clusterNum+"/";
+	}
+	
+	private String getMatchesLoc(int clusterNum) {
+		return "/Users/sbaars/Documents/Kim/jhotdraw_source/output-4-fold/cluster_"+clusterNum+"-5-matches.xml";
+	}
 	
 	public static void main(String[] args) throws SAXException, IOException, ParserConfigurationException {
 		List<Sequence> s = new IntimalsReader().loadIntimalsClones();
 		System.out.println(Arrays.toString(s.toArray()));
+		System.out.println(s.size()+", "+s.stream().map(e -> e.size()+"").collect(Collectors.joining(", ")));
+	}
+	
+	public List<Sequence> loadIntimalsClones(){
+		List<Sequence> clones = new ArrayList<>();
+		for(int i = 1; i<=4; i++) {
+			try {
+				clones.addAll(loadIntimalsClones(i));
+			} catch (ParserConfigurationException | SAXException | IOException e) {
+				e.printStackTrace();
+			}
+		}
+		return clones;
 	}
 
-	private List<Sequence> loadIntimalsClones() throws ParserConfigurationException, SAXException, IOException {
+	private List<Sequence> loadIntimalsClones(int clusterNum) throws ParserConfigurationException, SAXException, IOException {
 		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-		Document doc = dBuilder.parse(new File(matchesLoc));
+		Document doc = dBuilder.parse(new File(getMatchesLoc(clusterNum)));
 		doc.getDocumentElement().normalize();
 		List<Pattern> patterns = parseMatches(doc.getElementsByTagName("match"));
-		SourceFiles files = loadSourceCode(dBuilder, patterns);
+		SourceFiles files = loadSourceCode(dBuilder, patterns, getClusterLoc(clusterNum));
 		return createCloneClasses(patterns, files);
 	}
 
@@ -72,7 +90,7 @@ public class IntimalsReader {
 		return rootLoc;
 	}
 
-	private SourceFiles loadSourceCode(DocumentBuilder dBuilder, List<Pattern> patterns) throws SAXException, IOException {
+	private SourceFiles loadSourceCode(DocumentBuilder dBuilder, List<Pattern> patterns, String clusterLoc) throws SAXException, IOException {
 		SourceFiles sourceFiles = new SourceFiles();
 		for(Pattern pattern : patterns) {
 			for(Match match : pattern.getMatches()) {
