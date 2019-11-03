@@ -6,4 +6,9 @@ public class NotSimilar extends Similarity {
 		// TODO Auto-generated constructor stub
 	}
 
+	@Override
+	protected boolean isMoreImportant(Similarity similarity) {
+		return false;
+	}
+
 }
