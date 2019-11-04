@@ -26,50 +26,39 @@ public class Similarity implements CalculatesPercentages, HasImportance<Similari
 	}
 	
 	public Similarity determineSimilarity(PatternSequence pattern, List<Sequence> clones) {
-		return getMostImportant(clones.stream().map(clone -> determineSimilarity(pattern, clone)));
-		List<Similarity> similarities = new ArrayList<>();
-		for(Sequence clone : clones) {
-			similarities.add(determineSimilarity(pattern, clone));
-		}
-		return getMostImportant(similarities);
+		return getMostImportant(clones.stream().map(clone -> determineSimilarity(pattern, clone, false)));
 	}
 	
-	public Similarity determineSimilarity(List<PatternSequence> patterns, Sequence clone) {
-		List<Similarity> similarities = new ArrayList<>();
-		for(PatternSequence pattern : patterns) {
-			similarities.add(determineSimilarity(pattern, clone));
-		}
-		return similarities.stream().reduce((e1, e2) -> e1.isMoreImportant(e2) ? e1 : e2).get();
+	private Similarity determineSimilarity(PatternSequence pattern, Sequence clone, boolean fromClone) {
+		List<Matching> matching = determineSimilarity(pattern.getLocations(), clone.getLocations(), fromClone);
+		return null;
 	}
 
-	private Similarity determineSimilarity(PatternSequence pattern, Sequence clone) {
-		for(PatternLocation location : pattern.getLocations()) {
-			
-		}
-		
-		if(!pattern.getFile().equals(clone.getFile())) {
-			return new NotSimilar();
-		} else if (pattern.actualRange().overlapsWith(clone.getRange())) {
-			return new Intersects(pattern, clone);
-		}
-		return new SameClass(pattern, clone);
+	public Similarity determineSimilarity(List<PatternSequence> patterns, Sequence clone) {
+		return getMostImportant(patterns.stream().map(pattern -> determineSimilarity(pattern, clone, true)));
+	}
+
+	private List<Matching> determineSimilarity(List<PatternLocation> patterns, List<Location> clones, boolean fromClone) {
+		if(fromClone)
+			return clones.stream().map(clone -> determineInstanceSimilarity(patterns, clone)).collect(Collectors.toList());
+		return patterns.stream().map(pattern -> determineInstanceSimilarity(pattern, clones)).collect(Collectors.toList());
 	}
 	
-	private static Matching determineSimilarity(PatternLocation pattern, List<Location> clones) {
+	private static Matching determineInstanceSimilarity(PatternLocation pattern, List<Location> clones) {
 		if (pattern.actualRange().overlapsWith(clone.getRange())) {
 			return new Intersects(pattern, clone);
 		}
 		return new NotSimilar();
 	}
 	
-	private static Matching determineSimilarity(List<PatternLocation> patterns, Location clone) {
+	private static Matching determineInstanceSimilarity(List<PatternLocation> patterns, Location clone) {
 		if (pattern.actualRange().overlapsWith(clone.getRange())) {
 			return new Intersects(pattern, clone);
 		}
 		return new NotSimilar().getMostImportant(stuff);
 	}
 	
-	private static Matching determineSimilarity(PatternLocation pattern, Location clone) {
+	private static Matching determineInstanceSimilarity(PatternLocation pattern, Location clone) {
 		if (pattern.actualRange().overlapsWith(clone.getRange())) {
 			return new Intersects(pattern, clone);
 		}
