@@ -72,7 +72,6 @@ public class JHotDraw extends Type1Test {
 		String path = "/Users/sbaars/Documents/Kim/jhotdraw/";
 		DetectionResults cloneDetection = Main.cloneDetection(Paths.get(path), Paths.get(path+"src/"));
 		cloneDetection.sorted();
-		List<Similarity> fromClone = new ArrayList<>(), fromPattern = new ArrayList<>();
 		List<PatternSequence> patternSequences = new IntimalsReader().loadIntimalsClones();
 		List<Similarity> sims1 = new Similarity().determineSimilarities(patternSequences, cloneDetection.getClones(), true);
 		List<Similarity> sims2 = new Similarity().determineSimilarities(patternSequences, cloneDetection.getClones(), false);

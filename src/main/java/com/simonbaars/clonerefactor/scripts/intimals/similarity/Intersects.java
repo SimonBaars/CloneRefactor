@@ -24,8 +24,8 @@ public class Intersects extends Matching implements CalculatesPercentages {
 		Position begin = actualPatternRange.begin.isBefore(clone.getRange().begin) ? actualPatternRange.begin : clone.getRange().begin;
 		Position end = actualPatternRange.end.isAfter(clone.getRange().end) ? actualPatternRange.end : clone.getRange().end;
 		for(int i = begin.line; i<=end.line; i++) {
-			boolean patternIntersects = actualPatternRange.begin.line >= i && actualPatternRange.end.line <= i;
-			boolean cloneIntersects = clone.getRange().begin.line >= i && clone.getRange().end.line <= i;
+			boolean patternIntersects = i >= actualPatternRange.begin.line && i <= actualPatternRange.end.line;
+			boolean cloneIntersects = i >= clone.getRange().begin.line && i <= clone.getRange().end.line;
 			if(patternIntersects && cloneIntersects) {
 				matched++;
 			}else if(patternIntersects) {

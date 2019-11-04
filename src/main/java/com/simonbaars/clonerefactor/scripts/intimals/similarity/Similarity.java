@@ -60,7 +60,7 @@ public class Similarity implements CalculatesPercentages, HasImportance<Similari
 	}
 	
 	private static Matching determineInstanceSimilarity(PatternLocation pattern, Location clone, boolean fromClone) {
-		if (pattern.actualRange().overlapsWith(clone.getRange())) {
+		if (pattern.getFile().equals(clone.getFile()) && pattern.actualRange().overlapsWith(clone.getRange())) {
 			return new Intersects(pattern, clone);
 		}
 		return new NotSimilar(fromClone ? clone : pattern);
