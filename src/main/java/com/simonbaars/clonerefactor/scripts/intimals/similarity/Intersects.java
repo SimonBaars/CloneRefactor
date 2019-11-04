@@ -6,7 +6,7 @@ import com.simonbaars.clonerefactor.detection.interfaces.CalculatesPercentages;
 import com.simonbaars.clonerefactor.detection.model.location.Location;
 import com.simonbaars.clonerefactor.scripts.intimals.model.PatternLocation;
 
-public class Intersects implements CalculatesPercentages, HasImportance {
+public class Intersects extends Matching implements CalculatesPercentages {
 	
 	private int unmatchedClone = 0;
 	private int unmatchedPattern = 0;
@@ -40,7 +40,7 @@ public class Intersects implements CalculatesPercentages, HasImportance {
 		return matched - unmatchedClone - unmatchedPattern;
 	}
 	
-	public boolean isMoreImportant(HasImportance other) {
+	public boolean isMoreImportant(Matching other) {
 		if(other instanceof NotSimilar)
 			return false;
 		return getMatchedMinusUnmatched() > ((Intersects)other).getMatchedMinusUnmatched();

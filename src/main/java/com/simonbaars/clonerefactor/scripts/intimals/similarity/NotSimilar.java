@@ -1,11 +1,11 @@
 package com.simonbaars.clonerefactor.scripts.intimals.similarity;
 
-public class NotSimilar implements HasImportance {
+public class NotSimilar extends Matching {
 
 	public NotSimilar() {}
 
 	@Override
-	public boolean isMoreImportant(HasImportance similarity) {
+	public boolean isMoreImportant(Matching similarity) {
 		return false;
 	}
 
