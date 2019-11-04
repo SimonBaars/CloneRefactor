@@ -3,12 +3,17 @@ package com.simonbaars.clonerefactor.types;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.simonbaars.clonerefactor.Main;
 import com.simonbaars.clonerefactor.core.util.SavePaths;
 import com.simonbaars.clonerefactor.detection.model.DetectionResults;
 import com.simonbaars.clonerefactor.helper.Type1Test;
 import com.simonbaars.clonerefactor.refactoring.enums.RefactoringStrategy;
+import com.simonbaars.clonerefactor.scripts.intimals.IntimalsReader;
+import com.simonbaars.clonerefactor.scripts.intimals.model.PatternSequence;
+import com.simonbaars.clonerefactor.scripts.intimals.similarity.Similarity;
 import com.simonbaars.clonerefactor.scripts.model.MetricsTable;
 import com.simonbaars.clonerefactor.settings.CloneType;
 import com.simonbaars.clonerefactor.settings.Settings;
@@ -40,7 +45,7 @@ public class JHotDraw extends Type1Test {
 		}
 	}
 	
-	public void type3R() {
+	public void type3() {
 		MetricsTable tables = new MetricsTable();
 		Settings.get().setCloneType(CloneType.TYPE3);
 		SavePaths.genTimestamp();
@@ -58,6 +63,17 @@ public class JHotDraw extends Type1Test {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public void type3Similarity() {
+		Settings.get().setCloneType(CloneType.TYPE3);
+		Settings.get().setRefactoringStrategy(RefactoringStrategy.DONOTREFACTOR);
+		System.out.println("JHotDraw");
+		String path = "/Users/sbaars/Documents/Kim/jhotdraw/";
+		DetectionResults cloneDetection = Main.cloneDetection(Paths.get(path), Paths.get(path+"src/"));
+		cloneDetection.sorted();
+		List<Similarity> fromClone = new ArrayList<>(), fromPattern = new ArrayList<>();
+		List<PatternSequence> patternSequences = new IntimalsReader().loadIntimalsClones();
 	}
 }
 	
