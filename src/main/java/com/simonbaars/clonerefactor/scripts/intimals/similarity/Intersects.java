@@ -1,5 +1,8 @@
 package com.simonbaars.clonerefactor.scripts.intimals.similarity;
 
+import com.simonbaars.clonerefactor.detection.model.location.Location;
+import com.simonbaars.clonerefactor.scripts.intimals.model.PatternLocation;
+
 public class Intersects extends Similarity {
 	
 	private int unmatchedClone;
@@ -11,6 +14,10 @@ public class Intersects extends Similarity {
 		this.unmatchedClone = unmatchedClone;
 		this.unmatchedPattern = unmatchedPattern;
 		this.matched = matched;
+	}
+
+	public Intersects(PatternLocation pattern, Location clone) {
+		//TODO
 	}
 
 	@Override

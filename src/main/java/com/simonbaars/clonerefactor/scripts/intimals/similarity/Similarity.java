@@ -10,8 +10,10 @@ public abstract class Similarity {
 	public static Similarity determineSimilarity(PatternLocation pattern, Location clone) {
 		if(!pattern.getFile().equals(clone.getFile())) {
 			return new NotSimilar();
-		} //else if ()
-		return null;
+		} else if (pattern.actualRange().overlapsWith(clone.getRange())) {
+			return new Intersects(pattern, clone);
+		}
+		return new SameClass(pattern, clone);
 	}
 	
 	protected abstract boolean isMoreImportant(Similarity similarity);

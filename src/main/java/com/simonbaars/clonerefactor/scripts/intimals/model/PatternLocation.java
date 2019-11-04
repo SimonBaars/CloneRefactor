@@ -1,6 +1,7 @@
 package com.simonbaars.clonerefactor.scripts.intimals.model;
 
 import java.nio.file.Path;
+import java.util.Collections;
 import java.util.List;
 
 import com.github.javaparser.Range;
@@ -33,5 +34,10 @@ public class PatternLocation extends Location {
 
 	public void setComponents(List<Location> locations) {
 		this.patternComponents = locations;
+		Collections.sort(this.patternComponents);
+	}
+	
+	public Range actualRange() {
+		return new Range(this.patternComponents.get(0).getRange().begin, this.patternComponents.get(patternComponents.size()-1).getRange().end);
 	}
 }

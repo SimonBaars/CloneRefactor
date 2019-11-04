@@ -42,6 +42,6 @@ public class Match {
 	}
 
 	public Path getFilePath(String clusterLoc) {
-		return Paths.get(clusterLoc+file);
+		return Paths.get(file);
 	}
 }
