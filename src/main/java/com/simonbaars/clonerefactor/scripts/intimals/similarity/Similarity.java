@@ -5,14 +5,12 @@ import com.simonbaars.clonerefactor.scripts.intimals.model.PatternLocation;
 
 public abstract class Similarity {
 
-	public Similarity() {
-		// TODO Auto-generated constructor stub
-	}
+	public Similarity() {}
 
 	public static Similarity determineSimilarity(PatternLocation pattern, Location clone) {
 		if(!pattern.getFile().equals(clone.getFile())) {
 			return new NotSimilar();
-		}
+		} //else if ()
 		return null;
 	}
 	

@@ -37,7 +37,7 @@ public class IntimalsReader {
 		return "/Users/sbaars/Documents/Kim/jhotdraw_source/output-4-fold/cluster_"+clusterNum+"-5-matches.xml";
 	}
 	
-	public static void main(String[] args) throws SAXException, IOException, ParserConfigurationException {
+	public static void main(String[] args) {
 		List<Sequence> s = new IntimalsReader().loadIntimalsClones();
 		System.out.println(Arrays.toString(s.toArray()));
 		System.out.println(s.size()+", "+s.stream().map(e -> e.size()+"").collect(Collectors.joining(", ")));
@@ -78,7 +78,7 @@ public class IntimalsReader {
 
 	private Location createLocation(SourceFiles files, Match m) {
 		List<Location> locations = new ArrayList<>();
-		Location rootLoc = null;
+		PatternLocation rootLoc = null;
 		for(com.simonbaars.clonerefactor.scripts.intimals.model.matches.Node n : m.getNodes()) {
 			Location loc = files.get(m.getFile()).getLoc(n.getId());
 			if(n.isRoot()) {
@@ -87,6 +87,7 @@ public class IntimalsReader {
 				locations.add(loc);
 			}
 		}
+		rootLoc.setComponents(locations);
 		return rootLoc;
 	}
 

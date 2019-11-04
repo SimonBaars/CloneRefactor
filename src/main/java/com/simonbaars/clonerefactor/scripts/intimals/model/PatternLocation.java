@@ -31,4 +31,7 @@ public class PatternLocation extends Location {
 		super(file, nodes);
 	}
 
+	public void setComponents(List<Location> locations) {
+		this.patternComponents = locations;
+	}
 }

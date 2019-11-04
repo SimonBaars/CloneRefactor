@@ -10,11 +10,10 @@ public class SameClass extends Similarity {
 
 	@Override
 	protected boolean isMoreImportant(Similarity similarity) {
-		if(similarity instanceof NotSimilar) {
+		if(similarity instanceof NotSimilar) 
 			return true;
-		} else if (similarity instanceof Intersects) {
+		else if (similarity instanceof Intersects)
 			return false;
-		}
 		return distance<((SameClass)similarity).distance;
 	}
 
