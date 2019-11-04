@@ -20,7 +20,6 @@ import org.xml.sax.SAXException;
 
 import com.github.javaparser.Position;
 import com.github.javaparser.Range;
-import com.simonbaars.clonerefactor.detection.model.Sequence;
 import com.simonbaars.clonerefactor.detection.model.location.Location;
 import com.simonbaars.clonerefactor.scripts.intimals.model.PatternLocation;
 import com.simonbaars.clonerefactor.scripts.intimals.model.PatternSequence;
