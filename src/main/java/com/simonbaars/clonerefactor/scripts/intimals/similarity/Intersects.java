@@ -2,10 +2,11 @@ package com.simonbaars.clonerefactor.scripts.intimals.similarity;
 
 import com.github.javaparser.Position;
 import com.github.javaparser.Range;
+import com.simonbaars.clonerefactor.detection.interfaces.CalculatesPercentages;
 import com.simonbaars.clonerefactor.detection.model.location.Location;
 import com.simonbaars.clonerefactor.scripts.intimals.model.PatternLocation;
 
-public class Intersects extends Similarity {
+public class Intersects implements CalculatesPercentages {
 	
 	private int unmatchedClone = 0;
 	private int unmatchedPattern = 0;
@@ -35,16 +36,16 @@ public class Intersects extends Similarity {
 		}
 	}
 
-	@Override
-	protected boolean isMoreImportant(Similarity similarity) {
-		if(!(similarity instanceof Intersects))
-			return true;
-		Intersects other = (Intersects)similarity;
+	private int getMatchedMinusUnmatched() {
+		return matched - unmatchedClone - unmatchedPattern;
+	}
+	
+	public boolean isMoreImportant(Intersects other) {
 		return getMatchedMinusUnmatched() > other.getMatchedMinusUnmatched();
 	}
 	
-	private int getMatchedMinusUnmatched() {
-		return matched - unmatchedClone - unmatchedPattern;
+	public double getDifferencePercentage() {
+		return calcPercentage(matched, matched+unmatchedClone+unmatchedPattern); 
 	}
 
 }
