@@ -23,6 +23,7 @@ import com.github.javaparser.Range;
 import com.simonbaars.clonerefactor.detection.model.Sequence;
 import com.simonbaars.clonerefactor.detection.model.location.Location;
 import com.simonbaars.clonerefactor.scripts.intimals.model.PatternLocation;
+import com.simonbaars.clonerefactor.scripts.intimals.model.PatternSequence;
 import com.simonbaars.clonerefactor.scripts.intimals.model.matches.Match;
 import com.simonbaars.clonerefactor.scripts.intimals.model.matches.Pattern;
 import com.simonbaars.clonerefactor.scripts.intimals.model.sourcefiles.SourceFile;
@@ -38,13 +39,13 @@ public class IntimalsReader {
 	}
 	
 	public static void main(String[] args) {
-		List<Sequence> s = new IntimalsReader().loadIntimalsClones();
+		List<PatternSequence> s = new IntimalsReader().loadIntimalsClones();
 		System.out.println(Arrays.toString(s.toArray()));
 		System.out.println(s.size()+", "+s.stream().map(e -> e.size()+"").collect(Collectors.joining(", ")));
 	}
 	
-	public List<Sequence> loadIntimalsClones(){
-		List<Sequence> clones = new ArrayList<>();
+	public List<PatternSequence> loadIntimalsClones(){
+		List<PatternSequence> clones = new ArrayList<>();
 		for(int i = 1; i<=4; i++) {
 			try {
 				clones.addAll(loadIntimalsClones(i));
@@ -55,7 +56,7 @@ public class IntimalsReader {
 		return clones;
 	}
 
-	private List<Sequence> loadIntimalsClones(int clusterNum) throws ParserConfigurationException, SAXException, IOException {
+	private List<PatternSequence> loadIntimalsClones(int clusterNum) throws ParserConfigurationException, SAXException, IOException {
 		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
 		Document doc = dBuilder.parse(new File(getMatchesLoc(clusterNum)));
@@ -65,10 +66,10 @@ public class IntimalsReader {
 		return createCloneClasses(patterns, files);
 	}
 
-	private List<Sequence> createCloneClasses(List<Pattern> patterns, SourceFiles files) {
-		List<Sequence> clones = new ArrayList<>();
+	private List<PatternSequence> createCloneClasses(List<Pattern> patterns, SourceFiles files) {
+		List<PatternSequence> clones = new ArrayList<>();
 		for(Pattern pattern : patterns) {
-			Sequence s = new Sequence();
+			PatternSequence s = new PatternSequence();
 			for(Match m : pattern.getMatches())
 				s.add(createLocation(files, m));
 			clones.add(s);
@@ -76,7 +77,7 @@ public class IntimalsReader {
 		return clones;
 	}
 
-	private Location createLocation(SourceFiles files, Match m) {
+	private PatternLocation createLocation(SourceFiles files, Match m) {
 		List<Location> locations = new ArrayList<>();
 		PatternLocation rootLoc = null;
 		for(com.simonbaars.clonerefactor.scripts.intimals.model.matches.Node n : m.getNodes()) {
