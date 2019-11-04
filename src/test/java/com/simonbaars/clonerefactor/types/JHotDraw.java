@@ -74,7 +74,10 @@ public class JHotDraw extends Type1Test {
 		cloneDetection.sorted();
 		List<Similarity> fromClone = new ArrayList<>(), fromPattern = new ArrayList<>();
 		List<PatternSequence> patternSequences = new IntimalsReader().loadIntimalsClones();
-		//cloneDetection.getClones().Similarity.determineSimilarity(patterns, clone)
+		List<Similarity> sims1 = new Similarity().determineSimilarities(patternSequences, cloneDetection.getClones(), true);
+		List<Similarity> sims2 = new Similarity().determineSimilarities(patternSequences, cloneDetection.getClones(), false);
+		System.out.println(sims1);
+		System.out.println(sims2);
 	}
 }
 	

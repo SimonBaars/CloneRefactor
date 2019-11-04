@@ -50,4 +50,10 @@ public class Intersects extends Matching implements CalculatesPercentages {
 		return calcPercentage(matched, matched+unmatchedClone+unmatchedPattern); 
 	}
 
+	@Override
+	public String toString() {
+		return "Intersects [unmatchedClone=" + unmatchedClone + ", unmatchedPattern=" + unmatchedPattern + ", matched="
+				+ matched + "]";
+	}
+
 }

@@ -1,6 +1,7 @@
 package com.simonbaars.clonerefactor.scripts.intimals.similarity;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -73,5 +74,11 @@ public class Similarity implements CalculatesPercentages, HasImportance<Similari
 		WeightedPercentage wp = new WeightedPercentage(0, clonesNoMatch+patternsNoMatch);
 		matches.forEach(match -> wp.mergeWith(new WeightedPercentage(match.getDifferencePercentage(), 1)));
 		return wp.getPercentage(); 
+	}
+
+	@Override
+	public String toString() {
+		return "Similarity [matches=" + Arrays.toString(matches.toArray()) + ", clonesNoMatch=" + clonesNoMatch + ", patternsNoMatch="
+				+ patternsNoMatch + "]";
 	}
 }
