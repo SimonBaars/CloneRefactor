@@ -42,7 +42,7 @@ public class Intersects extends Matching implements CalculatesPercentages {
 	
 	public boolean isMoreImportant(Matching other) {
 		if(other instanceof NotSimilar)
-			return false;
+			return true;
 		return getMatchedMinusUnmatched() > ((Intersects)other).getMatchedMinusUnmatched();
 	}
 	
