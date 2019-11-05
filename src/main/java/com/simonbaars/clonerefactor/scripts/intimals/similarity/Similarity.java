@@ -17,6 +17,8 @@ public class Similarity implements CalculatesPercentages, HasImportance<Similari
 	private final List<Intersects> matches = new ArrayList<>();
 	private int clonesNoMatch;
 	private int patternsNoMatch;
+	private PatternSequence pattern;
+	private Sequence clone;
 	
 	public Similarity() {}
 	
@@ -42,6 +44,8 @@ public class Similarity implements CalculatesPercentages, HasImportance<Similari
 		main.stream().filter(e -> e instanceof Intersects).map(e -> (Intersects)e).forEach(similarity.matches::add);
 		similarity.clonesNoMatch = matchingClones.stream().filter(e -> e instanceof NotSimilar).mapToInt(e -> ((NotSimilar)e).lines).sum();
 		similarity.patternsNoMatch = matchingClones.stream().filter(e -> e instanceof NotSimilar).mapToInt(e -> ((NotSimilar)e).lines).sum();
+		similarity.pattern = pattern;
+		similarity.clone = clone;
 		return similarity;
 	}
 
@@ -71,8 +75,13 @@ public class Similarity implements CalculatesPercentages, HasImportance<Similari
 	
 	private double matchPercentage() {
 		WeightedPercentage wp = new WeightedPercentage(0, clonesNoMatch+patternsNoMatch);
-		matches.forEach(match -> wp.mergeWith(new WeightedPercentage(match.getMatchPercentage(), match.getWeight())));
+		for(Intersects match : matches)
+			wp = wp.mergeWith(new WeightedPercentage(match.getMatchPercentage(), match.getWeight()));
 		return wp.getPercentage(); 
+	}
+	
+	public List<Intersects> getMatches(){
+		return matches;
 	}
 
 	@Override
