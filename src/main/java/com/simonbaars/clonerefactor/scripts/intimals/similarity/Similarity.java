@@ -30,6 +30,10 @@ public class Similarity implements CalculatesPercentages, HasImportance<Similari
 		return getMostImportant(clones.stream().map(clone -> determineSimilarity(pattern, clone, false)));
 	}
 	
+	private Similarity determineSimilarity(List<PatternSequence> patterns, Sequence clone) {
+		return getMostImportant(patterns.stream().map(pattern -> determineSimilarity(pattern, clone, true)));
+	}
+	
 	private Similarity determineSimilarity(PatternSequence pattern, Sequence clone, boolean fromClone) {
 		List<Matching> matchingClones = determineSimilarity(pattern.getLocations(), clone.getLocations(), true),
 						matchingPatterns = determineSimilarity(pattern.getLocations(), clone.getLocations(), false),
@@ -39,10 +43,6 @@ public class Similarity implements CalculatesPercentages, HasImportance<Similari
 		similarity.clonesNoMatch = matchingClones.stream().filter(e -> e instanceof NotSimilar).mapToInt(e -> ((NotSimilar)e).lines).sum();
 		similarity.patternsNoMatch = matchingClones.stream().filter(e -> e instanceof NotSimilar).mapToInt(e -> ((NotSimilar)e).lines).sum();
 		return similarity;
-	}
-
-	private Similarity determineSimilarity(List<PatternSequence> patterns, Sequence clone) {
-		return getMostImportant(patterns.stream().map(pattern -> determineSimilarity(pattern, clone, true)));
 	}
 
 	private List<Matching> determineSimilarity(List<PatternLocation> patterns, List<Location> clones, boolean fromClone) {
@@ -60,9 +60,8 @@ public class Similarity implements CalculatesPercentages, HasImportance<Similari
 	}
 	
 	private static Matching determineInstanceSimilarity(PatternLocation pattern, Location clone, boolean fromClone) {
-		if (pattern.getFile().equals(clone.getFile()) && pattern.actualRange().overlapsWith(clone.getRange())) {
+		if (pattern.getFile().equals(clone.getFile()) && pattern.actualRange().overlapsWith(clone.getRange()))
 			return new Intersects(pattern, clone);
-		}
 		return new NotSimilar(fromClone ? clone : pattern);
 	}
 	
@@ -72,7 +71,7 @@ public class Similarity implements CalculatesPercentages, HasImportance<Similari
 	
 	private double matchPercentage() {
 		WeightedPercentage wp = new WeightedPercentage(0, clonesNoMatch+patternsNoMatch);
-		matches.forEach(match -> wp.mergeWith(new WeightedPercentage(match.getDifferencePercentage(), 1)));
+		matches.forEach(match -> wp.mergeWith(new WeightedPercentage(match.getMatchPercentage(), match.getWeight())));
 		return wp.getPercentage(); 
 	}
 
