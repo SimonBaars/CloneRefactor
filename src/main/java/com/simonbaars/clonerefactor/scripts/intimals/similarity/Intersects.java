@@ -34,15 +34,11 @@ public class Intersects extends Matching implements CalculatesPercentages {
 		}
 		assert matched != 0;
 	}
-
-	private int getMatchedMinusUnmatched() {
-		return matched - unmatchedClone - unmatchedPattern;
-	}
 	
 	public boolean isMoreImportant(Matching other) {
 		if(other instanceof NotSimilar)
 			return true;
-		return getMatchedMinusUnmatched() > ((Intersects)other).getMatchedMinusUnmatched();
+		return getMatchPercentage() > ((Intersects)other).getMatchPercentage();
 	}
 	
 	public double getMatchPercentage() {
