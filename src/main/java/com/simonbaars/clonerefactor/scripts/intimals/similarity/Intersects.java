@@ -8,18 +8,16 @@ import com.simonbaars.clonerefactor.scripts.intimals.model.PatternLocation;
 
 public class Intersects extends Matching implements CalculatesPercentages {
 	
+	private final PatternLocation pattern;
+	private final Location clone;
+	
 	private int unmatchedClone = 0;
 	private int unmatchedPattern = 0;
 	private int matched = 0;
 	
-	public Intersects(int unmatchedClone, int unmatchedPattern, int matched) {
-		super();
-		this.unmatchedClone = unmatchedClone;
-		this.unmatchedPattern = unmatchedPattern;
-		this.matched = matched;
-	}
-
 	public Intersects(PatternLocation pattern, Location clone) {
+		this.pattern = pattern;
+		this.clone = clone;
 		Range actualPatternRange = pattern.actualRange();
 		Position begin = actualPatternRange.begin.isBefore(clone.getRange().begin) ? actualPatternRange.begin : clone.getRange().begin;
 		Position end = actualPatternRange.end.isAfter(clone.getRange().end) ? actualPatternRange.end : clone.getRange().end;
@@ -28,12 +26,13 @@ public class Intersects extends Matching implements CalculatesPercentages {
 			boolean cloneIntersects = i >= clone.getRange().begin.line && i <= clone.getRange().end.line;
 			if(patternIntersects && cloneIntersects) {
 				matched++;
-			}else if(patternIntersects) {
+			} else if(patternIntersects) {
 				unmatchedPattern++;
 			} else if(cloneIntersects) {
 				unmatchedClone++;
 			}
 		}
+		assert matched != 0;
 	}
 
 	private int getMatchedMinusUnmatched() {
@@ -46,14 +45,18 @@ public class Intersects extends Matching implements CalculatesPercentages {
 		return getMatchedMinusUnmatched() > ((Intersects)other).getMatchedMinusUnmatched();
 	}
 	
-	public double getDifferencePercentage() {
-		return calcPercentage(matched, matched+unmatchedClone+unmatchedPattern); 
+	public double getMatchPercentage() {
+		return calcPercentage(matched, getWeight()); 
 	}
 
 	@Override
 	public String toString() {
 		return "Intersects [unmatchedClone=" + unmatchedClone + ", unmatchedPattern=" + unmatchedPattern + ", matched="
 				+ matched + "]";
+	}
+
+	public int getWeight() {
+		return matched+unmatchedClone+unmatchedPattern;
 	}
 
 }
