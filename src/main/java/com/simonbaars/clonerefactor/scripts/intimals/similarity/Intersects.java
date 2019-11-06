@@ -15,6 +15,11 @@ public class Intersects extends Matching implements CalculatesPercentages {
 	private int unmatchedPattern = 0;
 	private int matched = 0;
 	
+	public Intersects() {
+		pattern = null;
+		clone = null;
+	}
+	
 	public Intersects(PatternLocation pattern, Location clone) {
 		this.pattern = pattern;
 		this.clone = clone;
@@ -42,7 +47,7 @@ public class Intersects extends Matching implements CalculatesPercentages {
 	}
 	
 	public double getMatchPercentage() {
-		return calcPercentage(matched, getWeight()); 
+		return calcPercentage(matched*2, getWeight()); 
 	}
 
 	@Override
@@ -52,7 +57,7 @@ public class Intersects extends Matching implements CalculatesPercentages {
 	}
 
 	public int getWeight() {
-		return matched+unmatchedClone+unmatchedPattern;
+		return (matched*2)+unmatchedClone+unmatchedPattern;
 	}
 
 }

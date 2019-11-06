@@ -5,16 +5,12 @@ import com.simonbaars.clonerefactor.scripts.intimals.model.PatternLocation;
 
 public class NotSimilar extends Matching {
 	
-	int lines;
-	
-	public NotSimilar() {}
+	private final int linesClone;
+	private final int linesPattern;
 
 	public NotSimilar(Location location) {
-		if(location instanceof PatternLocation) {
-			lines = ((PatternLocation)location).getRange().end.line-((PatternLocation)location).getRange().begin.line+1;
-		} else {
-			lines = location.getNumberOfLines();
-		}
+		this.linesPattern = ((PatternLocation)location).actualRange().end.line-((PatternLocation)location).actualRange().begin.line+1;
+		this.linesClone = location.getNumberOfLines();
 	}
 
 	@Override
@@ -22,4 +18,13 @@ public class NotSimilar extends Matching {
 		return false;
 	}
 
+	@Override
+	public double getMatchPercentage() {
+		return 0D;
+	}
+
+	@Override
+	public int getWeight() {
+		return linesClone + linesPattern;
+	}
 }

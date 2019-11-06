@@ -14,14 +14,20 @@ import com.simonbaars.clonerefactor.scripts.intimals.model.PatternSequence;
 
 public class Similarity implements CalculatesPercentages, HasImportance<Similarity> {
 
-	private final List<Intersects> matches = new ArrayList<>();
-	private int clonesNoMatch;
-	private int patternsNoMatch;
+	private final List<Matching> matches;
+	
 	private PatternSequence pattern;
 	private Sequence clone;
 	
-	public Similarity() {}
+	public Similarity() {
+		matches = new ArrayList<>();
+	}
 	
+	public Similarity(List<Matching> matches) {
+		super();
+		this.matches = matches;
+	}
+
 	public List<Similarity> determineSimilarities(List<PatternSequence> patterns, List<Sequence> clones, boolean fromClone) {
 		if(fromClone)
 			return clones.stream().map(clone -> determineSimilarity(patterns, clone)).collect(Collectors.toList());
@@ -37,16 +43,7 @@ public class Similarity implements CalculatesPercentages, HasImportance<Similari
 	}
 	
 	private Similarity determineSimilarity(PatternSequence pattern, Sequence clone, boolean fromClone) {
-		List<Matching> matchingClones = determineSimilarity(pattern.getLocations(), clone.getLocations(), true),
-						matchingPatterns = determineSimilarity(pattern.getLocations(), clone.getLocations(), false),
-						main = fromClone ? matchingClones : matchingPatterns;
-		Similarity similarity = new Similarity();
-		main.stream().filter(e -> e instanceof Intersects).map(e -> (Intersects)e).forEach(similarity.matches::add);
-		similarity.clonesNoMatch = matchingClones.stream().filter(e -> e instanceof NotSimilar).mapToInt(e -> ((NotSimilar)e).lines).sum();
-		similarity.patternsNoMatch = matchingClones.stream().filter(e -> e instanceof NotSimilar).mapToInt(e -> ((NotSimilar)e).lines).sum();
-		similarity.pattern = pattern;
-		similarity.clone = clone;
-		return similarity;
+		return new Similarity(determineSimilarity(pattern.getLocations(), clone.getLocations(), fromClone));
 	}
 
 	private List<Matching> determineSimilarity(List<PatternLocation> patterns, List<Location> clones, boolean fromClone) {
@@ -56,11 +53,11 @@ public class Similarity implements CalculatesPercentages, HasImportance<Similari
 	}
 	
 	private static Matching determineInstanceSimilarity(PatternLocation pattern, List<Location> clones) {
-		return new NotSimilar().getMostImportant(clones.stream().map(clone -> determineInstanceSimilarity(pattern, clone, false)));
+		return new Intersects().getMostImportant(clones.stream().map(clone -> determineInstanceSimilarity(pattern, clone, false)));
 	}
 	
 	private static Matching determineInstanceSimilarity(List<PatternLocation> patterns, Location clone) {
-		return new NotSimilar().getMostImportant(patterns.stream().map(pattern -> determineInstanceSimilarity(pattern, clone, true)));
+		return new Intersects().getMostImportant(patterns.stream().map(pattern -> determineInstanceSimilarity(pattern, clone, true)));
 	}
 	
 	private static Matching determineInstanceSimilarity(PatternLocation pattern, Location clone, boolean fromClone) {
@@ -74,19 +71,18 @@ public class Similarity implements CalculatesPercentages, HasImportance<Similari
 	}
 	
 	private double matchPercentage() {
-		WeightedPercentage wp = new WeightedPercentage(0, clonesNoMatch+patternsNoMatch);
-		for(Intersects match : matches)
+		WeightedPercentage wp = new WeightedPercentage(0, 0);
+		for(Matching match : matches)
 			wp = wp.mergeWith(new WeightedPercentage(match.getMatchPercentage(), match.getWeight()));
 		return wp.getPercentage(); 
 	}
 	
-	public List<Intersects> getMatches(){
+	public List<Matching> getMatches(){
 		return matches;
 	}
 
 	@Override
 	public String toString() {
-		return "Similarity [matches=" + Arrays.toString(matches.toArray()) + ", clonesNoMatch=" + clonesNoMatch + ", patternsNoMatch="
-				+ patternsNoMatch + "]";
+		return "Similarity [matches=" + Arrays.toString(matches.toArray()) + "]";
 	}
 }
