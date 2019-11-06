@@ -8,9 +8,9 @@ public class NotSimilar extends Matching {
 	private final int linesClone;
 	private final int linesPattern;
 
-	public NotSimilar(Location location) {
-		this.linesPattern = ((PatternLocation)location).actualRange().end.line-((PatternLocation)location).actualRange().begin.line+1;
-		this.linesClone = location.getNumberOfLines();
+	public NotSimilar(PatternLocation pattern, Location clone) {
+		this.linesPattern = ((PatternLocation)pattern).actualRange().end.line-((PatternLocation)pattern).actualRange().begin.line+1;
+		this.linesClone = clone.getNumberOfLines();
 	}
 
 	@Override
