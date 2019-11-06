@@ -60,4 +60,12 @@ public class Intersects extends Matching implements CalculatesPercentages {
 		return (matched*2)+unmatchedClone+unmatchedPattern;
 	}
 
+	public PatternLocation getPattern() {
+		return pattern;
+	}
+
+	public Location getClone() {
+		return clone;
+	}
+
 }

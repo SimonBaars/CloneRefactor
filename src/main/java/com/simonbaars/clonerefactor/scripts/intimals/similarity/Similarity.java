@@ -71,10 +71,10 @@ public class Similarity implements CalculatesPercentages, HasImportance<Similari
 	}
 	
 	public boolean isMoreImportant(Similarity similarity) {
-		return matchPercentage() > similarity.matchPercentage();
+		return similarityPercentage() > similarity.similarityPercentage();
 	}
 	
-	private double matchPercentage() {
+	public double similarityPercentage() {
 		WeightedPercentage wp = new WeightedPercentage(0, 0);
 		for(Matching match : matches)
 			wp = wp.mergeWith(new WeightedPercentage(match.getMatchPercentage(), match.getWeight()));
