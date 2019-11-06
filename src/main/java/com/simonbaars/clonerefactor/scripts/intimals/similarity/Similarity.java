@@ -16,16 +16,20 @@ public class Similarity implements CalculatesPercentages, HasImportance<Similari
 
 	private final List<Matching> matches;
 	
-	private PatternSequence pattern;
-	private Sequence clone;
+	private final PatternSequence pattern;
+	private final Sequence clone;
 	
 	public Similarity() {
 		matches = new ArrayList<>();
+		this.pattern = null;
+		this.clone = null;
 	}
-	
-	public Similarity(List<Matching> matches) {
+
+	public Similarity(List<Matching> matches, PatternSequence pattern, Sequence clone) {
 		super();
 		this.matches = matches;
+		this.pattern = pattern;
+		this.clone = clone;
 	}
 
 	public List<Similarity> determineSimilarities(List<PatternSequence> patterns, List<Sequence> clones, boolean fromClone) {
@@ -43,7 +47,7 @@ public class Similarity implements CalculatesPercentages, HasImportance<Similari
 	}
 	
 	private Similarity determineSimilarity(PatternSequence pattern, Sequence clone, boolean fromClone) {
-		return new Similarity(determineSimilarity(pattern.getLocations(), clone.getLocations(), fromClone));
+		return new Similarity(determineSimilarity(pattern.getLocations(), clone.getLocations(), fromClone), pattern, clone);
 	}
 
 	private List<Matching> determineSimilarity(List<PatternLocation> patterns, List<Location> clones, boolean fromClone) {
@@ -79,6 +83,22 @@ public class Similarity implements CalculatesPercentages, HasImportance<Similari
 	
 	public List<Matching> getMatches(){
 		return matches;
+	}
+	
+	public double intersectPercentage() {
+		return calcPercentage(intersectNum(), matches.size());
+	}
+	
+	public int intersectNum() {
+		return Math.toIntExact(matches.stream().filter(e -> e instanceof Intersects).count());
+	}
+
+	public PatternSequence getPattern() {
+		return pattern;
+	}
+
+	public Sequence getClone() {
+		return clone;
 	}
 
 	@Override
