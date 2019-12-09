@@ -3,7 +3,7 @@ package com.simonbaars.clonerefactor.scripts.intimals.similarity;
 import com.simonbaars.clonerefactor.detection.model.location.Location;
 import com.simonbaars.clonerefactor.scripts.intimals.model.PatternLocation;
 
-public class NotSimilar extends Matching {
+public class NotSimilar implements Matching {
 	
 	private final int linesClone;
 	private final int linesPattern;
@@ -26,5 +26,10 @@ public class NotSimilar extends Matching {
 	@Override
 	public int getWeight() {
 		return linesClone + linesPattern;
+	}
+	
+	@Override
+	public MatchType getMatchType() {
+		return MatchType.NOMATCH;
 	}
 }

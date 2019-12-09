@@ -5,7 +5,7 @@ import com.simonbaars.clonerefactor.detection.model.location.Location;
 import com.simonbaars.clonerefactor.scripts.intimals.model.PatternLocation;
 import com.simonbaars.clonerefactor.scripts.intimals.model.SimpleRange;
 
-public class Intersects extends Matching implements CalculatesPercentages {
+public class Intersects implements Matching, CalculatesPercentages {
 	
 	private final PatternLocation pattern;
 	private final Location clone;
@@ -27,29 +27,21 @@ public class Intersects extends Matching implements CalculatesPercentages {
 		this.clone = clone;
 		SimpleRange patternRange = new SimpleRange(pattern.actualRange());
 		SimpleRange cloneRange = new SimpleRange(clone.getRange());
-		/*Position begin = actualPatternRange.begin.isBefore(clone.getRange().begin) ? actualPatternRange.begin : clone.getRange().begin;
-		Position end = actualPatternRange.end.isAfter(clone.getRange().end) ? actualPatternRange.end : clone.getRange().end;
-		for(int i = begin.line; i<=end.line; i++) {
-			boolean patternIntersects = i >= actualPatternRange.begin.line && i <= actualPatternRange.end.line;
-			boolean cloneIntersects = i >= clone.getRange().begin.line && i <= clone.getRange().end.line;
-			if(patternIntersects && cloneIntersects) {
-				matched++;
-			} else if(patternIntersects) {
-				unmatchedPattern++;
-			} else if(cloneIntersects) {
-				unmatchedClone++;
-			}
-		}*/
+		this.matched = patternRange.nMatch(cloneRange);
+		this.unmatchedClone = cloneRange.unmatched(patternRange);
+		this.unmatchedPattern = patternRange.unmatched(cloneRange);
 		this.matchType = MatchType.determine(patternRange, cloneRange);
 		assert matched != 0;
 	}
 	
+	@Override
 	public boolean isMoreImportant(Matching other) {
 		if(other instanceof NotSimilar)
 			return true;
 		return getMatchPercentage() > ((Intersects)other).getMatchPercentage();
 	}
 	
+	@Override
 	public double getMatchPercentage() {
 		return calcPercentage(matched*2, getWeight()); 
 	}
@@ -60,6 +52,7 @@ public class Intersects extends Matching implements CalculatesPercentages {
 				+ matched + "]";
 	}
 
+	@Override
 	public int getWeight() {
 		return (matched*2)+unmatchedClone+unmatchedPattern;
 	}
@@ -72,6 +65,7 @@ public class Intersects extends Matching implements CalculatesPercentages {
 		return clone;
 	}
 
+	@Override
 	public MatchType getMatchType() {
 		return matchType;
 	}

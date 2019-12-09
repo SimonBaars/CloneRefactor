@@ -56,7 +56,17 @@ public class SimpleRange {
 		return true;
 	}
 
-	public boolean contains(SimpleRange patternRange) {
-		return beginLine >= patternRange.beginLine && endLine <= patternRange.endLine;
+	public boolean contains(SimpleRange range) {
+		return beginLine >= range.beginLine && endLine <= range.endLine;
+	}
+
+	public int nMatch(SimpleRange range) {
+		int begin = beginLine > range.beginLine ? beginLine : range.beginLine;
+		int end = endLine > range.endLine ? endLine : range.endLine;
+		return end - begin + 1;
+	}
+
+	public int unmatched(SimpleRange range) {
+		return Math.max(0, range.beginLine-beginLine) + Math.max(0, endLine-range.endLine);
 	}
 }

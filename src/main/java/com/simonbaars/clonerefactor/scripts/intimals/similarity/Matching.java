@@ -1,9 +1,7 @@
 package com.simonbaars.clonerefactor.scripts.intimals.similarity;
 
-public abstract class Matching implements HasImportance<Matching> {
-
-	public Matching() {}
-
-	public abstract double getMatchPercentage();
-	public abstract int getWeight();
+public interface Matching extends HasImportance<Matching> {
+	public double getMatchPercentage();
+	public int getWeight();
+	public MatchType getMatchType();
 }
