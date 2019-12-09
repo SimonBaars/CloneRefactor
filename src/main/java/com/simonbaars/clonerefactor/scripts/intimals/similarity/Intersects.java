@@ -1,10 +1,10 @@
 package com.simonbaars.clonerefactor.scripts.intimals.similarity;
 
 import com.github.javaparser.Position;
-import com.github.javaparser.Range;
 import com.simonbaars.clonerefactor.detection.interfaces.CalculatesPercentages;
 import com.simonbaars.clonerefactor.detection.model.location.Location;
 import com.simonbaars.clonerefactor.scripts.intimals.model.PatternLocation;
+import com.simonbaars.clonerefactor.scripts.intimals.model.SimpleRange;
 
 public class Intersects extends Matching implements CalculatesPercentages {
 	
@@ -15,16 +15,20 @@ public class Intersects extends Matching implements CalculatesPercentages {
 	private int unmatchedPattern = 0;
 	private int matched = 0;
 	
+	private final MatchType matchType;
+	
 	public Intersects() {
 		pattern = null;
 		clone = null;
+		matchType = null;
 	}
 	
 	public Intersects(PatternLocation pattern, Location clone) {
 		this.pattern = pattern;
 		this.clone = clone;
-		Range actualPatternRange = pattern.actualRange();
-		Position begin = actualPatternRange.begin.isBefore(clone.getRange().begin) ? actualPatternRange.begin : clone.getRange().begin;
+		SimpleRange patternRange = new SimpleRange(pattern.actualRange());
+		SimpleRange cloneRange = new SimpleRange(clone.getRange());
+		/*Position begin = actualPatternRange.begin.isBefore(clone.getRange().begin) ? actualPatternRange.begin : clone.getRange().begin;
 		Position end = actualPatternRange.end.isAfter(clone.getRange().end) ? actualPatternRange.end : clone.getRange().end;
 		for(int i = begin.line; i<=end.line; i++) {
 			boolean patternIntersects = i >= actualPatternRange.begin.line && i <= actualPatternRange.end.line;
@@ -36,7 +40,8 @@ public class Intersects extends Matching implements CalculatesPercentages {
 			} else if(cloneIntersects) {
 				unmatchedClone++;
 			}
-		}
+		}*/
+		this.matchType = MatchType.determine(patternRange, cloneRange);
 		assert matched != 0;
 	}
 	
