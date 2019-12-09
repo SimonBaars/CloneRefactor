@@ -1,6 +1,5 @@
 package com.simonbaars.clonerefactor.scripts.intimals.similarity;
 
-import com.github.javaparser.Position;
 import com.simonbaars.clonerefactor.detection.interfaces.CalculatesPercentages;
 import com.simonbaars.clonerefactor.detection.model.location.Location;
 import com.simonbaars.clonerefactor.scripts.intimals.model.PatternLocation;
@@ -71,6 +70,10 @@ public class Intersects extends Matching implements CalculatesPercentages {
 
 	public Location getClone() {
 		return clone;
+	}
+
+	public MatchType getMatchType() {
+		return matchType;
 	}
 
 }

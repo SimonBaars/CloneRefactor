@@ -57,7 +57,6 @@ public class SimpleRange {
 	}
 
 	public boolean contains(SimpleRange patternRange) {
-		// TODO Auto-generated method stub
-		return false;
+		return beginLine >= patternRange.beginLine && endLine <= patternRange.endLine;
 	}
 }
