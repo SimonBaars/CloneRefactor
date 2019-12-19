@@ -1,5 +1,7 @@
 package com.simonbaars.clonerefactor.scripts.intimals.similarity;
 
+import java.util.Set;
+
 import com.simonbaars.clonerefactor.detection.interfaces.CalculatesPercentages;
 import com.simonbaars.clonerefactor.detection.model.location.Location;
 import com.simonbaars.clonerefactor.scripts.intimals.model.PatternLocation;
@@ -25,12 +27,15 @@ public class Intersects implements Matching, CalculatesPercentages {
 	public Intersects(PatternLocation pattern, Location clone) {
 		this.pattern = pattern;
 		this.clone = clone;
-		SimpleRange patternRange = new SimpleRange(pattern.actualRange());
-		SimpleRange cloneRange = new SimpleRange(clone.getRange());
-		this.matched = patternRange.nMatch(cloneRange);
-		this.unmatchedClone = cloneRange.unmatched(patternRange);
-		this.unmatchedPattern = patternRange.unmatched(cloneRange);
-		this.matchType = MatchType.determine(patternRange, cloneRange);
+		Set<Integer> patternLines = pattern.lines(), cloneLines = clone.lines();
+		cloneLines.retainAll(patternLines);
+		this.matched = cloneLines.size();
+		cloneLines = clone.lines();
+		cloneLines.removeAll(patternLines);
+		patternLines.removeAll(clone.lines());
+		this.unmatchedClone = cloneLines.size();
+		this.unmatchedPattern = patternLines.size();
+		this.matchType = MatchType.determine(new SimpleRange(pattern.actualRange()), new SimpleRange(clone.getRange()));
 		assert matched != 0;
 	}
 	

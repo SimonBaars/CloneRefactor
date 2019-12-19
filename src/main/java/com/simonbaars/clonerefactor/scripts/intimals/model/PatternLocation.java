@@ -1,7 +1,11 @@
 package com.simonbaars.clonerefactor.scripts.intimals.model;
 
 import java.nio.file.Path;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import com.github.javaparser.Range;
 import com.github.javaparser.ast.Node;
@@ -39,5 +43,12 @@ public class PatternLocation extends Location {
 	
 	public Range actualRange() {
 		return actualRange;
+	}
+	
+	@Override
+	public Set<Integer> lines(){
+		Set<Integer> lines = new HashSet<>();
+		for(Location loc : patternComponents) lines.addAll(IntStream.rangeClosed(loc.getRange().begin.line, loc.getRange().end.line).boxed().collect(Collectors.toSet()));
+		return lines;
 	}
 }

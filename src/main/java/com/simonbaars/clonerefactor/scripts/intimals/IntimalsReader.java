@@ -29,12 +29,14 @@ import com.simonbaars.clonerefactor.scripts.intimals.model.sourcefiles.SourceFil
 import com.simonbaars.clonerefactor.scripts.intimals.model.sourcefiles.SourceFiles;
 
 public class IntimalsReader {
+	private int NUMBER_OF_FOLDS = 3;
+	
 	private String getClusterLoc(int clusterNum) {
-		return "/Users/sbaars/Documents/Kim/jhotdraw-4-folds/cluster_"+clusterNum+"/";
+		return "/Users/sbaars/Documents/Kim/repos_folds/jhotdraw-"+NUMBER_OF_FOLDS+"-folds/fold_"+clusterNum+"/";
 	}
 	
 	private String getMatchesLoc(int clusterNum) {
-		return "/Users/sbaars/Documents/Kim/jhotdraw_source/output-4-fold/cluster_"+clusterNum+"-5-matches.xml";
+		return "/Users/sbaars/Documents/Kim/repos_folds_results/jhotdraw-"+NUMBER_OF_FOLDS+"-fold/fold_"+clusterNum+"-5-patterns.xml";
 	}
 	
 	public static void main(String[] args) {
@@ -45,7 +47,7 @@ public class IntimalsReader {
 	
 	public List<PatternSequence> loadIntimalsClones(){
 		List<PatternSequence> clones = new ArrayList<>();
-		for(int i = 1; i<=4; i++) {
+		for(int i = 1; i<=NUMBER_OF_FOLDS; i++) {
 			try {
 				clones.addAll(loadIntimalsClones(i));
 			} catch (ParserConfigurationException | SAXException | IOException e) {
