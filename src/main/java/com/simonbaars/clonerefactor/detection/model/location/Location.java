@@ -55,7 +55,6 @@ public class Location implements Comparable<Location>, HasRange {
 	}
 	
 	private boolean isRangeVisited(Range r) {
-		//System.out.println("Determine visited range "+r+" with "+range+"and isvisited "+isVisited);
 		if(!r.contains(range))
 			return true;
 		else if(!isVisited)

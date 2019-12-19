@@ -5,8 +5,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 import com.github.javaparser.Range;
 import com.simonbaars.clonerefactor.detection.model.location.Location;
@@ -60,7 +58,7 @@ public class Type3Location extends Location implements Type3Calculation{
 	@Override
 	public Set<Integer> lines(){
 		Set<Integer> lines = new HashSet<>();
-		for(Location loc : locations) lines.addAll(IntStream.rangeClosed(loc.getRange().begin.line, loc.getRange().end.line).boxed().collect(Collectors.toSet()));
+		for(Location loc : locations) lines.addAll(loc.lines());
 		return lines;
 	}
 }
