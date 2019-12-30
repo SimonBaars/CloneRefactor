@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class Type2Contents {
@@ -29,8 +30,8 @@ public class Type2Contents {
 		return statements;
 	}
 	
-	public List<Type2Location> getStatementsWithinThreshold() {
-		List<Type2Location> statementsWithinThreshold = equalityMap.entrySet().stream().filter(e -> e.getValue().check()).flatMap(e -> e.getKey().getStatements().stream()).collect(Collectors.toList());
+	public List<Type2Location> getStatementsWithinThreshold(Predicate<Double> threshold) {
+		List<Type2Location> statementsWithinThreshold = equalityMap.entrySet().stream().filter(e -> threshold.test(e.getValue().getPercentage())).flatMap(e -> e.getKey().getStatements().stream()).collect(Collectors.toList());
 		statementsWithinThreshold.addAll(statements);
 		return statementsWithinThreshold;
 	}

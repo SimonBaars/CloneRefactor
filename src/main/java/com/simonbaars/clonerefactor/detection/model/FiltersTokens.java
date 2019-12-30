@@ -11,6 +11,7 @@ import com.github.javaparser.JavaToken;
 import com.github.javaparser.JavaToken.Category;
 import com.github.javaparser.TokenRange;
 import com.github.javaparser.ast.Node;
+import com.simonbaars.clonerefactor.settings.CloneType;
 import com.simonbaars.clonerefactor.settings.Settings;
 
 public interface FiltersTokens {
@@ -48,7 +49,7 @@ public interface FiltersTokens {
 		return Arrays.stream(catArray).noneMatch(c -> c.equals(t.getCategory()));
 	}
 	
-	public default List<JavaToken> filterTokensForCompare(List<JavaToken> tokens) {
-		return Settings.get().getCloneType().isNotType1() ? tokens.stream().filter(t -> isComparableToken(t, LITERATURE_TYPE2_NO_TOKEN)).collect(Collectors.toList()) : tokens;
+	public default List<JavaToken> filterTokensForCompare(CloneType type, List<JavaToken> tokens) {
+		return type.isNotType1() ? tokens.stream().filter(t -> isComparableToken(t, LITERATURE_TYPE2_NO_TOKEN)).collect(Collectors.toList()) : tokens;
 	}
 }

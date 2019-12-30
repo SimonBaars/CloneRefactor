@@ -125,7 +125,7 @@ public class Type2Location implements DeterminesNodeTokens, Comparable<Type2Loca
 	}
 
 	private Location convertToLocation(Location location, Type2Sequence seq) {
-		return new Location(location.getFile(), statementIndices.stream().boxed().map(i -> location.getContents().getNodes().get(i)).toArray(Node[]::new));
+		return new Location(location.getContents().settings, location.getFile(), statementIndices.stream().boxed().map(i -> location.getContents().getNodes().get(i)).toArray(Node[]::new));
 	}
 	
 	public Type2Location getLast() {

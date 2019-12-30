@@ -11,14 +11,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.simonbaars.clonerefactor.detection.interfaces.CalculatesPercentages;
+import com.simonbaars.clonerefactor.detection.interfaces.HasSettings;
+import com.simonbaars.clonerefactor.settings.Settings;
 
-public class Progress implements CalculatesPercentages{
+public class Progress extends HasSettings implements CalculatesPercentages{
 	private static final int MAX_PRINTS_PER_STAGE = 100;
 	private Stage currentStage;
 	private int processed = 0;
 	private int total = 0;
 	
-	public Progress(Path sourceRoot) {
+	public Progress(Settings s, Path sourceRoot) {
+		super(s);
 		total = scanProjectForJavaFiles(sourceRoot).size();
 		reset();
 	}
@@ -48,7 +51,7 @@ public class Progress implements CalculatesPercentages{
 	
 	public void next() {
 		processed++;
-		if(processed % ((total / MAX_PRINTS_PER_STAGE)+1) == 0)
+		if(processed % ((total / MAX_PRINTS_PER_STAGE)+1) == 0 && settings.isPrintProgress())
 			System.out.println(toString());
 	}
 	

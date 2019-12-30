@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 
 import com.github.javaparser.Range;
 import com.simonbaars.clonerefactor.datatype.map.ListMap;
-import com.simonbaars.clonerefactor.detection.interfaces.ChecksThresholds;
+import com.simonbaars.clonerefactor.detection.interfaces.HasSettings;
 import com.simonbaars.clonerefactor.detection.interfaces.RemovesDuplicates;
 import com.simonbaars.clonerefactor.detection.metrics.ProblemType;
 import com.simonbaars.clonerefactor.detection.metrics.SequenceObservable;
@@ -18,18 +18,19 @@ import com.simonbaars.clonerefactor.graph.interfaces.DeterminesNodeTokens;
 import com.simonbaars.clonerefactor.settings.Settings;
 import com.simonbaars.clonerefactor.settings.progress.Progress;
 
-public class CloneDetection implements ChecksThresholds, RemovesDuplicates, DeterminesNodeTokens {
+public class CloneDetection extends HasSettings implements RemovesDuplicates, DeterminesNodeTokens {
 	final List<Sequence> clones = new ArrayList<>();
-	private SequenceObservable seqObservable;
+	private final SequenceObservable seqObservable;
 
-	public CloneDetection(SequenceObservable seqObservable) {
+	public CloneDetection(Settings settings, SequenceObservable seqObservable) {
+		super(settings);
 		this.seqObservable = seqObservable;
 	}
 
 	public List<Sequence> findChains(Location lastLoc, Progress progress) {
 		for(Sequence buildingChains = new Sequence(); lastLoc!=null; lastLoc = lastLoc.getPrev()) {
 			Sequence newClones = collectClones(lastLoc);
-			if(!buildingChains.getLocations().isEmpty() || newClones.size()>=Settings.get().getMinCloneClassSize())
+			if(!buildingChains.getLocations().isEmpty() || newClones.size()>=settings.getMinCloneClassSize())
 				buildingChains = makeValid(lastLoc, buildingChains, newClones); //Because of the recent additions the current sequence may be invalidated
 			if(buildingChains.size() <= 1 || (lastLoc.getPrev()!=null && lastLoc.getPrev().getFile()!=lastLoc.getFile()))
 				buildingChains.getLocations().clear();
@@ -40,13 +41,11 @@ public class CloneDetection implements ChecksThresholds, RemovesDuplicates, Dete
 
 
 	private Sequence makeValid(Location lastLoc, Sequence oldClones, Sequence newClones) {
-		Map<Location /*oldClones*/, Location /*newClones*/> validChains = oldClones.getLocations().stream().distinct().filter(oldClone -> 
-			newClones.getLocations().stream().anyMatch(newClone -> newClone.getFile() == oldClone.getFile() && oldClone.getPrev()!=null && oldClone.getFile() == oldClone.getPrev().getFile()
-		    && newClone.getContents().getRange()!= null && newClone.getContents().getRange().equals(oldClone.getPrev().getContents().getRange()))).collect(Collectors.toMap(e -> e, Location::getPrev));
+		Map<Location /*oldClones*/, Location /*newClones*/> validChains = oldClones.getLocations().stream().distinct().filter(oldClone -> newClones.getLocations().stream().anyMatch(newClone -> isChain(oldClone, newClone))).collect(Collectors.toMap(e -> e, Location::getPrev));
 		
 		collectFinishedClones(oldClones, newClones, validChains);
 		
-		if(newClones.size()<Settings.get().getMinCloneClassSize())
+		if(newClones.size()<settings.getMinCloneClassSize())
 			return new Sequence();
 		
 		mergeLocationsOnBasisOfChains(newClones, validChains);
@@ -56,6 +55,10 @@ public class CloneDetection implements ChecksThresholds, RemovesDuplicates, Dete
 		}
 		
 		return newClones;
+	}
+
+	private boolean isChain(Location oldClone, Location newClone) {
+		return newClone.getFile() == oldClone.getFile() && oldClone.getPrev()!=null && oldClone.getFile() == oldClone.getPrev().getFile() && newClone.getContents().getRange()!= null && newClone.getContents().getRange().equals(oldClone.getPrev().getContents().getRange());
 	}
 
 	private void collectFinishedClones(Sequence oldClones, Sequence newClones, Map<Location, Location> validChains) {

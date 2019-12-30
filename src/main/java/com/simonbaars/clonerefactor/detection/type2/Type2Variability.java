@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 
 import com.simonbaars.clonerefactor.detection.interfaces.CalculatesPercentages;
 import com.simonbaars.clonerefactor.detection.interfaces.ChecksForComparability;
-import com.simonbaars.clonerefactor.detection.interfaces.ChecksThresholds;
+import com.simonbaars.clonerefactor.detection.interfaces.HasSettings;
 import com.simonbaars.clonerefactor.detection.model.Sequence;
 import com.simonbaars.clonerefactor.detection.model.location.Location;
 import com.simonbaars.clonerefactor.detection.type2.model.Type2Contents;
@@ -19,8 +19,14 @@ import com.simonbaars.clonerefactor.detection.type2.model.Type2Sequence;
 import com.simonbaars.clonerefactor.detection.type2.model.WeightedPercentage;
 import com.simonbaars.clonerefactor.graph.compare.Compare;
 import com.simonbaars.clonerefactor.settings.CloneType;
+import com.simonbaars.clonerefactor.settings.Settings;
 
-public class Type2Variability implements CalculatesPercentages, ChecksThresholds, ChecksForComparability {
+public class Type2Variability extends HasSettings implements CalculatesPercentages, ChecksForComparability {
+	
+	public Type2Variability(Settings s) {
+		super(s);
+	}
+
 	public List<Sequence> determineVariability(Sequence s) {
 		List<List<Compare>> literals = createLiteralList(s);
 		int[/*location*/][/*compare*/] equalityArray = createEqualityArray(literals);
@@ -31,7 +37,7 @@ public class Type2Variability implements CalculatesPercentages, ChecksThresholds
 
 	private List<Sequence> findDisplacedClones(Sequence s, List<List<Compare>> literals, Map<Integer, int[][]> statementEqualityArrays) {
 		Type2Location lastLoc = generateType2Locations(statementEqualityArrays);
-		List<Type2Sequence> type2Sequences = new Type2CloneDetection().findChains(lastLoc);
+		List<Type2Sequence> type2Sequences = new Type2CloneDetection(settings).findChains(lastLoc);
 		return type2Sequences.stream().map(e -> e.convertToSequence(s)).collect(Collectors.toList());
 	}
 

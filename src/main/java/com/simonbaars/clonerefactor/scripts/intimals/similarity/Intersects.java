@@ -36,7 +36,6 @@ public class Intersects implements Matching, CalculatesPercentages {
 		this.unmatchedClone = cloneLines.size();
 		this.unmatchedPattern = patternLines.size();
 		this.matchType = MatchType.determine(new SimpleRange(pattern.actualRange()), new SimpleRange(clone.getRange()));
-		assert matched != 0;
 	}
 	
 	@Override

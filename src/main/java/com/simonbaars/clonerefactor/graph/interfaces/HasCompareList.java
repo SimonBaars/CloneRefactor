@@ -17,19 +17,19 @@ import com.simonbaars.clonerefactor.settings.Settings;
 public interface HasCompareList extends DeterminesNodeTokens {
 	public List<Compare> getCompare();
 	
-	public default void createComparablesByNode(List<JavaToken> myTokens, Node statement) {
+	public default void createComparablesByNode(Settings s, List<JavaToken> myTokens, Node statement) {
 		Map<Range, Node> compareMap = getNodesForCompare(Collections.singletonList(statement), getRange(myTokens));
 		myTokens.forEach(token -> {
 			Optional<Entry<Range, Node>> thisNodeOptional = compareMap.entrySet().stream().filter(e -> e.getKey().contains(token.getRange().get())).findAny();
 			if(thisNodeOptional.isPresent()) {
 				if(thisNodeOptional.get().getValue()!=null)
-					createCompareFromNode(statement, compareMap, token, thisNodeOptional.get());
-			} else getCompare().add(Compare.create(statement, null, token, Settings.get().getCloneType()));
+					createCompareFromNode(s, statement, compareMap, token, thisNodeOptional.get());
+			} else getCompare().add(Compare.create(statement, null, token, s.getCloneType()));
 		});
 	}
 	
-	public default void createCompareFromNode(Node statement, Map<Range, Node> compareMap, JavaToken token, Entry<Range, Node> thisNode) {
-		Compare createdNode = Compare.create(statement, thisNode.getValue(), token, Settings.get().getCloneType());
+	public default void createCompareFromNode(Settings s, Node statement, Map<Range, Node> compareMap, JavaToken token, Entry<Range, Node> thisNode) {
+		Compare createdNode = Compare.create(statement, thisNode.getValue(), token, s.getCloneType());
 		getCompare().add(createdNode);
 		getCompare().addAll(createdNode.relevantChildren(statement, this));
 		if(createdNode instanceof CompareToken) compareMap.remove(thisNode.getKey()); 

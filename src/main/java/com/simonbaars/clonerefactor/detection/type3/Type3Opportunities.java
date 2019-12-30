@@ -7,34 +7,40 @@ import java.util.stream.IntStream;
 import com.github.javaparser.ast.Node;
 import com.simonbaars.clonerefactor.datatype.map.ListMap;
 import com.simonbaars.clonerefactor.detection.interfaces.CalculatesPercentages;
+import com.simonbaars.clonerefactor.detection.interfaces.HasSettings;
 import com.simonbaars.clonerefactor.detection.model.Sequence;
 import com.simonbaars.clonerefactor.detection.model.location.Location;
 import com.simonbaars.clonerefactor.detection.model.location.LocationContents;
 import com.simonbaars.clonerefactor.graph.compare.CompareOutOfScope;
 import com.simonbaars.clonerefactor.settings.Settings;
 
-public class Type3Opportunities implements Type3Calculation, CalculatesPercentages {
+public class Type3Opportunities extends HasSettings implements Type3Calculation, CalculatesPercentages {
 	private ListMap<Integer, FileLocations> opportunities = new ListMap<>();
 	
+	public Type3Opportunities(Settings s) {
+		super(s);
+	}
+	
 	public void determineType3Opportunities(List<Sequence> clones) {
-		outerloop: for(int i = 0; i<clones.size(); i++) {
-			FileLocations fl = new FileLocations(clones.get(i));
-			if(opportunities.containsKey(fl.hashCode())) {
-				 List<FileLocations> otherFls = opportunities.get(fl.hashCode());
-				 for(int j = 0; j<otherFls.size(); j++) {
-					 FileLocations loc = otherFls.get(j);
-					 if(isType3(fl, loc)) {
-						 clones.remove(fl.getSeq());
-						 clones.remove(loc.getSeq());
-						 otherFls.remove(loc);
-						 clones.add(merge(fl.getLocs(), loc.getLocs()));
-						 i--;
-						 continue outerloop;
-					 }
+		for(int i = 0; i<clones.size(); i+=determineOpportunities(clones, new FileLocations(clones.get(i))));
+	}
+
+	private int determineOpportunities(List<Sequence> clones, FileLocations fl) {
+		if(opportunities.containsKey(fl.hashCode())) {
+			 List<FileLocations> otherFls = opportunities.get(fl.hashCode());
+			 for(int j = 0; j<otherFls.size(); j++) {
+				 FileLocations loc = otherFls.get(j);
+				 if(isType3(fl, loc)) {
+					 clones.remove(fl.getSeq());
+					 clones.remove(loc.getSeq());
+					 otherFls.remove(loc);
+					 clones.add(merge(fl.getLocs(), loc.getLocs()));
+					 return 0;
 				 }
-			} 
-			opportunities.addTo(fl.hashCode(), fl);
+			 }
 		}
+		opportunities.addTo(fl.hashCode(), fl);
+		return 1;
 	}
 	
 	private Sequence merge(List<Location> fl1, List<Location> fl2) {
@@ -61,12 +67,11 @@ public class Type3Opportunities implements Type3Calculation, CalculatesPercentag
 	}
 
 	private boolean checkType3Threshold(Location l1, Location l2) {
-		if(!(Settings.get().useLiteratureTypeDefinitions() || parentsEqual(l1.getLastNode().getParentNode(), l2.getFirstNode().getParentNode())))
+		if(!(settings.useLiteratureTypeDefinitions() || parentsEqual(l1.getLastNode().getParentNode(), l2.getFirstNode().getParentNode())))
 			return false;
 		int combinedSize = l1.getNumberOfNodes() + l2.getNumberOfNodes();
 		LocationContents diff = calculateDiffContents(l1, l2);
-		if(diff.getCompare().stream().anyMatch(e -> e instanceof CompareOutOfScope))
-			return false;
-		return calcPercentage(calculateDiff(diff), combinedSize) <= Settings.get().getType3GapSize();
+		if(diff.getCompare().stream().anyMatch(e -> e instanceof CompareOutOfScope)) return false;
+		return calcPercentage(calculateDiff(diff), combinedSize) <= settings.getType3GapSize();
 	}
 }

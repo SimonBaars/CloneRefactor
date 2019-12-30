@@ -1,6 +1,5 @@
 package com.simonbaars.clonerefactor.detection.type3;
 
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -21,12 +20,8 @@ public class Type3Location extends Location implements Type3Calculation{
 		super(clonedLocation);
 	}
 
-	public Type3Location(Path file, Range range) {
-		super(file, range);
-	}
-
 	public Type3Location(Location location, Location location2) {
-		super(location.getFile(), location.getRange());
+		super(location.getContents().settings, location.getFile(), location.getRange());
 		if(location.getRange().isBefore(location2.getRange().begin))
 			mergeLocations(location, location2);
 		else mergeLocations(location2, location);

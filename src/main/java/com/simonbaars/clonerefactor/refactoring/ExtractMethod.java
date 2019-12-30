@@ -49,6 +49,7 @@ import com.simonbaars.clonerefactor.core.util.SavePaths;
 import com.simonbaars.clonerefactor.datatype.map.CountMap;
 import com.simonbaars.clonerefactor.datatype.map.ListMap;
 import com.simonbaars.clonerefactor.datatype.map.SimpleTable;
+import com.simonbaars.clonerefactor.detection.interfaces.HasSettings;
 import com.simonbaars.clonerefactor.detection.metrics.ProblemType;
 import com.simonbaars.clonerefactor.detection.model.Sequence;
 import com.simonbaars.clonerefactor.detection.model.location.Location;
@@ -69,7 +70,7 @@ import com.simonbaars.clonerefactor.refactoring.target.ExtractToClassOrInterface
 import com.simonbaars.clonerefactor.settings.Settings;
 import com.simonbaars.clonerefactor.settings.progress.Progress;
 
-public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperations, DoesFileOperations, ResolvesFullyQualifiedIdentifiers {
+public class ExtractMethod extends HasSettings implements RequiresNodeContext, RequiresNodeOperations, DoesFileOperations, ResolvesFullyQualifiedIdentifiers {
 	private final PopulatesExtractedMethod[] populators = {new PopulateThrows(), new PopulateArguments(), new PopulateReturnValue(), new PopulateReturningFlow()};
 	private static final String METHOD_NAME = "cloneRefactor";
 	
@@ -89,13 +90,14 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 	
 	private final Set<Storage> modified = new HashSet<>();
 	
-	public ExtractMethod(Path projectRoot, Path root, List<CompilationUnit> compilationUnits, MetricCollector metricCollector) {
+	public ExtractMethod(Settings s, Path projectRoot, Path root, List<CompilationUnit> compilationUnits, MetricCollector metricCollector) {
+		super(s);
 		this.projectFolder = projectRoot;
 		this.sourceFolder = root; 
 		Path saveFolder = Paths.get(refactoringSaveFolder(false));
-		if(Settings.get().getRefactoringStrategy().copyAll() && !saveFolder.toFile().exists())
+		if(settings.getRefactoringStrategy().copyAll() && !saveFolder.toFile().exists())
 			copyFolder(projectFolder, saveFolder);
-		gitCommit = Settings.get().getRefactoringStrategy().usesGit() ? new GitChangeCommitter(saveFolder) : new GitChangeCommitter();
+		gitCommit = settings.getRefactoringStrategy().usesGit() ? new GitChangeCommitter(s, saveFolder) : new GitChangeCommitter();
 		this.compilationUnits = compilationUnits;
 		this.metricCollector = metricCollector;
 
@@ -169,13 +171,13 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 		saveNodes.addAll(methodcalls);
 		Collection<CompilationUnit> cus = getUniqueCompilationUnits(saveNodes);
 		cus.forEach(cu -> modified.add(cu.getStorage().get()));
-		if(Settings.get().getRefactoringStrategy().savesFiles())
+		if(settings.getRefactoringStrategy().savesFiles())
 			cus.forEach(this::save);
 	}
 
 	private void placeMethodOnBasisOfRelation(Sequence s, MethodDeclaration decl) {
 		Relation relation = s.getRelation();
-		if(Settings.get().getRefactoringStrategy().usesGit())
+		if(settings.getRefactoringStrategy().usesGit())
 			relation.getIntersectingClasses().forEach(c -> saveASTBeforeChange(getCompilationUnit(c).get()));
 		if(relation.isEffectivelyUnrelated())
 			createRelation(s, relation);
@@ -235,7 +237,7 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 	}
 	
 	private String refactoringSaveFolder(boolean sources) {
-		if(Settings.get().getRefactoringStrategy().originalLocation())
+		if(settings.getRefactoringStrategy().originalLocation())
 			return (sources ? sourceFolder : projectFolder).toString();
 		return SavePaths.getRefactorFolder(projectFolder.getFileName().toString(), sources ? outputSourceFolder() : "");
 	}
@@ -268,7 +270,7 @@ public class ExtractMethod implements RequiresNodeContext, RequiresNodeOperation
 	private Statement removeLowestNodes(Sequence s, List<Node> lowestNodes, String name) {
 		MethodCallExpr methodCallExpr = new MethodCallExpr(name);
 		Statement methodCallStmt = Arrays.stream(populators).map(p -> p.modifyMethodCall(s, methodCallExpr)).filter(Optional::isPresent).map(Optional::get).findAny().orElse(new ExpressionStmt(methodCallExpr));
-		if(Settings.get().getRefactoringStrategy().usesGit())
+		if(settings.getRefactoringStrategy().usesGit())
 			saveASTBeforeChange(getCompilationUnit(lowestNodes.get(0)).get());
 		placeMethodCall(lowestNodes, methodCallStmt);
 		return methodCallStmt;

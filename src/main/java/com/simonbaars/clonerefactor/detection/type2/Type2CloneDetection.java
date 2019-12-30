@@ -7,14 +7,17 @@ import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 import com.simonbaars.clonerefactor.datatype.map.ListMap;
-import com.simonbaars.clonerefactor.detection.interfaces.ChecksThresholds;
+import com.simonbaars.clonerefactor.detection.interfaces.HasSettings;
 import com.simonbaars.clonerefactor.detection.type2.model.Type2Location;
 import com.simonbaars.clonerefactor.detection.type2.model.Type2Sequence;
+import com.simonbaars.clonerefactor.settings.Settings;
 
-public class Type2CloneDetection implements ChecksThresholds {
+public class Type2CloneDetection extends HasSettings {
 	final List<Type2Sequence> clones = new ArrayList<>();
 
-	public Type2CloneDetection() {}
+	public Type2CloneDetection(Settings settings) {
+		super(settings);
+	}
 
 	public List<Type2Sequence> findChains(Type2Location lastLoc) {
 		for(Type2Sequence buildingChains = new Type2Sequence(); lastLoc!=null; lastLoc = lastLoc.getPrev()) {
@@ -29,7 +32,7 @@ public class Type2CloneDetection implements ChecksThresholds {
 	
 	public List<Type2Sequence> tryToExpand(List<Type2Sequence> clones){
 		for(int i = 0; i<clones.size(); i++)
-			clones.get(i).tryToExpand(clones);
+			clones.get(i).tryToExpand(this::checkType2VariabilityThreshold, clones);
 		return clones;
 	}
 
@@ -92,7 +95,7 @@ public class Type2CloneDetection implements ChecksThresholds {
 	}
 
 	private Type2Sequence collectClones(Type2Location lastLoc) {
-		return new Type2Sequence(lastLoc.getFirstContents().getStatementsWithinThreshold());
+		return new Type2Sequence(lastLoc.getFirstContents().getStatementsWithinThreshold(this::checkType2VariabilityThreshold));
 	}
 }
 

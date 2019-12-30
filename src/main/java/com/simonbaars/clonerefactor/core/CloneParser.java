@@ -45,15 +45,17 @@ public class CloneParser implements SetsIfNotNull, RemovesDuplicates, WritesErro
 	private final Path projectRoot;
 	private final SourceRoot sourceRoot;
 	private final ParserConfiguration config;
+	private final Settings settings;
 
-	public CloneParser(Path projectRoot, SourceRoot sourceRoot, ParserConfiguration config) {
+	public CloneParser(Path projectRoot, SourceRoot sourceRoot, ParserConfiguration config, Settings settings) {
 		this.projectRoot = projectRoot;
 		this.sourceRoot = sourceRoot;
 		this.config = config;
+		this.settings = settings;
 	}
 	
 	public DetectionResults parse(JavaParserTypeSolver javaParserTypeSolver) {
-		final Progress progress = new Progress(sourceRoot.getRoot());
+		final Progress progress = new Progress(settings, sourceRoot.getRoot());
 		final List<CompilationUnit> compilationUnits = createAST(progress, javaParserTypeSolver);
 		return parseProject(compilationUnits, progress);
 	}
@@ -69,7 +71,7 @@ public class CloneParser implements SetsIfNotNull, RemovesDuplicates, WritesErro
 			if(lastLoc!=null) {
 				List<Sequence> findChains = detectClones(progress, metricCollector, beginTime, seqObservable, lastLoc);
 				DetectionResults res = new DetectionResults(metricCollector.reportClones(findChains, progress), findChains);
-				if(Settings.get().getRefactoringStrategy() != RefactoringStrategy.DONOTREFACTOR)
+				if(settings.getRefactoringStrategy() != RefactoringStrategy.DONOTREFACTOR)
 					refactorClones(compilationUnits, progress, metricCollector, findChains, res);
 				return res;
 			} else throw new IllegalStateException("Project has no usable sources!");
@@ -81,7 +83,7 @@ public class CloneParser implements SetsIfNotNull, RemovesDuplicates, WritesErro
 	private List<Sequence> detectClones(Progress progress, MetricCollector metricCollector, long beginTime,
 			SequenceObservable seqObservable, Location lastLoc) {
 		progress.nextStage(metricCollector.getMetrics().generalStats.get("Total Nodes"));
-		List<Sequence> findChains = new CloneDetection(seqObservable).findChains(lastLoc, progress);
+		List<Sequence> findChains = new CloneDetection(settings, seqObservable).findChains(lastLoc, progress);
 		doTypeSpecificTransformations(findChains);
 		metricCollector.getMetrics().generalStats.increment("Detection time", interval(beginTime));
 		progress.nextStage(findChains.size());
@@ -91,7 +93,7 @@ public class CloneParser implements SetsIfNotNull, RemovesDuplicates, WritesErro
 	private void refactorClones(final List<CompilationUnit> compilationUnits, Progress progress,
 			MetricCollector metricCollector, List<Sequence> findChains, DetectionResults res) {
 		progress.nextStage();
-		ExtractMethod extractMethod = new ExtractMethod(projectRoot, sourceRoot.getRoot(), compilationUnits, metricCollector);
+		ExtractMethod extractMethod = new ExtractMethod(settings, projectRoot, sourceRoot.getRoot(), compilationUnits, metricCollector);
 		extractMethod.refactor(findChains, progress);
 		res.getRefactorResults().addAll(extractMethod.getRes());
 		metricCollector.resetMetrics();
@@ -116,14 +118,13 @@ public class CloneParser implements SetsIfNotNull, RemovesDuplicates, WritesErro
 
 	private void doTypeSpecificTransformations(List<Sequence> findChains) {
 		doType2Transformations(findChains); 
-		if (Settings.get().getCloneType().isType3())
-			new Type3Opportunities().determineType3Opportunities(findChains);
+		if (settings.getCloneType().isType3()) new Type3Opportunities(settings).determineType3Opportunities(findChains);
 	}
 
 	private void doType2Transformations(List<Sequence> findChains) {
-		if(Settings.get().getCloneType().isNotType1() && !Settings.get().useLiteratureTypeDefinitions()) {
+		if(settings.getCloneType().isNotType1() && !settings.useLiteratureTypeDefinitions()) {
 			IntStream.range(0, findChains.size()).forEach(i -> {
-				List<Sequence> determineVariability = new Type2Variability().determineVariability(findChains.remove(0));
+				List<Sequence> determineVariability = new Type2Variability(settings).determineVariability(findChains.remove(0));
 				for(Sequence s : determineVariability) {
 					if(removeDuplicatesOf(findChains, s) && s.size()>1)
 						findChains.add(s);
@@ -133,7 +134,7 @@ public class CloneParser implements SetsIfNotNull, RemovesDuplicates, WritesErro
 	}
 
 	private final Location calculateLineReg(MetricCollector metricCollector, List<CompilationUnit> compilationUnits, SequenceObservable seqObservable, Progress progress) {
-		NodeParser astParser = new NodeParser(metricCollector, seqObservable);
+		NodeParser astParser = new NodeParser(settings, metricCollector, seqObservable);
 		Location l = null;
 		for(CompilationUnit cu : compilationUnits) {
 			l = astParser.extractLinesFromAST(l, cu, cu);

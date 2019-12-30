@@ -60,4 +60,8 @@ public class PatternSequence implements HasSize {
 		PatternSequence other = (PatternSequence) obj;
 		return locations == null ? other.locations == null : locations.equals(other.locations);
 	}
+	
+	public int getCountedLineSize() {
+		return locations.stream().mapToInt(e -> e.lines().size()).sum();
+	}
 }

@@ -18,20 +18,12 @@ public class PatternLocation extends Location {
 		super(clonedLocation);
 	}
 
-	public PatternLocation(Path file, Range range) {
-		super(file, range);
-	}
-
 	public PatternLocation(Location clonedLocation, Range r) {
 		super(clonedLocation, r);
 	}
 
 	public PatternLocation(Path path, Location prevLocation, Node n) {
 		super(path, prevLocation, n);
-	}
-
-	public PatternLocation(Path file, Node... nodes) {
-		super(file, nodes);
 	}
 
 	public void setComponents(List<Location> locations) {

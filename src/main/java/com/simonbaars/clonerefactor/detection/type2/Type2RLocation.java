@@ -31,14 +31,6 @@ public class Type2RLocation extends Location {
 		super(path, prevLocation, n);
 	}
 
-	public Type2RLocation(Path file, Node... nodes) {
-		super(file, nodes);
-	}
-
-	public Type2RLocation(Path file, Range range) {
-		super(file, range);
-	}
-
 	public Set<Expression> getDiffExpressions() {
 		return diffExpressions;
 	}

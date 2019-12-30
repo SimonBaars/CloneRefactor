@@ -6,9 +6,8 @@ import java.text.DecimalFormatSymbols;
 import java.util.Locale;
 
 import com.simonbaars.clonerefactor.detection.interfaces.CalculatesPercentages;
-import com.simonbaars.clonerefactor.detection.interfaces.ChecksThresholds;
 
-public class WeightedPercentage implements CalculatesPercentages, ChecksThresholds {
+public class WeightedPercentage implements CalculatesPercentages {
 	private final double percentage;
 	private final int weight;
 	
@@ -41,9 +40,5 @@ public class WeightedPercentage implements CalculatesPercentages, ChecksThreshol
 		DecimalFormat formatter = new DecimalFormat("#.##", DecimalFormatSymbols.getInstance( Locale.ENGLISH ));
 		formatter.setRoundingMode( RoundingMode.HALF_UP );
 		return formatter.format(percentage);
-	}
-	
-	public boolean check() {
-		return checkType2VariabilityThreshold(percentage);
 	}
 }

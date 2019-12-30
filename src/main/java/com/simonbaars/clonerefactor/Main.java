@@ -18,6 +18,7 @@ import com.github.javaparser.utils.SourceRoot;
 import com.simonbaars.clonerefactor.core.CloneParser;
 import com.simonbaars.clonerefactor.core.util.NoJavaFilesFoundException;
 import com.simonbaars.clonerefactor.detection.model.DetectionResults;
+import com.simonbaars.clonerefactor.settings.Settings;
 
 public class Main {
 
@@ -38,10 +39,14 @@ public class Main {
 	}
 	
 	public static DetectionResults cloneDetection(Path path, Path sourceRoot) {
+		return cloneDetection(Settings.get(), path, sourceRoot);
+	}
+	
+	public static DetectionResults cloneDetection(Settings settings, Path path, Path sourceRoot) {
 		JavaParserTypeSolver javaParserTypeSolver = new JavaParserTypeSolver(sourceRoot);
 		final ParserConfiguration config = createParseConfig(path, sourceRoot, javaParserTypeSolver);
         SourceRoot root = new SourceRoot(sourceRoot);
-		return new CloneParser(path, root, config).parse(javaParserTypeSolver);
+		return new CloneParser(path, root, config, settings).parse(javaParserTypeSolver);
 	}
 
 	public static ParserConfiguration createParseConfig(Path path, Path sourceRoot, JavaParserTypeSolver javaParserTypeSolver) {

@@ -26,11 +26,9 @@ public class GitChangeCommitter implements RequiresNodeContext {
 		this.git = null;
 	}
 	
-	public GitChangeCommitter(Path path) {
+	public GitChangeCommitter(Settings s, Path path) {
 		Optional<Repository> opt = createRepo(path);
-		if(!opt.isPresent()) {
-			Settings.get().setRefactoringStrategy(Settings.get().getRefactoringStrategy().revertToNonGit());
-		}
+		if(!opt.isPresent()) s.setRefactoringStrategy(s.getRefactoringStrategy().revertToNonGit());
 		repo = opt.orElse(null);
 		if(opt.isPresent()) {
 			git = new Git(repo);

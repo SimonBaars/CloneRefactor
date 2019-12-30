@@ -9,6 +9,7 @@ import com.github.javaparser.Range;
 import com.github.javaparser.ast.Node;
 import com.simonbaars.clonerefactor.context.analyze.CloneLocation;
 import com.simonbaars.clonerefactor.context.enums.LocationType;
+import com.simonbaars.clonerefactor.settings.Settings;
 
 public class Location implements Comparable<Location>, HasRange {
 	private final Path file;
@@ -27,10 +28,10 @@ public class Location implements Comparable<Location>, HasRange {
 		this(clonedLocation, clonedLocation.range);
 	}
 	
-	public Location(Path file, Range r) {
+	public Location(Settings s, Path file, Range r) {
 		this.file = file;
 		this.range = r;
-		this.contents = new LocationContents(r);
+		this.contents = new LocationContents(s, r);
 	}
 
 	public Location(Path file, LocationContents contents) {
@@ -41,7 +42,7 @@ public class Location implements Comparable<Location>, HasRange {
 
 	public Location(Location clonedLocation, Range r) {
 		this.file = clonedLocation.file;
-		this.contents = new LocationContents(clonedLocation.contents, r);
+		this.contents = new LocationContents(clonedLocation.contents.settings, clonedLocation.contents, r);
 		this.range = r;
 		this.prev = clonedLocation.prev;
 		this.clone = clonedLocation.clone;
@@ -65,13 +66,13 @@ public class Location implements Comparable<Location>, HasRange {
 	}
 
 	public Location(Path path, Location prevLocation, Node n) {
-		this(path, n);
+		this(prevLocation.contents.settings, path, n);
 		this.prev = prevLocation;
 	}
 
-	public Location(Path file, Node...nodes) {
+	public Location(Settings s, Path file, Node...nodes) {
 		this.file = file;
-		this.contents = new LocationContents(nodes);
+		this.contents = new LocationContents(s, nodes);
 		this.range = this.contents.getRange();
 	}
 

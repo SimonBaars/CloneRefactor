@@ -17,6 +17,7 @@ import com.simonbaars.clonerefactor.context.analyze.CloneContents;
 import com.simonbaars.clonerefactor.context.enums.ContentsType;
 import com.simonbaars.clonerefactor.context.interfaces.RequiresNodeContext;
 import com.simonbaars.clonerefactor.datatype.map.ListMap;
+import com.simonbaars.clonerefactor.detection.interfaces.HasSettings;
 import com.simonbaars.clonerefactor.graph.compare.Compare;
 import com.simonbaars.clonerefactor.graph.compare.CompareLiteral;
 import com.simonbaars.clonerefactor.graph.compare.CompareMethodCall;
@@ -28,7 +29,7 @@ import com.simonbaars.clonerefactor.graph.interfaces.HasCompareList;
 import com.simonbaars.clonerefactor.settings.Scope;
 import com.simonbaars.clonerefactor.settings.Settings;
 
-public class LocationContents implements HasRange, HasCompareList, RequiresNodeContext, CalculatesLineSize
+public class LocationContents extends HasSettings implements HasRange, HasCompareList, RequiresNodeContext, CalculatesLineSize
 {
 	private Range range;
 	private final List<Node> nodes;
@@ -37,46 +38,44 @@ public class LocationContents implements HasRange, HasCompareList, RequiresNodeC
 	
 	private ContentsType contentsType;
 	
-	public LocationContents() {
+	public LocationContents(Settings settings) {
+		super(settings);
 		this.nodes = new ArrayList<>();
 		this.tokens = new ArrayList<>();
 		this.compare = new ArrayList<>();
 	}
 
-	public LocationContents(LocationContents contents) {
-		this(contents, contents.range);
+	public LocationContents(Settings settings, LocationContents contents) {
+		this(settings, contents, contents.range);
 	}
 
-	public LocationContents(Node...nodes) {
+	public LocationContents(Settings settings, Node...nodes) {
+		this(settings);
 		if(nodes.length == 0) throw new IllegalStateException("Must have at least one node!");
-		this.nodes = new ArrayList<>();
-		this.tokens = new ArrayList<>();
-		this.compare = new ArrayList<>();
 		for(Node n : nodes) {
 			List<JavaToken> nodeTokens = calculateTokensFromNode(n);
 			this.tokens.addAll(nodeTokens);
 			this.nodes.add(n);
-			if(Settings.get().getScope()!=Scope.ALL && (!getMethod(n).isPresent() || (Settings.get().getScope() == Scope.METHODBODYONLY && n instanceof MethodDeclaration)))
+			if(settings.getScope()!=Scope.ALL && (!getMethod(n).isPresent() || (settings.getScope() == Scope.METHODBODYONLY && n instanceof MethodDeclaration)))
 				this.compare.add(new CompareOutOfScope(getRange(n)));
-			else if(!Settings.get().useLiteratureTypeDefinitions()) createComparablesByNode(tokens, n);
-			else this.compare.add(new CompareTokens(filterTokensForCompare(nodeTokens), getRange(nodeTokens)));
+			else if(!settings.useLiteratureTypeDefinitions()) createComparablesByNode(settings, tokens, n);
+			else this.compare.add(new CompareTokens(filterTokensForCompare(settings.getCloneType(), nodeTokens), getRange(nodeTokens)));
 		}
 		determineRange();
 	}
 
-	public LocationContents(LocationContents contents, Range r) {
+	public LocationContents(Settings settings, LocationContents contents, Range r) {
 		//if(contents.nodes.isEmpty()) throw new IllegalStateException("Must have at least one node!");
+		super(settings);
 		this.range = r;
 		this.nodes = new ArrayList<>(contents.getNodes());
 		this.tokens = new ArrayList<>(contents.getTokens());
 		this.compare = new ArrayList<>(contents.getCompare());
 	}
 
-	public LocationContents(Range r) {
+	public LocationContents(Settings s, Range r) {
+		this(s);
 		this.range = r;
-		this.nodes = new ArrayList<>();
-		this.tokens = new ArrayList<>();
-		this.compare = new ArrayList<>();
 	}
 
 	public List<Node> getNodes() {

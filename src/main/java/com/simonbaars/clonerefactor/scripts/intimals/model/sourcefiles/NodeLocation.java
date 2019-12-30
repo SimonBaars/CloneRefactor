@@ -9,7 +9,7 @@ public class NodeLocation extends Location {
 	private int id;
 	
 	public NodeLocation(int nodeId, String file, Range range) {
-		super(Paths.get(file), range);
+		super(null, Paths.get(file), range);
 		this.id = nodeId;
 	}
 

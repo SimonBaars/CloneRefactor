@@ -161,4 +161,8 @@ public class Sequence implements Comparable<Sequence>, HasSize {
 	public int getTokenSize() {
 		return getAny().getNumberOfTokens();
 	}
+
+	public int getCountedLineSize() {
+		return getTotalVolume(e -> e.lines().size());
+	}
 }

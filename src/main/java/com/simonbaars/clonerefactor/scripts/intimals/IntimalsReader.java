@@ -36,7 +36,7 @@ public class IntimalsReader {
 	}
 	
 	private String getMatchesLoc(int clusterNum) {
-		return "/Users/sbaars/Documents/Kim/repos_folds_results/jhotdraw-"+NUMBER_OF_FOLDS+"-fold/fold_"+clusterNum+"-5-patterns.xml";
+		return "/Users/sbaars/Documents/Kim/repos_folds_results/jhotdraw-"+NUMBER_OF_FOLDS+"-folds/fold_"+clusterNum+"-5-matches.xml";
 	}
 	
 	public static void main(String[] args) {
@@ -115,9 +115,8 @@ public class IntimalsReader {
 	        if (currentNode.getNodeType() == Node.ELEMENT_NODE) {
 	            Element e = (Element)currentNode;
 	            String id = e.getAttribute("ID");
-	            if(id!=null && !id.isEmpty()) {
-	            	file.getSourceLocations().put(Integer.parseInt(id), new Location(filePath, new Range(new Position(Integer.parseInt(e.getAttribute("LineNr")), Integer.parseInt(e.getAttribute("ColNr"))), new Position(Integer.parseInt(e.getAttribute("EndLineNr")), Integer.parseInt(e.getAttribute("EndColNr"))))));
-	            }
+	            if(id!=null && !id.isEmpty()) 
+	            	file.getSourceLocations().put(Integer.parseInt(id), new Location(null, filePath, new Range(new Position(Integer.parseInt(e.getAttribute("LineNr")), Integer.parseInt(e.getAttribute("ColNr"))), new Position(Integer.parseInt(e.getAttribute("EndLineNr")), Integer.parseInt(e.getAttribute("EndColNr"))))));
 	            collectLocations(filePath, file, currentNode);
 	        }
 	    }
@@ -132,11 +131,8 @@ public class IntimalsReader {
 				Element element = (Element)node;
 				Match match = new Match(element.getAttribute("FullName"), parseNodes(element.getElementsByTagName("node")));
 				int id = Integer.parseInt(element.getAttribute("PatternID"));
-				Pattern pattern = patterns.stream().filter(e -> e.getId() == id).findAny().orElse(null);
-				if(pattern == null) {
-					pattern = new Pattern(id);
-					patterns.add(pattern);
-				}
+				Pattern pattern = patterns.stream().filter(e -> e.getId() == id).findAny().orElse(new Pattern(id));
+				if(!patterns.contains(pattern)) patterns.add(pattern);
 				pattern.getMatches().add(match);
 			}
 		}

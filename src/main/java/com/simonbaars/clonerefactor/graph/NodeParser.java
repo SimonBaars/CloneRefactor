@@ -11,6 +11,7 @@ import com.github.javaparser.ast.PackageDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.stmt.BlockStmt;
 import com.github.javaparser.ast.stmt.LocalClassDeclarationStmt;
+import com.simonbaars.clonerefactor.detection.interfaces.HasSettings;
 import com.simonbaars.clonerefactor.detection.metrics.ProblemType;
 import com.simonbaars.clonerefactor.detection.metrics.SequenceObservable;
 import com.simonbaars.clonerefactor.detection.metrics.calculators.CyclomaticComplexityCalculator;
@@ -23,13 +24,15 @@ import com.simonbaars.clonerefactor.detection.model.location.LocationContents;
 import com.simonbaars.clonerefactor.graph.interfaces.DeterminesNodeTokens;
 import com.simonbaars.clonerefactor.graph.interfaces.SetsIfNotNull;
 import com.simonbaars.clonerefactor.metrics.MetricCollector;
+import com.simonbaars.clonerefactor.settings.Settings;
 
-public class NodeParser implements SetsIfNotNull, DeterminesNodeTokens {
+public class NodeParser extends HasSettings implements SetsIfNotNull, DeterminesNodeTokens {
 	private final Map<LocationContents, Location> lineReg = new HashMap<>();
 	private final MetricCollector metricCollector;
 	private final SequenceObservable seqObservable;
 	
-	public NodeParser(MetricCollector metricCollector, SequenceObservable seqObservable) {
+	public NodeParser(Settings s, MetricCollector metricCollector, SequenceObservable seqObservable) {
+		super(s);
 		this.metricCollector = metricCollector;
 		this.seqObservable = seqObservable;
 	}
@@ -50,7 +53,7 @@ public class NodeParser implements SetsIfNotNull, DeterminesNodeTokens {
 	
 	
 	private void collectAlternateMetrics(MethodDeclaration n, CompilationUnit cu) {	
-		final Location l = new Location(cu.getStorage().get().getPath(), n.getRange().get());
+		final Location l = new Location(settings, cu.getStorage().get().getPath(), n.getRange().get());
 		Sequence sequence = new Sequence(Collections.singletonList(l));
 		l.getContents().getNodes().add(n);
 		l.getContents().setTokens(n.getTokenRange().get());

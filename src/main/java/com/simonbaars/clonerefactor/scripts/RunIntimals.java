@@ -1,4 +1,4 @@
-package com.simonbaars.clonerefactor.types;
+package com.simonbaars.clonerefactor.scripts;
 
 import java.io.File;
 import java.io.IOException;
@@ -10,10 +10,11 @@ import java.util.stream.Collectors;
 import com.simonbaars.clonerefactor.Main;
 import com.simonbaars.clonerefactor.context.enums.LocationType;
 import com.simonbaars.clonerefactor.context.enums.RelationType;
+import com.simonbaars.clonerefactor.core.util.DoesFileOperations;
 import com.simonbaars.clonerefactor.core.util.SavePaths;
 import com.simonbaars.clonerefactor.datatype.map.CountMap;
 import com.simonbaars.clonerefactor.detection.model.DetectionResults;
-import com.simonbaars.clonerefactor.helper.Type1Test;
+import com.simonbaars.clonerefactor.metrics.Metrics;
 import com.simonbaars.clonerefactor.refactoring.enums.RefactoringStrategy;
 import com.simonbaars.clonerefactor.scripts.intimals.IntimalsReader;
 import com.simonbaars.clonerefactor.scripts.intimals.model.PatternSequence;
@@ -22,53 +23,15 @@ import com.simonbaars.clonerefactor.scripts.intimals.similarity.MatchType;
 import com.simonbaars.clonerefactor.scripts.intimals.similarity.Similarity;
 import com.simonbaars.clonerefactor.settings.CloneType;
 import com.simonbaars.clonerefactor.settings.Settings;
+import com.simonbaars.clonerefactor.thread.CalculatesTimeIntervals;
+import com.simonbaars.clonerefactor.thread.ThreadPool;
+import com.simonbaars.clonerefactor.thread.WritesErrors;
 
-public class JHotDraw extends Type1Test {
-	public JHotDraw(String testName) {
-		super(testName);
-	}
+public class RunIntimals implements DoesFileOperations, WritesErrors, CalculatesTimeIntervals {
 
-	/*public void testJHotDraw() {
-		MetricsTable tables = new MetricsTable();
-		for(CloneType type : CloneType.values()) {
-			Settings.get().setCloneType(type);
-			SavePaths.genTimestamp();
-			Settings.get().setRefactoringStrategy(RefactoringStrategy.DONOTREFACTOR);
-	    	System.out.println("JHotDraw");
-	    	String path = "/Users/sbaars/Documents/Kim/jhotdraw/";
-	    	System.out.println(Settings.get());
-			DetectionResults cloneDetection = Main.cloneDetection(Paths.get(path), Paths.get(path+"src/"));
-			cloneDetection.sorted();
-			tables.reportMetrics(type.getNicelyFormatted(), cloneDetection.getMetrics());
-			try {
-				writeStringToFile(new File(SavePaths.getMyOutputFolder()+"refactor.txt"), cloneDetection.getRefactorResults().toString());
-				writeStringToFile(new File(SavePaths.getMyOutputFolder()+type.getNicelyFormatted()+".txt"), cloneDetection.toString());
-				writeStringToFile(new File(SavePaths.getMyOutputFolder()+"settings.txt"), Settings.get().toString());
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
+	public static void main(String[] args) {
+		new RunIntimals().run();
 	}
-	
-	public void type3() {
-		MetricsTable tables = new MetricsTable();
-		Settings.get().setCloneType(CloneType.TYPE3);
-		SavePaths.genTimestamp();
-		Settings.get().setRefactoringStrategy(RefactoringStrategy.DONOTREFACTOR);
-		System.out.println("JHotDraw");
-		String path = "/Users/sbaars/Documents/Kim/jhotdraw/";
-		System.out.println(Settings.get());
-		DetectionResults cloneDetection = Main.cloneDetection(Paths.get(path), Paths.get(path+"src/"));
-		cloneDetection.sorted();
-		tables.reportMetrics(CloneType.TYPE3.getNicelyFormatted(), cloneDetection.getMetrics());
-		try {
-			writeStringToFile(new File(SavePaths.getMyOutputFolder()+"refactor.txt"), cloneDetection.getRefactorResults().toString());
-			writeStringToFile(new File(SavePaths.getMyOutputFolder()+CloneType.TYPE3.getNicelyFormatted()+".txt"), cloneDetection.toString());
-			writeStringToFile(new File(SavePaths.getMyOutputFolder()+"settings.txt"), Settings.get().toString());
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}*/
 	
 	public void type3Similarity(List<PatternSequence> patterns) {
 		Settings.get().setCloneType(CloneType.TYPE3);
@@ -102,6 +65,7 @@ public class JHotDraw extends Type1Test {
 		String patternSizes = patterns.stream().map(e -> Integer.toString(e.getCountedLineSize())).collect(Collectors.joining(System.lineSeparator()));
 		List<Similarity> allSimilarity = new ArrayList<>(cloneToPattern);
 		allSimilarity.addAll(patternToClone);
+		SavePaths.genTimestamp();
 		try {
 			writeStringToFile(new File(SavePaths.getMyOutputFolder()+"cloneToPatternSimilarityPerc.txt"), cloneToPatternSimilarityPerc.toString());
 			writeStringToFile(new File(SavePaths.getMyOutputFolder()+"patternToCloneSimilarityPerc.txt"), patternToCloneSimilarityPerc.toString());
@@ -115,15 +79,13 @@ public class JHotDraw extends Type1Test {
 			writeStringToFile(new File(SavePaths.getMyOutputFolder()+"patternToCloneMatchType.txt"), patternToCloneMatchType.toString());
 			writeStringToFile(new File(SavePaths.getMyOutputFolder()+"cloneSizes.txt"), cloneSizes);
 			writeStringToFile(new File(SavePaths.getMyOutputFolder()+"patternSizes.txt"), patternSizes);
-			writeStringToFile(new File(SavePaths.getMyOutputFolder()+"sim.txt"), "Similarity = "+allSimilarity.stream().mapToDouble(e -> e.similarityPercentage()).average().getAsDouble());
+			writeStringToFile(new File(SavePaths.getMyOutputFolder()+"res.txt"), Settings.get() + System.lineSeparator() + "Similarity = "+allSimilarity.stream().mapToDouble(e -> e.similarityPercentage()).average().getAsDouble()+System.lineSeparator()+"Size = "+cloneDetection.getClones().size()+" clones vs "+patterns.size()+" patterns.");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		System.out.println("Similarity = "+allSimilarity.stream().mapToDouble(e -> e.similarityPercentage()).average().getAsDouble());
-		System.out.println("Size = "+cloneDetection.getClones().size()+" clones vs "+patterns.size()+" patterns.");
 	}
 	
-	public void type3Similarities() {
+	public void run() {
 		List<PatternSequence> patterns = new IntimalsReader().loadIntimalsClones();
 		for(double gapSize = 0D; gapSize<=1000D; gapSize+=20D) {
 			Settings.get().setType3GapSize(gapSize);
@@ -134,5 +96,39 @@ public class JHotDraw extends Type1Test {
 			}
 		}
 	}
-}
 	
+	public Metrics calculateMetricsForCorpus() {
+		try {
+			System.out.println(Settings.get());
+			SavePaths.genTimestamp();
+			System.out.println("Saving results in "+SavePaths.getMyOutputFolder());
+			ThreadPool threadPool = new ThreadPool();
+			File[] corpusFiles = new File(SavePaths.getApplicationDataFolder()+"git").listFiles();
+			writeSettings();
+			long startTime = System.currentTimeMillis();
+			analyzeAllProjects(threadPool, corpusFiles);
+			threadPool.finishFinalThreads();
+			threadPool.getFullMetrics().generalStats.increment("Total Duration", interval(startTime));
+			return threadPool.getFullMetrics();
+		} catch (Exception e) {
+			writeError(SavePaths.getMyOutputFolder()+"terminate", e);
+		}
+		return null;
+	}
+	
+	private void writeSettings() {
+		try {
+			writeStringToFile(new File(SavePaths.getMyOutputFolder()+"settings.txt"), Settings.get().toString());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private void analyzeAllProjects(ThreadPool threadPool, File[] corpusFiles) {
+		for(int i = 0; i<corpusFiles.length; i++) {
+			System.out.println(threadPool.showContents()+" ("+(i+1)+"/"+corpusFiles.length+")");
+			if(!threadPool.anyNull()) threadPool.waitForThreadToFinish();
+			threadPool.addToAvailableThread(corpusFiles[i]);
+		}
+	}
+}
