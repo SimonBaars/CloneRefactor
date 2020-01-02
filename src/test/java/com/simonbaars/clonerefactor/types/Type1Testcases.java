@@ -12,7 +12,6 @@ import com.simonbaars.clonerefactor.scripts.model.MetricsTable;
 import com.simonbaars.clonerefactor.settings.CloneType;
 import com.simonbaars.clonerefactor.settings.Scope;
 import com.simonbaars.clonerefactor.settings.Settings;
-import com.simonbaars.clonerefactor.thread.CorpusThread;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
@@ -130,7 +129,7 @@ public class Type1Testcases extends Type1Test {
 		Settings.get().setCloneType(CloneType.TYPE1R);
     }
     
-    public void testThread() {
+   /* public void testThread() {
     	System.out.println("custom2");
     	CorpusThread t = new CorpusThread(new File("/Users/sbaars/clone/java_projects/gatein-forge-plugin/src/main/java/"));
     	while(t.isAlive())
@@ -139,7 +138,7 @@ public class Type1Testcases extends Type1Test {
 			} catch (InterruptedException e) {
 				Thread.currentThread().interrupt();
 			}
-    }
+    }*/
     
     /**
      * Test for clones that consist of lines that do not occur elsewhere.

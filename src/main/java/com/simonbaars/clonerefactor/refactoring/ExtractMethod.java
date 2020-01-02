@@ -117,8 +117,7 @@ public class ExtractMethod extends HasSettings implements RequiresNodeContext, R
 				metricCollector.reassessRelation(s);
 			String extractedMethod = extractMethod(s);
 			metricCollector.getMetrics().generalStats.increment("Amount Refactored");
-			if(gitCommit.doCommit())
-				gitCommit.commit(extractedMethod);
+			if(gitCommit.doCommit()) gitCommit.commit(extractedMethod);
 		}
 	}
 

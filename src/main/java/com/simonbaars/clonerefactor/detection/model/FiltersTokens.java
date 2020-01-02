@@ -12,7 +12,6 @@ import com.github.javaparser.JavaToken.Category;
 import com.github.javaparser.TokenRange;
 import com.github.javaparser.ast.Node;
 import com.simonbaars.clonerefactor.settings.CloneType;
-import com.simonbaars.clonerefactor.settings.Settings;
 
 public interface FiltersTokens {
 	public static final Category[] NO_TOKEN = {Category.COMMENT, Category.EOL, Category.WHITESPACE_NO_EOL};

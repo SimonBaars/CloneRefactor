@@ -14,11 +14,12 @@ import com.simonbaars.clonerefactor.core.util.DoesFileOperations;
 import com.simonbaars.clonerefactor.core.util.SavePaths;
 import com.simonbaars.clonerefactor.datatype.map.SimpleTable;
 import com.simonbaars.clonerefactor.metrics.Metrics;
+import com.simonbaars.clonerefactor.settings.Settings;
 
 public class ThreadPool implements WritesErrors, CalculatesTimeIntervals, DoesFileOperations {
 	private final File OUTPUT_FOLDER = new File(SavePaths.getFullOutputFolder());
 	private final File FULL_METRICS = new File(OUTPUT_FOLDER.getParent()+"/metrics.txt");
-	private final int NUMBER_OF_THREADS = 1;
+	private int numberOfThreads = 4;
 	private final int THREAD_TIMEOUT = 60000000;
 	private final Metrics fullMetrics = new Metrics();
 	private final SimpleTable refactorResults = new SimpleTable("System", "Nodes", "Tokens", "Relation", "Returns", "Arguments", "Duplication", "Complexity", "Interface Size", "Size", "Duplication (nodes)", "Size (nodes)");
@@ -26,7 +27,13 @@ public class ThreadPool implements WritesErrors, CalculatesTimeIntervals, DoesFi
 	private final List<Optional<CorpusThread>> threads;
 	
 	public ThreadPool () {
-		threads = new ArrayList<>(Collections.nCopies(NUMBER_OF_THREADS, Optional.empty()));
+		threads = new ArrayList<>(Collections.nCopies(numberOfThreads, Optional.empty()));
+		OUTPUT_FOLDER.mkdirs();
+	}
+	
+	public ThreadPool (int numberOfThreads) {
+		this.numberOfThreads = numberOfThreads;
+		threads = new ArrayList<>(Collections.nCopies(numberOfThreads, Optional.empty()));
 		OUTPUT_FOLDER.mkdirs();
 	}
 
@@ -61,19 +68,25 @@ public class ThreadPool implements WritesErrors, CalculatesTimeIntervals, DoesFi
 		if(freeMemoryPercentage()<15)
 			clearThreadObjects();
 	}
-
-	public void addToAvailableThread(File file) {
-		replaceFinishedThread(Optional.of(new CorpusThread(file)));
+	
+	public Optional<CorpusThread> addToAvailableThread(Settings settings, File file, File sourceRoot) {
+		System.out.println(settings);
+		return replaceFinishedThread(Optional.of(new CorpusThread(settings, file, sourceRoot)));
 	}
 
-	private void replaceFinishedThread(Optional<CorpusThread> t) {
+	public Optional<CorpusThread> addToAvailableThread(File file) {
+		return addToAvailableThread(Settings.get(), file, new File(file.getAbsolutePath()+"/src/main/java"));
+	}
+
+	private Optional<CorpusThread> replaceFinishedThread(Optional<CorpusThread> t) {
 		for(int i = 0; i<threads.size(); i++) {
 			if((!threads.get(i).isPresent() && t.isPresent()) || (threads.get(i).isPresent() && !threads.get(i).get().isAlive())) {
 				writePreviousThreadResults(i);
 				threads.set(i, t);
-				break;
+				return threads.get(i);
 			}
 		}
+		throw new IllegalStateException("No thread to be replaced!");
 	}
 	
 	private void clearThreadObjects() {
@@ -133,7 +146,7 @@ public class ThreadPool implements WritesErrors, CalculatesTimeIntervals, DoesFi
 	}
 	
 	public boolean anyNull() {
-		return validElements().count() != NUMBER_OF_THREADS;
+		return validElements().count() != numberOfThreads;
 	}
 	
 	public boolean allNull() {

@@ -2,12 +2,11 @@ package com.simonbaars.clonerefactor.scripts;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
-import com.simonbaars.clonerefactor.Main;
 import com.simonbaars.clonerefactor.context.enums.LocationType;
 import com.simonbaars.clonerefactor.context.enums.RelationType;
 import com.simonbaars.clonerefactor.core.util.DoesFileOperations;
@@ -24,6 +23,7 @@ import com.simonbaars.clonerefactor.scripts.intimals.similarity.Similarity;
 import com.simonbaars.clonerefactor.settings.CloneType;
 import com.simonbaars.clonerefactor.settings.Settings;
 import com.simonbaars.clonerefactor.thread.CalculatesTimeIntervals;
+import com.simonbaars.clonerefactor.thread.CorpusThread;
 import com.simonbaars.clonerefactor.thread.ThreadPool;
 import com.simonbaars.clonerefactor.thread.WritesErrors;
 
@@ -33,11 +33,11 @@ public class RunIntimals implements DoesFileOperations, WritesErrors, Calculates
 		new RunIntimals().run();
 	}
 	
-	public void type3Similarity(List<PatternSequence> patterns) {
+	public void type3Similarity(List<PatternSequence> patterns, DetectionResults cloneDetection) {
 		Settings.get().setCloneType(CloneType.TYPE3);
 		Settings.get().setRefactoringStrategy(RefactoringStrategy.DONOTREFACTOR);
-		String path = "/Users/sbaars/Documents/Kim/jhotdraw/";
-		DetectionResults cloneDetection = Main.cloneDetection(Paths.get(path), Paths.get(path+"src/"));
+		//String path = "/Users/sbaars/Documents/Kim/jhotdraw/";
+		//DetectionResults cloneDetection = Main.cloneDetection(settings, Paths.get(path), Paths.get(path+"src/"));
 		cloneDetection.sorted();
 		List<Similarity> cloneToPattern = new Similarity().determineSimilarities(patterns, cloneDetection.getClones(), true);
 		List<Similarity> patternToClone = new Similarity().determineSimilarities(patterns, cloneDetection.getClones(), false);
@@ -87,12 +87,12 @@ public class RunIntimals implements DoesFileOperations, WritesErrors, Calculates
 	
 	public void run() {
 		List<PatternSequence> patterns = new IntimalsReader().loadIntimalsClones();
+		ThreadPool threadPool = new ThreadPool();
 		for(double gapSize = 0D; gapSize<=1000D; gapSize+=20D) {
-			Settings.get().setType3GapSize(gapSize);
 			for(int minLines = 1; minLines<=10; minLines++) {
-				Settings.get().setMinAmountOfLines(minLines);
-				System.out.println(Settings.get());
-				type3Similarity(patterns);
+				if(!threadPool.anyNull()) threadPool.waitForThreadToFinish();
+				Optional<CorpusThread> thread = threadPool.addToAvailableThread(Settings.builder().withMinAmountOfLines(minLines).withType3GapSize(gapSize).build(), new File("/Users/sbaars/Documents/Kim/jhotdraw/"), new File("/Users/sbaars/Documents/Kim/jhotdraw/src/"));	
+				if(thread.isPresent() && thread.get().res != null) type3Similarity(patterns, thread.get().res);
 			}
 		}
 	}
