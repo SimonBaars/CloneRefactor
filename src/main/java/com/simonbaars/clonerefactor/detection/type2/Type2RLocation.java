@@ -1,13 +1,11 @@
 package com.simonbaars.clonerefactor.detection.type2;
 
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import com.github.javaparser.Range;
-import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.expr.Expression;
 import com.github.javaparser.ast.expr.LiteralExpr;
@@ -25,10 +23,6 @@ public class Type2RLocation extends Location {
 
 	public Type2RLocation(Location clonedLocation) {
 		super(clonedLocation);
-	}
-
-	public Type2RLocation(Path path, Location prevLocation, Node n) {
-		super(path, prevLocation, n);
 	}
 
 	public Set<Expression> getDiffExpressions() {

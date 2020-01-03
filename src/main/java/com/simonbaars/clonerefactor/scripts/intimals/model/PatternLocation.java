@@ -1,12 +1,10 @@
 package com.simonbaars.clonerefactor.scripts.intimals.model;
 
-import java.nio.file.Path;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import com.github.javaparser.Range;
-import com.github.javaparser.ast.Node;
 import com.simonbaars.clonerefactor.detection.model.location.Location;
 
 public class PatternLocation extends Location {
@@ -20,10 +18,6 @@ public class PatternLocation extends Location {
 
 	public PatternLocation(Location clonedLocation, Range r) {
 		super(clonedLocation, r);
-	}
-
-	public PatternLocation(Path path, Location prevLocation, Node n) {
-		super(path, prevLocation, n);
 	}
 
 	public void setComponents(List<Location> locations) {

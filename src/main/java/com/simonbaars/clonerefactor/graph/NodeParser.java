@@ -66,7 +66,7 @@ public class NodeParser extends HasSettings implements SetsIfNotNull, Determines
 	}
 
 	public Location parseToken(Location prevLocation, CompilationUnit cu, Node n) {
-		Location thisLocation = new Location(cu.getStorage().get().getPath(), prevLocation, n);
+		Location thisLocation = new Location(settings, cu.getStorage().get().getPath(), prevLocation, n);
 		addLineTokensToReg(thisLocation);
 		if(prevLocation!=null) {
 			if(handleInvalidOrder(thisLocation))

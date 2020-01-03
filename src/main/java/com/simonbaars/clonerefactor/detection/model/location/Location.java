@@ -65,15 +65,15 @@ public class Location implements Comparable<Location>, HasRange {
 		return next.isRangeVisited(r);
 	}
 
-	public Location(Path path, Location prevLocation, Node n) {
-		this(prevLocation.contents.settings, path, n);
-		this.prev = prevLocation;
-	}
-
 	public Location(Settings s, Path file, Node...nodes) {
 		this.file = file;
 		this.contents = new LocationContents(s, nodes);
 		this.range = this.contents.getRange();
+	}
+
+	public Location(Settings settings, Path path, Location prevLocation, Node n) {
+		this(settings, path, n);
+		this.prev = prevLocation;
 	}
 
 	public Path getFile() {
