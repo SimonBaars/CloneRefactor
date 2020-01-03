@@ -9,28 +9,35 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.github.javaparser.symbolsolver.javaparsermodel.JavaParserFacade;
-import com.simonbaars.clonerefactor.core.util.DoesFileOperations;
 import com.simonbaars.clonerefactor.metrics.Metrics;
 import com.simonbaars.clonerefactor.settings.Settings;
 import com.simonbaars.clonerefactor.thread.results.DefaultResultWriter;
 import com.simonbaars.clonerefactor.thread.results.WritesResults;
 
-public class ThreadPool implements WritesErrors, CalculatesTimeIntervals, DoesFileOperations {
-	private int numberOfThreads = 4;
+public class ThreadPool implements WritesErrors {
+	private static final int DEFAULT_THREADS = 4;
+	private final int numberOfThreads;
 	private final int THREAD_TIMEOUT = 60000000;
 	
 	private final List<Optional<CorpusThread>> threads;
 	private final WritesResults resultWriter;
 	
 	public ThreadPool () {
-		threads = new ArrayList<>(Collections.nCopies(numberOfThreads, Optional.empty()));
-		this.resultWriter = new DefaultResultWriter();
+		this(DEFAULT_THREADS);
 	}
 	
 	public ThreadPool (int numberOfThreads) {
+		this(new DefaultResultWriter(), numberOfThreads);
+	}
+
+	public ThreadPool(WritesResults intimalsResultWriter) {
+		this(intimalsResultWriter, DEFAULT_THREADS);
+	}
+	
+	public ThreadPool(WritesResults intimalsResultWriter, int numberOfThreads) {
 		this.numberOfThreads = numberOfThreads;
 		threads = new ArrayList<>(Collections.nCopies(numberOfThreads, Optional.empty()));
-		this.resultWriter = new DefaultResultWriter();
+		this.resultWriter = intimalsResultWriter;
 	}
 
 	public boolean waitForThreadToFinish() {
@@ -65,24 +72,21 @@ public class ThreadPool implements WritesErrors, CalculatesTimeIntervals, DoesFi
 			clearThreadObjects();
 	}
 	
-	public Optional<CorpusThread> addToAvailableThread(Settings settings, File file, File sourceRoot) {
-		System.out.println(settings);
-		return replaceFinishedThread(Optional.of(new CorpusThread(settings, file, sourceRoot)));
+	public void addToAvailableThread(Settings settings, File file, File sourceRoot) {
+		replaceFinishedThread(Optional.of(new CorpusThread(settings, file, sourceRoot)));
 	}
 
-	public Optional<CorpusThread> addToAvailableThread(File file) {
-		return addToAvailableThread(Settings.get(), file, new File(file.getAbsolutePath()+"/src/main/java"));
+	public void addToAvailableThread(File file) {
+		addToAvailableThread(Settings.get(), file, new File(file.getAbsolutePath()+"/src/main/java"));
 	}
 
-	private Optional<CorpusThread> replaceFinishedThread(Optional<CorpusThread> t) {
+	private void replaceFinishedThread(Optional<CorpusThread> t) {
 		for(int i = 0; i<threads.size(); i++) {
 			if((!threads.get(i).isPresent() && t.isPresent()) || (threads.get(i).isPresent() && !threads.get(i).get().isAlive())) {
 				writePreviousThreadResults(i);
 				threads.set(i, t);
-				return threads.get(i);
 			}
 		}
-		throw new IllegalStateException("No thread to be replaced!");
 	}
 	
 	private void clearThreadObjects() {
