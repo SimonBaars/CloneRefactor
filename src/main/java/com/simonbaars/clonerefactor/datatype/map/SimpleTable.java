@@ -13,8 +13,7 @@ public class SimpleTable extends ArrayList<String> {
 	
 	public SimpleTable(String...columns) {
 		super(1);
-		if(columns.length != 0)
-			addRow((Object[])columns);
+		if(columns.length != 0) addRow((Object[])columns);
 	}
 
 	public void addRow(Object...objects) {
