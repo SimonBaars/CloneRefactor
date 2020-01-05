@@ -40,10 +40,8 @@ public class ThreadPool implements WritesErrors {
 		this.resultWriter = intimalsResultWriter;
 	}
 
-	public boolean waitForThreadToFinish() {
-		if(allNull())
-			return false;
-		while(validElements().noneMatch(e -> !e.isAlive())) {
+	public void waitForThreadToFinish(boolean any) {
+		while(any ? !anyNull() : !allNull()) {
 			try {
 				Thread.sleep(100);
 				nullifyThreadIfStarved();
@@ -51,23 +49,23 @@ public class ThreadPool implements WritesErrors {
 				Thread.currentThread().interrupt();
 			}
 		}
-		return true;
 	}
 	
-	public Stream<CorpusThread> validElements(){
+	/*public Stream<CorpusThread> validElements(){
 		return validElements(threads);
 	}
 	
 	public<T> Stream<T> validElements(List<Optional<T>> list){
 		return validElements(list.stream());
-	}	
+	}	*/
 	
-	public<T> Stream<T> validElements(Stream<Optional<T>> stream){
-		return stream.filter(Optional::isPresent).map(Optional::get);
+	private Stream<CorpusThread> validElements(){
+		return threads.stream().filter(e -> e.isPresent() && e.get().isAlive()).map(Optional::get);
 	}
 
 	private void nullifyThreadIfStarved() {
 		validElements().filter(i -> i.creationTime+THREAD_TIMEOUT<System.currentTimeMillis()).forEach(CorpusThread::timeout);
+		//replaceFinishedThread(Optional.empty());
 		if(freeMemoryPercentage()<15)
 			clearThreadObjects();
 	}
@@ -85,6 +83,7 @@ public class ThreadPool implements WritesErrors {
 			if((!threads.get(i).isPresent() && t.isPresent()) || (threads.get(i).isPresent() && !threads.get(i).get().isAlive())) {
 				writePreviousThreadResults(i);
 				threads.set(i, t);
+				return;
 			}
 		}
 	}
@@ -95,7 +94,7 @@ public class ThreadPool implements WritesErrors {
 	}
 
 	public void finishFinalThreads() {
-		while(waitForThreadToFinish()) replaceFinishedThread(Optional.empty());
+		waitForThreadToFinish(false);
 		resultWriter.finalize();
 	}
 

@@ -49,7 +49,7 @@ public class RunOnCorpus implements WritesErrors, CalculatesTimeIntervals {
 	private void analyzeAllProjects(ThreadPool threadPool, File[] corpusFiles) {
 		for(int i = 0; i<corpusFiles.length; i++) {
 			System.out.println(threadPool.showContents()+" ("+(i+1)+"/"+corpusFiles.length+")");
-			if(!threadPool.anyNull()) threadPool.waitForThreadToFinish();
+			if(!threadPool.anyNull()) threadPool.waitForThreadToFinish(true);
 			threadPool.addToAvailableThread(corpusFiles[i]);
 		}
 	}

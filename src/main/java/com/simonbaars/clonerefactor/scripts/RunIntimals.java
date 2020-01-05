@@ -20,7 +20,7 @@ public class RunIntimals implements DoesFileOperations, WritesErrors, Calculates
 		for(double gapSize = 0D; gapSize<=1000D; gapSize+=20D) {
 			for(int minLines = 1; minLines<=10; minLines++) {
 				System.out.println(gapSize+", "+minLines);
-				if(!threadPool.anyNull()) threadPool.waitForThreadToFinish();
+				if(!threadPool.anyNull()) threadPool.waitForThreadToFinish(true);
 				threadPool.addToAvailableThread(Settings.builder().withMinAmountOfLines(minLines).withType3GapSize(gapSize).build(), new File("/Users/sbaars/Documents/Kim/jhotdraw/"), new File("/Users/sbaars/Documents/Kim/jhotdraw/src/"));	
 			}
 		}

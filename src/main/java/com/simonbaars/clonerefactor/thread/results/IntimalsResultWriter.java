@@ -75,7 +75,7 @@ public class IntimalsResultWriter implements WritesResults, DoesFileOperations {
 			writeStringToFile(new File(SavePaths.getMyOutputFolder()+"patternToCloneMatchType.txt"), patternToCloneMatchType.toString());
 			writeStringToFile(new File(SavePaths.getMyOutputFolder()+"cloneSizes.txt"), cloneSizes);
 			writeStringToFile(new File(SavePaths.getMyOutputFolder()+"patternSizes.txt"), patternSizes);
-			writeStringToFile(new File(SavePaths.getMyOutputFolder()+"res.txt"), Settings.get() + System.lineSeparator() + "Similarity = "+allSimilarity.stream().mapToDouble(e -> e.similarityPercentage()).average().getAsDouble()+System.lineSeparator()+"Size = "+t.res.getClones().size()+" clones vs "+patterns.size()+" patterns.");
+			writeStringToFile(new File(SavePaths.getMyOutputFolder()+"res.txt"), t.settings + System.lineSeparator() + "Similarity = "+allSimilarity.stream().mapToDouble(e -> e.similarityPercentage()).average().getAsDouble()+System.lineSeparator()+"Size = "+t.res.getClones().size()+" clones vs "+patterns.size()+" patterns.");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
