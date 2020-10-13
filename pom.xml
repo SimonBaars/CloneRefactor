@@ -14,7 +14,7 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<jdk.version>1.8</jdk.version>
-		<junit.version>3.8.1</junit.version>
+		<junit.version>4.13.1</junit.version>
 		<javaparser.version>3.14.8</javaparser.version>
 		<jgit.version>5.4.0.201906121030-r</jgit.version>
 	</properties>
