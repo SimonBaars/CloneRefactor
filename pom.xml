@@ -16,7 +16,7 @@
 		<jdk.version>1.8</jdk.version>
 		<junit.version>3.8.1</junit.version>
 		<javaparser.version>3.14.8</javaparser.version>
-		<jgit.version>5.4.0.201906121030-r</jgit.version>
+		<jgit.version>5.13.3.202401111512-r</jgit.version>
 	</properties>
 
 	<dependencies>
