@@ -4,6 +4,13 @@ CloneRefactor is a tool that bridges the gap between clone detection and refacto
 
 For more details, please read the included thesis document.
 
+## 📚 Documentation
+
+- **[QUICKSTART.md](QUICKSTART.md)** - Get started in 5 minutes
+- **[USAGE_GUIDE.md](USAGE_GUIDE.md)** - Comprehensive usage guide (200+ lines)
+- **[examples/](examples/)** - Sample code and examples
+- **Master_Thesis_Simon_Baars.pdf** - Theoretical background
+
 ## Table of Contents
 - [Quick Start](#quick-start)
 - [Installation](#installation)
