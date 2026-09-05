@@ -165,10 +165,20 @@ public class CloneParser implements SetsIfNotNull, RemovesDuplicates, WritesErro
 		try {
 			Field parsedFilesField = javaParserTypeSolver.getClass().getDeclaredField("parsedFiles");
 			parsedFilesField.setAccessible(true);
-			Cache<Path, Optional<CompilationUnit>> parserCache = (Cache<Path, Optional<CompilationUnit>>) parsedFilesField.get(javaParserTypeSolver);
-			parserCache.put(path, Optional.of(compilationUnit));
-		} catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e) {
-			e.printStackTrace();
+			Object parsedFilesObj = parsedFilesField.get(javaParserTypeSolver);
+			
+			// Try to handle both direct Cache and wrapped cache implementations
+			if (parsedFilesObj instanceof Cache) {
+				Cache<Path, Optional<CompilationUnit>> parserCache = (Cache<Path, Optional<CompilationUnit>>) parsedFilesObj;
+				parserCache.put(path, Optional.of(compilationUnit));
+			} else {
+				// Newer JavaParser versions may use a different caching strategy
+				// We'll silently skip cache setup if the structure has changed
+				System.err.println("Warning: Could not set up type solver cache - JavaParser version may not support this operation");
+			}
+		} catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException | ClassCastException e) {
+			// Silently ignore - cache setup is an optimization, not required for functionality
+			System.err.println("Warning: Could not access type solver cache: " + e.getMessage());
 		}
 	}
 }

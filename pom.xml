@@ -16,7 +16,7 @@
 		<maven.compiler.source>11</maven.compiler.source>
 		<maven.compiler.target>11</maven.compiler.target>
 		<junit.version>4.13.2</junit.version>
-		<javaparser.version>3.26.3</javaparser.version>
+		<javaparser.version>3.25.10</javaparser.version>
 		<jgit.version>7.1.0.202411261347-r</jgit.version>
 	</properties>
 
