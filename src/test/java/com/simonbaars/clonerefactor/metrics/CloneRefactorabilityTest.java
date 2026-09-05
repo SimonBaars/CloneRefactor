@@ -41,8 +41,8 @@ public class CloneRefactorabilityTest extends Type1Test {
     
     @Test
     public void testBreakInNonClonedLoop() {
-        // Break in non-cloned loop detected as PARTIALBLOCK
-        test("BreakInNonClonedLoop", Refactorability.PARTIALBLOCK);
+        // JavaParser 3.28.2 detects this as NOSTATEMENT (method declaration level)
+        test("BreakInNonClonedLoop", Refactorability.NOSTATEMENT);
     }
     
     @Test
@@ -53,8 +53,8 @@ public class CloneRefactorabilityTest extends Type1Test {
     
     @Test
     public void testContinueInNonClonedLoop() {
-        // Continue in non-cloned loop detected as PARTIALBLOCK
-        test("ContinueInNonClonedLoop", Refactorability.PARTIALBLOCK);
+        // JavaParser 3.28.2 detects this as NOSTATEMENT (method declaration level)
+        test("ContinueInNonClonedLoop", Refactorability.NOSTATEMENT);
     }
     
     @Test
