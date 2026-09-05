@@ -129,8 +129,7 @@ public class CloneRefactorability implements DeterminesMetric<Refactorability>, 
 		assert continueOrBreak(breakOrContinue);
 		if(breakOrContinue instanceof BreakStmt) {
 			BreakStmt br = (BreakStmt)breakOrContinue;
-			return br.getValue().isPresent() && br.getValue().get() instanceof NameExpr ? 
-					Optional.of(((NameExpr)br.getValue().get()).getName()) : Optional.empty();
+			return br.getLabel();
 		}
 		return ((ContinueStmt)breakOrContinue).getLabel();
 	}
