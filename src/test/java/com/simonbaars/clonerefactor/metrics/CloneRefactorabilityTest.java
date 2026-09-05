@@ -66,6 +66,12 @@ public class CloneRefactorabilityTest extends Type1Test {
 		System.out.println(name);
 		DetectionResults r = testProject(name);
 		System.out.println(r);
-        Assert.assertEquals(loc, r.getMetrics().amountPerExtract.keySet().iterator().next());
+		System.out.println("Extract map: " + r.getMetrics().amountPerExtract);
+		
+        Assert.assertFalse("No clones detected - amountPerExtract map is empty for " + name, 
+        		r.getMetrics().amountPerExtract.isEmpty());
+        		
+        Refactorability actualType = r.getMetrics().amountPerExtract.keySet().iterator().next();
+        Assert.assertEquals("Expected " + loc + " but got " + actualType + " for " + name, loc, actualType);
 	}
 }
