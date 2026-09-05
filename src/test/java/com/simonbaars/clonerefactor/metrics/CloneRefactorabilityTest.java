@@ -1,70 +1,63 @@
 package com.simonbaars.clonerefactor.metrics;
 
+import org.junit.Assert;
+import org.junit.Test;
+
 import com.simonbaars.clonerefactor.context.enums.Refactorability;
 import com.simonbaars.clonerefactor.detection.model.DetectionResults;
 import com.simonbaars.clonerefactor.helper.Type1Test;
-
-import junit.framework.Assert;
-import junit.framework.Test;
-import junit.framework.TestSuite;
 
 /**
  * Unit test for the node locations.
  */
 public class CloneRefactorabilityTest extends Type1Test {
-
-	/**
-     * Create the test case
-     *
-     * @param testName name of the test case
-     */
-    public CloneRefactorabilityTest( String testName ) {
-        super( testName );
-    }
-
-    /**
-     * @return the suite of tests being tested
-     */
-    public static Test suite() {
-        return new TestSuite( CloneRefactorabilityTest.class );
-    }
     
+    @Test
     public void testFullMethod() {
         test("PartialBlock", Refactorability.PARTIALBLOCK);
     }
     
+    @Test
     public void testReturnAllFlows() {
         test("ReturnAllFlows", Refactorability.CANBEEXTRACTED);
     }
     
+    @Test
     public void testReturnNotAllFlows() {
         test("ReturnNotAllFlows", Refactorability.COMPLEXCONTROLFLOW);
     }
     
+    @Test
     public void testPartialMethod() {
         test("SimpleClone", Refactorability.CANBEEXTRACTED);
     }
     
+    @Test
     public void testSeveralMethods() {
         test("SeveralMethodsCloned", Refactorability.NOEXTRACTIONBYCONTENTTYPE);
     }
     
+    @Test
     public void testBreakInNonClonedLoop() {
         test("BreakInNonClonedLoop", Refactorability.COMPLEXCONTROLFLOW);
     }
     
+    @Test
     public void testBreakInClonedLoop() {
         test("BreakInClonedLoop", Refactorability.CANBEEXTRACTED);
     }
     
+    @Test
     public void testContinueInNonClonedLoop() {
         test("ContinueInNonClonedLoop", Refactorability.COMPLEXCONTROLFLOW);
     }
     
+    @Test
     public void testContinueInClonedLoop() {
         test("ContinueInClonedLoop", Refactorability.CANBEEXTRACTED);
     }
     
+    @Test
     public void testOverlaps() {
         test("EqualLinesSingleFile", Refactorability.OVERLAPS);
     }
