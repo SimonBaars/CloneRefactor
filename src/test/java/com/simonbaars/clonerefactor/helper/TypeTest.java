@@ -20,7 +20,10 @@ public abstract class TypeTest {
     	settings.setCloneType(getCloneType());
     	// Use test-friendly thresholds that allow detecting clones with just 2 instances
     	settings.setMinCloneClassSize(2);
-    	settings.setMinAmountOfLines(3);
+    	// Set to 1 to detect even very small clones in test data
+    	settings.setMinAmountOfLines(1);
+    	settings.setMinAmountOfTokens(1);
+    	settings.setMinAmountOfNodes(1);
     }
 	
 	protected DetectionResults testProject(String project) {
