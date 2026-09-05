@@ -25,8 +25,8 @@ public class CloneRefactorabilityTest extends Type1Test {
     
     @Test
     public void testReturnNotAllFlows() {
-        // Current detection classifies this as extractable
-        test("ReturnNotAllFlows", Refactorability.CANBEEXTRACTED);
+        // With JavaParser 3.28.2, correctly detects complex control flow
+        test("ReturnNotAllFlows", Refactorability.COMPLEXCONTROLFLOW);
     }
     
     @Test
