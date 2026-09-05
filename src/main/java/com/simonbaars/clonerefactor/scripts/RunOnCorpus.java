@@ -25,17 +25,28 @@ public class RunOnCorpus implements WritesErrors, CalculatesTimeIntervals {
 			SavePaths.genTimestamp();
 			System.out.println("Saving results in "+SavePaths.getMyOutputFolder());
 			ThreadPool threadPool = new ThreadPool();
-			File[] corpusFiles = new File(SavePaths.getApplicationDataFolder()+"git").listFiles();
+			File corpusDir = new File(SavePaths.getApplicationDataFolder()+"git");
+			File[] corpusFiles = corpusDir.exists() ? corpusDir.listFiles() : new File[0];
+			
+			if (corpusFiles == null) {
+				corpusFiles = new File[0];
+			}
+			
 			writeSettings();
 			long startTime = System.currentTimeMillis();
-			analyzeAllProjects(threadPool, corpusFiles);
+			
+			if (corpusFiles.length > 0) {
+				analyzeAllProjects(threadPool, corpusFiles);
+			}
+			
 			threadPool.finishFinalThreads();
 			threadPool.getFullMetrics().generalStats.increment("Total Duration", interval(startTime));
 			return threadPool.getFullMetrics();
 		} catch (Exception e) {
 			writeError(SavePaths.getMyOutputFolder()+"terminate", e);
+			// Return empty metrics on error instead of null
+			return new Metrics();
 		}
-		return null;
 	}
 
 	private void writeSettings() {
