@@ -26,8 +26,9 @@ public class JavaparserTest {
 	@Test
 	public void testJavaParserBug() {
     	System.out.println("testSingleFile");
-    	URL resourceUrl = CloneContentsTest.class.getClassLoader().getResource(CloneType.TYPE1R.getNicelyFormatted());
-    	Assert.assertNotNull("Resource URL should not be null", resourceUrl);
+    	// Use name() not getNicelyFormatted() - resource dirs use enum name (TYPE1R not "Type 1R")
+    	URL resourceUrl = CloneContentsTest.class.getClassLoader().getResource(CloneType.TYPE1R.name());
+    	Assert.assertNotNull("Resource URL should not be null for " + CloneType.TYPE1R.name(), resourceUrl);
     	Path p = Paths.get(resourceUrl.getFile()+File.separator+"SingleFile");
     	SourceRoot s = new SourceRoot(p);
     	ParseResult<CompilationUnit> pcu;
