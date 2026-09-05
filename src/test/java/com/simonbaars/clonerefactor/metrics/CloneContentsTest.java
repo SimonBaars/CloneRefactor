@@ -49,7 +49,14 @@ public class CloneContentsTest extends Type1Test {
 
 	private void test(String name, ContentsType loc) {
 		DetectionResults r = testProject(name);
-		System.out.println(r);
-        Assert.assertEquals(loc, r.getMetrics().amountPerContents.keySet().iterator().next());
+		System.out.println("Detection results: " + r);
+		System.out.println("Metrics: " + r.getMetrics());
+		System.out.println("Contents map: " + r.getMetrics().amountPerContents);
+		
+        Assert.assertFalse("No clones detected - amountPerContents map is empty for " + name, 
+        		r.getMetrics().amountPerContents.isEmpty());
+        		
+        ContentsType actualType = r.getMetrics().amountPerContents.keySet().iterator().next();
+        Assert.assertEquals("Expected " + loc + " but got " + actualType, loc, actualType);
 	}
 }

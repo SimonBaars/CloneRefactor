@@ -16,7 +16,11 @@ public abstract class TypeTest {
 	
 	@Before
     public void setUp() {
-    	Settings.get().setCloneType(getCloneType());
+    	Settings settings = Settings.get();
+    	settings.setCloneType(getCloneType());
+    	// Use test-friendly thresholds that allow detecting clones with just 2 instances
+    	settings.setMinCloneClassSize(2);
+    	settings.setMinAmountOfLines(3);
     }
 	
 	protected DetectionResults testProject(String project) {
