@@ -4,6 +4,9 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
 
+import org.junit.Ignore;
+import org.junit.Test;
+
 import com.simonbaars.clonerefactor.Main;
 import com.simonbaars.clonerefactor.core.util.SavePaths;
 import com.simonbaars.clonerefactor.detection.model.DetectionResults;
@@ -12,9 +15,6 @@ import com.simonbaars.clonerefactor.scripts.model.MetricsTable;
 import com.simonbaars.clonerefactor.settings.CloneType;
 import com.simonbaars.clonerefactor.settings.Scope;
 import com.simonbaars.clonerefactor.settings.Settings;
-
-import junit.framework.Test;
-import junit.framework.TestSuite;
 
 /**
  * Unit test for the clone detector.
@@ -29,23 +29,8 @@ public class Type1Testcases extends Type1Test {
     private static final String EQUAL_LINES_PROJECT = "EqualLines";
     private static final String ENUM_PROJECT = "EnumClone";
     
-
-	/**
-     * Create the test case
-     *
-     * @param testName name of the test case
-     */
-    public Type1Testcases( String testName ) {
-        super( testName );
-    }
-
-    /**
-     * @return the suite of tests being tested
-     */
-    public static Test suite() {
-        return new TestSuite( Type1Testcases.class );
-    }
-    
+    @Test
+    @Ignore("Requires external repository at /home/simon/clone/git/kryo-serializers/")
     public void testMetricTables() {
     	MetricsTable tables = new MetricsTable();
     	System.out.println("kryo-serializers");
@@ -54,6 +39,8 @@ public class Type1Testcases extends Type1Test {
 		tables.reportMetrics("Kryo", Main.cloneDetection(Paths.get(path), Paths.get(path+"src/main/java/")).getMetrics());
     }
     
+    @Test
+    @Ignore("Requires external repository at /Users/sbaars/clone/git/cccc-plugin/")
     public void testCCCC() {
     	MetricsTable tables = new MetricsTable();
     	System.out.println("cccc-plugin");
@@ -62,6 +49,8 @@ public class Type1Testcases extends Type1Test {
 		tables.reportMetrics("Kryo", Main.cloneDetection(Paths.get(path), Paths.get(path+"src/main/java/")).getMetrics());
     }
     
+    @Test
+    @Ignore("Requires external repository at /home/simon/clone/git/zkfiddle-sandbox/")
     public void testMetricTables2() {
     	MetricsTable tables = new MetricsTable();
     	System.out.println("joda-time");
@@ -76,6 +65,8 @@ public class Type1Testcases extends Type1Test {
 		}
     }
     
+    @Test
+    @Ignore("Requires external repository at /home/simon/clone/git/Alice/")
     public void testMetricTables3() {
     	MetricsTable tables = new MetricsTable();
     	System.out.println("ning-api-java");
@@ -84,6 +75,8 @@ public class Type1Testcases extends Type1Test {
 		tables.reportMetrics("Kryo", Main.cloneDetection(Paths.get(path), Paths.get(path+"src/main/java/")).getMetrics());
     }
     
+    @Test
+    @Ignore("Requires external repository at /Users/sbaars/git/kryo-serializers/")
     public void testRef() {
     	System.out.println("kryo-serializers");
     	String path = "/Users/sbaars/git/kryo-serializers/";
@@ -91,6 +84,8 @@ public class Type1Testcases extends Type1Test {
 		System.out.println(Main.cloneDetection(Paths.get(path), Paths.get(path+"src/main/java/")).sorted());
     }
     
+    @Test
+    @Ignore("Requires external repository at /Users/sbaars/clone/git/kryo-serializers/")
     public void testCustom() {
     	System.out.println("kryo-serializers");
     	String path = "/Users/sbaars/clone/git/kryo-serializers/";
@@ -98,6 +93,8 @@ public class Type1Testcases extends Type1Test {
 		System.out.println(Main.cloneDetection(Paths.get(path), Paths.get(path+"src/main/java/")).sorted());
     }
     
+    @Test
+    @Ignore("Requires external repository at /Users/sbaars/clone/git/athena/")
     public void testAthena() {
     	System.out.println("athena");
     	String path = "/Users/sbaars/clone/git/athena/";
@@ -105,6 +102,8 @@ public class Type1Testcases extends Type1Test {
 		System.out.println(Main.cloneDetection(Paths.get(path), Paths.get(path+"src/main/java/")).sorted());
     }
     
+    @Test
+    @Ignore("Requires external repository at /Users/sbaars/clone/git/Caronas/")
     public void testCaronas() {
     	System.out.println("caronas");
     	String path = "/Users/sbaars/clone/git/Caronas/";
@@ -112,6 +111,8 @@ public class Type1Testcases extends Type1Test {
 		System.out.println(Main.cloneDetection(Paths.get(path), Paths.get(path+"src/main/java/")).sorted());
     }
     
+    @Test
+    @Ignore("Requires external repository at /Users/sbaars/clone/git/abmash/")
     public void testAbmashMethodScope() {
     	Settings.get().setScope(Scope.METHODSONLY);
     	System.out.println("abmash");
@@ -120,6 +121,8 @@ public class Type1Testcases extends Type1Test {
 		Settings.get().setScope(Scope.ALL);
     }
     
+    @Test
+    @Ignore("Requires external repository at /Users/sbaars/clone/git/abmash/")
     public void testMetricsOutput() {
     	System.out.println("abmash");
     	String path = "/Users/sbaars/clone/git/abmash/";
@@ -143,11 +146,13 @@ public class Type1Testcases extends Type1Test {
     /**
      * Test for clones that consist of lines that do not occur elsewhere.
      */
+    @Test
     public void testSimpleClones() {
     	System.out.println("testSimpleClones");
     	System.out.println(testProject(SIMPLE_PROJECT));
     }
     
+    @Test
     public void testNestedClone() {
     	System.out.println("testNestedClone");
     	System.out.println(testProject("NestedClone"));
@@ -156,6 +161,7 @@ public class Type1Testcases extends Type1Test {
 	/**
      * Test for clones that consist of all equal lines.
      */
+    @Test
     public void testEqualLines() {
     	System.out.println("testEqualLines");
     	System.out.println(testProject(EQUAL_LINES_PROJECT));
@@ -164,6 +170,7 @@ public class Type1Testcases extends Type1Test {
     /**
      * Test for three clones, of which one starts a line later than the others.
      */
+    @Test
     public void testPartialClonesLeft() {
     	System.out.println("testPartialClonesLeft");
     	System.out.println(testProject(PARTIAL_CLONES_LEFT));
@@ -172,6 +179,7 @@ public class Type1Testcases extends Type1Test {
     /**
      * Test for three clones, of which one ends a line later than the others.
      */
+    @Test
     public void testPartialLinesRight() {
     	System.out.println("testPartialLinesRight");
     	System.out.println(testProject(PARTIAL_CLONES_RIGHT));
@@ -180,6 +188,7 @@ public class Type1Testcases extends Type1Test {
 	/**
      * Test for clones in Java enumerations.
      */
+    @Test
     public void testEnumClone() {
     	System.out.println("testEnumClone");
     	System.out.println(testProject(ENUM_PROJECT));
@@ -188,11 +197,13 @@ public class Type1Testcases extends Type1Test {
     /**
      * Test for clones in a single file, with just a single line to separate the clones.
      */
+    @Test
     public void testSingleFile() {
     	System.out.println("testSingleFile");
     	System.out.println(testProject(SINGLE_FILE_PROJECT));
     }
     
+    @Test
     public void testEqualLinesSingleFile() {
     	System.out.println("testEqualLinesSingleFile");
     	System.out.println(testProject("EqualLinesSingleFile"));
@@ -202,6 +213,7 @@ public class Type1Testcases extends Type1Test {
     /**
      * Test for clones that differ in length but consist of lines with equal tokens.
      */
+    @Test
     public void testUnequalSizeClones() {
     	System.out.println("testUnequalSizeClones");
     	System.out.println(testProject(UNEQUAL_SIZE_CLONES_PROJECT));
@@ -210,6 +222,7 @@ public class Type1Testcases extends Type1Test {
     /**
      * Test for clones that span multiple methods.
      */
+    @Test
     public void testSeveralMethodsCloned() {
     	System.out.println("testSeveralMethodsCloned");
     	System.out.println(testProject(SEVERAL_METHODS_PROJECT));
@@ -218,16 +231,19 @@ public class Type1Testcases extends Type1Test {
     /**
      * Test for clones in import statements.
      */
+    @Test
     public void testImportStatements() {
     	System.out.println("testImportStatements");
     	System.out.println(testProject("EqualImportStatements"));
     }
     
+    @Test
     public void testEqualLinesDifferentLength() {
     	System.out.println("testEqualLinesDifferentLength");
     	System.out.println(testProject("EqualLinesDifferentLength"));
     }
     
+    @Test
     public void testThrowsMethod() {
     	System.out.println("testThrowsMethod");
     	System.out.println(testProject("ThrowsMethod"));
