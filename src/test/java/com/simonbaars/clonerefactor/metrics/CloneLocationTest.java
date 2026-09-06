@@ -1,50 +1,38 @@
 package com.simonbaars.clonerefactor.metrics;
 
+import org.junit.Assert;
+import org.junit.Test;
+
 import com.simonbaars.clonerefactor.context.enums.LocationType;
 import com.simonbaars.clonerefactor.detection.model.DetectionResults;
 import com.simonbaars.clonerefactor.helper.Type1Test;
-
-import junit.framework.Assert;
-import junit.framework.Test;
-import junit.framework.TestSuite;
 
 /**
  * Unit test for the node locations.
  */
 public class CloneLocationTest extends Type1Test {
-
-	/**
-     * Create the test case
-     *
-     * @param testName name of the test case
-     */
-    public CloneLocationTest( String testName ) {
-        super( testName );
-    }
-
-    /**
-     * @return the suite of tests being tested
-     */
-    public static Test suite() {
-        return new TestSuite( CloneLocationTest.class );
-    }
     
+    @Test
     public void testClassLevel() {
         test("SeveralMethodsCloned", LocationType.CLASSLEVEL);
     }
     
+    @Test
     public void testEnumLevel() {
         test("EnumClone", LocationType.ENUMLEVEL);
     }
     
+    @Test
     public void testInterfaceLevel() {
         test("InterfaceClone", LocationType.INTERFACELEVEL);
     }
     
+    @Test
     public void testMethodLevel1() {
         test("SingleFile", LocationType.METHODLEVEL);
     }
     
+    @Test
     public void testMethodLevel2() {
         test("SimpleClone", LocationType.METHODLEVEL);
     }

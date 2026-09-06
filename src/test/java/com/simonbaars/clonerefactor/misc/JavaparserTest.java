@@ -2,11 +2,15 @@ package com.simonbaars.clonerefactor.misc;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+
+import org.junit.Assert;
+import org.junit.Test;
 
 import com.github.javaparser.ParseResult;
 import com.github.javaparser.ast.CompilationUnit;
@@ -18,12 +22,14 @@ import com.github.javaparser.utils.SourceRoot;
 import com.simonbaars.clonerefactor.metrics.CloneContentsTest;
 import com.simonbaars.clonerefactor.settings.CloneType;
 
-import junit.framework.TestCase;
-
-public class JavaparserTest extends TestCase {
+public class JavaparserTest {
+	@Test
 	public void testJavaParserBug() {
     	System.out.println("testSingleFile");
-    	Path p = Paths.get(CloneContentsTest.class.getClassLoader().getResource(CloneType.TYPE1R.getNicelyFormatted()).getFile()+File.separator+"SingleFile");
+    	// Use name() not getNicelyFormatted() - resource dirs use enum name (TYPE1R not "Type 1R")
+    	URL resourceUrl = CloneContentsTest.class.getClassLoader().getResource(CloneType.TYPE1R.name());
+    	Assert.assertNotNull("Resource URL should not be null for " + CloneType.TYPE1R.name(), resourceUrl);
+    	Path p = Paths.get(resourceUrl.getFile()+File.separator+"SingleFile");
     	SourceRoot s = new SourceRoot(p);
     	ParseResult<CompilationUnit> pcu;
 		try {

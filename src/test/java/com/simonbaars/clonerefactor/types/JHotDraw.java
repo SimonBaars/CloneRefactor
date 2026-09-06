@@ -24,9 +24,6 @@ import com.simonbaars.clonerefactor.settings.CloneType;
 import com.simonbaars.clonerefactor.settings.Settings;
 
 public class JHotDraw extends Type1Test {
-	public JHotDraw(String testName) {
-		super(testName);
-	}
 
 	/*public void testJHotDraw() {
 		MetricsTable tables = new MetricsTable();
